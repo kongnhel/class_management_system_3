@@ -7,12 +7,13 @@ use Illuminate\Support\Facades\Schedule;
 use Carbon\Carbon;
 
 Schedule::call(function () {
-    $users = User::whereNotNull('telegram_chat_id')->get();
     $botToken = env('TELEGRAM_BOT_TOKEN2');
     $todayName = Carbon::now()->format('l'); 
+    
+    // ទាញយកតែ User ណាដែលមាន Role ជា Professor និងមាន Telegram ID
     $users = User::where('role', 'professor')
-                    ->whereNotNull('telegram_chat_id')
-                    ->get();
+                 ->whereNotNull('telegram_chat_id')
+                 ->get();
 
     foreach ($users as $user) {
         $todaySchedules = ClassSchedule::with(['courseOffering.course', 'room'])
@@ -50,6 +51,8 @@ Schedule::call(function () {
             ]);
         }
     }
-})->dailyAt('07:00') 
-  ->timezone('Asia/Phnom_Penh')
-  ->withoutOverlapping();
+})
+->name('send-daily-professor-schedule') // បន្ថែមឈ្មោះដើម្បីកុំឱ្យ Error Overlapping
+->dailyAt('07:00') 
+->timezone('Asia/Phnom_Penh')
+->withoutOverlapping();

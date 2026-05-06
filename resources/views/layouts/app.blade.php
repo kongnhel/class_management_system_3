@@ -143,8 +143,17 @@
             @endisset
 
             {{-- Main Slot - ប្រើ w-full និងដក Dark Mode --}}
-            <main class="flex-grow bg-[#f8fafc]">
+            {{-- <main class="flex-grow bg-[#f8fafc]">
                 {{ $slot }}
+            </main> --}}
+            <main>
+                {{-- បន្ថែម @yield ត្រង់នេះ ដើម្បីកុំឱ្យ Error $slot ទៀត --}}
+                @yield('content') 
+
+                {{-- រក្សាទុក $slot សម្រាប់ Component ផ្សេងទៀត --}}
+                @if(isset($slot))
+                    {{ $slot }}
+                @endif
             </main>
         </div>
     </div>

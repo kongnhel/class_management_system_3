@@ -310,11 +310,10 @@ const firebaseConfig = {
     //     cluster: '{{ env('PUSHER_APP_CLUSTER') }}',
     //     forceTLS: true
     // });
-    var pusher = new Pusher('{{ config('broadcasting.connections.pusher.key') }}', { 
+var pusher = new Pusher('{{ config('broadcasting.connections.pusher.key') }}', { 
     cluster: '{{ config('broadcasting.connections.pusher.options.cluster') }}',
     forceTLS: true
 });
-
 
     // បង្កើត Function សម្រាប់ប្តូរទំព័រពេលស្កែនជាប់
     function bindChannelEvents(channel) {

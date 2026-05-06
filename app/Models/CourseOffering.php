@@ -4,12 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo; // 💡 បានបន្ថែមការ import នេះ
 use Illuminate\Database\Eloquent\Relations\HasMany; // 💡 បានបន្ថែមការ import នេះ (សម្រាប់ schedules, attendanceRecords, etc.)
 
 class CourseOffering extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'program_id', // 💡 កែតម្រូវ: នេះក៏ត្រូវបានបន្ថែមទៅ migration ដែរ
@@ -29,6 +30,7 @@ class CourseOffering extends Model
     protected $casts = [
         'start_date' => 'date', // 💡 បានបន្ថែម cast នេះ
         'end_date' => 'date',   // 💡 បានបន្ថែម cast នេះ
+        'deleted_at' => 'datetime',
     ];
 
     /*

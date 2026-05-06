@@ -3,7 +3,7 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\QrLoginController;
-
+use App\Http\Controllers\AIChatController;
 
 use App\Http\Controllers\admin\AdminController;
 use App\Http\Controllers\admin\UserController;
@@ -47,11 +47,15 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Http\Request;
 
 
-// /verify-qr-login
-    Route::get('/run-scheduler/scheduler-secret-key', function () {
-        Artisan::call('schedule:run');
-        return "Scheduler is running!";
-    });
+
+
+// ========================================================
+// AUTHENTICATED ROUTES - AI Chat (All Authenticated Users)
+// ========================================================
+Route::middleware(['auth', 'throttle:60,1'])->group(function () {
+    Route::get('/ai-chat', [AIChatController::class, 'index'])->name('ai.chat');
+    Route::post('/ai-chat/send', [AIChatController::class, 'sendMessage'])->name('ai.send');
+});
     
     /*
     |--------------------------------------------------------------------------
@@ -97,15 +101,10 @@ Route::middleware(['auth'])->group(function () {
     })->name('qr.scanner');
 });
 
-    Route::get('/qr-login', [QrLoginController::class, 'showQrForm'])->name('qr.login');
-    Route::get('/qr-login/finalize/{token}', [QrLoginController::class, 'finalizeLogin'])->name('qr.finalize');
-
     Route::middleware(['web'])->group(function () {
         Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-
         Route::post('/login', [LoginController::class, 'login']);
     });
-
 
     Route::get('/api/check-student/{code}', [RegisteredUserController::class, 'checkStudent']);
 /*
@@ -113,6 +112,7 @@ Route::middleware(['auth'])->group(function () {
 | Authenticated & Verified Routes (Shared for all authenticated users)
 |--------------------------------------------------------------------------
 */
+
     Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/dashboard', function () {
             if (Auth::user()->isAdmin()) {
@@ -134,8 +134,9 @@ Route::middleware(['auth'])->group(function () {
     // Route::middleware(['auth'])->post('/qr-authorize', [App\Http\Controllers\Auth\QrLoginController::class, 'handleScan'])
     //     ->name('qr.authorize');
     Route::middleware(['auth'])->post('/qr-authorize', [QrLoginController::class, 'handleScan'])
-    ->name('qr.authorize');
-     Route::get('/qr-refresh', [App\Http\Controllers\Auth\QrLoginController::class, 'refreshQr'])->name('qr.refresh');
+        ->name('qr.authorize');
+    
+    Route::get('/qr-refresh', [QrLoginController::class, 'refreshQr'])->name('qr.refresh');
     /*
     |--------------------------------------------------------------------------
     | Admin Routes (Protected by 'role:admin' middleware)
@@ -186,7 +187,7 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/courses/{course}', [CourseController::class, 'update'])->name('update-course');
         Route::delete('/courses/{course}', [CourseController::class, 'destroy'])->name('delete-course');
 
-        Route::resource('course-offerings', CourseOfferingController::class);
+        // Route::resource('course-offerings', CourseOfferingController::class);
         Route::get('/course-offerings', [CourseOfferingController::class, 'index'])->name('manage-course-offerings');
         Route::get('/course-offerings/create', [CourseOfferingController::class, 'create'])->name('create-course-offering');
         Route::post('/course-offerings', [CourseOfferingController::class, 'store'])->name('store-course-offering');
@@ -196,7 +197,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/enroll-student', [CourseOfferingController::class, 'enrollStudentForm'])->name('enroll_student_form');
         Route::post('/perform-enrollment', [CourseOfferingController::class, 'performEnrollment'])->name('perform_enrollment');
 
-        Route::resource('rooms', RoomController::class);
+        // Route::resource('rooms', RoomController::class);
         Route::get('/rooms', [RoomController::class, 'index'])->name('rooms.index'); 
         Route::get('/rooms/create', [RoomController::class, 'create'])->name('rooms.create'); 
         Route::post('/rooms', [RoomController::class, 'store'])->name('rooms.store'); 
