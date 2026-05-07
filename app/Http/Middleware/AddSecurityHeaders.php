@@ -22,19 +22,23 @@ class AddSecurityHeaders
         $response = $next($request);
 
         // 1. Prevent MIME type sniffing
-        $response->header('X-Content-Type-Options', 'nosniff');
+      if (!method_exists($response, 'header')) {
+        return $response;
+    }
 
-        // 2. Prevent Clickjacking attacks
-        $response->header('X-Frame-Options', 'DENY');
+    // 1. Prevent MIME type sniffing
+    $response->header('X-Content-Type-Options', 'nosniff');
 
-        // 3. Enable XSS Protection in older browsers
-        $response->header('X-XSS-Protection', '1; mode=block');
+    // 2. Prevent Clickjacking attacks
+    $response->header('X-Frame-Options', 'DENY');
 
-        // 4. Force HTTPS in production
-        if (config('app.env') === 'production') {
-            $response->header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
-        }
+    // 3. Enable XSS Protection in older browsers
+    $response->header('X-XSS-Protection', '1; mode=block');
 
+    // 4. Force HTTPS in production
+    if (config('app.env') === 'production') {
+        $response->header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+    }
         /**
          * 5. Content Security Policy (Updated for Livewire & Assets)
          * - ថែម 'unsafe-eval' ក្នុង script-src ដើម្បីឱ្យ Livewire ដើរ
