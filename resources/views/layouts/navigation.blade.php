@@ -92,7 +92,7 @@
         </div>
     </a>
 </div>
-@auth
+{{-- @auth
     <x-nav-link :href="route('ai.chat')" :active="request()->routeIs('ai.chat')"
         class="flex items-center px-5 py-3 text-base font-medium rounded-xl hover:bg-gray-700 hover:text-green-300">
         <svg class="h-6 w-6 me-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -100,7 +100,7 @@
         </svg>
         <span>{{ __('សួរ AI ជំនួយការ') }}</span>
     </x-nav-link>
-@endauth
+@endauth --}}
 
 <div 
     x-data="{

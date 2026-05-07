@@ -1,9 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\ChatMessage;
-use App\Http\Requests\SendAIChatMessageRequest;
 
+use App\Models\ChatMessage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -12,7 +11,7 @@ use Illuminate\Support\Facades\RateLimiter;
 class AIChatController extends Controller
 {
     /**
-     * Display AI Chat interface (for all authenticated users)
+     * បង្ហាញ Interface សម្រាប់ Chat
      */
     public function index()
     {
@@ -20,170 +19,80 @@ class AIChatController extends Controller
     }
 
     /**
-     * Send message to AI and store conversation
-     * 
-     * @param SendAIChatMessageRequest $request - Validated request with 'message' field
-     * @return \Illuminate\Http\JsonResponse
+     * ផ្ញើសារទៅកាន់ Dify AI ជាមួយជម្រើស (Information ឬ Process Flow)
      */
-    // public function sendMessage(SendAIChatMessageRequest $request)
-    // {
-    //     // ===== STEP 1: VALIDATION ALREADY DONE BY FORM REQUEST =====
-    //     $validated = $request->validated();
-    //     $userMessage = $validated['message'];
-
-    //     // ===== STEP 2: RATE LIMITING (5 messages per minute per user) =====
-    //     $userId = auth()->id();
-    //     $rateLimitKey = "ai-chat:{$userId}";
+    public function sendMessage(Request $request)
+    {
+        $user = auth()->user();
+        $userMessage = $request->input('message');
         
-    //     if (RateLimiter::tooManyAttempts($rateLimitKey, 5)) {
-    //         Log::warning("AI Chat rate limit exceeded for user: $userId");
-    //         return response()->json([
-    //             'error' => 'សូមរង់ចាំមួយភាពបង្ហាប់ពេលឈប់ មុនពេលផ្ញើសារលើកក្រោយ'
-    //         ], 429);
-    //     }
+        // ទទួលយក Option ពី Frontend (ឧទាហរណ៍៖ 'info' ឬ 'process')
+        // បើ User មិនបានរើស យើងទម្លាក់ទៅ 'info' ជា Default
+        $chatOption = $request->input('option', 'info'); 
 
-    //     RateLimiter::hit($rateLimitKey, 60);
-
-    //     try {
-    //         // ===== STEP 3: SAVE USER MESSAGE =====
-    //         ChatMessage::create([
-    //             'user_id' => $userId,
-    //             'message' => $userMessage,
-    //             'sender' => 'user',
-    //         ]);
-
-    //         // ===== STEP 4: PREPARE SYSTEM INSTRUCTION =====
-    //         $systemInstruction = "អ្នកគឺជាជំនួយការឆ្លាតវៃរបស់សាកលវិទ្យាល័យជាតិមានជ័យ (National Meanchey University)។ " .
-    //             "ភារកិច្ចរបស់អ្នកគឺឆ្លើយតែសំណួរដែលទាក់ទងនឹងប្រព័ន្ធគ្រប់គ្រងថ្នាក់រៀន ការលើកលែងតាម កម្មវិធីសិក្សា គ្រូបង្រៀន និងសិស្ស។";
-
-    //         // ===== STEP 5: CALL GEMINI API =====
-    //         $apiKey = config('services.gemini.api_key') ?? env('GEMINI_API_KEY');
-            
-    //         if (!$apiKey) {
-    //             Log::error("Gemini API key not configured");
-    //             return response()->json([
-    //                 'error' => 'សេវាកម្ម AI មិនអាចប្រើបាននៅពេលនេះ'
-    //             ], 503);
-    //         }
-
-    //         $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent";
-
-    //         $response = Http::withHeaders([
-    //             'Content-Type' => 'application/json',
-    //         ])
-    //         ->withQueryParameters([ // បញ្ជូន API Key តាម Query String (នេះជាអ្វីដែល Google ត្រូវការ)
-    //     'key' => $apiKey
-    // ])
-    //         ->timeout(30)->post($url, [
-    //             'contents' => [
-    //                 'parts' => [
-    //                     [
-    //                         'text' => "Context: {$systemInstruction}\n\nUser Question: {$userMessage}"
-    //                     ]
-    //                 ]
-    //             ]
-    //         ], [
-    //             'key' => $apiKey
-    //         ]);
-
-    //         $data = $response->json();
-
-    //         // ===== STEP 6: ERROR HANDLING (NEVER expose API key) =====
-    //         if ($response->failed()) {
-    //             if (isset($data['error'])) {
-    //                 $errorMsg = $data['error']['message'] ?? 'Unknown API error';
-                    
-    //                 // Log full error server-side only
-    //                 Log::error("Gemini API Error: {$errorMsg}", [
-    //                     'user_id' => $userId,
-    //                     'status_code' => $response->status()
-    //                 ]);
-                    
-    //                 // Return generic error to user (never expose API details)
-    //                 if ($response->status() === 429) {
-    //                     return response()->json([
-    //                         'error' => 'សេវាកម្ម AI មានបន្ទុកលើស។ សូមព្យាយាមម្តងទៀតក្រោយ'
-    //                     ], 503);
-    //                 }
-                    
-    //                 return response()->json([
-    //                     'error' => 'មិនអាចទទួលបានឆ្លើយលើគ្រប់គ្រងន័យបានទេ'
-    //                 ], 500);
-    //             }
-    //         }
-
-    //         // ===== STEP 7: EXTRACT RESPONSE =====
-    //         $aiResponse = $data['candidates'][0]['content']['parts'][0]['text'] ?? null;
-
-    //         if (!$aiResponse) {
-    //             Log::warning("Gemini returned empty response for user: $userId");
-    //             return response()->json([
-    //                 'error' => 'គ្មានឆ្លើយលើគ្រប់គ្រងន័យ'
-    //             ], 500);
-    //         }
-
-    //         // ===== STEP 8: SAVE AI RESPONSE =====
-    //         ChatMessage::create([
-    //             'user_id' => $userId,
-    //             'message' => $aiResponse,
-    //             'sender' => 'ai',
-    //         ]);
-
-    //         return response()->json(['message' => $aiResponse]);
-
-    //     } catch (\Exception $e) {
-    //         // ===== STEP 9: CATCH ALL ERRORS =====
-    //         Log::error("AI Chat Exception for user {$userId}: " . $e->getMessage(), [
-    //             'exception' => get_class($e),
-    //             'file' => $e->getFile(),
-    //             'line' => $e->getLine()
-    //         ]);
-
-    //         return response()->json([
-    //             'error' => 'មានបញ្ហាក្នុងលំនិត្តលើបរិក្ខាររុងចម្រើន'
-    //         ], 500);
-    //     }
-    // }
-
-  public function sendMessage(Request $request)
-{
-    $userMessage = $request->input('message');
-
-    // ថែមត្រង់នេះ៖ បើអត់មានសារ កុំផ្ញើទៅ API អី នាំតែ Error
-    if (!$userMessage) {
-        return response()->json(['message' => 'បងអើយ! ជួយវាយសំណួរតិចមក បើនៅទទេ AI ឆ្លើយអត់ចេញទេ! 😂']);
-    }
-
-    try {
-        $response = \Illuminate\Support\Facades\Http::withHeaders([
-            'Authorization' => 'Bearer ' . env('DIFY_API_KEY'),
-            'Content-Type' => 'application/json',
-        ])->post("https://api.dify.ai/v1/chat-messages", [
-            'inputs' => new \stdClass(), // ប្រើបែបនេះធានាថា Dify យល់ថាជា Object ទទេ
-            'query' => $userMessage,
-            'response_mode' => 'blocking',
-            'user' => 'nhel-kong-' . (auth()->id() ?? 'guest'), 
-        ]);
-
-        $data = $response->json();
-        
-        // បន្ថែមការឆែកមើល Error ពី Dify API
-        if (isset($data['code']) && $data['code'] === 'invalid_param') {
-            return response()->json(['message' => 'កំហុសបច្ចេកទេស៖ ' . $data['message'] . ' (បងប្រហែលភ្លេចលុប Variable ក្នុង Dify ហើយ)']);
+        // 1. ត្រួតពិនិត្យសារទទេ
+        if (!$userMessage) {
+            return response()->json(['message' => 'សូមមេត្តាវាយសំណួររបស់បងសិន! 😊']);
         }
 
-        $aiResponse = $data['answer'] ?? 'សុំទោសបង ខ្ញុំរកចម្លើយមិនឃើញក្នុងឯកសារទេ។';
+        // 2. Rate Limiting (10 Messages per Minute)
+        $rateLimitKey = "ai-chat:" . ($user->id ?? 'guest');
+        if (RateLimiter::tooManyAttempts($rateLimitKey, 10)) {
+            return response()->json([
+                'message' => 'បងផ្ញើសារលឿនពេកហើយ! សូមរង់ចាំមួយភ្លែតសិន។'
+            ], 429);
+        }
+        RateLimiter::hit($rateLimitKey, 60);
 
-        // រក្សាសារចូល Database
-        \App\Models\ChatMessage::create([
-            'user_id' => auth()->id(),
-            'message' => $aiResponse,
-            'sender'  => 'ai',
-        ]);
+        try {
+            // 3. រក្សាសាររបស់ User ចូល Database
+            ChatMessage::create([
+                'user_id' => $user->id ?? null,
+                'message' => $userMessage,
+                'sender'  => 'user',
+            ]);
 
-        return response()->json(['message' => $aiResponse]);
-    } catch (\Exception $e) {
-        return response()->json(['error' => 'មានបញ្ហាតភ្ជាប់ទៅ AI៖ ' . $e->getMessage()], 500);
+            // 4. រៀបចំទិន្នន័យសម្រាប់ផ្ញើទៅ Dify
+            $userRole = $user->role ?? 'student'; 
+            $userName = $user->name ?? 'ភ្ញៀវ';
+
+            // 5. ហៅទៅកាន់ Dify API
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . env('DIFY_API_KEY'),
+                'Content-Type' => 'application/json',
+            ])->timeout(30)->post("https://api.dify.ai/v1/chat-messages", [
+                'inputs' => [
+                    'user_role'   => $userRole,   // តួនាទី
+                    'user_name'   => $userName,   // ឈ្មោះ
+                    'chat_option' => $chatOption, // ជម្រើស: info ឬ process
+                ],
+                'query' => $userMessage,
+                'response_mode' => 'blocking',
+                'user' => 'nmu-user-' . ($user->id ?? 'guest'),
+            ]);
+
+            $data = $response->json();
+
+            // 6. ត្រួតពិនិត្យ Error
+            if ($response->failed()) {
+                Log::error("Dify API Error: " . json_encode($data));
+                return response()->json(['message' => 'សុំទោសបង ប្រព័ន្ធ AI កំពុងមានបញ្ហាបច្ចេកទេស។'], 500);
+            }
+
+            $aiResponse = $data['answer'] ?? 'សុំទោសបង ខ្ញុំមិនអាចរកឃើញព័ត៌មាននេះទេ។';
+
+            // 7. រក្សាសាររបស់ AI ចូល Database
+            ChatMessage::create([
+                'user_id' => $user->id ?? null,
+                'message' => $aiResponse,
+                'sender'  => 'ai',
+            ]);
+
+            return response()->json(['message' => $aiResponse]);
+
+        } catch (\Exception $e) {
+            Log::error("AI Chat Exception: " . $e->getMessage());
+            return response()->json(['message' => 'មានបញ្ហាតភ្ជាប់ទៅកាន់ AI។'], 500);
+        }
     }
-}
 }
