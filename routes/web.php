@@ -4,6 +4,7 @@
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\QrLoginController;
 use App\Http\Controllers\AIChatController;
+use App\Http\Controllers\SmartAssistantController;
 
 use App\Http\Controllers\admin\AdminController;
 use App\Http\Controllers\admin\UserController;
@@ -55,6 +56,13 @@ use Illuminate\Http\Request;
 Route::middleware(['auth', 'throttle:60,1'])->group(function () {
     Route::get('/ai-chat', [AIChatController::class, 'index'])->name('ai.chat');
     Route::post('/ai-chat/send', [AIChatController::class, 'sendMessage'])->name('ai.send');
+    Route::get('/ai/history', [AIChatController::class, 'getHistory'])->name('ai.history');
+    Route::post('/ai/clear-history', [AIChatController::class, 'clearHistory'])->name('ai.clear-history');
+
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/ai/send', [SmartAssistantController::class, 'generateResponse'])->name('ai.send');
 });
     
     /*
@@ -192,7 +200,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/course-offerings/create', [CourseOfferingController::class, 'create'])->name('create-course-offering');
         Route::post('/course-offerings', [CourseOfferingController::class, 'store'])->name('store-course-offering');
         Route::get('/course-offerings/{courseOffering}/edit', [CourseOfferingController::class, 'edit'])->name('edit-course-offering');
-        Route::put('/course-offerings/{courseOffering}', [CourseOfferingController::class, 'update'])->name('update-course-offering');
+        // Route::put('/course-offerings/{courseOffering}', [CourseOfferingController::class, 'update'])->name('update-course-offering');
+        Route::put('/course-offerings/{courseOffering}', [CourseOfferingController::class, 'update'])->name('course-offerings.update');
         Route::delete('/course-offerings/{courseOffering}', [CourseOfferingController::class, 'destroy'])->name('course-offerings.destroy');
         Route::get('/enroll-student', [CourseOfferingController::class, 'enrollStudentForm'])->name('enroll_student_form');
         Route::post('/perform-enrollment', [CourseOfferingController::class, 'performEnrollment'])->name('perform_enrollment');

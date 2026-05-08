@@ -267,68 +267,178 @@
             </form>
         </div>
             
-            <div x-data="{ viewMode: '{{ request('view', 'grid') }}' }" @view-changed.window="viewMode = $event.detail">
-                <div x-show="viewMode === 'grid'">
-                    @if($courseOfferings->isEmpty())
-                        <div class="bg-white p-20 text-center rounded-3xl shadow-sm border border-dashed border-gray-300">
-                            <i class="fas fa-search fa-3x text-gray-200 mb-4"></i>
-                            <p class="text-gray-500 font-medium italic">មិនមានទិន្នន័យសម្រាប់ការ Filter នេះទេ!</p>
-                        </div>
-                    @else
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            @foreach ($courseOfferings as $offering)
-                            
-                                <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative group">
-                                    <div class="flex justify-between items-start mb-4">
-                                        <div class="flex flex-col">
-                                            @php
-    // Logic: Active if current date is between start and end date
-    $today = now()->startOfDay();
-    $isActive = $today->between($offering->start_date, $offering->end_date);
-@endphp
-
-<div class="flex justify-between items-start mb-4">
-
+<div x-data="{ viewMode: '{{ request('view', 'grid') }}' }" @view-changed.window="viewMode = $event.detail">
     
-    {{-- Status Badge --}}
-    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider border {{ $isActive ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : 'bg-rose-50 text-rose-600 border-rose-200' }}">
-        <span class="w-1.5 h-1.5 rounded-full mr-1.5 {{ $isActive ? 'bg-emerald-500' : 'bg-rose-500' }}"></span>
-        {{ $isActive ? 'Active' : 'Expired' }}
-    </span>
-</div>
-                                            <span class="text-[10px] font-black text-emerald-600 uppercase tracking-widest bg-emerald-50 px-2 py-1 rounded-md mb-2 w-fit">Sem {{ $offering->semester }} / {{ $offering->academic_year }}</span>
-                                            <div class="flex flex-wrap gap-1">
-                                                @foreach($offering->targetPrograms as $p)
-                                                    <span class="bg-blue-50 text-blue-600 px-2 py-0.5 rounded text-[9px] font-bold border border-blue-100">{{ $p->name_km }} (G{{ $p->pivot->generation }})</span>
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                        <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <a href="{{ route('admin.edit-course-offering', $offering->id) }}" class="p-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-colors"><i class="fas fa-edit text-xs"></i></a>
-                                            <button onclick="openDeleteModal({{ $offering->id }})" class="p-2 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white transition-colors"><i class="fas fa-trash text-xs"></i></button>
-                                        </div>
-                                    </div>
-                                    <h4 class="font-bold text-gray-900 text-lg mb-2 leading-tight">{{ $offering->course->title_km ?? $offering->course->title_en }}</h4>
-                                    <div class="flex items-center gap-2 mb-5">
-                                        <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 text-xs"><i class="fas fa-user-tie"></i></div>
-                                        <span class="text-sm font-semibold text-slate-600">{{ $offering->lecturer->name ?? 'Unassigned' }}</span>
-                                    </div>
-                                    <div class="space-y-2 border-t pt-5">
-                                        @foreach($offering->schedules as $s)
-                                            <div class="flex justify-between items-center text-[11px] bg-slate-50 p-2 rounded-xl">
-                                                <span class="font-bold text-slate-800">{{ substr($s->day_of_week, 0, 3) }}</span>
-                                                <span class="text-slate-500 font-medium">{{ \Carbon\Carbon::parse($s->start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($s->end_time)->format('H:i') }}</span>
-                                                <span class="text-emerald-600 font-bold bg-white px-2 py-0.5 rounded-md border border-emerald-100">Rm: {{ $s->room->room_number ?? '-' }}</span>
-                                            </div>
-                                        @endforeach
-                                    </div>
+    {{-- GRID VIEW (Cards) --}}
+    <div x-show="viewMode === 'grid'" x-cloak>
+        @if($courseOfferings->isEmpty())
+            <div class="bg-white p-20 text-center rounded-3xl shadow-sm border border-dashed border-gray-300">
+                <i class="fas fa-search fa-3x text-gray-200 mb-4"></i>
+                <p class="text-gray-500 font-medium italic">មិនមានទិន្នន័យសម្រាប់ការ Filter នេះទេ!</p>
+            </div>
+        @else
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                @foreach ($courseOfferings as $offering)
+                    <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative group">
+                        {{-- Your existing card content (unchanged) --}}
+                        <div class="flex justify-between items-start mb-4">
+                            @php
+                                $today = now()->startOfDay();
+                                $isActive = $today->between($offering->start_date, $offering->end_date);
+                            @endphp
+
+                            <div class="flex flex-col">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider border {{ $isActive ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : 'bg-rose-50 text-rose-600 border-rose-200' }}">
+                                    <span class="w-1.5 h-1.5 rounded-full mr-1.5 {{ $isActive ? 'bg-emerald-500' : 'bg-rose-500' }}"></span>
+                                    {{ $isActive ? 'Active' : 'Expired' }}
+                                </span>
+                                <span class="text-[10px] font-black text-emerald-600 uppercase tracking-widest bg-emerald-50 px-2 py-1 rounded-md mb-2 w-fit">
+                                    Sem {{ $offering->semester }} / {{ $offering->academic_year }}
+                                </span>
+                                <div class="flex flex-wrap gap-1">
+                                    @foreach($offering->targetPrograms as $p)
+                                        <span class="bg-blue-50 text-blue-600 px-2 py-0.5 rounded text-[9px] font-bold border border-blue-100">
+                                            {{ $p->name_km }} (G{{ $p->pivot->generation }})
+                                        </span>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <a href="{{ route('admin.edit-course-offering', $offering->id) }}" 
+                                   class="p-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-colors">
+                                    <i class="fas fa-edit text-xs"></i>
+                                </a>
+                                <button onclick="openDeleteModal({{ $offering->id }})" 
+                                        class="p-2 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white transition-colors">
+                                    <i class="fas fa-trash text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <h4 class="font-bold text-gray-900 text-lg mb-2 leading-tight">
+                            {{ $offering->course->title_km ?? $offering->course->title_en }}
+                        </h4>
+
+                        <div class="flex items-center gap-2 mb-5">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 text-xs">
+                                <i class="fas fa-user-tie"></i>
+                            </div>
+                            <span class="text-sm font-semibold text-slate-600">
+                                {{ $offering->lecturer->name ?? 'Unassigned' }}
+                            </span>
+                        </div>
+
+                        <div class="space-y-2 border-t pt-5">
+                            @foreach($offering->schedules as $s)
+                                <div class="flex justify-between items-center text-[11px] bg-slate-50 p-2 rounded-xl">
+                                    <span class="font-bold text-slate-800">{{ substr($s->day_of_week, 0, 3) }}</span>
+                                    <span class="text-slate-500 font-medium">
+                                        {{ \Carbon\Carbon::parse($s->start_time)->format('H:i') }} - 
+                                        {{ \Carbon\Carbon::parse($s->end_time)->format('H:i') }}
+                                    </span>
+                                    <span class="text-emerald-600 font-bold bg-white px-2 py-0.5 rounded-md border border-emerald-100">
+                                        Rm: {{ $s->room->room_number ?? '-' }}
+                                    </span>
                                 </div>
                             @endforeach
                         </div>
-                    @endif
-                </div>
-                <div class="mt-12 no-print">{{ $courseOfferings->links() }}</div>
+                    </div>
+                @endforeach
             </div>
+        @endif
+    </div>
+
+    {{-- TABLE VIEW (NEW) --}}
+    <div x-show="viewMode === 'table'" x-cloak>
+        @if($courseOfferings->isEmpty())
+            <div class="bg-white p-20 text-center rounded-3xl shadow-sm border border-dashed border-gray-300">
+                <i class="fas fa-search fa-3x text-gray-200 mb-4"></i>
+                <p class="text-gray-500 font-medium italic">មិនមានទិន្នន័យសម្រាប់ការ Filter នេះទេ!</p>
+            </div>
+        @else
+            <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-slate-50">
+                        <tr>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">មុខវិជ្ជា</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">សាស្ត្រាចារ្យ</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">ឆមាស / ឆ្នាំ</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">ជំនាញ</th>
+                            <th class="px-6 py-4 text-center text-xs font-bold text-slate-600 uppercase tracking-wider">កាលវិភាគ</th>
+                            <th class="px-6 py-4 text-center text-xs font-bold text-slate-600 uppercase tracking-wider">ស្ថានភាព</th>
+                            <th class="px-6 py-4 text-center text-xs font-bold text-slate-600 uppercase tracking-wider">សកម្មភាព</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-100">
+                        @foreach ($courseOfferings as $offering)
+                            @php
+                                $today = now()->startOfDay();
+                                $isActive = $today->between($offering->start_date, $offering->end_date);
+                            @endphp
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-6 py-4">
+                                    <div class="font-semibold text-gray-900">
+                                        {{ $offering->course->title_km ?? $offering->course->title_en }}
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-2">
+                                        <i class="fas fa-user-tie text-slate-400"></i>
+                                        <span class="font-medium">{{ $offering->lecturer->name ?? 'Unassigned' }}</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="text-sm">Sem {{ $offering->semester }} / {{ $offering->academic_year }}</span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex flex-wrap gap-1">
+                                        @foreach($offering->targetPrograms as $p)
+                                            <span class="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+                                                {{ $p->name_km }} (G{{ $p->pivot->generation }})
+                                            </span>
+                                        @endforeach
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-sm">
+                                    @foreach($offering->schedules as $s)
+                                        <div class="mb-1 last:mb-0">
+                                            <span class="font-medium">{{ substr($s->day_of_week, 0, 3) }}</span>
+                                            <span class="text-slate-500 mx-2">
+                                                {{ \Carbon\Carbon::parse($s->start_time)->format('H:i') }}-{{ \Carbon\Carbon::parse($s->end_time)->format('H:i') }}
+                                            </span>
+                                            <span class="text-emerald-600 font-medium">Rm.{{ $s->room->room_number ?? '-' }}</span>
+                                        </div>
+                                    @endforeach
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold {{ $isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700' }}">
+                                        {{ $isActive ? 'Active' : 'Expired' }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <div class="flex justify-center gap-2">
+                                        <a href="{{ route('admin.edit-course-offering', $offering->id) }}" 
+                                           class="p-2 text-blue-600 hover:bg-blue-50 rounded-xl transition-colors">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button onclick="openDeleteModal({{ $offering->id }})" 
+                                                class="p-2 text-red-600 hover:bg-red-50 rounded-xl transition-colors">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @endif
+    </div>
+
+    {{-- Pagination --}}
+    <div class="mt-12 no-print">{{ $courseOfferings->links() }}</div>
+</div>
             
         </div>
     </div>
@@ -565,4 +675,4 @@
             document.body.appendChild(link); link.click(); document.body.removeChild(link);
         }
     </script>
-</x-app-layout>
+</x-app-layout> 

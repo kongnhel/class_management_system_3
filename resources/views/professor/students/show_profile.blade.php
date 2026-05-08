@@ -1,110 +1,103 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="px-4 md:px-6 lg:px-8">
-            <h2 class="font-extrabold text-4xl text-gray-900 leading-tight">
+        <div class="px-4 sm:px-6">
+            <h2 class="font-medium text-lg text-gray-900 leading-tight">
                 {{ __('ប្រវត្តិរូបនិស្សិត') }}
             </h2>
-            <p class="mt-2 text-base text-gray-500">{{ __('ព័ត៌មានលម្អិត និងទំនាក់ទំនងរបស់និស្សិត') }}</p>
+            <p class="mt-0.5 text-sm text-gray-400">{{ __('ព័ត៌មានលម្អិត និងទំនាក់ទំនងរបស់និស្សិត') }}</p>
         </div>
     </x-slot>
 
-    <div class="py-12 bg-gray-50 min-h-screen">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-2xl sm:rounded-3xl p-8 lg:p-12 border border-gray-100">
+    <div class="py-6 bg-gray-50 min-h-screen">
+        <div class="max-w-2xl mx-auto px-4 sm:px-6 space-y-3">
 
-                <div class="flex flex-col md:flex-row items-center md:items-start mb-10 pb-10 border-b border-gray-200">
-                    <div class="flex-shrink-0 mb-6 md:mb-0 md:mr-10 relative group">
-                        @if($student->studentProfile && $student->studentProfile->profile_picture_url)
-                            <img src="{{$student->studentProfile->profile_picture_url}}" alt="{{ $student->name }}" class="w-36 h-36 rounded-full object-cover border-4 border-green-400 shadow-xl transition-transform duration-300 transform group-hover:scale-105">
-                        @else
-                            <div class="w-36 h-36 rounded-full bg-green-100 flex items-center justify-center text-green-600 text-5xl font-extrabold border-4 border-green-400 shadow-xl">
-                                {{ Str::upper(Str::substr($student->studentProfile->full_name_km ?? $student->name, 0, 1)) }}
-                            </div>
-                        @endif
-                    </div>
-
-                    <div class="text-center md:text-left">
-                        <h3 class="text-5xl font-extrabold text-gray-900 leading-tight">{{ $student->studentProfile->full_name_km ?? $student->name }}</h3>
-                        <p class="text-lg text-gray-600 mt-2">{{ $student->email }}</p>
-                        <p class="text-lg text-gray-500 mt-3">{{ __('លេខកូដអត្តសញ្ញាណនិស្សិត') }}: <span class="font-bold text-gray-700">{{ $student->student_id_code ?? 'N/A' }}</span></p>
-                    </div>
-                </div>
-
-                <div class="space-y-8">
-                    <h4 class="text-3xl font-extrabold text-gray-800 mb-6 pb-2 border-b-2 border-green-300">{{ __('ព័ត៌មានលម្អិត') }}</h4>
-                    @if ($student->studentProfile)
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 text-gray-700">
-                            {{-- Full Name (Khmer) --}}
-                            <div class="flex items-start space-x-4 bg-gray-50 p-6 rounded-2xl shadow-sm border border-gray-100">
-                                <i class="fas fa-id-card-alt text-green-500 mt-1 text-xl flex-shrink-0"></i>
-                                <div class="flex-1">
-                                    <p class="text-sm font-semibold text-gray-500">{{ __('ឈ្មោះពេញ (ខ្មែរ)') }}</p>
-                                    <p class="text-xl font-bold mt-1 text-gray-900">{{ $student->studentProfile->full_name_km ?? 'N/A' }}</p>
-                                </div>
-                            </div>
-                            {{-- Full Name (English) --}}
-                            <div class="flex items-start space-x-4 bg-gray-50 p-6 rounded-2xl shadow-sm border border-gray-100">
-                                <i class="fas fa-id-card text-green-500 mt-1 text-xl flex-shrink-0"></i>
-                                <div class="flex-1">
-                                    <p class="text-sm font-semibold text-gray-500">{{ __('ឈ្មោះពេញ (អង់គ្លេស)') }}</p>
-                                    <p class="text-xl font-bold mt-1 text-gray-900">{{ $student->studentProfile->full_name_en ?? 'N/A' }}</p>
-                                </div>
-                            </div>
-                            {{-- Gender --}}
-                            <div class="flex items-start space-x-4 bg-gray-50 p-6 rounded-2xl shadow-sm border border-gray-100">
-                                <i class="fas fa-venus-mars text-green-500 mt-1 text-xl flex-shrink-0"></i>
-                                <div class="flex-1">
-                                    <p class="text-sm font-semibold text-gray-500">{{ __('ភេទ') }}</p>
-                                    <p class="text-xl font-bold mt-1 text-gray-900">{{ $student->studentProfile->gender ?? 'N/A' }}</p>
-                                </div>
-                            </div>
-                            {{-- Date of Birth --}}
-                            <div class="flex items-start space-x-4 bg-gray-50 p-6 rounded-2xl shadow-sm border border-gray-100">
-                                <i class="fas fa-birthday-cake text-green-500 mt-1 text-xl flex-shrink-0"></i>
-                                <div class="flex-1">
-                                    <p class="text-sm font-semibold text-gray-500">{{ __('ថ្ងៃខែឆ្នាំកំណើត') }}</p>
-                                    <p class="text-xl font-bold mt-1 text-gray-900">{{ $student->studentProfile->date_of_birth ? \Carbon\Carbon::parse($student->studentProfile->date_of_birth)->format('d-M-Y') : 'N/A' }}</p>
-                                </div>
-                            </div>
-                            {{-- Phone Number --}}
-                            <div class="flex items-start space-x-4 bg-gray-50 p-6 rounded-2xl shadow-sm border border-gray-100">
-                                <i class="fas fa-phone-alt text-green-500 mt-1 text-xl flex-shrink-0"></i>
-                                <div class="flex-1">
-                                    <p class="text-sm font-semibold text-gray-500">{{ __('លេខទូរស័ព្ទ') }}</p>
-                                    <p class="text-xl font-bold mt-1 text-gray-900">{{ $student->studentProfile->phone_number ?? 'N/A' }}</p>
-                                </div>
-                            </div>
-                            {{-- Address --}}
-                            <div class="flex items-start space-x-4 bg-gray-50 p-6 rounded-2xl shadow-sm border border-gray-100">
-                                <i class="fas fa-map-marker-alt text-green-500 mt-1 text-xl flex-shrink-0"></i>
-                                <div class="flex-1">
-                                    <p class="text-sm font-semibold text-gray-500">{{ __('អាសយដ្ឋាន') }}</p>
-                                    <p class="text-xl font-bold mt-1 text-gray-900">{{ $student->studentProfile->address ?? 'N/A' }}</p>
-                                </div>
-                            </div>
-                            {{-- Academic Program --}}
-                            <div class="flex items-start space-x-4 col-span-1 md:col-span-2 bg-gray-50 p-6 rounded-2xl shadow-sm border border-gray-100">
-                                <i class="fas fa-graduation-cap text-green-500 mt-1 text-xl flex-shrink-0"></i>
-                                <div class="flex-1">
-                                    <p class="text-sm font-semibold text-gray-500">{{ __('កម្មវិធីសិក្សា') }}</p>
-                                    <p class="text-xl font-bold mt-1 text-gray-900">{{ $student->program->name_km ?? $student->program->name_en ?? 'N/A' }}</p>
-                                </div>
-                            </div>
-                        </div>
+            {{-- Hero Card --}}
+            <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+                <div class="flex items-center gap-4 px-5 py-5 border-b border-gray-100">
+                    @if($student->studentProfile && $student->studentProfile->profile_picture_url)
+                        <img src="{{ $student->studentProfile->profile_picture_url }}"
+                             alt="{{ $student->name }}"
+                             class="w-16 h-16 rounded-full object-cover border-2 border-green-300 flex-shrink-0">
                     @else
-                        <div class="bg-gray-100 p-8 rounded-2xl text-center text-gray-500 border border-gray-200">
-                            <p class="text-xl font-medium">{{ __('មិនទាន់មានព័ត៌មាន Profile ទេ។') }}</p>
+                        <div class="w-16 h-16 rounded-full bg-green-50 border-2 border-green-200 flex items-center justify-center text-green-700 text-2xl font-medium flex-shrink-0">
+                            {{ Str::upper(Str::substr($student->studentProfile->full_name_km ?? $student->name, 0, 1)) }}
                         </div>
                     @endif
+                    <div class="min-w-0">
+                        <h3 class="text-base font-medium text-gray-900 truncate">
+                            {{ $student->studentProfile->full_name_km ?? $student->name }}
+                        </h3>
+                        <p class="text-sm text-gray-400 truncate mt-0.5">{{ $student->email }}</p>
+                        <span class="inline-flex items-center gap-1.5 mt-2 text-xs font-medium text-green-700 bg-green-50 px-2.5 py-1 rounded-full">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2"/></svg>
+                            {{ $student->student_id_code ?? 'N/A' }}
+                        </span>
+                    </div>
                 </div>
-
-                {{-- <div class="flex justify-start mt-12 pt-8 border-t border-gray-200">
-                    <a href="{{ route('professor.course-offerings.students.index', ['courseOffering' => $courseOffering->id]) }}" class="inline-flex items-center px-8 py-3 bg-gray-700 border border-transparent rounded-2xl font-bold text-base text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2 transition ease-in-out duration-150 shadow-lg">
-                        <i class="fas fa-arrow-left mr-3"></i> {{ __('ត្រឡប់ទៅបញ្ជីនិស្សិត') }}
-                    </a>
-                </div> --}}
-
             </div>
+
+            {{-- Info Card --}}
+            @if($student->studentProfile)
+            <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+                <p class="px-5 pt-4 pb-2 text-xs font-medium text-gray-400 tracking-widest uppercase">{{ __('ព័ត៌មានផ្ទាល់ខ្លួន') }}</p>
+
+                @php
+                $fields = [
+                    ['icon' => 'M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0', 'label' => __('ឈ្មោះពេញ (ខ្មែរ)'), 'value' => $student->studentProfile->full_name_km ?? 'N/A'],
+                    ['icon' => 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z', 'label' => __('ឈ្មោះពេញ (អង់គ្លេស)'), 'value' => $student->studentProfile->full_name_en ?? 'N/A'],
+                    ['icon' => 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z', 'label' => __('ភេទ'), 'value' => $student->studentProfile->gender ?? 'N/A'],
+                    ['icon' => 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z', 'label' => __('ថ្ងៃខែឆ្នាំកំណើត'), 'value' => $student->studentProfile->date_of_birth ? \Carbon\Carbon::parse($student->studentProfile->date_of_birth)->format('d-M-Y') : 'N/A'],
+                    ['icon' => 'M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z', 'label' => __('លេខទូរស័ព្ទ'), 'value' => $student->studentProfile->phone_number ?? 'N/A'],
+                    ['icon' => 'M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z M15 11a3 3 0 11-6 0 3 3 0 016 0z', 'label' => __('អាសយដ្ឋាន'), 'value' => $student->studentProfile->address ?? 'N/A'],
+                ];
+                @endphp
+
+                @foreach($fields as $i => $field)
+                <div class="flex items-start gap-3 px-5 py-3.5 {{ !$loop->last ? 'border-b border-gray-50' : '' }}">
+                    <div class="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="{{ $field['icon'] }}"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-400">{{ $field['label'] }}</p>
+                        <p class="text-sm font-medium text-gray-900 mt-0.5">{{ $field['value'] }}</p>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+
+            {{-- Program Card --}}
+            <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+                <p class="px-5 pt-4 pb-2 text-xs font-medium text-gray-400 tracking-widest uppercase">{{ __('កម្មវិធីសិក្សា') }}</p>
+                <div class="flex items-center gap-3 px-5 py-3.5">
+                    <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center flex-shrink-0">
+                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-400">{{ __('ឯកទេសសិក្សា') }}</p>
+                        <p class="text-sm font-medium text-gray-900 mt-0.5">{{ $student->program->name_km ?? $student->program->name_en ?? 'N/A' }}</p>
+                    </div>
+                </div>
+            </div>
+
+            @else
+            <div class="bg-white rounded-2xl border border-gray-100 px-5 py-10 text-center">
+                <p class="text-sm text-gray-400">{{ __('មិនទាន់មានព័ត៌មាន Profile ទេ។') }}</p>
+            </div>
+            @endif
+
+            {{-- Back Button --}}
+            {{-- <a href="{{ route('professor.course-offerings.students.index', ['courseOffering' => $courseOffering->id]) }}"
+               class="flex items-center justify-center gap-2 w-full py-3 bg-white border border-gray-200 rounded-2xl text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors duration-150">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+                {{ __('ត្រឡប់ទៅបញ្ជីនិស្សិត') }}
+            </a> --}}
+
         </div>
     </div>
 </x-app-layout>
