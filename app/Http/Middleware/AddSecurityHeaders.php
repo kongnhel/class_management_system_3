@@ -66,10 +66,10 @@ class AddSecurityHeaders
         $response->header('Referrer-Policy', 'strict-origin-when-cross-origin');
 
         // 8. Permissions Policy
-        $response->header(
-            'Permissions-Policy',
-            'geolocation=(), microphone=(), camera=()'
-        );
+        // $response->header(
+        //     'Permissions-Policy',
+        //     'geolocation=(), microphone=(), camera=()'
+        // );
 
         return $response;
     }

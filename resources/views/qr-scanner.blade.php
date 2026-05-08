@@ -1,6 +1,5 @@
 <x-app-layout>
     <style>
-        /* Scanning Animation Line */
         @keyframes scan {
             0% { top: 0; }
             50% { top: 100%; }
@@ -9,123 +8,99 @@
         .scanner-container {
             position: relative;
             overflow: hidden;
+            border-radius: 20px;
+            background: #000;
         }
         .scanner-line {
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 2px;
-            background: rgba(16, 185, 129, 0.8);
-            box-shadow: 0 0 15px 5px rgba(16, 185, 129, 0.5);
-            animation: scan 3s infinite linear;
-            z-index: 10;
-            pointer-events: none;
-        }
-        /* Customizing html5-qrcode UI */
-        #reader { border: none !important; }
-        #reader__dashboard_section_csr button {
-            background-color: #10b981 !important;
-            color: white !important;
-            border-radius: 0.75rem !important;
-            padding: 0.5rem 1rem !important;
-            font-weight: 600 !important;
-            border: none !important;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 0.05em;
+            top: 0; left: 0; width: 100%; height: 4px;
+            background: linear-gradient(90deg, transparent, #10b981, transparent);
+            box-shadow: 0 0 25px #10b981;
+            animation: scan 2.5s infinite linear;
         }
     </style>
 
-    <div class="min-h-[80vh] flex flex-col items-center justify-center px-4 py-8">
+    <div class="min-h-[85vh] flex items-center justify-center p-4 bg-dark-50">
         <div class="w-full max-w-md">
-            {{-- Card Container --}}
-            <div class="bg-white/80 backdrop-blur-xl border border-white/20 shadow-2xl rounded-[2.5rem] p-8 text-center relative overflow-hidden">
+            <div class="bg-white rounded-3xl shadow-2xl p-8 text-center">
                 
-                {{-- Header Section --}}
-                <div class="mb-8">
-                    <div class="inline-flex items-center justify-center w-16 h-16 bg-emerald-50 rounded-2xl mb-4 text-emerald-600 shadow-inner">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
-                        </svg>
-                    </div>
-                    <h2 class="text-2xl font-black text-gray-900 tracking-tight">ស្កែន QR Code</h2>
-                    <p class="text-gray-500 text-sm mt-1">Scan to authorize desktop login</p>
+                <div class="mx-auto w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mb-5">
+                    <i class="fa-solid fa-qrcode text-5xl text-emerald-600"></i>
                 </div>
 
-                {{-- Scanner Window --}}
-                <div class="scanner-container rounded-[2rem] border-4 border-emerald-500/10 bg-black relative shadow-2xl">
-                    <div id="reader" class="w-full"></div>
-                    <div class="scanner-line"></div> {{-- Animated Line --}}
+                <h2 class="text-2xl font-black text-dark-800">ស្កែន QR Code</h2>
+                <p class="text-dark-500 mt-1 mb-8">ស្កែនដើម្បីចូលកុំព្យូទ័រ</p>
+
+                <!-- Scanner -->
+                <div class="scanner-container border-4 border-emerald-400 shadow-inner" style="aspect-ratio: 1 / 1;">
+                    <div id="reader" class="w-full h-full rounded-[14px]"></div>
+                    <div class="scanner-line"></div>
                 </div>
 
-                {{-- Status Display --}}
-                <div id="result" class="mt-6 min-h-[1.5rem] flex items-center justify-center gap-2">
-                    <p class="text-sm font-bold text-emerald-600" id="status-text"></p>
-                </div>
-                
-                <div class="mt-4 p-4 bg-gray-50 rounded-2xl border border-gray-100">
-                    <p class="text-[11px] text-gray-500 leading-relaxed font-medium">
-                        <span class="text-emerald-600 font-bold uppercase mr-1">ចំណាំ:</span> 
-                        សូមឆ្លុះកាមេរ៉ាទៅកាន់ QR Code ដែលបង្ហាញនៅលើអេក្រង់ Computer របស់អ្នកឱ្យចំផ្ទៃកណ្តាល
-                    </p>
+                <div id="status" class="mt-6 text-sm font-medium min-h-[70px]"></div>
+
+                <!-- Instruction -->
+                <div class="mt-4 p-4 bg-blue-50 border border-blue-100 rounded-2xl text-left text-xs leading-relaxed">
+                    <strong class="text-blue-700">ការណែនាំ៖</strong><br>
+                    1. ចុច <strong>"Request Camera Permissions"</strong><br>
+                    2. ជ្រើសរើស <strong>Allow</strong> នៅពេល Browser សួរ<br>
+                    3. សូមប្រើទូរស័ព្ទ និងដាក់ QR Code ឱ្យចំកណ្តាល
                 </div>
             </div>
-
-            {{-- Footer Support --}}
-            <p class="text-center mt-8 text-gray-400 text-[10px] font-bold uppercase tracking-[0.2em]">
-                &copy; {{ date('Y') }} NMU Security Portal
-            </p>
         </div>
     </div>
 
-    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script>
-        function onScanSuccess(decodedText, decodedResult) {
-            const statusText = document.getElementById('status-text');
-            statusText.innerText = "កំពុងបញ្ជាក់អត្តសញ្ញាណ...";
-            statusText.classList.add('animate-pulse');
+        let scanner;
 
-            // បញ្ឈប់កាមេរ៉ាសិនក្រោយស្កែនជាប់
-            html5QrcodeScanner.clear();
+        function onScanSuccess(decodedText) {
+            const status = document.getElementById('status');
+            status.innerHTML = `<span class="text-emerald-600">កំពុងផ្ទៀងផ្ទាត់ សូមរង់ចាំ...</span>`;
 
-            // ផ្ញើទិន្នន័យទៅ API ក្នុង Laravel
+            scanner.clear();
+
             fetch('/qr-authorize', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                 },
                 body: JSON.stringify({ token: decodedText })
             })
-            .then(response => {
-                if (response.status === 401) {
-                    alert("Session ផុតកំណត់! សូម Login លើទូរស័ព្ទម្ដងទៀត។");
-                    window.location.reload();
-                }
-                return response.json();
-            })
+            .then(res => res.json())
             .then(data => {
                 if (data.status === 'success') {
-                    statusText.innerText = "បញ្ជាក់អត្តសញ្ញាណជោគជ័យ!";
-                    statusText.classList.remove('animate-pulse');
-                    
-                    // បង្ហាញ Success Alert ស្អាតៗ ឬ Redirect ភ្លាម
-                    setTimeout(() => {
-                        window.location.href = "{{ route('dashboard') }}";
-                    }, 1000);
+                    status.innerHTML = `✅ <span class="text-emerald-600">ជោគជ័យ! សូមត្រឡប់ទៅកុំព្យូទ័រ</span>`;
+                } else {
+                    status.innerHTML = `<span class="text-red-600">${data.message}</span>`;
                 }
             })
-            .catch(error => {
-                console.error('Error:', error);
-                statusText.innerText = "មានបញ្ហាបច្ចេកទេស!";
+            .catch(() => {
+                status.innerHTML = `<span class="text-red-600">មានបញ្ហា សូមព្យាយាមម្តងទៀត</span>`;
             });
         }
 
-        // ការកំណត់ Scanner ឱ្យដើររលូន
-        let html5QrcodeScanner = new Html5QrcodeScanner("reader", { 
-            fps: 15, 
-            qrbox: { width: 250, height: 250 },
-            aspectRatio: 1.0 
-        });
-        html5QrcodeScanner.render(onScanSuccess);
+        function onScanFailure(error) {
+            // មិនបង្ហាញ error ធម្មតា
+        }
+
+        // ចាប់ផ្តើម Scanner
+        function startScanner() {
+            scanner = new Html5QrcodeScanner("reader", {
+                fps: 15,
+                qrbox: { width: 260, height: 260 },
+                aspectRatio: 1,
+                rememberLastUsedCamera: true,
+                showTorchButtonIfSupported: true
+            });
+
+            scanner.render(onScanSuccess, onScanFailure);
+        }
+
+        // រង់ចាំ DOM រួចចាប់ផ្តើម
+        window.onload = function() {
+            startScanner();
+        };
     </script>
 </x-app-layout>
