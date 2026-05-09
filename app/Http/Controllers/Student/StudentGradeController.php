@@ -43,12 +43,13 @@ class StudentGradeController extends Controller
                 'quiz'       => \App\Models\Quiz::with('courseOffering.course')->find($result->assessment_id),
                 default      => \App\Models\Exam::with('courseOffering.course')->find($result->assessment_id),
             };
-
             if (!$assessment) return null;
 
             $result->course_id = $assessment->course_offering_id;
-            $result->course_name_en = $assessment->courseOffering->course->title_en;
-            $result->course_name_km = $assessment->courseOffering->course->title_km;
+
+            $result->course_name_en = $assessment->courseOffering?->course?->title_en ?? 'Unknown Course';
+            $result->course_name_km = $assessment->courseOffering?->course?->title_km ?? 'មិនមានមុខវិជ្ជា';
+
             $result->max_score = (float) $assessment->max_score;
 
             $result->grade = $this->calculateGrade($result->score_obtained, $result->max_score);

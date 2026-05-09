@@ -275,30 +275,49 @@
         });
 
         // Refresh QR Code
-        function refreshQR() {
-            fetch('/qr-refresh', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('qrContainer').innerHTML = data.qrCode;
-                currentToken = data.token;
-                // Re-subscribe to new channel
-                pusher.unsubscribe('login-channel-' + currentToken);
-                const newChannel = pusher.subscribe('login-channel-' + currentToken);
-                newChannel.bind('login-success', function() {
-                    window.location.href = "/qr-login/finalize/" + currentToken;
-                });
-            })
-            .catch(error => console.error('Refresh QR Error:', error));
+// Refresh QR Code
+function refreshQR() {
+    fetch('/qr-refresh', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
         }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        document.getElementById('qrContainer').innerHTML = data.qrCode;
+        currentToken = data.token;
+        
+        // Re-subscribe Pusher channel
+        if (typeof pusher !== 'undefined') {
+            pusher.unsubscribe('login-channel-' + currentToken);
+            const newChannel = pusher.subscribe('login-channel-' + currentToken);
+            newChannel.bind('login-success', function() {
+                window.location.href = "/qr-login/finalize/" + currentToken;
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Refresh QR Error:', error);
+        // Optional: បង្ហាញសារដល់អ្នកប្រើ
+        const status = document.getElementById('qr-status');
+        if (status) status.innerHTML = `<span class="text-amber-400">កំពុងផ្ទុក QR ថ្មី...</span>`;
+    });
+}
 
         // Auto refresh QR every 4 minutes 30 seconds
-        setInterval(refreshQR, 270000);
+        // Auto refresh QR every 4 minutes
+setInterval(() => {
+    if (document.getElementById('qrSection').classList.contains('hidden') === false) {
+        refreshQR();
+    }
+}, 240000);   // 4 នាទី
     </script>
     @endif
 </x-guest-layout>

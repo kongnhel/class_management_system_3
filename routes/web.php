@@ -88,31 +88,43 @@ Route::middleware(['auth'])->group(function () {
         return redirect()->route('login');
     });
 
+// QR Login Routes
+Route::get('/login', [QrLoginController::class, 'showQrForm'])->name('login');
 
-// Desktop ទទួល QR Code — Public
-Route::get('/qr-login', [QrLoginController::class, 'showQrForm'])->name('qr.login');
+Route::post('/qr-authorize', [QrLoginController::class, 'handleScan'])
+     ->middleware('auth')
+     ->name('qr.authorize');
 
-// Desktop ហៅ finalize — Public (web middleware ស្វ័យប្រវត្តិ), គ្មាន auth
+Route::post('/qr-refresh', [QrLoginController::class, 'refreshQr'])
+     ->middleware('auth')
+     ->name('qr.refresh');
+
 Route::get('/qr-login/finalize/{token}', [QrLoginController::class, 'finalizeLogin'])
-    ->name('qr.finalize');
+     ->name('qr.finalize');
+// // Desktop ទទួល QR Code — Public
+// Route::get('/qr-login', [QrLoginController::class, 'showQrForm'])->name('qr.login');
 
-// Mobile refresh QR — Public
-Route::get('/qr-refresh', [QrLoginController::class, 'refreshQr'])->name('qr.refresh');
+// // Desktop ហៅ finalize — Public (web middleware ស្វ័យប្រវត្តិ), គ្មាន auth
+// Route::get('/qr-login/finalize/{token}', [QrLoginController::class, 'finalizeLogin'])
+//     ->name('qr.finalize');
 
-// Mobile ស្កែន — ត្រូវការ auth (user login នៅ mobile)
-Route::middleware(['auth'])->group(function () {
-    Route::post('/qr-authorize', [QrLoginController::class, 'handleScan'])
-        ->name('qr.authorize');
+// // Mobile refresh QR — Public
+// Route::get('/qr-refresh', [QrLoginController::class, 'refreshQr'])->name('qr.refresh');
+
+// // Mobile ស្កែន — ត្រូវការ auth (user login នៅ mobile)
+// Route::middleware(['auth'])->group(function () {
+//     Route::post('/qr-authorize', [QrLoginController::class, 'handleScan'])
+//         ->name('qr.authorize');
     
-    Route::get('/qr-scanner', function () {
-        return view('qr-scanner');
-    })->name('qr.scanner');
-});
+//     Route::get('/qr-scanner', function () {
+//         return view('qr-scanner');
+//     })->name('qr.scanner');
+// });
 
-    Route::middleware(['web'])->group(function () {
-        Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-        Route::post('/login', [LoginController::class, 'login']);
-    });
+//     Route::middleware(['web'])->group(function () {
+//         Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+//         Route::post('/login', [LoginController::class, 'login']);
+//     });
 
     Route::get('/api/check-student/{code}', [RegisteredUserController::class, 'checkStudent']);
 /*

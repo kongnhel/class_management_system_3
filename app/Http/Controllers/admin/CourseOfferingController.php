@@ -415,24 +415,30 @@ public function update(Request $request, CourseOffering $courseOffering)
             ->withInput();
     }
 }
-    public function destroy(CourseOffering $courseOffering)
-    {
-        try {
-            DB::beginTransaction();
-            $courseOffering->targetPrograms()->detach();
-            $courseOffering->schedules()->delete();
-            $courseOffering->studentCourseEnrollments()->delete();
-            $courseOffering->delete();
-            DB::commit();
+public function destroy(CourseOffering $courseOffering)
+{
+    try {
+        DB::beginTransaction();
 
-            Session::flash('success', 'ការផ្តល់ជូនមុខវិជ្ជាត្រូវបានលុបដោយជោគជ័យ។');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Session::flash('error', 'មានបញ្ហាក្នុងការលុប៖ ' . $e->getMessage());
-        }
-        return redirect()->route('admin.manage-course-offerings');
+        $courseOffering->targetPrograms()->detach();
+        $courseOffering->schedules()->delete();
+        $courseOffering->studentCourseEnrollments()->delete();
+        $courseOffering->assessments()->delete();     // បើមាន
+
+        // លុបពិតៗ (Force Delete)
+        $courseOffering->forceDelete();   
+
+        DB::commit();
+
+        Session::flash('success', 'ការផ្តល់ជូនមុខវិជ្ជាត្រូវបានលុបចោលពិតៗហើយ។');
+    } catch (\Exception $e) {
+        DB::rollBack();
+        Log::error($e->getMessage());
+        Session::flash('error', 'មានបញ្ហា៖ ' . $e->getMessage());
     }
 
+    return redirect()->route('admin.manage-course-offerings');
+}
     public function show(CourseOffering $courseOffering)
     {
         $courseOffering->load([

@@ -188,7 +188,7 @@
     </div>
 
     <button onclick="toggleAIChat()" id="chatBtn" 
-            class="relative bg-[#0084FF] text-white p-4 rounded-full shadow-[0_8px_25px_-5px_rgba(0,132,255,0.5)] hover:scale-110 active:scale-90 transition-all duration-300 flex items-center justify-center cursor-move">
+            class="relative bg-[#26D741] text-white p-4 rounded-full shadow-[0_8px_25px_-5px_rgba(0,132,255,0.5)] hover:scale-110 active:scale-90 transition-all duration-300 flex items-center justify-center cursor-move">
         <div class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 border-2 border-white rounded-full flex items-center justify-center">
             <span class="text-[9px] font-bold text-white">AI</span>
         </div>

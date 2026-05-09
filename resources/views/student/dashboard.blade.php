@@ -17,25 +17,21 @@
                     <p class="text-gray-500 font-medium mt-1 mb-6">{{ __('សូមពិនិត្យមើលបច្ចុប្បន្នភាពនៃការសិក្សារបស់អ្នកនៅថ្ងៃនេះ') }}</p>
                     
                     {{-- 🛡️ Google Link Status Card --}}
-                    <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 inline-block w-full sm:w-auto">
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-blue-600">
-                                <i class="fa-brands fa-google text-2xl"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-bold text-gray-800 text-sm">សុវត្ថិភាពគណនី</h3>
-                                <p class="text-[10px] text-gray-500 mb-2">ភ្ជាប់ជាមួយ Google ដើម្បីចូលបានលឿន</p>
-                                
-                                @if(!auth()->user()->google_id)
-                                    <button onclick="linkWithGoogle()" id="btn-link-google" class="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100 text-xs font-bold transition-all">
-                                        <i class="fa-solid fa-link"></i> ភ្ជាប់ជាមួយ Google ឥឡូវនេះ
-                                    </button>
-                                @else
-                                    <span class="text-emerald-500 font-bold flex items-center gap-2 text-xs">
-                                        <i class="fa-solid fa-circle-check"></i> បានភ្ជាប់រួចរាល់
-                                    </span>
-                                @endif
-                            </div>
+                    <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100 flex items-center gap-4 transition-all hover:shadow-md">
+                        <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 shadow-inner">
+                            <i class="fa-brands fa-google text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-800 text-sm leading-none mb-1">{{ __('សុវត្ថិភាពគណនី') }}</h3>
+                            @if(!auth()->user()->google_id)
+                                <button onclick="linkWithGoogle()" id="btn-link-google" class="flex items-center gap-2 text-blue-600 hover:text-blue-700 text-[11px] font-black transition-all group">
+                                    <i class="fa-solid fa-link group-hover:rotate-45 transition-transform"></i> {{ __('ភ្ជាប់ជាមួយ Google ឥឡូវនេះ') }}
+                                </button>
+                            @else
+                                <span class="text-emerald-500 font-bold flex items-center gap-1.5 text-[11px]">
+                                    <i class="fa-solid fa-circle-check"></i> {{ __('បានភ្ជាប់រួចរាល់') }}
+                                </span>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -538,5 +534,64 @@ const firebaseConfig = {
                 body: JSON.stringify({ id: itemId })
             }).then(() => location.reload());
         }
+    </script>
+        {{-- Firebase Integration --}}
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "{{ config('services.firebase.api_key') }}",
+            authDomain: "{{ config('services.firebase.auth_domain') }}",
+            projectId: "{{ config('services.firebase.project_id') }}",
+            storageBucket: "{{ config('services.firebase.storage_bucket') }}",
+            messagingSenderId: "{{ config('services.firebase.messaging_sender_id') }}",
+            appId: "{{ config('services.firebase.app_id') }}"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        window.linkWithGoogle = () => {
+            const btn = document.getElementById('btn-link-google');
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> កំពុងដំណើរការ...';
+            btn.disabled = true;
+
+            signInWithPopup(auth, provider)
+                .then((result) => {
+                    const user = result.user;
+                    fetch('{{ route("user.link-google") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify({
+                            uid: user.uid,
+                            photoURL: user.photoURL
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if(data.status === 'linked') {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'ជោគជ័យ',
+                                text: 'គណនី Google ត្រូវបានភ្ជាប់!',
+                                timer: 2000,
+                                showConfirmButton: false
+                            }).then(() => window.location.reload());
+                        }
+                    });
+                })
+                .catch((error) => {
+                    console.error("Firebase Error:", error.code);
+                    btn.innerHTML = originalHtml;
+                    btn.disabled = false;
+                    Swal.fire('បរាជ័យ', 'មិនអាចភ្ជាប់ Google បានទេ៖ ' + error.message, 'error');
+                });
+        };
     </script>
 </x-app-layout>

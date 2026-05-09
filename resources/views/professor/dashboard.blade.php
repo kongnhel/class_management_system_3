@@ -571,44 +571,93 @@
     });
   }
 
-  async function verifyTeacherLocationBeforeScan(courseOfferingId, sessionId) {
+//   async function verifyTeacherLocationBeforeScan(courseOfferingId, sessionId) {
+//     const scanBtn = document.getElementById(`btn-scan-${courseOfferingId}`);
+//     if (scanBtn) scanBtn.disabled = true;
+
+//     Swal.fire({
+//       title: 'កំពុងពិនិត្យ...',
+//       text: 'សូមរង់ចាំបន្តិច...',
+//       allowOutsideClick: false,
+//       showConfirmButton: false,
+//       didOpen: () => Swal.showLoading()
+//     });
+
+//     try {
+//       const pre = await precheckAttendance(courseOfferingId, sessionId);
+//       if (pre?.checked_in) {
+//         Swal.close();
+//         await openAttendanceList(courseOfferingId);
+//         if (scanBtn) scanBtn.disabled = false;
+//         return;
+//       }
+
+//       const loc = await getBestLocation(3, 1500);
+//       const data = await verifyLocation(courseOfferingId, sessionId, loc.lat, loc.lng);
+
+//       Swal.close();
+
+//       if (data?.success) {
+//         await Swal.fire({ icon: 'success', title: 'ជោគជ័យ', text: 'ចុះវត្តមានបានសម្រេច!', confirmButtonColor: '#4f46e5' });
+//         await openAttendanceList(courseOfferingId);
+//       } else {
+//         Swal.fire({ icon: 'error', title: 'បរាជ័យ', text: data?.message || 'ទីតាំងមិនត្រឹមត្រូវ' });
+//         if (scanBtn) scanBtn.disabled = false;
+//       }
+//     } catch (err) {
+//       Swal.close();
+//       if (scanBtn) scanBtn.disabled = false;
+//       Swal.fire('កំហុស', err.message || 'មានបញ្ហា!', 'error');
+//     }
+//   }
+
+async function verifyTeacherLocationBeforeScan(courseOfferingId, sessionId) {
     const scanBtn = document.getElementById(`btn-scan-${courseOfferingId}`);
     if (scanBtn) scanBtn.disabled = true;
 
     Swal.fire({
-      title: 'កំពុងពិនិត្យ...',
-      text: 'សូមរង់ចាំបន្តិច...',
-      allowOutsideClick: false,
-      showConfirmButton: false,
-      didOpen: () => Swal.showLoading()
+        title: 'កំពុងពិនិត្យ...',
+        text: 'សូមរង់ចាំបន្តិច...',
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        didOpen: () => Swal.showLoading()
     });
 
     try {
-      const pre = await precheckAttendance(courseOfferingId, sessionId);
-      if (pre?.checked_in) {
+        // 1. Precheck មុន
+        const pre = await precheckAttendance(courseOfferingId, sessionId);
+        
+        if (pre?.checked_in) {
+            Swal.close();
+            await openAttendanceList(courseOfferingId);
+            if (scanBtn) scanBtn.disabled = false;
+            return;
+        }
+
+        // 2. ទើបយក Location និង Check-in (លើកដំបូងតែប៉ុណ្ណោះ)
+        const loc = await getBestLocation(3, 1500);
+        const data = await verifyLocation(courseOfferingId, sessionId, loc.lat, loc.lng);
+
         Swal.close();
-        await openAttendanceList(courseOfferingId);
-        if (scanBtn) scanBtn.disabled = false;
-        return;
-      }
 
-      const loc = await getBestLocation(3, 1500);
-      const data = await verifyLocation(courseOfferingId, sessionId, loc.lat, loc.lng);
-
-      Swal.close();
-
-      if (data?.success) {
-        await Swal.fire({ icon: 'success', title: 'ជោគជ័យ', text: 'ចុះវត្តមានបានសម្រេច!', confirmButtonColor: '#4f46e5' });
-        await openAttendanceList(courseOfferingId);
-      } else {
-        Swal.fire({ icon: 'error', title: 'បរាជ័យ', text: data?.message || 'ទីតាំងមិនត្រឹមត្រូវ' });
-        if (scanBtn) scanBtn.disabled = false;
-      }
+        if (data?.success) {
+            await Swal.fire({ 
+                icon: 'success', 
+                title: 'ជោគជ័យ', 
+                text: data.message || 'ចុះវត្តមានបានសម្រេច!', 
+                confirmButtonColor: '#4f46e5' 
+            });
+            await openAttendanceList(courseOfferingId);
+        } else {
+            Swal.fire({ icon: 'error', title: 'បរាជ័យ', text: data?.message || 'ទីតាំងមិនត្រឹមត្រូវ' });
+        }
     } catch (err) {
-      Swal.close();
-      if (scanBtn) scanBtn.disabled = false;
-      Swal.fire('កំហុស', err.message || 'មានបញ្ហា!', 'error');
+        Swal.close();
+        Swal.fire('កំហុស', err.message || 'មានបញ្ហា!', 'error');
+    } finally {
+        if (scanBtn) scanBtn.disabled = false;
     }
-  }
+}
+
 </script>
 </x-app-layout>
