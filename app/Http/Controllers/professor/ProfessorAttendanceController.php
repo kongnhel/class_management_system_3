@@ -172,7 +172,7 @@ public function verifyLocation(Request $request)
     $existing = AttendanceProfessor::where([
         'professor_id' => $professorId,
         'course_offering_id' => $request->course_offering_id,
-        'verified_date' => $today,
+        'verified_at' => $today,
         'session_id' => $request->session_id,
     ])->first();
 
@@ -203,7 +203,7 @@ public function verifyLocation(Request $request)
         'professor_id' => $professorId,
         'course_offering_id' => $request->course_offering_id,
         'session_id' => $request->session_id,
-        'verified_date' => $today,
+        'verified_at' => $today,
         'lat' => $request->lat,
         'lng' => $request->lng,
         'verified_at' => $now,
@@ -230,7 +230,7 @@ public function precheck(Request $request)
     $exists = AttendanceProfessor::where([
         'professor_id' => auth()->id(),
         'course_offering_id' => $request->course_offering_id,
-        'verified_date' => Carbon::now('Asia/Phnom_Penh')->toDateString(),
+        'verified_at' => Carbon::now('Asia/Phnom_Penh')->toDateString(),
         'session_id' => $request->session_id,
     ])->exists();
 
@@ -264,4 +264,17 @@ public function precheck(Request $request)
 
     //     return response()->json(['checked_in' => $exists]);
     // }
+
+    /**
+ * Display professor's attendance history
+ */
+public function history()
+{
+    $attendances = AttendanceProfessor::with(['courseOffering.course', 'room'])
+        ->where('professor_id', auth()->id())
+        ->orderBy('verified_at', 'desc')
+        ->paginate(15);
+
+    return view('professor.attendance.history', compact('attendances'));
+}
 }

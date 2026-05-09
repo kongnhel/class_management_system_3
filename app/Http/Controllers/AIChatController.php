@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\DB;
 
 class AIChatController extends Controller
 {
@@ -23,7 +24,7 @@ class AIChatController extends Controller
         $userMessage = $validated['message'];
         $chatOption  = $validated['option'] ?? 'info';
 
-        // Rate Limiting (ប្រើ User ID ឬ IP សម្រាប់ Guest)
+        // Rate Limiting
         $rateLimitKey = $user 
             ? "ai-chat:user-" . $user->id 
             : "ai-chat:ip-" . $request->ip();
@@ -36,7 +37,7 @@ class AIChatController extends Controller
         RateLimiter::hit($rateLimitKey, 60);
 
         try {
-            // រក្សាទុកសាររបស់ User
+            // ១. រក្សាទុកសាររបស់ User ចូល Database ក្នុងស្រុក
             ChatMessage::create([
                 'user_id' => $user?->id,
                 'message' => $userMessage,
@@ -45,16 +46,20 @@ class AIChatController extends Controller
 
             $userRole = $user?->role ?? 'student';
             $userName = $user?->name ?? 'ភ្ញៀវ';
+            
+            // ២. ទាញទិន្នន័យពី Database មកធ្វើជា Context (ចំណុចសំខាន់)
+            $dbContext = $this->getDatabaseContext($user);
 
-            // ផ្ញើទៅ Dify AI
+            // ៣. ផ្ញើទៅ Dify AI
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . env('DIFY_API_KEY'),
                 'Content-Type' => 'application/json',
-            ])->timeout(35)->post("https://api.dify.ai/v1/chat-messages", [
+            ])->timeout(45)->post("https://api.dify.ai/v1/chat-messages", [
                 'inputs' => [
                     'user_role'   => $userRole,
                     'user_name'   => $userName,
                     'chat_option' => $chatOption,
+                    'db_context'  => $dbContext, // បោះទិន្នន័យដែលទាញបានទៅឱ្យ Dify
                 ],
                 'query' => $userMessage,
                 'response_mode' => 'blocking',
@@ -64,14 +69,14 @@ class AIChatController extends Controller
             if ($response->failed()) {
                 Log::error("Dify API Error: " . $response->body());
                 return response()->json([
-                    'message' => 'សុំទោស! ប្រព័ន្ធ AI មានបញ្ហាបច្ចេកទេសមួយចំនួន។ សូមព្យាយាមម្តងទៀត។'
+                    'message' => 'សុំទោស! ប្រព័ន្ធ AI មានបញ្ហាបច្ចេកទេស។ (Check Dify Variables)'
                 ], 500);
             }
 
             $data = $response->json();
             $aiResponse = $data['answer'] ?? 'សុំទោស ខ្ញុំមិនអាចឆ្លើយបានទេ។';
 
-            // រក្សាទុកសាររបស់ AI
+            // ៤. រក្សាទុកសាររបស់ AI ចូល Database
             ChatMessage::create([
                 'user_id' => $user?->id,
                 'message' => $aiResponse,
@@ -87,38 +92,64 @@ class AIChatController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * ទាញទិន្នន័យជាក់ស្ដែងពី Database តាម Role របស់អ្នកប្រើ
+     */
+    private function getDatabaseContext($user)
+    {
+        if (!$user) return "ភ្ញៀវមិនមានទិន្នន័យក្នុងប្រព័ន្ធឡើយ។";
+
+        $role = $user->role;
+        $context = "ព័ត៌មានបច្ចុប្បន្ន៖ ";
+
+        try {
+            if ($role === 'admin') {
+                $userCount = DB::table('users')->count();
+                $facultyCount = DB::table('faculties')->count();
+                $context .= "ប្រព័ន្ធមានអ្នកប្រើប្រាស់សរុប {$userCount} នាក់ និងមាន {$facultyCount} មហាវិទ្យាល័យ។";
+            } 
+            elseif ($role === 'professor') {
+                $courseCount = DB::table('course_offerings')->where('lecturer_user_id', $user->id)->count();
+                $context .= "លោកគ្រូ/អ្នកគ្រូ មានបង្រៀនចំនួន {$courseCount} មុខវិជ្ជាក្នុងឆមាសនេះ។";
+            } 
+            else {
+                // សិស្ស៖ មើលវត្តមានបន្តិចបន្តួច
+                $attendanceCount = DB::table('attendance_records')->where('student_user_id', $user->id)->count();
+                $context .= "ប្អូនមានកំណត់ត្រាវត្តមានសរុប {$attendanceCount} ដងក្នុងប្រព័ន្ធ។";
+            }
+
+            // បន្ថែមការប្រកាសចុងក្រោយ (Announcements) សម្រាប់គ្រប់គ្នា
+            $latestAnnounce = DB::table('announcements')->latest()->first();
+            if ($latestAnnounce) {
+                $context .= " ការប្រកាសចុងក្រោយ៖ " . $latestAnnounce->title;
+            }
+        } catch (\Exception $e) {
+            $context .= "មិនអាចទាញទិន្នន័យបាន (DB Error)។";
+        }
+
+        return $context;
+    }
+
     public function getHistory()
-{
-    $user = auth()->user();
-    
-    if (!$user) {
-        return response()->json(['messages' => []]);
+    {
+        $user = auth()->user();
+        if (!$user) return response()->json(['messages' => []]);
+
+        $messages = ChatMessage::where('user_id', $user->id)
+            ->orderBy('created_at', 'asc')
+            ->take(50)
+            ->get(['sender', 'message', 'created_at']);
+
+        return response()->json(['messages' => $messages]);
     }
 
-    $messages = ChatMessage::where('user_id', $user->id)
-        ->orderBy('created_at', 'asc')
-        ->take(50) // យក 50 សារចុងក្រោយ
-        ->get(['sender', 'message', 'created_at']);
+    public function clearHistory()
+    {
+        $user = auth()->user();
+        if (!$user) return response()->json(['message' => 'Unauthorized'], 401);
 
-    return response()->json([
-        'messages' => $messages
-    ]);
-}
-
-/**
- * លុបប្រវត្តិសន្ទនាទាំងអស់
- */
-public function clearHistory()
-{
-    $user = auth()->user();
-    
-    if (!$user) {
-        return response()->json(['message' => 'Unauthorized'], 401);
+        ChatMessage::where('user_id', $user->id)->delete();
+        return response()->json(['message' => 'Chat history cleared successfully']);
     }
-
-    // លុបសារទាំងអស់របស់ User នេះ
-    ChatMessage::where('user_id', $user->id)->delete();
-
-    return response()->json(['message' => 'Chat history cleared successfully']);
-}
 }

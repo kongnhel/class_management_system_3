@@ -177,8 +177,8 @@
             </main>
         </div>
     </div>
-@auth
-<!-- Draggable Chat Button -->
+
+ @auth
 <div id="draggableChat" class="fixed flex flex-col items-end group z-[100]" 
      style="bottom: 24px; right: 24px; touch-action: none;">
     
@@ -188,7 +188,7 @@
     </div>
 
     <button onclick="toggleAIChat()" id="chatBtn" 
-            class="relative bg-[#26D741] text-white p-4 rounded-full shadow-[0_8px_25px_-5px_rgba(0,132,255,0.5)] hover:scale-110 active:scale-90 transition-all duration-300 flex items-center justify-center cursor-move">
+            class="relative bg-[#26D741] text-white p-4 rounded-full shadow-[0_8px_25px_-5px_rgba(38,215,65,0.5)] hover:scale-110 active:scale-90 transition-all duration-300 flex items-center justify-center cursor-move">
         <div class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 border-2 border-white rounded-full flex items-center justify-center">
             <span class="text-[9px] font-bold text-white">AI</span>
         </div>
@@ -199,13 +199,10 @@
     </button>
 </div>
 
-<!-- Overlay -->
 <div id="chat-overlay" onclick="toggleAIChat()" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[90] hidden opacity-0 transition-opacity duration-300 ease-in-out"></div>
 
-<!-- AI Sidebar -->
 <div id="ai-sidebar" class="fixed top-0 right-0 h-full w-full sm:w-[600px] bg-white shadow-[0_0_50px_-12px_rgba(0,0,0,0.3)] z-[100] transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col font-['Kantumruy_Pro','Inter']">
     
-    <!-- Header -->
     <div class="bg-gradient-to-r from-green-600 to-emerald-500 p-6 text-white flex items-center justify-between shadow-md">
         <div class="flex items-center space-x-4">
             <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/30">
@@ -233,21 +230,17 @@
         </div>
     </div>
 
-    <!-- Tabs -->
     <div class="flex border-b border-gray-50 bg-gray-50/50 p-3 space-x-3">
         <button type="button" onclick="setOption('info')" id="btn-info" class="flex-1 py-3 rounded-xl text-sm bg-white shadow-sm text-green-600 border border-green-200 font-bold transition-all">ព័ត៌មានទូទៅ</button>
         <button type="button" onclick="setOption('process')" id="btn-process" class="flex-1 py-3 rounded-xl text-sm text-gray-500 hover:bg-white font-bold transition-all">របៀបប្រើប្រាស់</button>
     </div>
 
-    <!-- Chat Box -->
     <div id="chat-box" class="flex-grow overflow-y-auto p-6 space-y-6 bg-[#f8fafc] custom-scrollbar"></div>
 
-    <!-- Thinking Indicator -->
     <div id="thinking-indicator" class="hidden px-6 py-3 bg-gray-50 border-t border-gray-100">
         <span class="text-sm italic text-gray-500 animate-pulse">កំពុងគិត...</span>
     </div>
 
-    <!-- Input Area -->
     <div class="p-6 bg-white border-t border-gray-100">
         <form id="chat-form" class="relative flex items-center gap-3">
             @csrf
@@ -263,9 +256,7 @@
         </form>
     </div>
 </div>
-@endauth>
 
-<!-- Professional Confirm Modal -->
 <div id="confirm-modal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-[200] flex items-center justify-center">
     <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full mx-4 overflow-hidden">
         <div class="p-8 text-center">
@@ -325,14 +316,14 @@
                         តើថ្ងៃនេះមានអ្វីឱ្យខ្ញុំជួយដែរទេ?
                         <div id="quick-actions" class="flex flex-wrap gap-2 mt-4">
                             @if(Auth::user()->role == 'admin')
-                                <button onclick="sendQuickQuery('របៀបបន្ថែមសាស្ត្រាចារ្យថ្មី')" class="text-xs bg-blue-50 border border-blue-100 text-blue-700 px-3 py-2 rounded-full hover:bg-blue-100 transition-all">👤 បន្ថែម Professor</button>
-                                <button onclick="sendQuickQuery('ពិនិត្យមើលរបាយការណ៍មហាវិទ្យាល័យ')" class="text-xs bg-blue-50 border border-blue-100 text-blue-700 px-3 py-2 rounded-full hover:bg-blue-100 transition-all">🏢 គ្រប់គ្រង Faculty</button>
+                                <button onclick="sendQuickQuery('របៀបបន្ថែមសាស្ត្រាចារ្យថ្មី')" class="text-[11px] bg-blue-50 border border-blue-100 text-blue-700 px-3 py-2 rounded-full hover:bg-blue-100 transition-all">👤 បន្ថែម Professor</button>
+                                <button onclick="sendQuickQuery('ពិនិត្យមើលរបាយការណ៍មហាវិទ្យាល័យ')" class="text-[11px] bg-blue-50 border border-blue-100 text-blue-700 px-3 py-2 rounded-full hover:bg-blue-100 transition-all">🏢 គ្រប់គ្រង Faculty</button>
                             @elseif(Auth::user()->role == 'professor')
-                                <button onclick="sendQuickQuery('តើខ្ញុំត្រូវស្រង់វត្តមានយ៉ាងដូចម្តេច?')" class="text-xs bg-green-50 border border-green-100 text-green-700 px-3 py-2 rounded-full hover:bg-green-100 transition-all">📝 របៀបស្រង់វត្តមាន</button>
-                                <button onclick="sendQuickQuery('ឆែកមើលតារាងបង្រៀនរបស់ខ្ញុំ')" class="text-xs bg-green-50 border border-green-100 text-green-700 px-3 py-2 rounded-full hover:bg-green-100 transition-all">📅 តារាងបង្រៀន</button>
+                                <button onclick="sendQuickQuery('តើខ្ញុំត្រូវស្រង់វត្តមានយ៉ាងដូចម្តេច?')" class="text-[11px] bg-green-50 border border-green-100 text-green-700 px-3 py-2 rounded-full hover:bg-green-100 transition-all">📝 របៀបស្រង់វត្តមាន</button>
+                                <button onclick="sendQuickQuery('ឆែកមើលតារាងបង្រៀនរបស់ខ្ញុំ')" class="text-[11px] bg-green-50 border border-green-100 text-green-700 px-3 py-2 rounded-full hover:bg-green-100 transition-all">📅 តារាងបង្រៀន</button>
                             @elseif(Auth::user()->role == 'student')
-                                <button onclick="sendQuickQuery('តើវត្តមានរបស់ខ្ញុំគ្រប់គ្រាន់ទេ?')" class="text-xs bg-purple-50 border border-purple-100 text-purple-700 px-3 py-2 rounded-full hover:bg-purple-100 transition-all">🙋‍♂️ ឆែកវត្តមានខ្ញុំ</button>
-                                <button onclick="sendQuickQuery('មើលកាលវិភាគសិក្សាប្រចាំសប្តាហ៍')" class="text-xs bg-purple-50 border border-purple-100 text-purple-700 px-3 py-2 rounded-full hover:bg-purple-100 transition-all">📖 កាលវិភាគរៀន</button>
+                                <button onclick="sendQuickQuery('តើវត្តមានរបស់ខ្ញុំគ្រប់គ្រាន់ទេ?')" class="text-[11px] bg-purple-50 border border-purple-100 text-purple-700 px-3 py-2 rounded-full hover:bg-purple-100 transition-all">🙋‍♂️ ឆែកវត្តមានខ្ញុំ</button>
+                                <button onclick="sendQuickQuery('មើលកាលវិភាគសិក្សាប្រចាំសប្តាហ៍')" class="text-[11px] bg-purple-50 border border-purple-100 text-purple-700 px-3 py-2 rounded-full hover:bg-purple-100 transition-all">📖 កាលវិភាគរៀន</button>
                             @endif
                         </div>
                     </div>
@@ -350,7 +341,7 @@
         const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
         let content = sender === 'user' 
-            ? `<div class="flex flex-col items-end max-w-[85%]"><div class="bg-blue-600 text-white p-4 rounded-2xl rounded-tr-none shadow-sm text-base">${text}</div><span class="text-[10px] text-gray-400 mt-1">${time}</span></div>`
+            ? `<div class="flex flex-col items-end max-w-[85%]"><div class="bg-green-600 text-white p-4 rounded-2xl rounded-tr-none shadow-sm text-base">${text}</div><span class="text-[10px] text-gray-400 mt-1">${time}</span></div>`
             : `<div class="flex items-start space-x-3 max-w-[92%] group"><div class="w-10 h-10 rounded-xl bg-green-100 flex-shrink-0 flex items-center justify-center border border-green-200"><span class="text-xs font-bold text-green-600">NMU</span></div><div class="flex flex-col"><div class="bg-white border border-gray-100 text-gray-800 p-5 rounded-2xl rounded-tl-none shadow-sm prose prose-sm prose-green max-w-full text-base leading-relaxed">${marked.parse(text)}</div><div class="flex items-center space-x-2 mt-2 ml-1"><span class="text-[10px] text-gray-400 italic font-medium">NMU Smart Assistant</span><span class="text-[10px] text-gray-400">•</span><span class="text-[10px] text-gray-400">${time}</span></div></div></div>`;
 
         div.innerHTML = content;
@@ -358,7 +349,6 @@
         if (scroll) chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
     }
 
-    // Professional Confirm Modal Functions
     function showClearConfirm() {
         document.getElementById('confirm-modal').classList.remove('hidden');
         document.getElementById('confirm-modal').classList.add('flex');
@@ -392,12 +382,11 @@
             }
         } catch (e) {
             console.error(e);
-            alert("មានបញ្ហាក្នុងការលុបប្រវត្តិ។ សូមព្យាយាមម្តងទៀត។");
+            alert("មានបញ្ហាក្នុងការលុបប្រវត្តិ។");
             loadChatHistory();
         }
     }
 
-    // Toggle Sidebar
     function toggleAIChat() {
         const sidebar = document.getElementById('ai-sidebar');
         const overlay = document.getElementById('chat-overlay');
@@ -442,12 +431,9 @@
         if (userInput && chatForm) {
             userInput.value = query;
             chatForm.dispatchEvent(new Event('submit'));
-            const qa = document.getElementById('quick-actions');
-            if (qa) qa.style.display = 'none';
         }
     }
 
-    // Main Logic
     document.addEventListener('DOMContentLoaded', function() {
         const chatForm = document.getElementById('chat-form');
         const thinkingIndicator = document.getElementById('thinking-indicator');
@@ -455,11 +441,12 @@
         if (chatForm) {
             chatForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const message = document.getElementById('user-input').value.trim();
+                const messageInput = document.getElementById('user-input');
+                const message = messageInput.value.trim();
                 if (!message) return;
 
                 appendMessage('user', message);
-                document.getElementById('user-input').value = '';
+                messageInput.value = '';
                 thinkingIndicator.classList.remove('hidden');
 
                 try {
@@ -480,8 +467,6 @@
         }
 
         makeDraggable();
-
-        // Close modal when click outside
         document.getElementById('confirm-modal').addEventListener('click', function(e) {
             if (e.target === this) hideConfirmModal();
         });
@@ -490,33 +475,60 @@
     function makeDraggable() {
         const container = document.getElementById('draggableChat');
         if (!container) return;
-        // ... (draggable code រក្សាដូចមុន) ...
-        let isDragging = false, offsetX, offsetY;
+        
+        let isDragging = false;
+        let startX, startY, initialX, initialY;
 
-        const startDrag = (clientX, clientY) => {
-            isDragging = true;
-            const rect = container.getBoundingClientRect();
-            offsetX = clientX - rect.left;
-            offsetY = clientY - rect.top;
-            container.style.transition = 'none';
+        const startDrag = (e) => {
+            if (e.target.closest('button')) {
+                 // ចាប់ផ្ដើមអូសតែពេលចុចលើ Container ឬ Button
+                 isDragging = true;
+                 const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+                 const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+                 
+                 const rect = container.getBoundingClientRect();
+                 startX = clientX;
+                 startY = clientY;
+                 initialX = rect.left;
+                 initialY = rect.top;
+                 
+                 container.style.transition = 'none';
+            }
         };
 
-        const onDrag = (clientX, clientY) => {
+        const onDrag = (e) => {
             if (!isDragging) return;
-            let x = Math.max(10, Math.min(clientX - offsetX, window.innerWidth - container.offsetWidth - 10));
-            let y = Math.max(10, Math.min(clientY - offsetY, window.innerHeight - container.offsetHeight - 10));
+            const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+            const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+
+            const dx = clientX - startX;
+            const dy = clientY - startY;
+
+            let x = initialX + dx;
+            let y = initialY + dy;
+
+            // Boundary checks
+            x = Math.max(10, Math.min(x, window.innerWidth - container.offsetWidth - 10));
+            y = Math.max(10, Math.min(y, window.innerHeight - container.offsetHeight - 10));
+
             container.style.left = `${x}px`;
             container.style.top = `${y}px`;
             container.style.bottom = 'auto';
             container.style.right = 'auto';
         };
 
-        container.addEventListener('mousedown', e => startDrag(e.clientX, e.clientY));
-        document.addEventListener('mousemove', e => onDrag(e.clientX, e.clientY));
-        document.addEventListener('mouseup', () => isDragging = false);
+        const stopDrag = () => {
+            isDragging = false;
+            container.style.transition = 'all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28)';
+        };
 
-        container.addEventListener('touchstart', e => startDrag(e.touches[0].clientX, e.touches[0].clientY));
-        document.addEventListener('touchmove', e => onDrag(e.touches[0].clientX, e.touches[0].clientY));
-        document.addEventListener('touchend', () => isDragging = false);
+        container.addEventListener('mousedown', startDrag);
+        document.addEventListener('mousemove', onDrag);
+        document.addEventListener('mouseup', stopDrag);
+
+        container.addEventListener('touchstart', startDrag, {passive: false});
+        document.addEventListener('touchmove', onDrag, {passive: false});
+        document.addEventListener('touchend', stopDrag);
     }
 </script>
+@endauth

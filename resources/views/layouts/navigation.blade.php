@@ -378,6 +378,22 @@
                     </svg>
                     <span>{{ __('កាលវិភាគរបស់ខ្ញុំ') }}</span>
                 </x-nav-link>
+                <x-nav-link :href="route('professor.attendance.history')" 
+                            :active="request()->routeIs('professor.attendance.history')"
+                            class="flex items-center w-full px-5 py-3 text-base font-medium rounded-xl hover:bg-gray-700/80 hover:text-green-300 transition duration-200 ease-in-out 
+                            {{ request()->routeIs('professor.attendance.history') ? 'bg-green-700 text-white shadow-lg' : 'text-gray-200' }}">
+
+                    {{-- History / Attendance Icon --}}
+                    <svg class="h-6 w-6 me-3 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                            d="M12 8v4l3 3m6-3a9 9 0 01-18 0 9 9 0 0118 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                            d="M19 19l-4-4m0 0l-4 4m4-4v-7" />
+                    </svg>
+                    
+                    <span>{{ __('ប្រវត្តិវត្តមាន') }}</span>
+                </x-nav-link>
+                
             @endif
 
             {{-- --- STUDENT LINKS --- --}}

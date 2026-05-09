@@ -25,6 +25,8 @@ use App\Http\Controllers\professor\ProfessorCourseOfferingController;
 use App\Http\Controllers\professor\ProfessorGradeController;
 use App\Http\Controllers\professor\ProfessorNotificationController;
 use App\Http\Controllers\professor\ProfessorProfileController;
+use App\Http\Controllers\professor\ProfessorAttendanceController;
+
 
 
 
@@ -374,6 +376,8 @@ Route::get('/qr-login/finalize/{token}', [QrLoginController::class, 'finalizeLog
         
         Route::get('/professor/course-offering/{offering_id}/export', [CourseOfferingController::class, 'exportStudents'])
             ->name('professor.course-offering.export');
+            Route::get('/professor/attendance/history', [ProfessorAttendanceController::class, 'history'])
+     ->name('professor.attendance.history');
 
 
         Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')->group(function () {
