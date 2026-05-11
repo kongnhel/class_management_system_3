@@ -98,7 +98,7 @@ Route::post('/qr-authorize', [QrLoginController::class, 'handleScan'])
      ->name('qr.authorize');
 
 Route::post('/qr-refresh', [QrLoginController::class, 'refreshQr'])
-     ->middleware('auth')
+    //  ->middleware('auth')
      ->name('qr.refresh');
 
 Route::get('/qr-login/finalize/{token}', [QrLoginController::class, 'finalizeLogin'])

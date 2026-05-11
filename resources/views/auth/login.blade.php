@@ -17,7 +17,7 @@
         .hidden { display: none; }
     </style>
 
-    {{-- Modern Floating Toast (កែឱ្យស្អាត និងមានតែមួយ) --}}
+    {{-- Modern Floating Toast --}}
     @if (session('success') || session('error'))
     <div 
         x-data="{ 
@@ -159,12 +159,12 @@
             <div id="qrSection" class="hidden text-center">
                 <h2 class="text-2xl font-black text-white mb-2">{{ __('ចូលតាម QR Code') }}</h2>
                 <div class="qr-container inline-block p-4 bg-white rounded-[2rem] border-4 border-emerald-500/30 mt-6" id="qrContainer">
-                    {!! $qrCode ?? '<div class="w-48 h-48 flex items-center justify-center">QR Loading...</div>' !!}
+                    {!! $qrCode ?? '<div class="w-64 h-64 flex items-center justify-center text-gray-400">QR Loading...</div>' !!}
                 </div>
                 <p class="text-emerald-400 text-[11px] font-black mt-6 uppercase tracking-widest" id="qr-status">រង់ចាំការស្កែន...</p>
                 
                 <button onclick="refreshQR()" 
-                        class="mt-4 text-emerald-400 hover:text-white flex items-center gap-2 mx-auto text-sm font-medium">
+                        class="mt-6 flex items-center gap-2 mx-auto text-emerald-400 hover:text-white text-sm font-medium">
                     <i class="fa-solid fa-arrows-rotate"></i> បង្កើត QR ថ្មី
                 </button>
             </div>
@@ -252,72 +252,75 @@
         };
     </script>
 
-    {{-- Pusher + QR Refresh --}}
+    {{-- Pusher + QR Refresh (កែប្រែថ្មី) --}}
     @if(isset($token))
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     <script>
         let currentToken = "{{ $token }}";
+        let pusher;
 
-        const pusher = new Pusher('{{ config('broadcasting.connections.pusher.key') }}', { 
-            cluster: '{{ config('broadcasting.connections.pusher.options.cluster') }}',
-            forceTLS: true
-        });
-
-        const channel = pusher.subscribe('login-channel-' + currentToken);
-        channel.bind('login-success', function() {
-            const statusEl = document.getElementById('qr-status');
-            if (statusEl) {
-                statusEl.innerHTML = `<span class="text-emerald-400 animate-pulse">ជោគជ័យ! កំពុងចូលប្រព័ន្ធ...</span>`;
-            }
-            setTimeout(() => {
-                window.location.href = "/qr-login/finalize/" + currentToken;
-            }, 1000);
-        });
-
-        // Refresh QR Code
-// Refresh QR Code
-function refreshQR() {
-    fetch('/qr-refresh', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        // Initialize Pusher
+        function initPusher() {
+            pusher = new Pusher('{{ config("broadcasting.connections.pusher.key") }}', { 
+                cluster: '{{ config("broadcasting.connections.pusher.options.cluster") }}',
+                forceTLS: true
+            });
+            subscribeChannel();
         }
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        document.getElementById('qrContainer').innerHTML = data.qrCode;
-        currentToken = data.token;
-        
-        // Re-subscribe Pusher channel
-        if (typeof pusher !== 'undefined') {
-            pusher.unsubscribe('login-channel-' + currentToken);
-            const newChannel = pusher.subscribe('login-channel-' + currentToken);
-            newChannel.bind('login-success', function() {
-                window.location.href = "/qr-login/finalize/" + currentToken;
+
+        function subscribeChannel() {
+            const channel = pusher.subscribe('login-channel-' + currentToken);
+            channel.bind('login-success', function() {
+                const statusEl = document.getElementById('qr-status');
+                if (statusEl) {
+                    statusEl.innerHTML = `<span class="text-emerald-400 animate-pulse">ជោគជ័យ! កំពុងចូលប្រព័ន្ធ...</span>`;
+                }
+                setTimeout(() => {
+                    window.location.href = "/qr-login/finalize/" + currentToken;
+                }, 1000);
             });
         }
-    })
-    .catch(error => {
-        console.error('Refresh QR Error:', error);
-        // Optional: បង្ហាញសារដល់អ្នកប្រើ
-        const status = document.getElementById('qr-status');
-        if (status) status.innerHTML = `<span class="text-amber-400">កំពុងផ្ទុក QR ថ្មី...</span>`;
-    });
-}
 
-        // Auto refresh QR every 4 minutes 30 seconds
-        // Auto refresh QR every 4 minutes
-setInterval(() => {
-    if (document.getElementById('qrSection').classList.contains('hidden') === false) {
-        refreshQR();
-    }
-}, 240000);   // 4 នាទី
+        // Refresh QR Code Function
+        window.refreshQR = function() {
+            fetch('/qr-refresh', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                }
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Network error');
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById('qrContainer').innerHTML = data.qrCode;
+                currentToken = data.token;
+                
+                // Re-subscribe new channel
+                if (pusher) {
+                    pusher.unsubscribe('login-channel-' + currentToken);
+                    subscribeChannel();
+                }
+                
+                document.getElementById('qr-status').textContent = "រង់ចាំការស្កែន...";
+            })
+            .catch(error => {
+                console.error('Refresh QR Error:', error);
+                document.getElementById('qr-status').innerHTML = `<span class="text-amber-400">មានបញ្ហា សូមព្យាយាមម្តងទៀត</span>`;
+            });
+        };
+
+        // Auto refresh every 3 minutes
+        setInterval(() => {
+            if (!document.getElementById('qrSection').classList.contains('hidden')) {
+                refreshQR();
+            }
+        }, 180000);
+
+        // Start everything
+        window.onload = initPusher;
     </script>
     @endif
 </x-guest-layout>
