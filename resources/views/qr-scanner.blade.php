@@ -54,32 +54,33 @@
     <script>
         let scanner;
 
-        function onScanSuccess(decodedText) {
-            const status = document.getElementById('status');
-            status.innerHTML = `<span class="text-emerald-600">កំពុងផ្ទៀងផ្ទាត់ សូមរង់ចាំ...</span>`;
+function onScanSuccess(decodedText, decodedResult) {
+    const status = document.getElementById('status');
+    status.innerHTML = `<span class="text-emerald-600">កំពុងផ្ទៀងផ្ទាត់...</span>`;
 
-            scanner.clear();
+    html5QrcodeScanner.clear();
 
-            fetch('/qr-authorize', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                },
-                body: JSON.stringify({ token: decodedText })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    status.innerHTML = `✅ <span class="text-emerald-600">ជោគជ័យ! សូមត្រឡប់ទៅកុំព្យូទ័រ</span>`;
-                } else {
-                    status.innerHTML = `<span class="text-red-600">${data.message}</span>`;
-                }
-            })
-            .catch(() => {
-                status.innerHTML = `<span class="text-red-600">មានបញ្ហា សូមព្យាយាមម្តងទៀត</span>`;
-            });
+    fetch('/qr-authorize', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({ token: decodedText })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.status === 'success') {
+            status.innerHTML = `✅ ជោគជ័យ! សូមត្រឡប់ទៅកុំព្យូទ័រ`;
+        } else {
+            status.innerHTML = `<span class="text-red-600">${data.message}</span>`;
         }
+    })
+    .catch(err => {
+        console.error(err);
+        status.innerHTML = `<span class="text-red-600">មានបញ្ហាបណ្តាញ</span>`;
+    });
+}
 
         function onScanFailure(error) {
             // មិនបង្ហាញ error ធម្មតា

@@ -124,46 +124,52 @@ class QrLoginController extends Controller
         return view('auth.login', compact('qrCode', 'token'));
     }
 
-    public function handleScan(Request $request)
-    {
-        try {
-            $user = Auth::user();
+public function handleScan(Request $request)
+{
+    try {
+        $user = Auth::user();
 
-            if (!$user) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Unauthorized - សូមចូលគណនីជាមុន'
-                ], 401);
-            }
-
-            $token = trim($request->token);
-
-            if (empty($token) || !Cache::has('login_token_' . $token)) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'QR Code នេះផុតកំណត់ ឬមិនត្រឹមត្រូវឡើយ!'
-                ], 400);
-            }
-
-            // ✅ លុប token ភ្លាម ដើម្បីការពារ replay
-            Cache::forget('login_token_' . $token);
-            
-            // រក្សាទុក User ID សម្រាប់ finalize
-            Cache::put('authorized_user_' . $token, $user->id, now()->addMinutes(2));
-
-            // Broadcast ទៅ Desktop
-            broadcast(new QrLoginSuccessful($token, $user->id));
-
-            return response()->json(['status' => 'success']);
-
-        } catch (\Exception $e) {
-            Log::error("QR Scan Error: " . $e->getMessage());
+        if (!$user) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'មានបញ្ហាម៉ាស៊ីនបម្រើ (Server Error)'
-            ], 500);
+                'message' => 'Unauthorized - សូមចូលគណនីជាមុន'
+            ], 401);
         }
+
+        $token = trim($request->token ?? '');
+
+        // Debug ដើម្បីមើលថាមាន token អ្វីខ្លះ
+        \Log::info('QR Scan Attempt', [
+            'token' => $token,
+            'exists' => Cache::has('login_token_' . $token)
+        ]);
+
+        if (empty($token) || !Cache::has('login_token_' . $token)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'QR Code នេះផុតកំណត់ ឬមិនត្រឹមត្រូវឡើយ!'
+            ], 400);
+        }
+
+        // លុប token ចាស់
+        Cache::forget('login_token_' . $token);
+        
+        // រក្សាទុក user
+        Cache::put('authorized_user_' . $token, $user->id, now()->addMinutes(2));
+
+        // Broadcast
+        broadcast(new QrLoginSuccessful($token, $user->id));
+
+        return response()->json(['status' => 'success']);
+
+    } catch (\Exception $e) {
+        Log::error("QR Scan Error: " . $e->getMessage());
+        return response()->json([
+            'status' => 'error',
+            'message' => 'មានបញ្ហាម៉ាស៊ីនបម្រើ'
+        ], 500);
     }
+}
 
     public function finalizeLogin($token)
     {
