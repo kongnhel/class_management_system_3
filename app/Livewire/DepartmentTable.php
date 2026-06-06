@@ -2,8 +2,8 @@
 
 namespace App\Livewire;
 
-use Livewire\Component;
 use App\Models\Department;
+use Livewire\Component;
 use Livewire\WithPagination;
 
 class DepartmentTable extends Component

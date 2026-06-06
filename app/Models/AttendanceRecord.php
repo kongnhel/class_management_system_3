@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class AttendanceRecord extends Model
 {
     use HasFactory;
+
     protected $table = 'attendances';
 
     protected $fillable = [
@@ -18,7 +19,7 @@ class AttendanceRecord extends Model
         'status',
         // 'notes',
         'remarks',
-        
+
     ];
 
     protected $casts = [
@@ -46,5 +47,4 @@ class AttendanceRecord extends Model
     {
         return $this->belongsTo(CourseOffering::class);
     }
-    
 }

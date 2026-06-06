@@ -55,8 +55,7 @@
 </style>
         <style>
             [x-cloak] { display: none !important; }
-            body, div {
-                font-family: 'Battambang', sans-serif;
+            body {
                 transition: background-color 0.3s ease, color 0.3s ease;
             }
 
@@ -73,7 +72,8 @@
             .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.5); }
 
             @media print {
-                nav, header, footer, .lg\:hidden, .no-print, .theme-toggle-btn { display: none !important; }
+                nav, header, footer, .lg\:hidden, .no-print, .theme-toggle-btn,
+                #draggableChat, #ai-sidebar, #chat-overlay, #confirm-modal { display: none !important; }
                 main { margin: 0 !important; padding: 0 !important; width: 100% !important; }
                 @page { margin: 15mm; size: A4 portrait; }
             }
@@ -201,7 +201,7 @@
 
 <div id="chat-overlay" onclick="toggleAIChat()" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[90] hidden opacity-0 transition-opacity duration-300 ease-in-out"></div>
 
-<div id="ai-sidebar" class="fixed top-0 right-0 h-full w-full sm:w-[600px] bg-white shadow-[0_0_50px_-12px_rgba(0,0,0,0.3)] z-[100] transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col font-['Kantumruy_Pro','Inter']">
+<div id="ai-sidebar" class="fixed top-0 right-0 h-full w-full sm:w-[600px] bg-white shadow-[0_0_50px_-12px_rgba(0,0,0,0.3)] z-[100] transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col font-['Battambang']">
     
     <div class="bg-gradient-to-r from-green-600 to-emerald-500 p-6 text-white flex items-center justify-between shadow-md">
         <div class="flex items-center space-x-4">

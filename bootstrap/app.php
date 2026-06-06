@@ -1,9 +1,9 @@
 <?php
 
+use App\Http\Middleware\CheckUserRole;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use App\Http\Middleware\CheckUserRole;
 use Illuminate\Http\Request; // <<<--- បន្ថែមបន្ទាត់នេះ
 use Symfony\Component\HttpKernel\Exception\HttpException; // <<<--- បន្ថែមបន្ទាត់នេះ
 
@@ -19,9 +19,12 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => CheckUserRole::class,
         ]);
-        
+
         // Register global middleware for security headers
         $middleware->append(\App\Http\Middleware\AddSecurityHeaders::class);
+
+        // Set locale for all requests
+        $middleware->append(\App\Http\Middleware\SetLocaleMiddleware::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         // បន្ថែម Logic Redirect នៅទីនេះ

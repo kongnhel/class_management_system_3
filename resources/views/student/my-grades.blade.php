@@ -11,12 +11,12 @@
                             <i class="fas fa-graduation-cap text-xl"></i>
                         </div>
                         <div>
-                            <h2 class="text-2xl font-bold text-slate-800 tracking-tight leading-none">{{ __('លទ្ធផលសិក្សា') }}</h2>
+                            <h2 class="text-2xl font-bold text-slate-800 tracking-tight leading-none">{{ __('stu_grades_title') }}</h2>
                             <p class="text-xs text-slate-500 font-medium mt-1 uppercase tracking-wider">Academic Performance Record</p>
                         </div>
                     </div>
                     <div class="flex items-center gap-3 bg-slate-50 px-4 py-2 rounded-xl border border-slate-100">
-                        <span class="text-xs font-bold text-slate-400 uppercase">{{ __('ឆមាសទី ១') }}</span>
+                        <span class="text-xs font-bold text-slate-400 uppercase">{{ __('stu_semester') }}</span>
                         <div class="h-4 w-px bg-slate-300"></div>
                         <span class="text-sm font-bold text-indigo-600">ឆ្នាំសិក្សា ២០២៤-២០២៥</span>
                     </div>
@@ -31,7 +31,7 @@
                 {{-- Rank Card --}}
                 <div class="bg-white p-5 rounded-2xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] border border-slate-100 flex items-center justify-between relative overflow-hidden group">
                     <div class="relative z-10">
-                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('ចំណាត់ថ្នាក់') }}</p>
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('stu_rank') }}</p>
                         <h3 class="text-3xl font-black text-slate-800">#{{ $overallRank ?? '-' }}</h3>
                     </div>
                     <div class="w-12 h-12 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
@@ -43,7 +43,7 @@
                 {{-- Average Card --}}
                 <div class="bg-white p-5 rounded-2xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] border border-slate-100 flex items-center justify-between relative overflow-hidden group">
                     <div class="relative z-10">
-                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('មធ្យមភាគ') }}</p>
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('stu_average') }}</p>
                         <h3 class="text-3xl font-black text-slate-800">{{ number_format($averageScore ?? 0, 2) }}</h3>
                     </div>
                     <div class="w-12 h-12 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
@@ -55,7 +55,7 @@
                 {{-- Total Score Card --}}
                 <div class="bg-white p-5 rounded-2xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] border border-slate-100 flex items-center justify-between relative overflow-hidden group">
                     <div class="relative z-10">
-                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('ពិន្ទុសរុប') }}</p>
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('stu_total_grade') }}</p>
                         <h3 class="text-3xl font-black text-slate-800">{{ number_format($totalFinalScore ?? 0, 1) }}</h3>
                     </div>
                     <div class="w-12 h-12 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
@@ -67,7 +67,7 @@
                 {{-- Grade Card --}}
                 <div class="bg-white p-5 rounded-2xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] border border-slate-100 flex items-center justify-between relative overflow-hidden group">
                     <div class="relative z-10">
-                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('និទ្ទេសរួម') }}</p>
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('stu_gpa') }}</p>
                         <h3 class="text-3xl font-black text-slate-800">{{ $overallGrade ?? '-' }}</h3>
                     </div>
                     <div class="w-12 h-12 bg-rose-50 text-rose-500 rounded-full flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
@@ -95,7 +95,7 @@
                                 <th scope="col" class="px-6 py-4 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">{{ __('ពិន្ទុបំបែក') }}</th>
                                 <th scope="col" class="px-6 py-4 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">{{ __('វត្តមាន') }}</th>
                                 <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-48">{{ __('សរុប & និទ្ទេស') }}</th>
-                                <th scope="col" class="px-6 py-4 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">{{ __('ចំណាត់ថ្នាក់') }}</th>
+                                <th scope="col" class="px-6 py-4 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">{{ __('stu_rank') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100 bg-white">

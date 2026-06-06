@@ -4,13 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Auth;
 
 class ExamResult extends Model
 {
-        use HasFactory;
+    use HasFactory;
 
-protected $fillable = ['assessment_id', 'assessment_type', 'student_user_id', 'score_obtained', 'notes', 'recorded_at'];
+    protected $fillable = ['assessment_id', 'assessment_type', 'student_user_id', 'score_obtained', 'notes', 'recorded_at'];
 
     protected $casts = [
         'recorded_at' => 'datetime',
@@ -21,12 +20,6 @@ protected $fillable = ['assessment_id', 'assessment_type', 'student_user_id', 's
     | Relationships
     |--------------------------------------------------------------------------
     */
-// In Exam.php
-public function grade()
-{
-    return $this->hasOne(ExamResult::class, 'assessment_id')
-                ->where('student_user_id', Auth::id());
-}
     /**
      * Get the exam that the result belongs to.
      */

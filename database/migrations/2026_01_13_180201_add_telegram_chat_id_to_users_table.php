@@ -9,12 +9,12 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-public function up()
-{
-    Schema::table('users', function (Blueprint $table) {
-        $table->string('telegram_chat_id')->nullable()->after('email');
-    });
-}
+    public function up()
+    {
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('telegram_chat_id')->nullable()->after('email');
+        });
+    }
 
     /**
      * Reverse the migrations.

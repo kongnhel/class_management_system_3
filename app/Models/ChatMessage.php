@@ -49,9 +49,10 @@ class ChatMessage extends Model
             return decrypt($value);
         } catch (\Exception $e) {
             // Fallback ប្រសិនបើ decryption ខ្ងាច
-            \Illuminate\Support\Facades\Log::warning("Failed to decrypt chat message", [
-                'error' => $e->getMessage()
+            \Illuminate\Support\Facades\Log::warning('Failed to decrypt chat message', [
+                'error' => $e->getMessage(),
             ]);
+
             return $value;
         }
     }

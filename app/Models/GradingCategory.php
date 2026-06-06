@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class GradingCategory extends Model
 {
-     use HasFactory;
+    use HasFactory;
 
     protected $fillable = [
         'course_id',
@@ -22,17 +22,16 @@ class GradingCategory extends Model
     |--------------------------------------------------------------------------
     */
     public const DEFAULT_COMPONENTS = [
-            // Midterm Exam: 15%
-            ['name_en' => 'Midterm Exam', 'name_km' => 'ការប្រឡងឆមាសកណ្តាល', 'weight_percentage' => 15],
-            // Final Exam: 50%
-            ['name_en' => 'Final Exam', 'name_km' => 'ការប្រឡងចុងឆមាស', 'weight_percentage' => 50],
-            // Attendance: 15%
-            ['name_en' => 'Attendance', 'name_km' => 'វត្តមាន', 'weight_percentage' => 15],
-            // Assignment (Research Work): 20%
-            ['name_en' => 'Assignment', 'name_km' => 'កិច្ចការស្រាវជ្រាវ', 'weight_percentage' => 20],
-            // Quiz: 10%
-            ['name_en' => 'Quiz', 'name_km' => 'កិច្ចការ', 'weight_percentage' => 10],
-        ];
+        // Attendance: 15%
+        ['name_en' => 'Attendance', 'name_km' => 'វត្តមាន', 'weight_percentage' => 15],
+        // Midterm Exam: 15%
+        ['name_en' => 'Midterm Exam', 'name_km' => 'ប្រឡងពាក់កណ្ដាល់ឆមាស', 'weight_percentage' => 15],
+        // Group Assignment: 20%
+        ['name_en' => 'Group Assignment', 'name_km' => 'កិច្ចការស្រាវជ្រាវ', 'weight_percentage' => 20],
+        // Final Exam: 50%
+        ['name_en' => 'Final Exam', 'name_km' => 'ប្រឡងប្រចាំឆមាស', 'weight_percentage' => 50],
+    ];
+
     /**
      * Get the course that the grading category belongs to.
      */

@@ -2,12 +2,12 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Activity Logger Service
- * 
+ *
  * Logs all critical actions for audit trail
  * Enables tracking of data changes, user actions, and security events
  */
@@ -15,11 +15,11 @@ class ActivityLogger
 {
     /**
      * Log user action
-     * 
-     * @param string $action Action name (e.g., 'grade_updated', 'user_deleted')
-     * @param string $description Human-readable description
-     * @param array $data Additional data to log
-     * @param string $severity 'info', 'warning', 'critical'
+     *
+     * @param  string  $action  Action name (e.g., 'grade_updated', 'user_deleted')
+     * @param  string  $description  Human-readable description
+     * @param  array  $data  Additional data to log
+     * @param  string  $severity  'info', 'warning', 'critical'
      */
     public static function log(
         string $action,
@@ -40,7 +40,7 @@ class ActivityLogger
             'user_agent' => request()->userAgent(),
         ];
 
-        if (!empty($data)) {
+        if (! empty($data)) {
             $logData['data'] = $data;
         }
 
@@ -134,7 +134,8 @@ class ActivityLogger
     /**
      * Log unauthorized access attempt
      */
-    public static function logUnauthorizedAccess(string $reason): void {
+    public static function logUnauthorizedAccess(string $reason): void
+    {
         self::log(
             'unauthorized_access',
             "Unauthorized access attempt: {$reason}",
@@ -166,7 +167,8 @@ class ActivityLogger
     /**
      * Log rate limit exceeded
      */
-    public static function logRateLimitExceeded(string $endpoint): void {
+    public static function logRateLimitExceeded(string $endpoint): void
+    {
         self::log(
             'rate_limit_exceeded',
             "Rate limit exceeded on endpoint: {$endpoint}",

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Assignment extends Model
 {
-     use HasFactory;
+    use HasFactory;
 
     protected $fillable = [
         'course_offering_id',
@@ -48,11 +48,9 @@ class Assignment extends Model
     /**
      * Get the submissions for this assignment.
      */
-
-        public function examResults()
+    public function examResults()
     {
         return $this->hasMany(ExamResult::class, 'assessment_id')
-                    ->where('assessment_type', 'assignment');
+            ->where('assessment_type', 'assignment');
     }
-
 }

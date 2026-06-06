@@ -3,149 +3,135 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use App\Models\StudentCourseEnrollment;
 use App\Models\AttendanceRecord;
-use App\Models\Schedule;
-use App\Models\ExamResult;
-use App\Models\Program;
-use App\Models\Course;
 use App\Models\CourseOffering;
-use App\Models\UserProfile;
-use App\Models\StudentProgramEnrollment; 
-use Illuminate\Pagination\LengthAwarePaginator;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Carbon;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Session;
-use App\Notifications\GeneralNotification;
-use Illuminate\Support\Facades\DB; 
-
+use Illuminate\Support\Facades\DB;
 
 class StudentAttendanceController extends Controller
 {
-public function myAttendance()
-{
-    $user = Auth::user();
+    public function myAttendance()
+    {
+        $user = Auth::user();
 
-    $attendances = AttendanceRecord::where('student_user_id', $user->id)
-        ->with(['courseOffering.course'])
-        ->withCount(['courseOffering as total_absent' => function ($query) use ($user) {
-            $query->whereHas('attendanceRecords', function ($q) use ($user) {
-                $q->where('student_user_id', $user->id)
-                  ->whereIn('status', ['absent', 'អវត្តមាន']);
-            });
-        }])
-        ->orderBy('created_at', 'desc')
-        ->paginate(10);
+        $attendances = AttendanceRecord::where('student_user_id', $user->id)
+            ->with(['courseOffering.course'])
+            ->withCount(['courseOffering as total_absent' => function ($query) use ($user) {
+                $query->whereHas('attendanceRecords', function ($q) use ($user) {
+                    $q->where('student_user_id', $user->id)
+                        ->whereIn('status', ['absent', 'អវត្តមាន']);
+                });
+            }])
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
 
-    return view('student.my-attendance', compact('user', 'attendances'));
-}
-public function leaderAttendance($courseOfferingId)
-{
-    $isLeader = DB::table('student_course_enrollments')
-        ->where('course_offering_id', $courseOfferingId)
-        ->where('student_user_id', auth()->id()) 
-        ->where('is_class_leader', 1)
-        ->exists();
-
-    if (!$isLeader) {
-        abort(403, 'អ្នកមិនមែនជាប្រធានថ្នាក់សម្រាប់មុខវិជ្ជានេះទេ។');
+        return view('student.my-attendance', compact('user', 'attendances'));
     }
 
+    public function leaderAttendance($courseOfferingId)
+    {
+        $isLeader = DB::table('student_course_enrollments')
+            ->where('course_offering_id', $courseOfferingId)
+            ->where('student_user_id', auth()->id())
+            ->where('is_class_leader', 1)
+            ->exists();
 
-    $courseOffering = CourseOffering::with('students.studentProfile')->findOrFail($courseOfferingId);
-    $students = $courseOffering->students;
-    $today = now()->format('Y-m-d');
+        if (! $isLeader) {
+            abort(403, 'អ្នកមិនមែនជាប្រធានថ្នាក់សម្រាប់មុខវិជ្ជានេះទេ។');
+        }
 
-    return view('student.leader.attendance', compact('courseOffering', 'students', 'today'));
-}
+        $courseOffering = CourseOffering::with('students.studentProfile')->findOrFail($courseOfferingId);
+        $students = $courseOffering->students;
+        $today = now()->format('Y-m-d');
 
-public function storeLeaderAttendance(Request $request, $courseOfferingId)
-{
-    $isLeader = DB::table('student_course_enrollments')
-        ->where('course_offering_id', $courseOfferingId)
-        ->where('student_user_id', auth()->id())
-        ->where('is_class_leader', 1)
-        ->exists();
-
-    if (!$isLeader) {
-        abort(403);
+        return view('student.leader.attendance', compact('courseOffering', 'students', 'today'));
     }
 
-    $attendances = $request->input('attendance'); 
-    $date = now()->format('Y-m-d');
+    public function storeLeaderAttendance(Request $request, $courseOfferingId)
+    {
+        $isLeader = DB::table('student_course_enrollments')
+            ->where('course_offering_id', $courseOfferingId)
+            ->where('student_user_id', auth()->id())
+            ->where('is_class_leader', 1)
+            ->exists();
 
-    foreach ($attendances as $studentUserId => $status) {
-       DB::table('attendances')->updateOrInsert(
-    [
-        'course_offering_id' => $courseOfferingId,
-        'student_user_id' => $studentUserId, // អាហ្នឹងប្រហែលជា ID សិស្ស
-        'user_id' => $studentUserId,         // បន្ថែម field ដែលវាទាមទារនេះចូលមក!
-        'date' => $date
-    ],
-    [
-        'status' => $status,
-        'updated_at' => now()
-    ]
-);
+        if (! $isLeader) {
+            abort(403);
+        }
+
+        $attendances = $request->input('attendance');
+        $date = now()->format('Y-m-d');
+
+        foreach ($attendances as $studentUserId => $status) {
+            DB::table('attendances')->updateOrInsert(
+                [
+                    'course_offering_id' => $courseOfferingId,
+                    'student_user_id' => $studentUserId, // អាហ្នឹងប្រហែលជា ID សិស្ស
+                    'user_id' => $studentUserId,         // បន្ថែម field ដែលវាទាមទារនេះចូលមក!
+                    'date' => $date,
+                ],
+                [
+                    'status' => $status,
+                    'updated_at' => now(),
+                ]
+            );
+        }
+
+        return redirect()->back()->with('success', 'រក្សាទុកវត្តមានបានជោគជ័យ!');
     }
-
-    return redirect()->back()->with('success', 'រក្សាទុកវត្តមានបានជោគជ័យ!');
-}
-
 
     public function leaderAttendanceReport($courseOfferingId)
-{
-    $courseOffering = CourseOffering::with('course')->findOrFail($courseOfferingId);
+    {
+        $courseOffering = CourseOffering::with('course')->findOrFail($courseOfferingId);
 
-    $isLeader = DB::table('student_course_enrollments')
-        ->where('student_user_id', auth()->id())
-        ->where('course_offering_id', $courseOfferingId)
-        ->where('is_class_leader', 1)
-        ->exists();
+        $isLeader = DB::table('student_course_enrollments')
+            ->where('student_user_id', auth()->id())
+            ->where('course_offering_id', $courseOfferingId)
+            ->where('is_class_leader', 1)
+            ->exists();
 
-    if (!$isLeader) {
-        abort(403, 'អ្នកមិនមានសិទ្ធិចូលមើលរបាយការណ៍នេះទេ។');
-    }
+        if (! $isLeader) {
+            abort(403, 'អ្នកមិនមានសិទ្ធិចូលមើលរបាយការណ៍នេះទេ។');
+        }
 
-    $students = User::whereHas('enrolledCourses', function($query) use ($courseOfferingId) {
+        $students = User::whereHas('enrolledCourses', function ($query) use ($courseOfferingId) {
             $query->where('course_offering_id', $courseOfferingId);
         })
-        ->with(['enrolledCourses' => function($q) use ($courseOfferingId) {
-            $q->where('course_offering_id', $courseOfferingId)->with('course');
-        }])
-        ->withCount([
-            'attendances as present_count' => function ($query) use ($courseOfferingId) {
-                $query->where('course_offering_id', $courseOfferingId)->where('status', 'present');
-            },
-            'attendances as absent_count' => function ($query) use ($courseOfferingId) {
-                $query->where('course_offering_id', $courseOfferingId)->where('status', 'absent');
-            },
-            'attendances as permission_count' => function ($query) use ($courseOfferingId) {
-                $query->where('course_offering_id', $courseOfferingId)->where('status', 'permission');
-            },
-            'attendances as late_count' => function ($query) use ($courseOfferingId) {
-                $query->where('course_offering_id', $courseOfferingId)->where('status', 'late');
-            }
-        ])
-        ->get();
+            ->with(['enrolledCourses' => function ($q) use ($courseOfferingId) {
+                $q->where('course_offering_id', $courseOfferingId)->with('course');
+            }])
+            ->withCount([
+                'attendances as present_count' => function ($query) use ($courseOfferingId) {
+                    $query->where('course_offering_id', $courseOfferingId)->where('status', 'present');
+                },
+                'attendances as absent_count' => function ($query) use ($courseOfferingId) {
+                    $query->where('course_offering_id', $courseOfferingId)->where('status', 'absent');
+                },
+                'attendances as permission_count' => function ($query) use ($courseOfferingId) {
+                    $query->where('course_offering_id', $courseOfferingId)->where('status', 'permission');
+                },
+                'attendances as late_count' => function ($query) use ($courseOfferingId) {
+                    $query->where('course_offering_id', $courseOfferingId)->where('status', 'late');
+                },
+            ])
+            ->get();
 
-    return view('student.leader.report', compact('courseOffering', 'students'));
-}
+        return view('student.leader.report', compact('courseOffering', 'students'));
+    }
 
-public function getAttendanceScore($studentId, $courseOfferingId)
-{
-    $absentCount = \App\Models\Attendance::where('student_user_id', $studentId)
-        ->where('course_offering_id', $courseOfferingId)
-        ->where('status', 'absent') 
-        ->count();
+    public function getAttendanceScore($studentId, $courseOfferingId)
+    {
+        $absentCount = \App\Models\AttendanceRecord::where('student_user_id', $studentId)
+            ->where('course_offering_id', $courseOfferingId)
+            ->where('status', 'absent')
+            ->count();
 
-    $maxScore = 15;
-    $deduction = floor($absentCount / 2); 
-    $finalScore = $maxScore - $deduction;
+        $maxScore = 15;
+        $deduction = floor($absentCount / 2);
+        $finalScore = $maxScore - $deduction;
 
-    return $finalScore < 0 ? 0 : $finalScore;
-}
+        return $finalScore < 0 ? 0 : $finalScore;
+    }
 }

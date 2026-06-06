@@ -1,24 +1,24 @@
 <?php
 
 namespace App\Http\Controllers\Auth;
-use Illuminate\Support\Str;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
+
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\View\View;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
+use Illuminate\View\View;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class AuthenticatedSessionController extends Controller
 {
-
-public function create(): View
+    public function create(): View
     {
         $token = (string) Str::uuid();
-        
-        Cache::put('login_token_' . $token, true, now()->addMinutes(2));
+
+        Cache::put('login_token_'.$token, true, now()->addMinutes(2));
 
         $qrCode = QrCode::size(200)
             ->color(16, 185, 129)
@@ -27,7 +27,7 @@ public function create(): View
 
         return view('auth.login', [
             'qrCode' => $qrCode,
-            'token' => $token
+            'token' => $token,
         ]);
     }
 

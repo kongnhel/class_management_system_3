@@ -9,12 +9,12 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-public function up()
-{
-    Schema::table('attendances', function (Blueprint $table) {
-        $table->unsignedBigInteger('student_user_id')->after('course_offering_id');
-    });
-}
+    public function up()
+    {
+        Schema::table('attendances', function (Blueprint $table) {
+            $table->unsignedBigInteger('student_user_id')->after('course_offering_id');
+        });
+    }
 
     /**
      * Reverse the migrations.
@@ -25,5 +25,4 @@ public function up()
             //
         });
     }
-    
 };

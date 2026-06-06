@@ -14,14 +14,14 @@ return new class extends Migration
         Schema::create('courses', function (Blueprint $table) {
             $table->id();
             $table->foreignId('department_id')
-                  ->constrained('departments')
-                  ->onDelete('no action'); // CHANGED: from 'cascade' to 'no action' for SQL Server compatibility
+                ->constrained('departments')
+                ->onDelete('no action'); // CHANGED: from 'cascade' to 'no action' for SQL Server compatibility
 
             // Added program_id column
             $table->foreignId('program_id')
-                  ->nullable() // Courses can optionally belong to a program, or be general
-                  ->constrained('programs') // Assumes 'programs' table exists
-                  ->onDelete('no action'); // Using 'no action' for SQL Server compatibility
+                ->nullable() // Courses can optionally belong to a program, or be general
+                ->constrained('programs') // Assumes 'programs' table exists
+                ->onDelete('no action'); // Using 'no action' for SQL Server compatibility
 
             // $table->string('code')->unique(); // E.g., CS101
             $table->string('title_km');

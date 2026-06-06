@@ -11,15 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-Schema::create('attendance_professors', function (Blueprint $table) {
-    $table->id();
-    $table->foreignId('professor_id')->constrained('users')->onDelete('cascade');
-    $table->foreignId('session_id'); // course_offering_id
-    $table->decimal('lat', 10, 8);
-    $table->decimal('lng', 11, 8);
-    $table->timestamp('verified_at');
-    $table->timestamps();
-});
+        Schema::create('attendance_professors', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('professor_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('session_id'); // course_offering_id
+            $table->decimal('lat', 10, 8);
+            $table->decimal('lng', 11, 8);
+            $table->timestamp('verified_at');
+            $table->timestamps();
+        });
     }
 
     /**

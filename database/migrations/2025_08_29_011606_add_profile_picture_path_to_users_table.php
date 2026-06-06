@@ -9,7 +9,7 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
- public function up(): void
+    public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('profile_picture_path')->nullable()->after('password'); // 💡 បន្ថែម column នេះ

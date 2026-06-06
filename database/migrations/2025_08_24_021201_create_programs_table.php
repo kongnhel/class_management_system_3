@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('programs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('department_id')
-                  ->constrained('departments')
-                  ->onDelete('no action'); // CHANGED: from 'cascade' to 'no action' for SQL Server compatibility
+                ->constrained('departments')
+                ->onDelete('no action'); // CHANGED: from 'cascade' to 'no action' for SQL Server compatibility
             $table->string('name_km');
             $table->string('name_en');
             $table->integer('duration_years');

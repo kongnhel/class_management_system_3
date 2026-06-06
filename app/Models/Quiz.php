@@ -22,7 +22,7 @@ class Quiz extends Model
     public function examResults()
     {
         return $this->hasMany(ExamResult::class, 'assessment_id')
-                    ->where('assessment_type', 'quiz');
+            ->where('assessment_type', 'quiz');
     }
 
     // Relationship ទៅកាន់ CourseOffering

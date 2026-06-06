@@ -179,13 +179,18 @@
                                         <div class="space-y-4">
                                             <div class="flex items-center gap-3">
                                                 <span class="bg-indigo-50 text-indigo-600 text-[10px] font-black px-3 py-1 rounded-lg border border-indigo-100 uppercase">
-                                                    {{ $courseOffering->course->program->name_km ?? 'បច្ចេកវិទ្យាវិទ្យាសាស្ត្រ' }}
+                                                    {{ $courseOffering->targetPrograms->first()?->name_km ?? $courseOffering->course->programs->first()?->name_km ?? '...' }}
                                                 </span>
-                                                <span class="text-slate-300">|</span>
-                                                <div class="flex items-center gap-1.5 text-sm text-slate-500 font-bold">
-                                                    <i class="fas fa-layer-group text-slate-400"></i>
-                                                    <span>{{ __('ជំនាន់') }}: <b class="text-slate-800">{{ $courseOffering->generation }}</b></span>
-                                                </div>
+                                                @php
+                                                    $generation = $courseOffering->generation ?? $courseOffering->targetPrograms->pluck('generation')->filter()->first();
+                                                @endphp
+                                                @if($generation)
+                                                    <span class="text-slate-300">|</span>
+                                                    <div class="flex items-center gap-1.5 text-sm text-slate-500 font-bold">
+                                                        <i class="fas fa-layer-group text-slate-400"></i>
+                                                        <span>{{ __('ជំនាន់') }}: <b class="text-slate-800">{{ $generation }}</b></span>
+                                                    </div>
+                                                @endif
                                             </div>
 
                                             <div class="bg-slate-50 rounded-3xl p-4 space-y-3 group-hover:bg-indigo-50/50 transition-colors border border-transparent group-hover:border-indigo-50">

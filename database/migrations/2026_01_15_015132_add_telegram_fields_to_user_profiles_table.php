@@ -9,15 +9,15 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-public function up(): void
+    public function up(): void
     {
         Schema::table('user_profiles', function (Blueprint $table) {
             // បន្ថែម telegram_user (Username) និង telegram_chat_id (សម្រាប់ Bot ផ្ញើសារ)
-            if (!Schema::hasColumn('user_profiles', 'telegram_user')) {
+            if (! Schema::hasColumn('user_profiles', 'telegram_user')) {
                 $table->string('telegram_user')->nullable()->after('phone_number');
             }
-            
-            if (!Schema::hasColumn('user_profiles', 'telegram_chat_id')) {
+
+            if (! Schema::hasColumn('user_profiles', 'telegram_chat_id')) {
                 $table->string('telegram_chat_id')->nullable()->after('telegram_user');
             }
         });

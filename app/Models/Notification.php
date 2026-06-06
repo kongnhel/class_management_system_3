@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Notification extends Model
 {
-     use HasFactory;
+    use HasFactory;
 
     // By default, Laravel's notification table uses UUIDs
     protected $keyType = 'string';
+
     public $incrementing = false;
 
     protected $fillable = [

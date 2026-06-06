@@ -22,40 +22,39 @@ class AddSecurityHeaders
         $response = $next($request);
 
         // 1. Prevent MIME type sniffing
-      if (!method_exists($response, 'header')) {
-        return $response;
-    }
+        if (! method_exists($response, 'header')) {
+            return $response;
+        }
 
-    // 1. Prevent MIME type sniffing
-    $response->header('X-Content-Type-Options', 'nosniff');
+        // 1. Prevent MIME type sniffing
+        $response->header('X-Content-Type-Options', 'nosniff');
 
-    // 2. Prevent Clickjacking attacks
-    $response->header('X-Frame-Options', 'DENY');
+        // 2. Prevent Clickjacking attacks
+        $response->header('X-Frame-Options', 'DENY');
 
-    // 3. Enable XSS Protection in older browsers
-    $response->header('X-XSS-Protection', '1; mode=block');
+        // 3. Enable XSS Protection in older browsers
+        $response->header('X-XSS-Protection', '1; mode=block');
 
-    // 4. Force HTTPS in production
-    if (config('app.env') === 'production') {
-        $response->header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
-    }
+        // 4. Force HTTPS in production
+        if (config('app.env') === 'production') {
+            $response->header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+        }
         /**
          * 5. Content Security Policy (Updated for Livewire & Assets)
          * - ថែម 'unsafe-eval' ក្នុង script-src ដើម្បីឱ្យ Livewire ដើរ
          * - ថែម 'unsafe-inline' ក្នុង style-src ដើម្បីឱ្យ CSS ដើរ
          * - ថែម https://fonts.gstatic.com សម្រាប់ Font
          */
-
-        $csp = "default-src 'self' http://localhost:* http://127.0.0.1:* [::1]:*; " .
-               "script-src 'self' 'unsafe-inline' 'unsafe-eval' " .
-               "https://cdn.jsdelivr.net https://www.gstatic.com https://unpkg.com " .
-               "http://localhost:* http://127.0.0.1:* [::1]:*; " .
-               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://fonts.bunny.net " .
-               "http://localhost:* http://127.0.0.1:* [::1]:*; " .
-               "img-src 'self' data: https: http://localhost:* http://127.0.0.1:* [::1]:*; " .
-               "font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com https://fonts.bunny.net; " .
-               "connect-src 'self' https://www.gstatic.com https://firebase.googleapis.com " .
-               "ws://localhost:* ws://127.0.0.1:* http://localhost:* http://127.0.0.1:* [::1]:*;";
+        $csp = "default-src 'self' http://localhost:* http://127.0.0.1:* [::1]:*; ".
+               "script-src 'self' 'unsafe-inline' 'unsafe-eval' ".
+               'https://cdn.jsdelivr.net https://www.gstatic.com https://unpkg.com '.
+               'http://localhost:* http://127.0.0.1:* [::1]:*; '.
+               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://fonts.bunny.net ".
+               'http://localhost:* http://127.0.0.1:* [::1]:*; '.
+               "img-src 'self' data: https: http://localhost:* http://127.0.0.1:* [::1]:*; ".
+               "font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com https://fonts.bunny.net; ".
+               "connect-src 'self' https://www.gstatic.com https://firebase.googleapis.com ".
+               'ws://localhost:* ws://127.0.0.1:* http://localhost:* http://127.0.0.1:* [::1]:*;';
 
         // $response->header('Content-Security-Policy', $csp);
 

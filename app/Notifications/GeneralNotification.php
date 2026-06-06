@@ -4,7 +4,6 @@ namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
-use Illuminate\Notifications\Messages\DatabaseMessage;
 
 class GeneralNotification extends Notification
 {
@@ -39,13 +38,12 @@ class GeneralNotification extends Notification
     public function toDatabase(object $notifiable): array
     {
         return [
-            'from_user_id'   => $this->data['from_user_id']   ?? null,
+            'from_user_id' => $this->data['from_user_id'] ?? null,
             'from_user_name' => $this->data['from_user_name'] ?? null,
-            'title'          => $this->data['title']          ?? null,
-            'message'        => $this->data['message']        ?? null,
-            'batch_uuid'     => $this->data['batch_uuid']     ?? null,
-            'recipient_ids'  => $this->data['recipient_ids']  ?? [],
+            'title' => $this->data['title'] ?? null,
+            'message' => $this->data['message'] ?? null,
+            'batch_uuid' => $this->data['batch_uuid'] ?? null,
+            'recipient_ids' => $this->data['recipient_ids'] ?? [],
         ];
     }
-    
 }

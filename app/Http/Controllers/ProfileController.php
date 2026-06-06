@@ -2,86 +2,86 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\UserProfile;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Http\RedirectResponse; 
-use App\Models\UserProfile;
-use Illuminate\View\View;
-use Illuminate\Validation\Rule; 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Session;
+use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
-public function edit(Request $request): View
-{
-    $user = Auth::user();
+    public function edit(Request $request): View
+    {
+        $user = Auth::user();
 
-    $userProfile = UserProfile::where('user_id', $user->id)->first();
-    $profilePictureUrl = $userProfile?->profile_picture_url;
+        $userProfile = UserProfile::where('user_id', $user->id)->first();
+        $profilePictureUrl = $userProfile?->profile_picture_url;
 
-    return view('profile.edit', [
-        'user' => $user,
-        'profilePictureUrl' => $profilePictureUrl, 
-    ]);
-}
+        return view('profile.edit', [
+            'user' => $user,
+            'profilePictureUrl' => $profilePictureUrl,
+        ]);
+    }
 
-public function updateProfilePicture(Request $request)
-{
-    $request->validate([
-        'profile_picture' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-    ], [
-        'profile_picture.required' => 'សូមជ្រើសរើសរូបភាពសម្រាប់ Profile Picture ។',
-        'profile_picture.image' => 'File ដែលបាន upload ត្រូវតែជារូបភាព។',
-        'profile_picture.max' => 'ទំហំរូបភាពមិនត្រូវលើស 2MB ទេ។',
-    ]);
+    public function updateProfilePicture(Request $request)
+    {
+        $request->validate([
+            'profile_picture' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ], [
+            'profile_picture.required' => 'សូមជ្រើសរើសរូបភាពសម្រាប់ Profile Picture ។',
+            'profile_picture.image' => 'File ដែលបាន upload ត្រូវតែជារូបភាព។',
+            'profile_picture.max' => 'ទំហំរូបភាពមិនត្រូវលើស 2MB ទេ។',
+        ]);
 
-    $user = Auth::user();
+        $user = Auth::user();
 
-    if ($request->hasFile('profile_picture')) {
-        try {
-            $image = $request->file('profile_picture');
-            
-            $response = Http::asMultipart()->post('https://api.imgbb.com/1/upload', [
-                'key' => env('IMGBB_API_KEY'), 
-                'image' => base64_encode(file_get_contents($image->getRealPath())),
-            ]);
+        if ($request->hasFile('profile_picture')) {
+            try {
+                $image = $request->file('profile_picture');
 
-            if ($response->successful()) {
-                $imageUrl = $response->json()['data']['url'];
+                $response = Http::asMultipart()->post('https://api.imgbb.com/1/upload', [
+                    'key' => env('IMGBB_API_KEY'),
+                    'image' => base64_encode(file_get_contents($image->getRealPath())),
+                ]);
 
-                UserProfile::updateOrCreate(
-                    ['user_id' => $user->id],
-                    ['profile_picture_url' => $imageUrl]
-                );
-                
-                Session::flash('success', 'រូបភាព Profile ត្រូវបានអាប់ដេតដោយជោគជ័យ!');
+                if ($response->successful()) {
+                    $imageUrl = $response->json()['data']['url'];
+
+                    UserProfile::updateOrCreate(
+                        ['user_id' => $user->id],
+                        ['profile_picture_url' => $imageUrl]
+                    );
+
+                    Session::flash('success', 'រូបភាព Profile ត្រូវបានអាប់ដេតដោយជោគជ័យ!');
+                }
+            } catch (\Exception $e) {
+                return redirect()->back()->withErrors(['profile_picture' => 'មានបញ្ហាបច្ចេកទេស៖ '.$e->getMessage()]);
             }
-        } catch (\Exception $e) {
-            return redirect()->back()->withErrors(['profile_picture' => 'មានបញ្ហាបច្ចេកទេស៖ ' . $e->getMessage()]);
         }
+
+        return redirect()->back();
     }
 
-    return redirect()->back();
-}
-  public function destroy(Request $request): RedirectResponse
-{
-    $request->validateWithBag('userDeletion', [
-        'password' => ['required', 'current_password'],
-    ]);
+    public function destroy(Request $request): RedirectResponse
+    {
+        $request->validateWithBag('userDeletion', [
+            'password' => ['required', 'current_password'],
+        ]);
 
-    $user = $request->user();
-    Auth::logout();
+        $user = $request->user();
+        Auth::logout();
 
-    if ($user->userProfile) {
-        $user->userProfile->delete();
+        if ($user->userProfile) {
+            $user->userProfile->delete();
+        }
+
+        $user->delete();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/');
     }
-
-    $user->delete();
-
-    $request->session()->invalidate();
-    $request->session()->regenerateToken();
-
-    return redirect('/');
-}
 }

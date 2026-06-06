@@ -28,8 +28,8 @@
                     <i class="fa-solid fa-qrcode text-5xl text-emerald-600"></i>
                 </div>
 
-                <h2 class="text-2xl font-black text-dark-800">ស្កែន QR Code</h2>
-                <p class="text-dark-500 mt-1 mb-8">ស្កែនដើម្បីចូលកុំព្យូទ័រ</p>
+                <h2 class="text-2xl font-black text-dark-800">{{ __('qr_scan_title') }}</h2>
+                <p class="text-dark-500 mt-1 mb-8">{{ __('qr_scan_subtitle') }}</p>
 
                 <!-- Scanner -->
                 <div class="scanner-container border-4 border-emerald-400 shadow-inner" style="aspect-ratio: 1 / 1;">
@@ -41,10 +41,10 @@
 
                 <!-- Instruction -->
                 <div class="mt-4 p-4 bg-blue-50 border border-blue-100 rounded-2xl text-left text-xs leading-relaxed">
-                    <strong class="text-blue-700">ការណែនាំ៖</strong><br>
+                    <strong class="text-blue-700">{{ __('qr_instructions') }}</strong><br>
                     1. ចុច <strong>"Request Camera Permissions"</strong><br>
                     2. ជ្រើសរើស <strong>Allow</strong> នៅពេល Browser សួរ<br>
-                    3. សូមប្រើទូរស័ព្ទ និងដាក់ QR Code ឱ្យចំកណ្តាល
+                    3. {{ __('qr_step3') }}
                 </div>
             </div>
         </div>
@@ -56,7 +56,7 @@
 
 function onScanSuccess(decodedText, decodedResult) {
     const status = document.getElementById('status');
-    status.innerHTML = `<span class="text-emerald-600">កំពុងផ្ទៀងផ្ទាត់...</span>`;
+    status.innerHTML = `<span class="text-emerald-600">{{ __('qr_verifying') }}</span>`;
 
     html5QrcodeScanner.clear();
 
@@ -71,14 +71,14 @@ function onScanSuccess(decodedText, decodedResult) {
     .then(r => r.json())
     .then(data => {
         if (data.status === 'success') {
-            status.innerHTML = `✅ ជោគជ័យ! សូមត្រឡប់ទៅកុំព្យូទ័រ`;
+            status.innerHTML = `✅ {{ __('qr_success') }}`;
         } else {
             status.innerHTML = `<span class="text-red-600">${data.message}</span>`;
         }
     })
     .catch(err => {
         console.error(err);
-        status.innerHTML = `<span class="text-red-600">មានបញ្ហាបណ្តាញ</span>`;
+        status.innerHTML = `<span class="text-red-600">{{ __('qr_network_error') }}</span>`;
     });
 }
 

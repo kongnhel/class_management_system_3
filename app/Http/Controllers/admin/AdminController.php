@@ -1,21 +1,14 @@
 <?php
 
 namespace App\Http\Controllers\admin;
+
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use App\Models\Faculty;
-use App\Models\Department;
-use App\Models\Program;
-use App\Models\Course;;
+use App\Models\Course;
 use App\Models\CourseOffering;
-use App\Models\StudentCourseEnrollment;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Hash;
-use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
-use Intervention\Image\ImageManagerStatic as Image;
+use App\Models\Department;
+use App\Models\Faculty;
+use App\Models\Program;
+use App\Models\User;
 
 class AdminController extends Controller
 {
@@ -42,7 +35,4 @@ class AdminController extends Controller
             'totalCourseOfferings'
         ));
     }
-
-  
 }
-

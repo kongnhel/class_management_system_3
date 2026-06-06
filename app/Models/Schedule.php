@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Schedule extends Model
 {
-        use HasFactory;
+    use HasFactory;
 
     protected $fillable = [
         'course_offering_id',
@@ -22,7 +22,6 @@ class Schedule extends Model
         'end_time' => 'datetime',   // Cast to datetime for easier manipulation
     ];
 
-    
     /*
     |--------------------------------------------------------------------------
     | Relationships
@@ -36,8 +35,8 @@ class Schedule extends Model
     {
         return $this->belongsTo(CourseOffering::class);
     }
-    
-      public function room()
+
+    public function room()
     {
         return $this->belongsTo(Room::class);
     }

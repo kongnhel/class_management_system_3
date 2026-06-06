@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::table('course_offerings', function (Blueprint $table) {
             // 💡 IMPORTANT: ពិនិត្យមើលថាតើ columns ទាំងនេះមានរួចហើយឬនៅ មុនពេលបន្ថែម
-            if (!Schema::hasColumn('course_offerings', 'is_open_for_self_enrollment')) {
+            if (! Schema::hasColumn('course_offerings', 'is_open_for_self_enrollment')) {
                 $table->boolean('is_open_for_self_enrollment')->default(false)->after('room_number');
             }
-            if (!Schema::hasColumn('course_offerings', 'start_date')) {
+            if (! Schema::hasColumn('course_offerings', 'start_date')) {
                 $table->date('start_date')->nullable()->after('is_open_for_self_enrollment');
             }
-            if (!Schema::hasColumn('course_offerings', 'end_date')) {
+            if (! Schema::hasColumn('course_offerings', 'end_date')) {
                 $table->date('end_date')->nullable()->after('start_date');
             }
 

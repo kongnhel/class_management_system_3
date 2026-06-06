@@ -327,7 +327,7 @@
                                                                                  alt="{{ $professor->name }}">
                                                                         @else
                                                                             <div class="h-10 w-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-sm">
-                                                                                {{ strtoupper(substr($professor->name, 0, 1)) }}
+                                                                                {{ mb_substr($professor->name, 0, 1, 'UTF-8') }}
                                                                             </div>
                                                                         @endif
                                                                     </td>

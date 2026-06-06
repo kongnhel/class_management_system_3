@@ -15,30 +15,30 @@ return new class extends Migration
             // Add student_id_code if it doesn't exist.
             // It should be nullable as only students have it.
             // Moved after 'role' for logical placement.
-            if (!Schema::hasColumn('users', 'student_id_code')) {
+            if (! Schema::hasColumn('users', 'student_id_code')) {
                 $table->string('student_id_code')->unique()->nullable()->after('role');
             }
 
             // Add department_id for professors.
             // It should be nullable as only professors have it.
             // Changed onDelete('set null') to onDelete('no action') for SQL Server compatibility.
-            if (!Schema::hasColumn('users', 'department_id')) {
+            if (! Schema::hasColumn('users', 'department_id')) {
                 $table->foreignId('department_id')
-                      ->nullable()
-                      ->constrained('departments') // Assumes 'departments' table exists
-                      ->onDelete('no action') // Changed from 'set null'
-                      ->after('student_id_code'); // Place after student_id_code
+                    ->nullable()
+                    ->constrained('departments') // Assumes 'departments' table exists
+                    ->onDelete('no action') // Changed from 'set null'
+                    ->after('student_id_code'); // Place after student_id_code
             }
 
             // Add program_id for students.
             // It should be nullable as only students have it.
             // Changed onDelete('set null') to onDelete('no action') for SQL Server compatibility.
-            if (!Schema::hasColumn('users', 'program_id')) {
+            if (! Schema::hasColumn('users', 'program_id')) {
                 $table->foreignId('program_id')
-                      ->nullable()
-                      ->constrained('programs') // Assumes 'programs' table exists
-                      ->onDelete('no action') // Changed from 'set null'
-                      ->after('department_id'); // Place after department_id
+                    ->nullable()
+                    ->constrained('programs') // Assumes 'programs' table exists
+                    ->onDelete('no action') // Changed from 'set null'
+                    ->after('department_id'); // Place after department_id
             }
         });
     }

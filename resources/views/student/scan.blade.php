@@ -55,21 +55,21 @@
                         <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mb-4 backdrop-blur-sm">
                             <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                         </div>
-                        <h3 class="text-lg font-bold mb-2">តម្រូវឱ្យបើកកាមេរ៉ា</h3>
-                        <p class="text-sm text-gray-400 mb-6">សម្រាប់ Brave ឬ Browser ខ្លះ អ្នកត្រូវចុចប៊ូតុងខាងក្រោមដើម្បីអនុញ្ញាត។</p>
+                        <h3 class="text-lg font-bold mb-2">{{ __('qr_enable_camera') }}</h3>
+                        <p class="text-sm text-gray-400 mb-6">{{ __('qr_enable_desc') }}</p>
                         
                         <button onclick="startCamera()" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-blue-500/30 transition-all active:scale-95 flex items-center gap-2">
-                            <span>📷 ចុចបើកកាមេរ៉ា</span>
+                            <span>📷 {{ __('qr_enable_btn') }}</span>
                         </button>
                     </div>
                 </div>
 
                 {{-- Upload Option (Fallback) --}}
                 <div class="text-center">
-                    <p class="text-xs text-gray-400 mb-2">- ឬ -</p>
+                    <p class="text-xs text-gray-400 mb-2">{{ __('or') }}</p>
                     <input type="file" id="qr-input-file" accept="image/*" class="hidden" onchange="handleFileUpload(this)">
                     <button onclick="document.getElementById('qr-input-file').click()" class="text-sm font-bold text-blue-600 bg-blue-50 px-4 py-2 rounded-lg hover:bg-blue-100 transition-colors w-full">
-                        📂 Upload រូប QR ពី Gallery
+                        📂 {{ __('qr_upload_gallery') }}
                     </button>
                 </div>
             </div>
@@ -111,7 +111,7 @@
             html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess, onScanFailure)
             .catch(err => {
                 console.error("Camera Error:", err);
-                showOnScreenError("មិនអាចបើកកាមេរ៉ាបានទេ៖ " + err);
+                showOnScreenError("{{ __('qr_camera_error') }} " + err);
                 
                 // បើកផ្ទាំង Start មកវិញបើបរាជ័យ
                 document.getElementById('start-screen').classList.remove('hidden');
@@ -169,7 +169,7 @@
                 onScanSuccess(decodedText, null);
             })
             .catch(err => {
-                showOnScreenError("អាន QR ពីរូបភាពមិនបាន៖ " + err);
+                showOnScreenError("{{ __('qr_read_error') }} " + err);
             });
         }
 
@@ -194,24 +194,24 @@
             if (type === 'processing') {
                 iconContainer.className = "mx-auto w-24 h-24 rounded-full flex items-center justify-center mb-6 bg-blue-50 text-blue-600 animate-spin";
                 iconContainer.innerHTML = `<svg class="w-10 h-10" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>`;
-                title.innerText = "កំពុងផ្ទៀងផ្ទាត់...";
-                msg.innerText = "សូមរង់ចាំបន្តិច";
+                title.innerText = "{{ __('qr_verifying') }}";
+                msg.innerText = "{{ __('qr_verifying_please') }}";
                 btn.classList.add('hidden');
             } else if (type === 'success') {
                 iconContainer.className = "mx-auto w-24 h-24 rounded-full flex items-center justify-center mb-6 bg-green-100 text-green-600";
                 iconContainer.innerHTML = `<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>`;
-                title.innerText = "ជោគជ័យ!";
+                title.innerText = "{{ __('qr_success_title') }}";
                 msg.innerText = message;
                 btn.className = "w-full py-4 rounded-2xl font-bold text-white bg-green-500 shadow-lg block";
-                btn.innerText = "រួចរាល់";
+                btn.innerText = "{{ __('qr_success_done') }}";
                 btn.classList.remove('hidden');
             } else {
                 iconContainer.className = "mx-auto w-24 h-24 rounded-full flex items-center justify-center mb-6 bg-red-100 text-red-500";
                 iconContainer.innerHTML = `<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>`;
-                title.innerText = "បរាជ័យ!";
+                title.innerText = "{{ __('qr_failed_title') }}";
                 msg.innerText = message;
                 btn.className = "w-full py-4 rounded-2xl font-bold text-white bg-red-500 shadow-lg block";
-                btn.innerText = "សាកល្បងម្តងទៀត";
+                btn.innerText = "{{ __('qr_retry') }}";
                 btn.classList.remove('hidden');
             }
         }

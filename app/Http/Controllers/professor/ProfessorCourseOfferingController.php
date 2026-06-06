@@ -2,25 +2,21 @@
 
 namespace App\Http\Controllers\professor;
 
+use App\Http\Controllers\Controller;
 use App\Models\Course;
-use App\Models\Faculty;
+use App\Models\CourseOffering;
 use App\Models\Department;
 use App\Models\Program;
-use App\Models\CourseOffering;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Http\Request;
 
 class ProfessorCourseOfferingController extends Controller
 {
-        public function myCourseOfferings()
+    public function myCourseOfferings()
     {
         $user = Auth::user();
         $courseOfferings = CourseOffering::where('lecturer_user_id', $user->id)
-                                         ->with('course.department', 'lecturer')
-                                         ->paginate(10); 
+            ->with('course.department', 'lecturer')
+            ->paginate(10);
 
         return view('professor.my-course-offerings', compact('courseOfferings'));
     }
@@ -33,6 +29,7 @@ class ProfessorCourseOfferingController extends Controller
     public function viewDepartments()
     {
         $departments = Department::with('faculty', 'head')->paginate(10);
+
         return view('professor.departments.index', compact('departments'));
     }
 
@@ -42,6 +39,7 @@ class ProfessorCourseOfferingController extends Controller
     public function viewPrograms()
     {
         $programs = Program::with('department')->paginate(10);
+
         return view('professor.programs.index', compact('programs'));
     }
 
@@ -51,6 +49,7 @@ class ProfessorCourseOfferingController extends Controller
     public function viewCourses()
     {
         $courses = Course::with('department', 'program')->paginate(10);
+
         return view('professor.courses.index', compact('courses'));
     }
 
@@ -60,6 +59,7 @@ class ProfessorCourseOfferingController extends Controller
     public function viewAllCourseOfferings()
     {
         $courseOfferings = CourseOffering::with('course', 'lecturer')->paginate(10);
+
         return view('professor.all-course-offerings.index', compact('courseOfferings'));
     }
 }

@@ -10,10 +10,10 @@
             {{-- Header Section --}}
             <div class="mb-10 text-center md:text-left">
                 <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-                    {{ __('កំណត់ប្រវត្តិរូបសង្ខេប') }}
+                    {{ __('profile_title') }}
                 </h1>
                 <p class="mt-2 text-slate-500 dark:text-slate-400">
-                    {{ __('គ្រប់គ្រងព័ត៌មានផ្ទាល់ខ្លួន និងសុវត្ថិភាពគណនីរបស់អ្នកនៅក្នុងប្រព័ន្ធ។') }}
+                    {{ __('profile_subtitle') }}
                 </p>
             </div>
 
@@ -76,8 +76,8 @@
                                 <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                             </div>
                             <div>
-                                <h2 class="text-xl font-bold text-slate-900 dark:text-white">{{ __('ព័ត៌មានមូលដ្ឋាន') }}</h2>
-                                <p class="text-sm text-slate-500">{{ __('ធ្វើបច្ចុប្បន្នភាពឈ្មោះ និងអាសយដ្ឋានអ៊ីមែលរបស់អ្នក។') }}</p>
+                                <h2 class="text-xl font-bold text-slate-900 dark:text-white">{{ __('profile_basic_info') }}</h2>
+                                <p class="text-sm text-slate-500">{{ __('profile_basic_desc') }}</p>
                             </div>
                         </div>
 
@@ -85,19 +85,19 @@
                             @csrf @method('patch')
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <x-input-label for="name" :value="__('ឈ្មោះពេញ')" class="text-slate-700 font-bold ml-1" />
+                                    <x-input-label for="name" :value="__('profile_full_name')" class="text-slate-700 font-bold ml-1" />
                                     <x-text-input id="name" name="name" type="text" class="mt-1.5 block w-full rounded-2xl border-slate-200 bg-slate-50/50 focus:bg-white transition-all shadow-sm" :value="old('name', $user->name)" required autofocus />
                                     <x-input-error :messages="$errors->get('name')" class="mt-2" />
                                 </div>
                                 <div>
-                                    <x-input-label for="email" :value="__('អាសយដ្ឋានអ៊ីមែល')" class="text-slate-700 font-bold ml-1" />
+                                    <x-input-label for="email" :value="__('profile_email')" class="text-slate-700 font-bold ml-1" />
                                     <x-text-input id="email" name="email" type="email" class="mt-1.5 block w-full rounded-2xl border-slate-200 bg-slate-50/50 focus:bg-white transition-all shadow-sm" :value="old('email', $user->email)" required />
                                     <x-input-error :messages="$errors->get('email')" class="mt-2" />
                                 </div>
                             </div>
                             <div class="flex justify-end pt-4">
                                 <x-primary-button class="bg-slate-900 hover:bg-slate-800 text-white rounded-xl px-8 py-3 font-bold transition-all shadow-lg shadow-slate-200 dark:shadow-none">
-                                    {{ __('រក្សាទុកការផ្លាស់ប្តូរ') }}
+                                    {{ __('profile_save') }}
                                 </x-primary-button>
                             </div>
                         </form>
@@ -110,8 +110,8 @@
                                 <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                             </div>
                             <div>
-                                <h2 class="text-xl font-bold text-slate-900 dark:text-white">{{ __('សុវត្ថិភាពគណនី') }}</h2>
-                                <p class="text-sm text-slate-500">{{ __('ប្តូរលេខសម្ងាត់ថ្មីដើម្បីធានាសុវត្ថិភាពខ្ពស់។') }}</p>
+                                <h2 class="text-xl font-bold text-slate-900 dark:text-white">{{ __('profile_security') }}</h2>
+                                <p class="text-sm text-slate-500">{{ __('profile_security_desc') }}</p>
                             </div>
                         </div>
 
@@ -119,25 +119,25 @@
                             @csrf @method('put')
                             <div class="space-y-5">
                                 <div>
-                                    <x-input-label for="current_password" :value="__('លេខសម្ងាត់បច្ចុប្បន្ន')" class="text-slate-700 font-bold ml-1" />
+                                    <x-input-label for="current_password" :value="__('profile_current_password')" class="text-slate-700 font-bold ml-1" />
                                     <x-text-input id="current_password" name="current_password" type="password" class="mt-1.5 block w-full rounded-2xl border-slate-200 bg-slate-50/50 shadow-sm" />
                                     <x-input-error :messages="$errors->updatePassword->get('current_password')" class="mt-2" />
                                 </div>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
-                                        <x-input-label for="password" :value="__('លេខសម្ងាត់ថ្មី')" class="text-slate-700 font-bold ml-1" />
+                                        <x-input-label for="password" :value="__('profile_new_password')" class="text-slate-700 font-bold ml-1" />
                                         <x-text-input id="password" name="password" type="password" class="mt-1.5 block w-full rounded-2xl border-slate-200 bg-slate-50/50 shadow-sm" />
                                         <x-input-error :messages="$errors->updatePassword->get('password')" class="mt-2" />
                                     </div>
                                     <div>
-                                        <x-input-label for="password_confirmation" :value="__('បញ្ជាក់លេខសម្ងាត់ថ្មី')" class="text-slate-700 font-bold ml-1" />
+                                        <x-input-label for="password_confirmation" :value="__('profile_confirm_password')" class="text-slate-700 font-bold ml-1" />
                                         <x-text-input id="password_confirmation" name="password_confirmation" type="password" class="mt-1.5 block w-full rounded-2xl border-slate-200 bg-slate-50/50 shadow-sm" />
                                     </div>
                                 </div>
                             </div>
                             <div class="flex justify-end pt-4">
                                 <x-primary-button class="bg-amber-600 hover:bg-amber-700 text-white rounded-xl px-8 py-3 font-bold transition-all shadow-lg shadow-amber-200 dark:shadow-none">
-                                    {{ __('ធ្វើបច្ចុប្បន្នភាពលេខសម្ងាត់') }}
+                                    {{ __('profile_update_password') }}
                                 </x-primary-button>
                             </div>
                         </form>
@@ -147,12 +147,12 @@
                     <section class="bg-red-50/50 dark:bg-red-900/10 rounded-[2rem] border border-red-100 dark:border-red-900/30 p-8">
                         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                             <div>
-                                <h2 class="text-lg font-bold text-red-700 dark:text-red-500">{{ __('លុបគណនីប្រើប្រាស់') }}</h2>
-                                <p class="text-sm text-red-600/70">{{ __('រាល់ទិន្នន័យទាំងអស់នឹងត្រូវលុបជាអចិន្ត្រៃយ៍។') }}</p>
+                                <h2 class="text-lg font-bold text-red-700 dark:text-red-500">{{ __('profile_delete_account') }}</h2>
+                                <p class="text-sm text-red-600/70">{{ __('profile_delete_warning') }}</p>
                             </div>
                             <button x-data="" x-on:click.prevent="$dispatch('open-modal', 'confirm-user-deletion')" 
                                     class="inline-flex justify-center items-center px-6 py-3 bg-white dark:bg-red-600 border border-red-200 dark:border-transparent text-red-600 dark:text-white rounded-xl font-bold hover:bg-red-600 hover:text-white transition-all shadow-sm">
-                                {{ __('លុបគណនី') }}
+                                {{ __('profile_delete_btn') }}
                             </button>
                         </div>
                     </section>

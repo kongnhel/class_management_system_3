@@ -42,7 +42,7 @@ class Announcement extends Model
         return $this->belongsTo(CourseOffering::class);
     }
 
-        public function reads()
+    public function reads()
     {
         return $this->belongsToMany(User::class, 'announcement_reads', 'announcement_id', 'user_id');
     }

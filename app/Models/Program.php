@@ -4,11 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany; 
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Program extends Model
 {
-     use HasFactory;
+    use HasFactory;
 
     protected $fillable = [
         'department_id',
@@ -16,7 +16,7 @@ class Program extends Model
         'name_en',
         'degree_level',
         'duration_years',
-        
+
     ];
 
     /*
@@ -24,11 +24,10 @@ class Program extends Model
     | Relationships
     |--------------------------------------------------------------------------
     */
-   public function courseOfferings(): HasMany
+    public function courseOfferings(): HasMany
     {
         return $this->hasMany(CourseOffering::class);
     }
-    
 
     /**
      * Get the department that the program belongs to.
@@ -38,7 +37,7 @@ class Program extends Model
         return $this->belongsTo(Department::class);
     }
 
-   public function users() // Changed from studentProgramEnrollments to users
+    public function users() // Changed from studentProgramEnrollments to users
     {
         return $this->hasMany(User::class);
     }
@@ -47,6 +46,7 @@ class Program extends Model
     {
         return $this->hasMany(Course::class);
     }
+
     /**
      * Get the student program enrollments for this program.
      */

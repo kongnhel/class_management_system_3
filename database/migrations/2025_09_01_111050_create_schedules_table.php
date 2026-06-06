@@ -21,7 +21,7 @@ return new class extends Migration
             $table->foreignId('room_id')->constrained()->onDelete('cascade'); // ជំនួស room_number ទៅជា room_id
             $table->time('start_time');
             $table->time('end_time')->nullable();
-            
+
             $table->timestamps();
         });
     }

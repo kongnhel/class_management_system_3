@@ -3,35 +3,30 @@
 namespace App\Http\Controllers\professor;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Quiz;
 use App\Models\CourseOffering;
+use App\Models\Quiz;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
 
 class QuizController extends Controller
 {
     /**
-     *
      * @param  int  $offering_id
      */
     public function index($offering_id)
     {
         $user = Auth::user();
-        
+
         $courseOffering = CourseOffering::findOrFail($offering_id);
 
-
         $quizzes = Quiz::where('course_offering_id', $offering_id)
-                       ->orderBy('created_at', 'desc')
-                       ->paginate(10);
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
 
         return view('professor.quiz.index', compact('courseOffering', 'quizzes'));
     }
 
     /**
-     *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $offering_id
      */
     public function store(Request $request, $offering_id)
@@ -44,9 +39,9 @@ class QuizController extends Controller
             'description_km' => ['nullable', 'string'],
             'description_en' => ['nullable', 'string'],
             // ត្រូវបន្ថែម rules ទាំងពីរនេះ ព្រោះ Form ពីមុនមិនទាន់មាន input
-            'max_attempts' => ['required', 'integer', 'min:1'], 
+            'max_attempts' => ['required', 'integer', 'min:1'],
             'duration_minutes' => ['required', 'integer', 'min:1'],
-            
+
             'max_score' => ['required', 'numeric', 'min:0'],
             'start_time' => ['nullable', 'date'],
             'end_time' => ['nullable', 'date', 'after_or_equal:start_time'],
@@ -59,34 +54,29 @@ class QuizController extends Controller
             'title_en' => $request->title_en,
             'description_km' => $request->description_km,
             'description_en' => $request->description_en,
-            'max_attempts' => $request->max_attempts, 
+            'max_attempts' => $request->max_attempts,
             'max_score' => $request->max_score,
             'duration_minutes' => $request->duration_minutes,
             'start_time' => $request->start_time,
             'end_time' => $request->end_time,
-            'is_published' => $request->boolean('is_published', false), 
+            'is_published' => $request->boolean('is_published', false),
         ]);
 
         return redirect()->route('professor.quiz.index', $offering_id)
-                         ->with('success', 'Quiz ថ្មីត្រូវបានបង្កើតដោយជោគជ័យ។');
+            ->with('success', 'Quiz ថ្មីត្រូវបានបង្កើតដោយជោគជ័យ។');
     }
 
     /**
-     *
      * @param  int  $offering_id
-     * @param  \App\Models\Quiz  $quiz
      */
     public function show($offering_id, Quiz $quiz)
     {
-        
+
         return view('professor.quiz.show', compact('quiz'));
     }
 
     /**
-     *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $offering_id
-     * @param  \App\Models\Quiz  $quiz
      */
     public function update(Request $request, $offering_id, Quiz $quiz)
     {
@@ -95,7 +85,7 @@ class QuizController extends Controller
             'title_km' => ['required', 'string', 'max:255'],
             'title_en' => ['nullable', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
-          
+
             'max_attempts' => ['required', 'integer', 'min:1'],
             'duration_minutes' => ['required', 'integer', 'min:1'],
             'max_score' => ['required', 'numeric', 'min:0'],
@@ -117,26 +107,22 @@ class QuizController extends Controller
         ]);
 
         return redirect()->route('professor.quiz.index', $offering_id)
-                         ->with('success', 'Quiz ត្រូវបានកែប្រែដោយជោគជ័យ។');
+            ->with('success', 'Quiz ត្រូវបានកែប្រែដោយជោគជ័យ។');
     }
 
     /**
-     *
      * @param  int  $offering_id
-     * @param  \App\Models\Quiz  $quiz
      */
     public function destroy($offering_id, Quiz $quiz)
     {
         $quiz->delete();
 
         return redirect()->route('professor.quiz.index', $offering_id)
-                         ->with('success', 'Quiz ត្រូវបានលុបដោយជោគជ័យ។');
+            ->with('success', 'Quiz ត្រូវបានលុបដោយជោគជ័យ។');
     }
-    
+
     /**
-     *
      * @param  int  $offering_id
-     * @param  \App\Models\Quiz  $quiz
      */
     public function manageQuestions($offering_id, Quiz $quiz)
     {

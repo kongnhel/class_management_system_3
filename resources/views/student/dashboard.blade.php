@@ -12,9 +12,9 @@
             <div class="mb-8 flex flex-col lg:flex-row items-center justify-between gap-6">
                 <div class="text-center lg:text-left">
                     <h3 class="text-3xl sm:text-4xl font-black text-gray-900 leading-tight">
-                        ជំរាបសួរ និស្សិត <span class="text-indigo-600">{{ auth()->user()->name }}</span>! 👋
+                        {{ __('stu_dashboard_greeting') }} <span class="text-indigo-600">{{ auth()->user()->name }}</span>! 👋
                     </h3>
-                    <p class="text-gray-500 font-medium mt-1 mb-6">{{ __('សូមពិនិត្យមើលបច្ចុប្បន្នភាពនៃការសិក្សារបស់អ្នកនៅថ្ងៃនេះ') }}</p>
+                    <p class="text-gray-500 font-medium mt-1 mb-6">{{ __('stu_dashboard_subtitle') }}</p>
                     
                     {{-- 🛡️ Google Link Status Card --}}
                     <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100 flex items-center gap-4 transition-all hover:shadow-md">
@@ -22,14 +22,14 @@
                             <i class="fa-brands fa-google text-2xl"></i>
                         </div>
                         <div>
-                            <h3 class="font-bold text-slate-800 text-sm leading-none mb-1">{{ __('សុវត្ថិភាពគណនី') }}</h3>
+                            <h3 class="font-bold text-slate-800 text-sm leading-none mb-1">{{ __('stu_account_security') }}</h3>
                             @if(!auth()->user()->google_id)
                                 <button onclick="linkWithGoogle()" id="btn-link-google" class="flex items-center gap-2 text-blue-600 hover:text-blue-700 text-[11px] font-black transition-all group">
-                                    <i class="fa-solid fa-link group-hover:rotate-45 transition-transform"></i> {{ __('ភ្ជាប់ជាមួយ Google ឥឡូវនេះ') }}
+                                    <i class="fa-solid fa-link group-hover:rotate-45 transition-transform"></i> {{ __('stu_connect_google') }}
                                 </button>
                             @else
                                 <span class="text-emerald-500 font-bold flex items-center gap-1.5 text-[11px]">
-                                    <i class="fa-solid fa-circle-check"></i> {{ __('បានភ្ជាប់រួចរាល់') }}
+                                    <i class="fa-solid fa-circle-check"></i> {{ __('stu_google_connected') }}
                                 </span>
                             @endif
                         </div>
@@ -41,18 +41,18 @@
                         <button type="button" onclick="document.getElementById('telegramEntryModal').classList.remove('hidden')" 
                             class="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#0088cc] hover:bg-[#0077b5] text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-blue-100 transition-all transform hover:scale-105 text-sm">
                             <i class="fab fa-telegram-plane text-lg"></i>
-                            <span>ភ្ជាប់ជាមួយ Telegram</span>
+                            <span>{{ __('stu_connect_telegram') }}</span>
                         </button>
                     @else
                         <div class="w-full sm:w-auto bg-green-50 text-green-600 border border-green-100 px-5 py-3 rounded-2xl font-bold flex items-center justify-center gap-2 text-sm shadow-sm">
                             <i class="fas fa-check-circle text-lg"></i>
-                            <span>បានភ្ជាប់ Telegram រួចរាល់</span>
+                            <span>{{ __('stu_telegram_connected') }}</span>
                         </div>
                     @endif
 
                     <a href="{{ route('qr.scanner') }}" class="w-full sm:w-auto flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-2xl font-bold shadow-lg text-sm transition-all">
                         <i class="fa-solid fa-camera"></i>
-                        <span>ស្កែន QR ចូល PC</span>
+                        <span>{{ __('stu_scan_qr') }}</span>
                     </a>
 
                     <div class="w-full sm:w-auto bg-white text-gray-700 border border-gray-100 px-5 py-3 rounded-2xl font-bold shadow-sm flex items-center justify-center gap-2 text-sm">
@@ -67,28 +67,28 @@
                 <div class="bg-white p-4 rounded-2xl border border-green-100 shadow-sm flex items-center gap-4">
                     <div class="w-12 h-12 rounded-xl bg-green-50 text-green-600 flex items-center justify-center text-xl"><i class="fas fa-user-check"></i></div>
                     <div>
-                        <p class="text-xs text-gray-400 font-bold uppercase">វត្តមាន</p>
+                        <p class="text-xs text-gray-400 font-bold uppercase">{{ __('stu_present') }}</p>
                         <h4 class="text-2xl font-black text-gray-800">{{ $totalPresent ?? 0 }}</h4>
                     </div>
                 </div>
                 <div class="bg-white p-4 rounded-2xl border border-red-100 shadow-sm flex items-center gap-4">
                     <div class="w-12 h-12 rounded-xl bg-red-50 text-red-600 flex items-center justify-center text-xl"><i class="fas fa-user-times"></i></div>
                     <div>
-                        <p class="text-xs text-gray-400 font-bold uppercase">អវត្តមាន</p>
+                        <p class="text-xs text-gray-400 font-bold uppercase">{{ __('stu_absent') }}</p>
                         <h4 class="text-2xl font-black text-gray-800">{{ $totalAbsent ?? 0 }}</h4>
                     </div>
                 </div>
                 <div class="bg-white p-4 rounded-2xl border border-blue-100 shadow-sm flex items-center gap-4">
                     <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl"><i class="fas fa-file-contract"></i></div>
                     <div>
-                        <p class="text-xs text-gray-400 font-bold uppercase">ច្បាប់</p>
+                        <p class="text-xs text-gray-400 font-bold uppercase">{{ __('stu_permission') }}</p>
                         <h4 class="text-2xl font-black text-gray-800">{{ $totalPermission ?? 0 }}</h4>
                     </div>
                 </div>
                 <div class="bg-white p-4 rounded-2xl border border-yellow-100 shadow-sm flex items-center gap-4">
                     <div class="w-12 h-12 rounded-xl bg-yellow-50 text-yellow-600 flex items-center justify-center text-xl"><i class="fas fa-clock"></i></div>
                     <div>
-                        <p class="text-xs text-gray-400 font-bold uppercase">យឺត</p>
+                        <p class="text-xs text-gray-400 font-bold uppercase">{{ __('stu_late') }}</p>
                         <h4 class="text-2xl font-black text-gray-800">{{ $totalLate ?? 0 }}</h4>
                     </div>
                 </div>
@@ -98,11 +98,11 @@
             <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-12">
                 @php
                     $stats = [
-                        ['label' => 'កម្រងសំណួរ', 'count' => $upcomingQuizzes->count(), 'icon' => 'fa-stopwatch', 'color' => 'indigo'],
-                        ['label' => 'កិច្ចការ', 'count' => $upcomingAssignments->count(), 'icon' => 'fa-file-signature', 'color' => 'emerald'],
-                        ['label' => 'ការប្រឡង', 'count' => $upcomingExams->count(), 'icon' => 'fa-graduation-cap', 'color' => 'rose'],
-                        ['label' => 'ម៉ោងសិក្សា', 'count' => $upcomingSchedules->count(), 'icon' => 'fa-book-open', 'color' => 'purple'],
-                        ['label' => 'មុខវិជ្ជា', 'count' => $enrolledCourses->count(), 'icon' => 'fa-layer-group', 'color' => 'blue'],
+                        ['label' => __('stu_quizzes'), 'count' => $upcomingQuizzes->count(), 'icon' => 'fa-stopwatch', 'color' => 'indigo'],
+                        ['label' => __('stu_assignments'), 'count' => $upcomingAssignments->count(), 'icon' => 'fa-file-signature', 'color' => 'emerald'],
+                        ['label' => __('stu_exams'), 'count' => $upcomingExams->count(), 'icon' => 'fa-graduation-cap', 'color' => 'rose'],
+                        ['label' => __('stu_study_hours'), 'count' => $upcomingSchedules->count(), 'icon' => 'fa-book-open', 'color' => 'purple'],
+                        ['label' => __('stu_courses'), 'count' => $enrolledCourses->count(), 'icon' => 'fa-layer-group', 'color' => 'blue'],
                     ];
                 @endphp
                 @foreach($stats as $stat)
@@ -128,7 +128,7 @@
                     <section>
                         <div class="flex items-center gap-3 mb-6">
                             <div class="h-8 w-1.5 bg-purple-600 rounded-full"></div>
-                            <h4 class="text-2xl font-black text-gray-800">{{ __('កាលវិភាគថ្ងៃនេះ') }}</h4>
+                            <h4 class="text-2xl font-black text-gray-800">{{ __('stu_today_schedule') }}</h4>
                         </div>
                         <div class="grid gap-4">
                             @forelse($upcomingSchedules as $schedule)
@@ -136,7 +136,7 @@
                                     <div class="flex items-center gap-5">
                                         <div class="text-center bg-purple-50 px-4 py-2 rounded-2xl border border-purple-100 min-w-[80px]">
                                             <p class="text-sm font-black text-purple-600">{{ $schedule->start_time->format('H:i') }}</p>
-                                            <p class="text-[10px] font-bold text-purple-400">ដល់ {{ $schedule->end_time->format('H:i') }}</p>
+                                            <p class="text-[10px] font-bold text-purple-400">{{ __('stu_to') }} {{ $schedule->end_time->format('H:i') }}</p>
                                         </div>
                                         <div>
                                             <h5 class="font-black text-gray-800 group-hover:text-purple-600 transition-colors">
@@ -150,7 +150,7 @@
                                     </div>
                                 </div>
                             @empty
-                                <div class="bg-gray-50 rounded-[2.5rem] p-10 text-center border-2 border-dashed border-gray-200 text-gray-400 italic">{{ __('មិនមានកាលវិភាគសម្រាប់ថ្ងៃនេះទេ') }}</div>
+                                <div class="bg-gray-50 rounded-[2.5rem] p-10 text-center border-2 border-dashed border-gray-200 text-gray-400 italic">{{ __('stu_no_schedule') }}</div>
                             @endforelse
                         </div>
                     </section>
@@ -158,7 +158,7 @@
                     <section>
                         <div class="flex items-center gap-3 mb-6">
                             <div class="h-8 w-1.5 bg-blue-600 rounded-full"></div>
-                            <h4 class="text-2xl font-black text-gray-800">{{ __('មុខវិជ្ជាដែលកំពុងសិក្សា') }}</h4>
+                            <h4 class="text-2xl font-black text-gray-800">{{ __('stu_enrolled_courses') }}</h4>
                         </div>
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -177,19 +177,19 @@
                                     <div class="absolute top-6 right-6 z-10">
                                         @if($course->today_status == 'present')
                                             <span class="px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700 border border-green-200 flex items-center gap-1 shadow-sm">
-                                                <i class="fas fa-check-circle"></i> {{ __('វត្តមាន') }}
+                                                <i class="fas fa-check-circle"></i> {{ __('stu_present') }}
                                             </span>
                                         @elseif($course->today_status == 'absent')
                                             <span class="px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700 border border-red-200 shadow-sm">
-                                                {{ __('អវត្តមាន') }}
+                                                {{ __('stu_absent') }}
                                             </span>
                                         @elseif($course->today_status == 'late')
                                             <span class="px-3 py-1 rounded-full text-xs font-bold bg-yellow-100 text-yellow-700 border border-yellow-200 shadow-sm">
-                                                {{ __('យឺត') }}
+                                                {{ __('stu_late') }}
                                             </span>
                                         @else
                                             <span class="px-3 py-1 rounded-full text-xs font-bold bg-gray-50 text-gray-400 border border-gray-100">
-                                                {{ __('មិនទាន់កត់ត្រា') }}
+                                                {{ __('stu_not_recorded') }}
                                             </span>
                                         @endif
                                     </div>

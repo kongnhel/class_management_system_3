@@ -11,7 +11,6 @@ use Illuminate\Validation\ValidationException;
 
 class LoginRequest extends FormRequest
 {
-
     public function authorize(): bool
     {
         return true;
@@ -30,99 +29,100 @@ class LoginRequest extends FormRequest
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-//     public function authenticate(): void
-//     {
-//         $this->ensureIsNotRateLimited();
+    //     public function authenticate(): void
+    //     {
+    //         $this->ensureIsNotRateLimited();
 
-//         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
-//             RateLimiter::hit($this->throttleKey());
+    //         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+    //             RateLimiter::hit($this->throttleKey());
 
-//             throw ValidationException::withMessages([
-//                 'email' => trans('auth.failed'),
-//             ]);
-//         }
+    //             throw ValidationException::withMessages([
+    //                 'email' => trans('auth.failed'),
+    //             ]);
+    //         }
 
-//         RateLimiter::clear($this->throttleKey());
-//     }
+    //         RateLimiter::clear($this->throttleKey());
+    //     }
 
-//     /**
-//      * Ensure the login request is not rate limited.
-//      *
-//      * @throws \Illuminate\Validation\ValidationException
-//      */
-//     // public function ensureIsNotRateLimited(): void
-//     // {
-//     //     if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
-//     //         return;
-//     //     }
+    //     /**
+    //      * Ensure the login request is not rate limited.
+    //      *
+    //      * @throws \Illuminate\Validation\ValidationException
+    //      */
+    //     // public function ensureIsNotRateLimited(): void
+    //     // {
+    //     //     if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+    //     //         return;
+    //     //     }
 
-//     //     event(new Lockout($this));
+    //     //     event(new Lockout($this));
 
-//     //     $seconds = RateLimiter::availableIn($this->throttleKey());
+    //     //     $seconds = RateLimiter::availableIn($this->throttleKey());
 
-//     //     throw ValidationException::withMessages([
-//     //         'email' => trans('auth.throttle', [
-//     //             'seconds' => $seconds,
-//     //             'minutes' => ceil($seconds / 60),
-//     //         ]),
-//     //     ]);
-//     // }
-// public function ensureIsNotRateLimited(): void
-// {
-//     if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
-//         return;
-//     }
+    //     //     throw ValidationException::withMessages([
+    //     //         'email' => trans('auth.throttle', [
+    //     //             'seconds' => $seconds,
+    //     //             'minutes' => ceil($seconds / 60),
+    //     //         ]),
+    //     //     ]);
+    //     // }
+    // public function ensureIsNotRateLimited(): void
+    // {
+    //     if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+    //         return;
+    //     }
 
-//     event(new Lockout($this));
+    //     event(new Lockout($this));
 
-//     // កំណត់ឱ្យវា Lock ១៥ នាទី (៩០០ វិនាទី) នៅត្រង់នេះ
-//     $seconds = RateLimiter::availableIn($this->throttleKey());
-    
-//     // ប្រសិនបើចង់ឱ្យវា Lock ១៥ នាទីភ្លាមៗពេលគ្រប់ ៥ ដង
-//     // អ្នកអាចប្រើ RateLimiter::hit($this->throttleKey(), 900); នៅត្រង់នេះក៏បាន
-    
-//     throw ValidationException::withMessages([
-//         'email' => trans('auth.throttle', [
-//             'seconds' => $seconds,
-//             'minutes' => ceil($seconds / 60),
-//         ]),
-//     ]);
-// }
+    //     // កំណត់ឱ្យវា Lock ១៥ នាទី (៩០០ វិនាទី) នៅត្រង់នេះ
+    //     $seconds = RateLimiter::availableIn($this->throttleKey());
 
-public function ensureIsNotRateLimited(): void
-{
-    if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
-        return;
-    }
+    //     // ប្រសិនបើចង់ឱ្យវា Lock ១៥ នាទីភ្លាមៗពេលគ្រប់ ៥ ដង
+    //     // អ្នកអាចប្រើ RateLimiter::hit($this->throttleKey(), 900); នៅត្រង់នេះក៏បាន
 
-    event(new Lockout($this));
+    //     throw ValidationException::withMessages([
+    //         'email' => trans('auth.throttle', [
+    //             'seconds' => $seconds,
+    //             'minutes' => ceil($seconds / 60),
+    //         ]),
+    //     ]);
+    // }
 
-    $seconds = RateLimiter::availableIn($this->throttleKey());
+    public function ensureIsNotRateLimited(): void
+    {
+        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+            return;
+        }
 
-    throw ValidationException::withMessages([
-        'email' => trans('auth.throttle', [
-            'seconds' => $seconds,
-            'minutes' => ceil($seconds / 60),
-        ]),
-    ]);
-}
+        event(new Lockout($this));
 
-// Lock 15 នាទីពេល hit 5 ដង
-public function authenticate(): void
-{
-    $this->ensureIsNotRateLimited();
-
-    if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
-        // ← 900 វិនាទី = 15 នាទី
-        RateLimiter::hit($this->throttleKey(), 900);
+        $seconds = RateLimiter::availableIn($this->throttleKey());
 
         throw ValidationException::withMessages([
-            'email' => trans('auth.failed'),
+            'email' => trans('auth.throttle', [
+                'seconds' => $seconds,
+                'minutes' => ceil($seconds / 60),
+            ]),
         ]);
     }
 
-    RateLimiter::clear($this->throttleKey());
-}
+    // Lock 15 នាទីពេល hit 5 ដង
+    public function authenticate(): void
+    {
+        $this->ensureIsNotRateLimited();
+
+        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+            // ← 900 វិនាទី = 15 នាទី
+            RateLimiter::hit($this->throttleKey(), 900);
+
+            throw ValidationException::withMessages([
+                'email' => trans('auth.failed'),
+            ]);
+        }
+
+        RateLimiter::clear($this->throttleKey());
+    }
+
     /**
      * Get the rate limiting throttle key for the request.
      */
@@ -130,5 +130,4 @@ public function authenticate(): void
     {
         return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
     }
-    
 } //

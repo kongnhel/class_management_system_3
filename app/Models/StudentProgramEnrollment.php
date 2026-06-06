@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class StudentProgramEnrollment extends Model
 {
-
     use HasFactory;
 
     protected $fillable = [

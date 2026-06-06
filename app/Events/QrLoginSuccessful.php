@@ -4,18 +4,17 @@ namespace App\Events;
 
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow; 
-
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class QrLoginSuccessful implements ShouldBroadcastNow 
+class QrLoginSuccessful implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $token;
-    public $userId;
 
+    public $userId;
 
     public function __construct($token, $userId)
     {
@@ -23,10 +22,9 @@ class QrLoginSuccessful implements ShouldBroadcastNow
         $this->userId = $userId;
     }
 
-
     public function broadcastOn(): array
     {
-        return [new Channel('login-channel-' . $this->token)];
+        return [new Channel('login-channel-'.$this->token)];
     }
 
     public function broadcastAs(): string

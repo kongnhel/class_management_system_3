@@ -15,26 +15,26 @@ return new class extends Migration
             // Add student_id_code if it doesn't exist.
             // Removed ->unique() constraint here to allow multiple NULLs in SQL Server.
             // Uniqueness for actual student IDs will be enforced in application logic/validation.
-            if (!Schema::hasColumn('users', 'student_id_code')) {
+            if (! Schema::hasColumn('users', 'student_id_code')) {
                 $table->string('student_id_code')->nullable()->after('role');
             }
 
             // Add department_id for professors.
-            if (!Schema::hasColumn('users', 'department_id')) {
+            if (! Schema::hasColumn('users', 'department_id')) {
                 $table->foreignId('department_id')
-                      ->nullable()
-                      ->constrained('departments')
-                      ->onDelete('no action')
-                      ->after('student_id_code');
+                    ->nullable()
+                    ->constrained('departments')
+                    ->onDelete('no action')
+                    ->after('student_id_code');
             }
 
             // Add program_id for students.
-            if (!Schema::hasColumn('users', 'program_id')) {
+            if (! Schema::hasColumn('users', 'program_id')) {
                 $table->foreignId('program_id')
-                      ->nullable()
-                      ->constrained('programs')
-                      ->onDelete('no action')
-                      ->after('department_id');
+                    ->nullable()
+                    ->constrained('programs')
+                    ->onDelete('no action')
+                    ->after('department_id');
             }
         });
     }

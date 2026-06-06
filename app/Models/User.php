@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -26,8 +25,8 @@ class User extends Authenticatable
         'student_id_code', // Added for students
         'department_id',   // Added for professors
         'program_id',      // Added for students
-        'generation',  
-            // Added for students
+        'generation',
+        // Added for students
         'google_id',
         'avatar',
 
@@ -57,8 +56,7 @@ class User extends Authenticatable
             'deleted_at' => 'datetime',
         ];
     }
-    
-    
+
     // Added for role check in authorization
     public function isAdmin(): bool
     {
@@ -82,13 +80,18 @@ class User extends Authenticatable
     {
         return $this->hasOne(UserProfile::class);
     }
-    
+
+    public function userProfile()
+    {
+        return $this->hasOne(UserProfile::class);
+    }
+
     // In App\Models\User.php
 
-// public function professorProfile()
-// {
-//     return $this->hasOne(ProfessorProfile::class);
-// }
+    // public function professorProfile()
+    // {
+    //     return $this->hasOne(ProfessorProfile::class);
+    // }
 
     /**
      * Get the department that the professor user belongs to.
@@ -120,22 +123,6 @@ class User extends Authenticatable
     public function departmentsAsHead()
     {
         return $this->hasMany(Department::class, 'head_user_id');
-    }
-
-    /**
-     * Get the course offerings where this user is the lecturer.
-     */
-    public function courseOfferingsAsLecturer()
-    {
-        return $this->hasMany(CourseOffering::class, 'lecturer_user_id');
-    }
-
-    /**
-     * Get the program enrollments for this student user.
-     */
-    public function studentProgramEnrollments()
-    {
-        return $this->hasMany(StudentProgramEnrollment::class, 'student_user_id');
     }
 
     /**
@@ -195,30 +182,22 @@ class User extends Authenticatable
         return $this->morphMany(Notification::class, 'notifiable');
     }
 
-       public function studentEnrollments()
-    {
-        return $this->hasMany(StudentCourseEnrollment::class, 'student_user_id');
-    }
-        public function programs()
+    public function programs()
     {
         return $this->hasManyThrough(
-            Program::class, // The final model we want to access
-            CourseOffering::class, // The intermediate model
-            'program_id', // Foreign key on the intermediate table...
-            'id', // Foreign key on the User table...
-            'id', // Local key on the User table...
-            'course_offering_id', // Local key on the intermediate table...
+            Program::class,
+            CourseOffering::class,
+            'lecturer_user_id',
+            'id',
+            'id',
+            'program_id',
         );
     }
-    public function userProfile()
-{
-    return $this->hasOne(UserProfile::class);
-}
 
     public function studentProfile()
-{
-    return $this->hasOne(StudentProfile::class);
-}
+    {
+        return $this->hasOne(StudentProfile::class);
+    }
 
     /**
      * Get the course offerings taught by the user (if they are a professor).
@@ -229,125 +208,113 @@ class User extends Authenticatable
     }
 
     public function hasRole($role)
-{
-    // ឧបមាថាអ្នកមាន column ឈ្មោះ 'role' នៅក្នុង table 'users'
-    // បើអ្នកប្រើតារាងផ្សេង សូមកែសម្រួលលក្ខខណ្ឌខាងក្រោម
-    return $this->role === $role;
-}
-public function enrolledCourses()
-{
-    return $this->belongsToMany(
-        \App\Models\CourseOffering::class, 
-        'student_course_enrollments', 
-        'student_user_id', 
-        'course_offering_id'
-    );
-}
+    {
+        // ឧបមាថាអ្នកមាន column ឈ្មោះ 'role' នៅក្នុង table 'users'
+        // បើអ្នកប្រើតារាងផ្សេង សូមកែសម្រួលលក្ខខណ្ឌខាងក្រោម
+        return $this->role === $role;
+    }
 
-/**
- * Relationship ទៅកាន់តារាងវត្តមាន
- * ប្រើដើម្បីរាប់ចំនួនវត្តមានក្នុងរបាយការណ៍
- */
-public function attendances()
-{
-    return $this->hasMany(\App\Models\AttendanceRecord::class, 'student_user_id');
-}
+    public function enrolledCourses()
+    {
+        return $this->belongsToMany(
+            \App\Models\CourseOffering::class,
+            'student_course_enrollments',
+            'student_user_id',
+            'course_offering_id'
+        );
+    }
+
+    /**
+     * Relationship ទៅកាន់តារាងវត្តមាន
+     * ប្រើដើម្បីរាប់ចំនួនវត្តមានក្នុងរបាយការណ៍
+     */
+    public function attendances()
+    {
+        return $this->hasMany(\App\Models\AttendanceRecord::class, 'student_user_id');
+    }
     // You may also have other relationships here, like department() or program()
     // You can also add the studentCourseEnrollments relationship here for consistency
-    
-// app/Models/User.php
 
+    // app/Models/User.php
 
+    /**
+     * គណនាពិន្ទុវត្តមាន (១៥%)
+     */
+    // នៅក្នុង User.php Model
+    // public function getAttendanceScoreByCourse($course_id)
+    // {
+    //     $maxScore = 15;
 
-/**
- * គណនាពិន្ទុវត្តមាន (១៥%)
- */
-// នៅក្នុង User.php Model
-// public function getAttendanceScoreByCourse($course_id)
-// {
-//     $maxScore = 15;
+    //     // រាប់អវត្តមាន តែរាប់ចំពោះតែមុខវិជ្ជាដែលយើងចង់ដឹងប៉ុណ្ណោះ
+    //     $absentCount = $this->attendanceRecords()
+    //                         ->where('course_offering_id', $course_id)
+    //                         ->where('status', 'absent')
+    //                         ->count();
 
-//     // រាប់អវត្តមាន តែរាប់ចំពោះតែមុខវិជ្ជាដែលយើងចង់ដឹងប៉ុណ្ណោះ
-//     $absentCount = $this->attendanceRecords()
-//                         ->where('course_offering_id', $course_id) 
-//                         ->where('status', 'absent')
-//                         ->count();
+    //     $deduction = floor($absentCount / 2);
+    //     $score = $maxScore - $deduction;
 
-//     $deduction = floor($absentCount / 2); 
-//     $score = $maxScore - $deduction;
+    //     return max(0, $score);
+    // }
 
-//     return max(0, $score);
-// }
+    // public function getFinalAttendanceScore($course_id)
+    // {
+    //     $enrollment = \App\Models\StudentCourseEnrollment::where('student_user_id', $this->id)
+    //                     ->where('course_offering_id', $course_id)
+    //                     ->first();
 
-// public function getFinalAttendanceScore($course_id)
-// {
-//     $enrollment = \App\Models\StudentCourseEnrollment::where('student_user_id', $this->id)
-//                     ->where('course_offering_id', $course_id)
-//                     ->first();
+    //     // បើមានពិន្ទុដែលគ្រូបញ្ចូលដោយដៃ យកពិន្ទុដៃ
+    //     if ($enrollment && $enrollment->attendance_score_manual !== null) {
+    //         return $enrollment->attendance_score_manual;
+    //     }
 
-//     // បើមានពិន្ទុដែលគ្រូបញ្ចូលដោយដៃ យកពិន្ទុដៃ
-//     if ($enrollment && $enrollment->attendance_score_manual !== null) {
-//         return $enrollment->attendance_score_manual;
-//     }
+    //     // បើគ្មានទេ ប្រើ System គណនា
+    //     return $this->getAttendanceScoreByCourse($course_id);
+    // }
 
-//     // បើគ្មានទេ ប្រើ System គណនា
-//     return $this->getAttendanceScoreByCourse($course_id);
-// }
+    /**
+     * គណនាពិន្ទុវត្តមានស្វ័យប្រវត្តិ (Auto Calculation)
+     * Uses a single query for both absent and permission counts.
+     */
+    public function getAttendanceScoreByCourse($course_id)
+    {
+        $maxScore = 15;
 
-/**
- * គណនាពិន្ទុវត្តមានស្វ័យប្រវត្តិ (Auto Calculation)
- */
-public function getAttendanceScoreByCourse($course_id)
-{
-    $maxScore = 15; // ពិន្ទុពេញ ១៥
+        $counts = $this->attendanceRecords()
+            ->where('course_offering_id', $course_id)
+            ->whereIn('status', ['absent', 'permission'])
+            ->selectRaw("SUM(CASE WHEN status = 'absent' THEN 1 ELSE 0 END) as absent_count, SUM(CASE WHEN status = 'permission' THEN 1 ELSE 0 END) as permission_count")
+            ->first();
 
-    // ១. រាប់ចំនួនអវត្តមាន (Absent)
-    $absentCount = $this->attendanceRecords()
-                        ->where('course_offering_id', $course_id) 
-                        ->where('status', 'absent')
-                        ->count();
+        $absentDeduction = floor(($counts->absent_count ?? 0) / 2);
+        $permissionDeduction = floor(($counts->permission_count ?? 0) / 4);
 
-    // ២. រាប់ចំនួនសុំច្បាប់ (Permission)
-    $permissionCount = $this->attendanceRecords()
-                            ->where('course_offering_id', $course_id)
-                            ->where('status', 'permission')
-                            ->count();
+        $score = $maxScore - ($absentDeduction + $permissionDeduction);
 
-    // --- រូបមន្តដកពិន្ទុ ---
-    // អវត្តមាន ២ ដង ដក ១ ពិន្ទុ
-    $absentDeduction = floor($absentCount / 2);
-    
-    // ច្បាប់ ៤ ដង ដក ១ ពិន្ទុ (បន្ថែមថ្មី)
-    $permissionDeduction = floor($permissionCount / 4);
+        return max(0, $score);
+    }
+    // // នៅក្នុង Student Model
+    // public function calculateAutoAttendanceScore($courseOfferingId) {
+    //     $totalSessions = Attendance::where('course_offering_id', $courseOfferingId)->count();
+    //     $presentSessions = Attendance::where('course_offering_id', $courseOfferingId)
+    //                         ->where('student_id', $this->id)
+    //                         ->where('status', 'present')
+    //                         ->count();
 
-    // គណនាពិន្ទុចុងក្រោយ
-    $score = $maxScore - ($absentDeduction + $permissionDeduction);
+    //     if($totalSessions == 0) return 0;
 
-    return max(0, $score);
-}
-// // នៅក្នុង Student Model
-// public function calculateAutoAttendanceScore($courseOfferingId) {
-//     $totalSessions = Attendance::where('course_offering_id', $courseOfferingId)->count();
-//     $presentSessions = Attendance::where('course_offering_id', $courseOfferingId)
-//                         ->where('student_id', $this->id)
-//                         ->where('status', 'present')
-//                         ->count();
-                        
-//     if($totalSessions == 0) return 0;
-    
-//     $attendanceWeight = 15; // ឬទាញពី $courseOffering->attendance_weight
-//     return ($presentSessions / $totalSessions) * $attendanceWeight;
-// }
-/**
- * យកពិន្ទុចុងក្រោយ (Manual Override vs Auto)
- */
+    //     $attendanceWeight = 15; // ឬទាញពី $courseOffering->attendance_weight
+    //     return ($presentSessions / $totalSessions) * $attendanceWeight;
+    // }
+    /**
+     * យកពិន្ទុចុងក្រោយ (Manual Override vs Auto)
+     */
 
-/**
- * បន្ថែម Relationship ទៅកាន់តារាង StudentProgramEnrollment
- */
-// public function programEnrollments()
-// {
-//     return $this->hasMany(\App\Models\StudentProgramEnrollment::class, 'student_user_id');
-// }
-
+    /**
+     * បន្ថែម Relationship ទៅកាន់តារាង StudentProgramEnrollment
+     */
+    public function studentProgramEnrollments()
+    {
+        return $this->hasMany(\App\Models\StudentProgramEnrollment::class, 'student_user_id');
+    }
 }

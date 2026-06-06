@@ -60,7 +60,7 @@ return [
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
                 PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false,
-                
+
             ]) : [],
 
             //    'sqlsrv' => [
@@ -101,7 +101,6 @@ return [
             //     'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'yes'),
 
             // ],
-
 
         ],
 
@@ -184,28 +183,28 @@ return [
     |
     */
     'redis' => [
-    'client' => env('REDIS_CLIENT', 'predis'),
+        'client' => env('REDIS_CLIENT', 'predis'),
 
-    'default' => [
-        'scheme'   => 'tls',
-        'host'     => env('REDIS_HOST', '127.0.0.1'),
-        'username' => env('REDIS_USERNAME', 'default'),
-        'password' => env('REDIS_PASSWORD', null),
-        'port'     => env('REDIS_PORT', 6379),
-        'database' => env('REDIS_DB', 0),
-        'ssl'      => ['verify_peer' => false],
-    ],
+        'default' => [
+            'scheme' => 'tls',
+            'host' => env('REDIS_HOST', '127.0.0.1'),
+            'username' => env('REDIS_USERNAME', 'default'),
+            'password' => env('REDIS_PASSWORD', null),
+            'port' => env('REDIS_PORT', 6379),
+            'database' => env('REDIS_DB', 0),
+            'ssl' => ['verify_peer' => false],
+        ],
 
-    'cache' => [
-        'scheme'   => 'tls',
-        'host'     => env('REDIS_HOST', '127.0.0.1'),
-        'username' => env('REDIS_USERNAME', 'default'),
-        'password' => env('REDIS_PASSWORD', null),
-        'port'     => env('REDIS_PORT', 6379),
-        'database' => env('REDIS_CACHE_DB', 0),
-        'ssl'      => ['verify_peer' => false],
+        'cache' => [
+            'scheme' => 'tls',
+            'host' => env('REDIS_HOST', '127.0.0.1'),
+            'username' => env('REDIS_USERNAME', 'default'),
+            'password' => env('REDIS_PASSWORD', null),
+            'port' => env('REDIS_PORT', 6379),
+            'database' => env('REDIS_CACHE_DB', 0),
+            'ssl' => ['verify_peer' => false],
+        ],
     ],
-],
 
     // 'redis' => [
 

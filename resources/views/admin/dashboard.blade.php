@@ -6,14 +6,14 @@
                     <div class="p-2 bg-green-100 rounded-lg">
                         <i class="fas fa-chart-bar text-green-600 text-xl"></i>
                     </div>
-                    {{ __('ផ្ទាំងគ្រប់គ្រងអ្នកគ្រប់គ្រង') }}
+                    {{ __('admin_dashboard_title') }}
                 </h2>
-                <p class="mt-1 text-sm text-gray-500 ml-12">{{ __('ទិដ្ឋភាពទូទៅនៃប្រព័ន្ធ និងស្ថិតិ') }}</p>
+                <p class="mt-1 text-sm text-gray-500 ml-12">{{ __('admin_dashboard_subtitle') }}</p>
             </div>
             {{-- Optional: Date or Breadcrumb could go here --}}
                                 <a href="{{ route('qr.scanner') }}" class="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-xl font-bold text-sm">
     <i class="fa-solid fa-camera"></i>
-    <span>ស្កែន QR ចូល Computer</span>
+    <span>{{ __('admin_scan_qr') }}</span>
 </a>
         </div>
     </x-slot>
@@ -70,7 +70,7 @@
             {{-- Text Content --}}
             <div class="flex-1 pt-0.5">
                 <p class="text-sm font-bold text-gray-900 leading-tight">
-                    {{ session('success') ? __('ជោគជ័យ!') : __('បរាជ័យ!') }}
+                    {{ session('success') ? __('success') : __('error') }}
                 </p>
                 <p class="mt-1 text-sm text-gray-600 leading-relaxed">
                     {{ session('success') ?? session('error') }}
@@ -103,7 +103,7 @@
                 <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:-translate-y-1 group">
                     <div class="flex justify-between items-start">
                         <div>
-                            <p class="text-sm font-medium text-gray-500 mb-1">{{ __('អ្នកប្រើប្រាស់សរុប') }}</p>
+                            <p class="text-sm font-medium text-gray-500 mb-1">{{ __('admin_total_users') }}</p>
                             <h3 class="text-3xl font-extrabold text-gray-800">{{ $totalUsers }}</h3>
                         </div>
                         <div class="p-3 bg-green-50 rounded-xl text-green-600 group-hover:bg-green-600 group-hover:text-white transition-colors duration-300">
@@ -119,7 +119,7 @@
                 <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:-translate-y-1 group">
                     <div class="flex justify-between items-start">
                         <div>
-                            <p class="text-sm font-medium text-gray-500 mb-1">{{ __('និស្សិតសរុប') }}</p>
+                            <p class="text-sm font-medium text-gray-500 mb-1">{{ __('admin_total_students') }}</p>
                             <h3 class="text-3xl font-extrabold text-gray-800">{{ $totalStudents }}</h3>
                         </div>
                         <div class="p-3 bg-teal-50 rounded-xl text-teal-600 group-hover:bg-teal-600 group-hover:text-white transition-colors duration-300">
@@ -135,7 +135,7 @@
                 <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:-translate-y-1 group">
                     <div class="flex justify-between items-start">
                         <div>
-                            <p class="text-sm font-medium text-gray-500 mb-1">{{ __('សាស្ត្រាចារ្យសរុប') }}</p>
+                            <p class="text-sm font-medium text-gray-500 mb-1">{{ __('admin_total_professors') }}</p>
                             <h3 class="text-3xl font-extrabold text-gray-800">{{ $totalProfessors }}</h3>
                         </div>
                         <div class="p-3 bg-orange-50 rounded-xl text-orange-600 group-hover:bg-orange-600 group-hover:text-white transition-colors duration-300">
@@ -151,7 +151,7 @@
                 <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:-translate-y-1 group">
                     <div class="flex justify-between items-start">
                         <div>
-                            <p class="text-sm font-medium text-gray-500 mb-1">{{ __('មហាវិទ្យាល័យសរុប') }}</p>
+                            <p class="text-sm font-medium text-gray-500 mb-1">{{ __('admin_total_faculties') }}</p>
                             <h3 class="text-3xl font-extrabold text-gray-800">{{ $totalFaculties }}</h3>
                         </div>
                         <div class="p-3 bg-purple-50 rounded-xl text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors duration-300">
@@ -172,7 +172,7 @@
                     <div class="p-6 border-b border-gray-50 flex items-center justify-between">
                         <h4 class="text-lg font-bold text-gray-800 flex items-center gap-2">
                             <i class="fas fa-bolt text-teal-500"></i>
-                            {{ __('សកម្មភាពរហ័ស') }}
+                            {{ __('admin_quick_actions') }}
                         </h4>
                     </div>
                     <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -182,8 +182,8 @@
                                 <i class="fas fa-user-plus text-lg"></i>
                             </div>
                             <div class="ml-4">
-                                <h5 class="font-bold text-gray-800 group-hover:text-blue-700">{{ __('បន្ថែមអ្នកប្រើប្រាស់') }}</h5>
-                                <p class="text-xs text-gray-500 mt-0.5">{{ __('បង្កើតគណនីថ្មី') }}</p>
+                                <h5 class="font-bold text-gray-800 group-hover:text-blue-700">{{ __('admin_add_user') }}</h5>
+                                <p class="text-xs text-gray-500 mt-0.5">{{ __('admin_create_account') }}</p>
                             </div>
                             <i class="fas fa-chevron-right ml-auto text-gray-300 group-hover:text-blue-400"></i>
                         </a>
@@ -193,8 +193,8 @@
                                 <i class="fas fa-university text-lg"></i>
                             </div>
                             <div class="ml-4">
-                                <h5 class="font-bold text-gray-800 group-hover:text-green-700">{{ __('បន្ថែមមហាវិទ្យាល័យ') }}</h5>
-                                <p class="text-xs text-gray-500 mt-0.5">{{ __('បង្កើតស្ថាប័នថ្មី') }}</p>
+                                <h5 class="font-bold text-gray-800 group-hover:text-green-700">{{ __('admin_add_faculty') }}</h5>
+                                <p class="text-xs text-gray-500 mt-0.5">{{ __('admin_create_institution') }}</p>
                             </div>
                             <i class="fas fa-chevron-right ml-auto text-gray-300 group-hover:text-green-400"></i>
                         </a>
@@ -204,8 +204,8 @@
                                 <i class="fas fa-users-cog text-lg"></i>
                             </div>
                             <div class="ml-4">
-                                <h5 class="font-bold text-gray-800 group-hover:text-purple-700">{{ __('គ្រប់គ្រងអ្នកប្រើប្រាស់') }}</h5>
-                                <p class="text-xs text-gray-500 mt-0.5">{{ __('កែប្រែ ឬលុបគណនី') }}</p>
+                                <h5 class="font-bold text-gray-800 group-hover:text-purple-700">{{ __('admin_manage_users') }}</h5>
+                                <p class="text-xs text-gray-500 mt-0.5">{{ __('admin_edit_delete') }}</p>
                             </div>
                             <i class="fas fa-chevron-right ml-auto text-gray-300 group-hover:text-purple-400"></i>
                         </a>
@@ -215,8 +215,8 @@
                                 <i class="fas fa-building text-lg"></i>
                             </div>
                             <div class="ml-4">
-                                <h5 class="font-bold text-gray-800 group-hover:text-red-700">{{ __('គ្រប់គ្រងមហាវិទ្យាល័យ') }}</h5>
-                                <p class="text-xs text-gray-500 mt-0.5">{{ __('ទិន្នន័យស្ថាប័ន') }}</p>
+                                <h5 class="font-bold text-gray-800 group-hover:text-red-700">{{ __('admin_manage_faculties') }}</h5>
+                                <p class="text-xs text-gray-500 mt-0.5">{{ __('admin_institution_data') }}</p>
                             </div>
                             <i class="fas fa-chevron-right ml-auto text-gray-300 group-hover:text-red-400"></i>
                         </a>
@@ -229,7 +229,7 @@
                     <div class="p-6 border-b border-gray-50">
                         <h4 class="text-lg font-bold text-gray-800 flex items-center gap-2">
                             <i class="fas fa-info-circle text-blue-500"></i>
-                            {{ __('ព័ត៌មានប្រព័ន្ធ') }}
+                            {{ __('admin_system_info') }}
                         </h4>
                     </div>
                     <div class="p-6 flex-1">
@@ -240,7 +240,7 @@
                                     <div class="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
                                         <i class="fas fa-sitemap text-xs"></i>
                                     </div>
-                                    <span class="text-gray-600 font-medium">{{ __('ដេប៉ាតឺម៉ង់សរុប') }}</span>
+                                    <span class="text-gray-600 font-medium">{{ __('admin_total_departments') }}</span>
                                 </div>
                                 <span class="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{{ $totalDepartments }}</span>
                             </div>
@@ -252,7 +252,7 @@
                                     <div class="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
                                         <i class="fas fa-cubes text-xs"></i>
                                     </div>
-                                    <span class="text-gray-600 font-medium">{{ __('កម្មវិធីសិក្សាសរុប') }}</span>
+                                    <span class="text-gray-600 font-medium">{{ __('admin_total_programs') }}</span>
                                 </div>
                                 <span class="text-lg font-bold text-gray-900 group-hover:text-emerald-600 transition-colors">{{ $totalPrograms }}</span>
                             </div>
@@ -264,7 +264,7 @@
                                     <div class="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center text-amber-600">
                                         <i class="fas fa-book text-xs"></i>
                                     </div>
-                                    <span class="text-gray-600 font-medium">{{ __('មុខវិជ្ជាសរុប') }}</span>
+                                    <span class="text-gray-600 font-medium">{{ __('admin_total_courses') }}</span>
                                 </div>
                                 <span class="text-lg font-bold text-gray-900 group-hover:text-amber-600 transition-colors">{{ $totalCourses }}</span>
                             </div>
@@ -276,7 +276,7 @@
                                     <div class="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600">
                                         <i class="fas fa-layer-group text-xs"></i>
                                     </div>
-                                    <span class="text-gray-600 font-medium">{{ __('វគ្គសិក្សាសរុប') }}</span>
+                                    <span class="text-gray-600 font-medium">{{ __('admin_total_offerings') }}</span>
                                 </div>
                                 <span class="text-lg font-bold text-gray-900 group-hover:text-indigo-600 transition-colors">{{ $totalCourseOfferings }}</span>
                             </div>

@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Models\Program;
-use App\Models\StudentProgramEnrollment;
-use App\Models\StudentCourseEnrollment; 
 use App\Models\CourseOffering;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
+use App\Models\Program;
+use App\Models\StudentCourseEnrollment;
+use App\Models\StudentProgramEnrollment;
+use App\Models\User;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class StudentRegistrationController extends Controller
 {
@@ -20,6 +20,7 @@ class StudentRegistrationController extends Controller
     {
         $programs = Program::all();
         $generations = User::select('generation')->distinct()->pluck('generation')->filter()->all();
+
         return view('auth.register', compact('programs', 'generations'));
     }
 
@@ -66,11 +67,11 @@ class StudentRegistrationController extends Controller
 
                 foreach ($courseOfferings as $offering) {
                     StudentCourseEnrollment::create([
-                        'student_user_id'    => $user->id,
-                        'student_id'         => $user->id, 
+                        'student_user_id' => $user->id,
+                        'student_id' => $user->id,
                         'course_offering_id' => $offering->id,
-                        'enrollment_date'    => now(),
-                        'status'             => 'enrolled',
+                        'enrollment_date' => now(),
+                        'status' => 'enrolled',
                     ]);
                 }
 
@@ -81,7 +82,7 @@ class StudentRegistrationController extends Controller
             return redirect()->route('dashboard')->with('success', 'ចុះឈ្មោះជោគជ័យ!');
 
         } catch (\Exception $e) {
-            return back()->with('error', 'Error: ' . $e->getMessage());
+            return back()->with('error', 'Error: '.$e->getMessage());
         }
     }
 }

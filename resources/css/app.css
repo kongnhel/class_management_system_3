@@ -4,5 +4,5 @@
 @plugin "@tailwindcss/forms"; 
 
 @theme {
-    /* ... custom theme របស់បង (បើមាន) ... */
+    --font-sans: 'Battambang', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
 }

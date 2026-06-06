@@ -31,27 +31,28 @@ class Course extends Model
     |--------------------------------------------------------------------------
     */
     protected static function boot()
-        {
-            parent::boot();
+    {
+        parent::boot();
 
-            // This static method runs when a new Course model is CREATED in the database
-            static::created(function (Course $course) {
-                $defaultComponents = GradingCategory::DEFAULT_COMPONENTS;
-                $categoriesToCreate = [];
-                
-                // Prepare data array for efficient batch insertion
-                foreach ($defaultComponents as $component) {
-                    $categoriesToCreate[] = array_merge($component, [
-                        'course_id' => $course->id,
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]);
-                }
-                
-                // Insert the 4 new components in one query linked to the new course
-                $course->gradingCategories()->insert($categoriesToCreate);
-            });
-        }
+        // This static method runs when a new Course model is CREATED in the database
+        static::created(function (Course $course) {
+            $defaultComponents = GradingCategory::DEFAULT_COMPONENTS;
+            $categoriesToCreate = [];
+
+            // Prepare data array for efficient batch insertion
+            foreach ($defaultComponents as $component) {
+                $categoriesToCreate[] = array_merge($component, [
+                    'course_id' => $course->id,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+
+            // Insert the 4 new components in one query linked to the new course
+            $course->gradingCategories()->insert($categoriesToCreate);
+        });
+    }
+
     /**
      * Get the department that the course belongs to.
      */
@@ -70,13 +71,12 @@ class Course extends Model
     //     // return $this->belongsTo(Program::class);
     //     return $this->belongsToMany(Program::class, 'course_program');
 
-
     // }
 
     public function programs()
-{
-    return $this->belongsToMany(Program::class, 'course_program', 'course_id', 'program_id');
-}
+    {
+        return $this->belongsToMany(Program::class, 'course_program', 'course_id', 'program_id');
+    }
 
     /**
      * Get the course offerings for this course.

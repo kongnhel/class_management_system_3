@@ -9,17 +9,17 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-public function up(): void
-{
-    Schema::table('courses', function (Blueprint $table) {
-        $table->softDeletes(); // វានឹងបង្កើត column deleted_at ឲ្យ
-    });
-}
+    public function up(): void
+    {
+        Schema::table('courses', function (Blueprint $table) {
+            $table->softDeletes(); // វានឹងបង្កើត column deleted_at ឲ្យ
+        });
+    }
 
-public function down(): void
-{
-    Schema::table('courses', function (Blueprint $table) {
-        $table->dropSoftDeletes();
-    });
-}
+    public function down(): void
+    {
+        Schema::table('courses', function (Blueprint $table) {
+            $table->dropSoftDeletes();
+        });
+    }
 };

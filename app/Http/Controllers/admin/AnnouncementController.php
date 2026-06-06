@@ -1,22 +1,21 @@
 <?php
 
 namespace App\Http\Controllers\admin;
+
+use App\Http\Controllers\Controller;
 use App\Models\Announcement;
 use App\Models\CourseOffering;
-use Illuminate\Validation\Rule;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Controller;
-
-use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class AnnouncementController extends Controller
 {
-    
     public function index()
     {
         $announcements = Announcement::with('poster', 'courseOffering.course', 'courseOffering.program')->paginate(10);
+
         return view('admin.announcements.index', compact('announcements'));
     }
 
@@ -42,7 +41,7 @@ class AnnouncementController extends Controller
             'content_km.required' => 'ខ្លឹមសារជាភាសាខ្មែរត្រូវតែបញ្ចូល។',
             'course_offering_id.exists' => 'ការផ្តល់ជូនវគ្គសិក្សាមិនត្រឹមត្រូវទេ។',
         ]);
-// code 
+        // code
         try {
             Announcement::create([
                 'poster_user_id' => Auth::id(),
@@ -56,21 +55,20 @@ class AnnouncementController extends Controller
 
             Session::flash('success', 'សេចក្តីប្រកាសត្រូវបានបង្កើតដោយជោគជ័យ!');
         } catch (\Exception $e) {
-            Session::flash('error', 'មានបញ្ហាក្នុងការបង្កើតសេចក្តីប្រកាស: ' . $e->getMessage());
+            Session::flash('error', 'មានបញ្ហាក្នុងការបង្កើតសេចក្តីប្រកាស: '.$e->getMessage());
         }
 
         return redirect()->route('admin.announcements.index');
     }
-    
+
     public function edit(Announcement $announcement)
     {
         $courseOfferings = CourseOffering::with('course', 'program')->get();
-        $role = ['all', 'student', 'professor','admin'];
+        $role = ['all', 'student', 'professor', 'admin'];
 
         return view('admin.announcements.edit', compact('announcement', 'courseOfferings', 'role'));
     }
-    
-    
+
     public function update(Request $request, Announcement $announcement)
     {
         $request->validate([
@@ -86,19 +84,19 @@ class AnnouncementController extends Controller
             $announcement->update($request->all());
             Session::flash('success', 'សេចក្តីប្រកាសត្រូវបានកែប្រែដោយជោគជ័យ!');
         } catch (\Exception $e) {
-            Session::flash('error', 'មានបញ្ហាក្នុងការកែប្រែសេចក្តីប្រកាស: ' . $e->getMessage());
+            Session::flash('error', 'មានបញ្ហាក្នុងការកែប្រែសេចក្តីប្រកាស: '.$e->getMessage());
         }
 
         return redirect()->route('admin.announcements.index');
     }
-    
+
     public function destroy(Announcement $announcement)
     {
         try {
             $announcement->delete();
             Session::flash('success', 'សេចក្តីប្រកាសត្រូវបានលុបដោយជោគជ័យ!');
         } catch (\Exception $e) {
-            Session::flash('error', 'មានបញ្ហាក្នុងការលុបសេចក្តីប្រកាស: ' . $e->getMessage());
+            Session::flash('error', 'មានបញ្ហាក្នុងការលុបសេចក្តីប្រកាស: '.$e->getMessage());
         }
 
         return redirect()->route('admin.announcements.index');

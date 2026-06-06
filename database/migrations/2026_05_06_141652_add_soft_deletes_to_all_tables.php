@@ -18,13 +18,13 @@ return new class extends Migration
             'course_offerings',
             'departments',
             'programs',
-            'faculties'
+            'faculties',
         ];
 
         foreach ($tables as $tableName) {
             if (Schema::hasTable($tableName)) {
                 Schema::table($tableName, function (Blueprint $blueprint) use ($tableName) {
-                    if (!Schema::hasColumn($tableName, 'deleted_at')) {
+                    if (! Schema::hasColumn($tableName, 'deleted_at')) {
                         $blueprint->softDeletes();
                     }
                 });
@@ -43,7 +43,7 @@ return new class extends Migration
             'course_offerings',
             'departments',
             'programs',
-            'faculties'
+            'faculties',
         ];
 
         foreach ($tables as $tableName) {

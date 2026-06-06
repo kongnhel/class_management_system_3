@@ -9,13 +9,13 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-public function up()
-{
-    Schema::table('student_course_enrollments', function (Blueprint $table) {
-        // បន្ថែម column attendance_score_manual (ពិន្ទុពេញ ១៥ ដូច្នេះប្រើ decimal ៥,២ គឺគ្រប់គ្រាន់)
-        $table->decimal('attendance_score_manual', 5, 2)->nullable()->after('status');
-    });
-}
+    public function up()
+    {
+        Schema::table('student_course_enrollments', function (Blueprint $table) {
+            // បន្ថែម column attendance_score_manual (ពិន្ទុពេញ ១៥ ដូច្នេះប្រើ decimal ៥,២ គឺគ្រប់គ្រាន់)
+            $table->decimal('attendance_score_manual', 5, 2)->nullable()->after('status');
+        });
+    }
 
     /**
      * Reverse the migrations.

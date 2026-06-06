@@ -1,204 +1,175 @@
 <?php
 
 namespace App\Http\Controllers\professor;
+
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use App\Models\UserProfile;
-use App\Models\Faculty;
-use App\Models\Department;
-use App\Models\Program;
+use App\Models\Announcement;
+use App\Models\Assignment;
+use App\Models\AttendanceRecord;
 use App\Models\Course;
 use App\Models\CourseOffering;
-use App\Models\Assignment;
-use App\Models\Notification;
+use App\Models\Department;
 use App\Models\Exam;
-use App\Models\Quiz;
-use App\Models\QuizQuestion;
-use App\Models\QuizOption;
-use App\Models\AttendanceRecord;
-use App\Models\Submission;
 use App\Models\ExamResult;
-use App\Models\Announcement;
-use App\Models\StudentQuizResponse;
-use App\Models\GradingCategory;
-use Illuminate\Support\Facades\DB;
+use App\Models\Program;
+use App\Models\Quiz;
 use App\Models\Schedule;
-use App\Models\Room;
+use App\Models\User;
+use App\Models\UserProfile;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
-use App\Models\StudentProfile;
-use App\Models\StudentCourseEnrollment;
-use App\Models\StudentProgramEnrollment;
-use App\Notifications\GeneralNotification;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str; 
-use Illuminate\Support\Facades\Notification as NotificationFacade; 
-use Illuminate\Notifications\DatabaseNotification;
-use Illuminate\Support\Facades\Storage;
-use App\Exports\GradebookExport;
-use Maatwebsite\Excel\Facades\Excel;
-use PhpOffice\PhpWord\PhpWord;
-use PhpOffice\PhpWord\IOFactory;
-use PhpOffice\PhpWord\Shared\Converter;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
-use Cloudinary\Configuration\Configuration;
-
 
 class ProfessorController extends Controller
 {
-public function dashboard()
-{
-    $user = \Illuminate\Support\Facades\Auth::user();
-    $todayName = now()->format('l'); // e.g., "Monday"
-    $todayDate = now()->toDateString(); 
+    public function dashboard()
+    {
+        $user = \Illuminate\Support\Facades\Auth::user();
+        $todayName = now()->format('l'); // e.g., "Monday"
+        $todayDate = now()->toDateString();
 
-    $unreadNotificationsCount = $user->unreadNotifications()->count();
+        $unreadNotificationsCount = $user->unreadNotifications()->count();
 
-    // 1. Get Professor Info with Department
-    $professor = \App\Models\User::where('id', $user->id)
-        ->with('department')
-        ->first();
+        // 1. Get Professor Info with Department
+        $professor = \App\Models\User::where('id', $user->id)
+            ->with('department')
+            ->first();
 
-$todaySchedules = \App\Models\Schedule::whereHas('courseOffering', function ($query) use ($user) {
-        $query->where('lecturer_user_id', $user->id);
-    })
-    ->where('day_of_week', $todayName)
-    ->with(['courseOffering.course.programs', 'room']) 
-    ->orderBy('start_time', 'asc')
-    ->get()
-        ->map(function ($schedule) use ($todayDate) {
-
-            $hasRecord = \App\Models\AttendanceRecord::where('course_offering_id', $schedule->course_offering_id)
-                            ->where('date', $todayDate)
-                            ->exists();
-            
-            $schedule->is_completed_today = $hasRecord;
-            return $schedule;
-        });
-    
-    // 3. Count Total Unique Students (for all courses taught by this professor)
-    $totalStudents = \App\Models\StudentCourseEnrollment::whereHas('courseOffering', function ($q) use ($user) {
-        $q->where('lecturer_user_id', $user->id);
-    })->distinct('student_user_id')->count('student_user_id');
-
-    // 4. Upcoming Assignments
-    $upcomingAssignments = \App\Models\Assignment::whereHas('courseOffering', function ($query) use ($user) {
+        $todaySchedules = \App\Models\Schedule::whereHas('courseOffering', function ($query) use ($user) {
             $query->where('lecturer_user_id', $user->id);
         })
-        ->whereDate('due_date', '>=', $todayDate)
-        ->orderBy('due_date')
-        ->take(5)
-        ->get();
+            ->where('day_of_week', $todayName)
+            ->with(['courseOffering.course.programs', 'courseOffering.targetPrograms', 'room'])
+            ->orderBy('start_time', 'asc')
+            ->get()
+            ->map(function ($schedule) use ($todayDate) {
 
-    // 5. Upcoming Exams
-    $upcomingExams = \App\Models\Exam::whereHas('courseOffering', function ($query) use ($user) {
+                $hasRecord = \App\Models\AttendanceRecord::where('course_offering_id', $schedule->course_offering_id)
+                    ->where('date', $todayDate)
+                    ->exists();
+
+                $schedule->is_completed_today = $hasRecord;
+
+                return $schedule;
+            });
+
+        // 3. Count Total Unique Students (for all courses taught by this professor)
+        $totalStudents = \App\Models\StudentCourseEnrollment::whereHas('courseOffering', function ($q) use ($user) {
+            $q->where('lecturer_user_id', $user->id);
+        })->distinct('student_user_id')->count('student_user_id');
+
+        // 4. Upcoming Assignments
+        $upcomingAssignments = \App\Models\Assignment::whereHas('courseOffering', function ($query) use ($user) {
             $query->where('lecturer_user_id', $user->id);
         })
-        ->whereDate('exam_date', '>=', $todayDate)
-        ->orderBy('exam_date')
-        ->take(5)
-        ->get();
+            ->whereDate('due_date', '>=', $todayDate)
+            ->orderBy('due_date')
+            ->take(5)
+            ->get();
 
-    // 6. Upcoming Quizzes
-    $upcomingQuizzes = \App\Models\Quiz::whereHas('courseOffering', function ($query) use ($user) {
+        // 5. Upcoming Exams
+        $upcomingExams = \App\Models\Exam::whereHas('courseOffering', function ($query) use ($user) {
             $query->where('lecturer_user_id', $user->id);
         })
-        ->whereDate('quiz_date', '>=', $todayDate) 
-        ->orderBy('quiz_date', 'asc')
-        ->take(5)
-        ->get();
+            ->whereDate('exam_date', '>=', $todayDate)
+            ->orderBy('exam_date')
+            ->take(5)
+            ->get();
 
-    // 7. Announcements
-    $announcements = \App\Models\Announcement::where('target_role', 'all')
-        ->orWhere('target_role', 'professor')
-        ->orderBy('created_at', 'desc')
-        ->take(5) 
-        ->get();
+        // 6. Upcoming Quizzes
+        $upcomingQuizzes = \App\Models\Quiz::whereHas('courseOffering', function ($query) use ($user) {
+            $query->where('lecturer_user_id', $user->id);
+        })
+            ->whereDate('quiz_date', '>=', $todayDate)
+            ->orderBy('quiz_date', 'asc')
+            ->take(5)
+            ->get();
 
-    // 8. Count Total Courses (for stats card)
-    $courseOfferingsCount = \App\Models\CourseOffering::where('lecturer_user_id', $user->id)->count();
+        // 7. Announcements
+        $announcements = \App\Models\Announcement::where('target_role', 'all')
+            ->orWhere('target_role', 'professor')
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
 
-    return view('professor.dashboard', compact(
-        'user',
-        'professor',
-        'todaySchedules', 
-        'totalStudents',
-        'courseOfferingsCount', 
-        'upcomingAssignments',
-        'upcomingExams',
-        'upcomingQuizzes',
-        'announcements',
-        'unreadNotificationsCount'
-    ));
-}
+        // 8. Count Total Courses (for stats card)
+        $courseOfferingsCount = \App\Models\CourseOffering::where('lecturer_user_id', $user->id)->count();
 
+        return view('professor.dashboard', compact(
+            'user',
+            'professor',
+            'todaySchedules',
+            'totalStudents',
+            'courseOfferingsCount',
+            'upcomingAssignments',
+            'upcomingExams',
+            'upcomingQuizzes',
+            'announcements',
+            'unreadNotificationsCount'
+        ));
+    }
 
-
-
-
-
-
-  /**
+    /**
      * API to get course offerings with associated students for modals.
      */
- public function getStudentsInCourseOffering($offering_id)
-{
-    $user = Auth::user();
+    public function getStudentsInCourseOffering($offering_id)
+    {
+        $user = Auth::user();
 
-    // ១. បន្ថែម Relationship 'studentProgramEnrollments.program' ដើម្បីបង្ហាញព័ត៌មាន Program និង Generation
-    $courseOffering = CourseOffering::where('id', $offering_id)
-        ->where('lecturer_user_id', $user->id)
-        ->with([
-            'course', 
-            'studentCourseEnrollments.student.studentProfile',
-            'studentCourseEnrollments.student.studentProgramEnrollments.program' //
-        ])
-        ->firstOrFail();
+        // ១. បន្ថែម Relationship 'studentProgramEnrollments.program' ដើម្បីបង្ហាញព័ត៌មាន Program និង Generation
+        $courseOffering = CourseOffering::where('id', $offering_id)
+            ->where('lecturer_user_id', $user->id)
+            ->with([
+                'course',
+                'targetPrograms',
+                'studentCourseEnrollments.student.studentProfile',
+                'studentCourseEnrollments.student.studentProgramEnrollments.program', //
+            ])
+            ->firstOrFail();
 
-    // ២. រៀបចំបញ្ជីឈ្មោះនិស្សិត និងគណនាស្ថិតិ
-    $stats = [
-        'total' => $courseOffering->studentCourseEnrollments->count(),
-        'male' => 0,
-        'female' => 0,
-        'leaders' => 0,
-    ];
+        // ២. រៀបចំបញ្ជីឈ្មោះនិស្សិត និងគណនាស្ថិតិ
+        $stats = [
+            'total' => $courseOffering->studentCourseEnrollments->count(),
+            'male' => 0,
+            'female' => 0,
+            'leaders' => 0,
+        ];
 
-    $students = $courseOffering->studentCourseEnrollments->map(function ($enrollment) use (&$stats) {
-        $student = $enrollment->student;
-        
-        // ឆែកភេទ (Gender) ពី Profile
-        $gender = strtoupper($student->studentProfile->gender ?? '');
-        if (in_array($gender, ['M', 'MALE', 'ប្រុស'])) {
-            $stats['male']++;
-        } elseif (in_array($gender, ['F', 'FEMALE', 'ស្រី'])) {
-            $stats['female']++;
-        }
+        $students = $courseOffering->studentCourseEnrollments->map(function ($enrollment) use (&$stats) {
+            $student = $enrollment->student;
 
-        // ឆែកប្រធានថ្នាក់
-        if ($enrollment->is_class_leader) {
-            $stats['leaders']++;
-        }
+            // ឆែកភេទ (Gender) ពី Profile
+            $gender = strtoupper($student->studentProfile->gender ?? '');
+            if (in_array($gender, ['M', 'MALE', 'ប្រុស'])) {
+                $stats['male']++;
+            } elseif (in_array($gender, ['F', 'FEMALE', 'ស្រី'])) {
+                $stats['female']++;
+            }
 
-        return $student; 
-    });
+            // ឆែកប្រធានថ្នាក់
+            if ($enrollment->is_class_leader) {
+                $stats['leaders']++;
+            }
 
-    // ៣. រៀបចំ Pagination
-    $perPage = 10;
-    $currentPage = LengthAwarePaginator::resolveCurrentPage('studentsPage');
-    $currentItems = $students->slice(($currentPage - 1) * $perPage, $perPage)->values()->all();
-    
-    $paginatedStudents = new LengthAwarePaginator($currentItems, $students->count(), $perPage, $currentPage, [
-        'path' => request()->url(),
-        'pageName' => 'studentsPage',
-    ]);
+            return $student;
+        });
 
-    return view('professor.students.index', compact('courseOffering', 'paginatedStudents', 'stats'));
-}
+        // ៣. រៀបចំ Pagination
+        $perPage = 10;
+        $currentPage = LengthAwarePaginator::resolveCurrentPage('studentsPage');
+        $currentItems = $students->slice(($currentPage - 1) * $perPage, $perPage)->values()->all();
+
+        $paginatedStudents = new LengthAwarePaginator($currentItems, $students->count(), $perPage, $currentPage, [
+            'path' => request()->url(),
+            'pageName' => 'studentsPage',
+        ]);
+
+        return view('professor.students.index', compact('courseOffering', 'paginatedStudents', 'stats'));
+    }
+
     /**
      * Display an 'all-in-one' view for professors,
      * combining various data points from all their courses.
@@ -230,18 +201,17 @@ $todaySchedules = \App\Models\Schedule::whereHas('courseOffering', function ($qu
             'allCourses'
         ));
     }
-    
+
     public function showStudentProfile(CourseOffering $courseOffering, User $student)
     {
-        if (!$student->isStudent()) {
-            abort(404); 
+        if (! $student->isStudent()) {
+            abort(404);
         }
 
-        $student->loadMissing('studentProfile', 'program'); 
+        $student->loadMissing('studentProfile', 'program');
 
-        return view('professor.students.show_profile', compact('courseOffering', 'student')); 
+        return view('professor.students.show_profile', compact('courseOffering', 'student'));
     }
-
 
     public function showStudentsInCourse(CourseOffering $courseOffering)
     {
@@ -249,12 +219,13 @@ $todaySchedules = \App\Models\Schedule::whereHas('courseOffering', function ($qu
             abort(403, 'Unauthorized action.');
         }
 
-       
+        $courseOffering->load(['targetPrograms', 'course.programs']);
+
         $studentIds = $courseOffering->studentCourseEnrollments()->pluck('student_user_id');
         $students = User::whereIn('id', $studentIds)
-                        ->with('studentProfile') 
-                        ->orderBy('name', 'asc')
-                        ->paginate(10); 
+            ->with(['studentProfile', 'studentProgramEnrollments.program'])
+            ->orderBy('name', 'asc')
+            ->paginate(10);
 
         return view('professor.students.index', compact('courseOffering', 'students'));
     }
@@ -269,182 +240,177 @@ $todaySchedules = \App\Models\Schedule::whereHas('courseOffering', function ($qu
         $courseOfferings = CourseOffering::where('lecturer_user_id', $user->id)
             ->with(['course', 'schedules'])
             ->get();
+
         return view('professor.my-schedule', compact('user', 'courseOfferings'));
     }
-
 
     public function createAssessment($offering_id)
     {
         $courseOffering = CourseOffering::findOrFail($offering_id);
+
         return view('professor.assignments.create', compact('courseOffering'));
     }
 
+    public function toggleClassLeader($offeringId, $studentUserId)
+    {
+        // ១. ស្វែងរក record ក្នុង table student_course_enrollments
+        $enrollment = DB::table('student_course_enrollments')
+            ->where('course_offering_id', $offeringId)
+            ->where('student_user_id', $studentUserId)
+            ->first();
 
-
-
-public function toggleClassLeader($offeringId, $studentUserId)
-{
-    // ១. ស្វែងរក record ក្នុង table student_course_enrollments
-    $enrollment = DB::table('student_course_enrollments')
-        ->where('course_offering_id', $offeringId)
-        ->where('student_user_id', $studentUserId)
-        ->first();
-
-    if (!$enrollment) {
-        return back()->with('error', 'រកមិនឃើញទិន្នន័យនិស្សិតក្នុង Database ទេ!');
-    }
-
-    // ២. ប្តូរតម្លៃ (Toggle) បើ 0 ទៅ 1, បើ 1 ទៅ 0
-    $newStatus = $enrollment->is_class_leader ? 0 : 1;
-
-    // ៣. Update ចូល Database ផ្ទាល់
-    DB::table('student_course_enrollments')
-        ->where('course_offering_id', $offeringId)
-        ->where('student_user_id', $studentUserId)
-        ->update(['is_class_leader' => $newStatus]);
-
-    return back()->with('success', 'ស្ថានភាពប្រធានថ្នាក់ត្រូវបានផ្លាស់ប្តូរ!');
-}
-
-
-public function markAsRead(Request $request, Announcement $announcement)
-{
-    // ពិនិត្យមើលថាតើអ្នកប្រើប្រាស់គឺជាសាស្ត្រាចារ្យឬអត់
-    if (Auth::user()->role === 'professor') {
-        $announcement->is_read = true;
-        $announcement->save();
-
-        return response()->json([
-            'success' => true, 
-            'message' => 'សេចក្តីប្រកាសត្រូវបានសម្គាល់ថាបានអានហើយ។'
-        ]);
-    }
-
-    return response()->json(['success' => false, 'message' => 'គ្មានការអនុញ្ញាត។'], 403);
-}
-
-
-
-
-public function assignLeader($courseOfferingId, $studentId)
-{
-    // ស្វែងរកមុខវិជ្ជា
-    $courseOffering = CourseOffering::findOrFail($courseOfferingId);
-
-    // ដកតំណែងប្រធានថ្នាក់ចាស់ចេញសិន (ប្រសិនបើចង់ឱ្យមានប្រធានថ្នាក់តែម្នាក់)
-    // ប្រសិនបើអ្នកចង់ឱ្យមានប្រធានថ្នាក់ច្រើននាក់ អ្នកអាចយកផ្នែកនេះចេញ
-    DB::table('student_course_enrollments')
-        ->where('course_offering_id', $courseOfferingId)
-        ->update(['is_class_leader' => false]);
-
-    // ឆែកមើលស្ថានភាពបច្ចុប្បន្នរបស់និស្សិត
-    $enrollment = DB::table('student_course_enrollments')
-        ->where('course_offering_id', $courseOfferingId)
-        ->where('student_id', $studentId)
-        ->first();
-
-    // ប្តូរស្ថានភាព (Toggle)
-    $newStatus = !($enrollment->is_class_leader ?? false);
-
-    DB::table('student_course_enrollments')
-        ->where('course_offering_id', $courseOfferingId)
-        ->where('student_id', $studentId)
-        ->update(['is_class_leader' => $newStatus]);
-
-    $message = $newStatus ? 'បានតែងតាំងប្រធានថ្នាក់ជោគជ័យ!' : 'បានដកតំណែងប្រធានថ្នាក់ជោគជ័យ!';
-
-    return redirect()->back()->with('success', $message);
-}
-
-public function attendanceIndex($courseOfferingId)
-{
-    $courseOffering = CourseOffering::with('students.studentProfile')->findOrFail($courseOfferingId);
-    $students = $courseOffering->students; // យកបញ្ជីនិស្សិតក្នុងថ្នាក់នោះ
-    $today = now()->format('Y-m-d');
-
-    return view('professor.attendance.index', compact('courseOffering', 'students', 'today'));
-}
-
-public function attendanceStore(Request $request, $courseOfferingId)
-{
-    $request->validate([
-        'attendance_date' => 'required|date',
-        'attendance' => 'required|array',
-    ]);
-
-    foreach ($request->attendance as $studentId => $status) {
-        DB::table('attendances')->updateOrInsert(
-            [
-                'course_offering_id' => $courseOfferingId,
-                'user_id' => $studentId,
-                'attendance_date' => $request->attendance_date,
-            ],
-            [
-                'status' => $status,
-                'updated_at' => now(),
-                'created_at' => now(),
-            ]
-        );
-    }
-
-    return redirect()->back()->with('success', 'បានរក្សាទុកវត្តមានដោយជោគជ័យ!');
-}
-
-// AttendanceRecord
-// export
-
-public function attendanceReport($courseOfferingId)
-{
-    $courseOffering = CourseOffering::findOrFail($courseOfferingId);
-
-    $students = User::whereHas('enrolledCourses', function($query) use ($courseOfferingId) {
-        $query->where('course_offering_id', $courseOfferingId);
-    })
-    ->withCount([
-        // ប្រើឈ្មោះ 'attendances' ឱ្យដូចក្នុង User.php
-        'attendances as present_count' => function ($query) use ($courseOfferingId) {
-            $query->where('course_offering_id', $courseOfferingId)
-                  ->where('status', 'present');
-        },
-        'attendances as absent_count' => function ($query) use ($courseOfferingId) {
-            $query->where('course_offering_id', $courseOfferingId)
-                  ->where('status', 'absent');
-        },
-        'attendances as permission_count' => function ($query) use ($courseOfferingId) {
-            $query->where('course_offering_id', $courseOfferingId)
-                  ->where('status', 'permission');
-        },
-        'attendances as late_count' => function ($query) use ($courseOfferingId) {
-            $query->where('course_offering_id', $courseOfferingId)
-                  ->where('status', 'late');
+        if (! $enrollment) {
+            return back()->with('error', 'រកមិនឃើញទិន្នន័យនិស្សិតក្នុង Database ទេ!');
         }
-    ])
-    ->get();
 
-    return view('professor.attendance.report', compact('courseOffering', 'students'));
-}
+        // ២. ប្តូរតម្លៃ (Toggle) បើ 0 ទៅ 1, បើ 1 ទៅ 0
+        $newStatus = $enrollment->is_class_leader ? 0 : 1;
 
+        // ៣. Update ចូល Database ផ្ទាល់
+        DB::table('student_course_enrollments')
+            ->where('course_offering_id', $offeringId)
+            ->where('student_user_id', $studentUserId)
+            ->update(['is_class_leader' => $newStatus]);
 
+        return back()->with('success', 'ស្ថានភាពប្រធានថ្នាក់ត្រូវបានផ្លាស់ប្តូរ!');
+    }
 
+    public function markAsRead(Request $request, Announcement $announcement)
+    {
+        if (Auth::user()->role === 'professor') {
+            $userId = Auth::id();
+            $exists = \App\Models\AnnouncementRead::where('announcement_id', $announcement->id)
+                ->where('user_id', $userId)
+                ->exists();
 
+            if (! $exists) {
+                \App\Models\AnnouncementRead::create([
+                    'announcement_id' => $announcement->id,
+                    'user_id' => $userId,
+                    'read_at' => now(),
+                ]);
+            }
 
-// សម្រាប់បង្ហាញទំព័រ Edit
+            return response()->json([
+                'success' => true,
+                'message' => 'សេចក្តីប្រកាសត្រូវបានសម្គាល់ថាបានអានហើយ។',
+            ]);
+        }
 
+        return response()->json(['success' => false, 'message' => 'គ្មានការអនុញ្ញាត។'], 403);
+    }
 
+    public function assignLeader($courseOfferingId, $studentId)
+    {
+        // ស្វែងរកមុខវិជ្ជា
+        $courseOffering = CourseOffering::findOrFail($courseOfferingId);
 
+        // ដកតំណែងប្រធានថ្នាក់ចាស់ចេញសិន (ប្រសិនបើចង់ឱ្យមានប្រធានថ្នាក់តែម្នាក់)
+        // ប្រសិនបើអ្នកចង់ឱ្យមានប្រធានថ្នាក់ច្រើននាក់ អ្នកអាចយកផ្នែកនេះចេញ
+        DB::table('student_course_enrollments')
+            ->where('course_offering_id', $courseOfferingId)
+            ->update(['is_class_leader' => false]);
 
+        // ឆែកមើលស្ថានភាពបច្ចុប្បន្នរបស់និស្សិត
+        $enrollment = DB::table('student_course_enrollments')
+            ->where('course_offering_id', $courseOfferingId)
+            ->where('student_id', $studentId)
+            ->first();
 
-public function showGradebook($offering_id)
+        // ប្តូរស្ថានភាព (Toggle)
+        $newStatus = ! ($enrollment->is_class_leader ?? false);
+
+        DB::table('student_course_enrollments')
+            ->where('course_offering_id', $courseOfferingId)
+            ->where('student_id', $studentId)
+            ->update(['is_class_leader' => $newStatus]);
+
+        $message = $newStatus ? 'បានតែងតាំងប្រធានថ្នាក់ជោគជ័យ!' : 'បានដកតំណែងប្រធានថ្នាក់ជោគជ័យ!';
+
+        return redirect()->back()->with('success', $message);
+    }
+
+    public function attendanceIndex($courseOfferingId)
+    {
+        $courseOffering = CourseOffering::with('students.studentProfile')->findOrFail($courseOfferingId);
+        $students = $courseOffering->students; // យកបញ្ជីនិស្សិតក្នុងថ្នាក់នោះ
+        $today = now()->format('Y-m-d');
+
+        return view('professor.attendance.index', compact('courseOffering', 'students', 'today'));
+    }
+
+    public function attendanceStore(Request $request, $courseOfferingId)
+    {
+        $request->validate([
+            'attendance_date' => 'required|date',
+            'attendance' => 'required|array',
+        ]);
+
+        foreach ($request->attendance as $studentId => $status) {
+            DB::table('attendances')->updateOrInsert(
+                [
+                    'course_offering_id' => $courseOfferingId,
+                    'user_id' => $studentId,
+                    'date' => $request->attendance_date,
+                ],
+                [
+                    'status' => $status,
+                    'updated_at' => now(),
+                    'created_at' => now(),
+                ]
+            );
+        }
+
+        return redirect()->back()->with('success', 'បានរក្សាទុកវត្តមានដោយជោគជ័យ!');
+    }
+
+    // AttendanceRecord
+    // export
+
+    public function attendanceReport($courseOfferingId)
+    {
+        $courseOffering = CourseOffering::findOrFail($courseOfferingId);
+
+        $students = User::whereHas('enrolledCourses', function ($query) use ($courseOfferingId) {
+            $query->where('course_offering_id', $courseOfferingId);
+        })
+            ->withCount([
+                // ប្រើឈ្មោះ 'attendances' ឱ្យដូចក្នុង User.php
+                'attendances as present_count' => function ($query) use ($courseOfferingId) {
+                    $query->where('course_offering_id', $courseOfferingId)
+                        ->where('status', 'present');
+                },
+                'attendances as absent_count' => function ($query) use ($courseOfferingId) {
+                    $query->where('course_offering_id', $courseOfferingId)
+                        ->where('status', 'absent');
+                },
+                'attendances as permission_count' => function ($query) use ($courseOfferingId) {
+                    $query->where('course_offering_id', $courseOfferingId)
+                        ->where('status', 'permission');
+                },
+                'attendances as late_count' => function ($query) use ($courseOfferingId) {
+                    $query->where('course_offering_id', $courseOfferingId)
+                        ->where('status', 'late');
+                },
+            ])
+            ->get();
+
+        return view('professor.attendance.report', compact('courseOffering', 'students'));
+    }
+
+    // សម្រាប់បង្ហាញទំព័រ Edit
+
+    public function showGradebook($offering_id)
     {
         // ១. ទាញយកព័ត៌មានមុខវិជ្ជា (Course Offering)
         $courseOffering = CourseOffering::with('course')->findOrFail($offering_id);
 
         // ២. ទាញបញ្ជីឈ្មោះសិស្ស ព្រមជាមួយ "វត្តមាន" ក្នុងមុខវិជ្ជានេះ
         $students = User::where('role', 'student')
-            ->whereHas('courseOfferings', function($q) use ($offering_id) {
+            ->whereHas('courseOfferings', function ($q) use ($offering_id) {
                 $q->where('course_offering_id', $offering_id);
             })
-            ->with(['attendanceRecords' => function($q) use ($offering_id) {
+            ->with(['attendanceRecords' => function ($q) use ($offering_id) {
                 $q->where('course_offering_id', $offering_id);
             }])
             ->get();
@@ -464,352 +430,356 @@ public function showGradebook($offering_id)
                 // ឧបមាថាអ្នកមាន Model AssignmentSubmission សម្រាប់រក្សាពិន្ទុ
                 $student->attendance_score = $this->getAttendanceScore($student->id, $offering_id);
                 $submission = $a->submissions()->where('user_id', $student->id)->first();
-                $gradebook[$student->id]['assignment_' . $a->id] = $submission ? $submission->score : 0;
+                $gradebook[$student->id]['assignment_'.$a->id] = $submission ? $submission->score : 0;
             }
             // ធ្វើដូចគ្នាសម្រាប់ Quiz និង Exam...
         }
 
         return view('professor.gradebook', compact('courseOffering', 'students', 'assessments', 'gradebook'));
     }
-// totalAttendanceWeight
+
+    // totalAttendanceWeight
     public function getAttendanceScore($studentId, $courseOfferingId)
-{
-    // ១. រាប់ចំនួនអវត្តមានសរុប (Absents) របស់និស្សិតក្នុងមុខវិជ្ជានោះ
-    $absentCount = \App\Models\Attendance::where('student_user_id', $studentId)
-        ->where('course_offering_id', $courseOfferingId)
-        ->where('status', 'absent') // យកតែអ្នកអវត្តមាន
-        ->count();
+    {
+        // ១. រាប់ចំនួនអវត្តមានសរុប (Absents) របស់និស្សិតក្នុងមុខវិជ្ជានោះ
+        $absentCount = \App\Models\AttendanceRecord::where('student_user_id', $studentId)
+            ->where('course_offering_id', $courseOfferingId)
+            ->where('status', 'absent')
+            ->count();
 
-    // ២. គណនាពិន្ទុ (ឈប់ ២ដង ដក ១ពិន្ទុ)
-    $maxScore = 10;
-    $deduction = floor($absentCount / 2); // ប្រើ floor ដើម្បីយកចំនួនគត់
-    $finalScore = $maxScore - $deduction;
+        // ២. គណនាពិន្ទុ (ឈប់ ២ដង ដក ១ពិន្ទុ)
+        $maxScore = 15;
+        $deduction = floor($absentCount / 2); // ប្រើ floor ដើម្បីយកចំនួនគត់
+        $finalScore = $maxScore - $deduction;
 
-    // ការពារកុំឱ្យពិន្ទុធ្លាក់ក្រោម ០
-    return $finalScore < 0 ? 0 : $finalScore;
-}
-
-
-
-
-
-
-
-
-public function exportStudentsDocx($offering_id)
-{
-    $user = Auth::user();
-
-    $courseOffering = CourseOffering::where('id', $offering_id)
-        ->where('lecturer_user_id', $user->id)
-        ->with([
-            'course', 
-            'studentCourseEnrollments.student.studentProfile',
-            'studentCourseEnrollments.student.studentProgramEnrollments.program'
-        ])->firstOrFail();
-
-    $students = $courseOffering->studentCourseEnrollments;
-
-    // រៀបចំ HTML សម្រាប់ Word
-    $html = view('professor.students.export_word', compact('courseOffering', 'students'))->render();
-
-    $fileName = 'Student_List_' . time() . '.doc';
-
-    return response($html)
-        ->header('Content-Type', 'application/msword')
-        ->header('Content-Disposition', "attachment; filename=\"$fileName\"");
-}
-
-// ឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲ
-public function exportGradebookDocx($offering_id)
-{
-    $courseOffering = \App\Models\CourseOffering::with([
-        'course',
-        'studentCourseEnrollments.student.studentProfile' 
-    ])->findOrFail($offering_id);
-
-    // ១. ទាញយក Assignments, Exams, Quizzes
-    $assignments = \App\Models\Assignment::where('course_offering_id', $offering_id)->get();
-    $exams = \App\Models\Exam::where('course_offering_id', $offering_id)->get();
-    $quizzes = \App\Models\Quiz::where('course_offering_id', $offering_id)->get();
-
-    $assessments = collect($assignments)->concat($exams)->concat($quizzes)->sortBy('created_at');
-
-    // ទាញយកពិន្ទុទាំងអស់មកទុកក្នុង Memory តែម្តង (ដើម្បីល្បឿនលឿន)
-    $studentIds = $courseOffering->studentCourseEnrollments->pluck('student_user_id');
-    $allResults = \App\Models\ExamResult::whereIn('student_user_id', $studentIds)
-        ->whereIn('assessment_id', $assessments->pluck('id'))
-        ->get();
-
-    // ២. រៀបចំ Gradebook និងគណនាពិន្ទុ
-    $gradebook = [];
-    $students = $courseOffering->studentCourseEnrollments->map(function ($enrollment) use ($assessments, $allResults, &$gradebook, $offering_id) {
-        $student = $enrollment->student;
-        
-        // ប្រើ Method ដែលអ្នកមានស្រាប់សម្រាប់ពិន្ទុវត្តមាន
-        $attendanceScore = $student->getAttendanceScoreByCourse($offering_id);
-        $totalScore = $attendanceScore;
-
-        foreach ($assessments as $assessment) {
-            // កំណត់ប្រភេទឱ្យត្រូវតាម Database (assignment, quiz, exam)
-            $type = ($assessment instanceof \App\Models\Assignment) ? 'assignment' : 
-                   (($assessment instanceof \App\Models\Quiz) ? 'quiz' : 'exam');
-
-            // ស្វែងរកពិន្ទុពី Collection ដែលយើងទាញទុកមុននេះ
-            $score = $allResults->where('assessment_id', $assessment->id)
-                                ->where('student_user_id', $student->id)
-                                ->where('assessment_type', $type)
-                                ->first()?->score_obtained ?? 0;
-            
-            // រក្សាទុកក្នុង Array សម្រាប់ផ្ញើទៅ Blade
-            $gradebook[$student->id][$type . '_' . $assessment->id] = $score;
-            
-            // បូកបញ្ចូលក្នុងពិន្ទុសរុប
-            $totalScore += (float)$score;
-        }
-
-        $student->temp_attendance = $attendanceScore;
-        $student->temp_total = $totalScore;
-        return $student;
-    });
-
-    // ៣. តម្រៀប Ranking តាមពិន្ទុសរុប
-    $students = $students->sortByDesc('temp_total')->values();
-
-    // ៤. ផ្ដល់ Rank និង Grade
-    foreach ($students as $index => $student) {
-        $student->rank = $index + 1;
-        $ts = $student->temp_total;
-        
-        if ($ts >= 85) $student->letterGrade = 'A';
-        elseif ($ts >= 80) $student->letterGrade = 'B+';
-        elseif ($ts >= 70) $student->letterGrade = 'B';
-        elseif ($ts >= 65) $student->letterGrade = 'C+';
-        elseif ($ts >= 50) $student->letterGrade = 'C';
-        else $student->letterGrade = 'F';
+        // ការពារកុំឱ្យពិន្ទុធ្លាក់ក្រោម ០
+        return $finalScore < 0 ? 0 : $finalScore;
     }
 
-    // ៥. បង្កើត HTML សម្រាប់ Word
-    $html = view('professor.grades.export_word', compact('courseOffering', 'students', 'assessments', 'gradebook'))->render();
+    public function exportStudentsDocx($offering_id)
+    {
+        $user = Auth::user();
 
-    // ប្តូរឈ្មោះ File និងការពារការខូចអក្សរខ្មែរ
-    $fileName = 'Gradebook_' . str_replace([' ', '/', '\\'], '_', $courseOffering->course->title_km) . '.doc';
+        $courseOffering = CourseOffering::where('id', $offering_id)
+            ->where('lecturer_user_id', $user->id)
+            ->with([
+                'course',
+                'studentCourseEnrollments.student.studentProfile',
+                'studentCourseEnrollments.student.studentProgramEnrollments.program',
+            ])->firstOrFail();
 
-    return response($html)
-        ->header('Content-Type', 'application/msword; charset=utf-8')
-        ->header('Content-Disposition', "attachment; filename*=UTF-8''" . rawurlencode($fileName));
-}
-// ឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲ
+        $students = $courseOffering->studentCourseEnrollments;
 
+        // រៀបចំ HTML សម្រាប់ Word
+        $html = view('professor.students.export_word', compact('courseOffering', 'students'))->render();
 
-public function notifyTelegram($chatId, $message) 
+        $fileName = 'Student_List_'.time().'.doc';
+
+        return response($html)
+            ->header('Content-Type', 'application/msword')
+            ->header('Content-Disposition', "attachment; filename=\"$fileName\"");
+    }
+
+    // ឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲ
+    public function exportGradebookDocx($offering_id)
+    {
+        $courseOffering = \App\Models\CourseOffering::with([
+            'course',
+            'studentCourseEnrollments.student.studentProfile',
+        ])->findOrFail($offering_id);
+
+        // ១. ទាញយក Assignments, Exams, Quizzes
+        $assignments = \App\Models\Assignment::where('course_offering_id', $offering_id)->get();
+        $exams = \App\Models\Exam::where('course_offering_id', $offering_id)->get();
+        $quizzes = \App\Models\Quiz::where('course_offering_id', $offering_id)->get();
+
+        $assessments = collect($assignments)->concat($exams)->concat($quizzes)->sortBy('created_at');
+
+        // ទាញយកពិន្ទុទាំងអស់មកទុកក្នុង Memory តែម្តង (ដើម្បីល្បឿនលឿន)
+        $studentIds = $courseOffering->studentCourseEnrollments->pluck('student_user_id');
+        $allResults = \App\Models\ExamResult::whereIn('student_user_id', $studentIds)
+            ->whereIn('assessment_id', $assessments->pluck('id'))
+            ->get();
+
+        // ២. រៀបចំ Gradebook និងគណនាពិន្ទុ
+        $gradebook = [];
+        $students = $courseOffering->studentCourseEnrollments->map(function ($enrollment) use ($assessments, $allResults, &$gradebook, $offering_id) {
+            $student = $enrollment->student;
+
+            // ប្រើ Method ដែលអ្នកមានស្រាប់សម្រាប់ពិន្ទុវត្តមាន
+            $attendanceScore = $student->getAttendanceScoreByCourse($offering_id);
+            $totalScore = $attendanceScore;
+
+            foreach ($assessments as $assessment) {
+                // កំណត់ប្រភេទឱ្យត្រូវតាម Database (assignment, quiz, exam)
+                $type = ($assessment instanceof \App\Models\Assignment) ? 'assignment' :
+                       (($assessment instanceof \App\Models\Quiz) ? 'quiz' : 'exam');
+
+                // ស្វែងរកពិន្ទុពី Collection ដែលយើងទាញទុកមុននេះ
+                $score = $allResults->where('assessment_id', $assessment->id)
+                    ->where('student_user_id', $student->id)
+                    ->where('assessment_type', $type)
+                    ->first()?->score_obtained ?? 0;
+
+                // រក្សាទុកក្នុង Array សម្រាប់ផ្ញើទៅ Blade
+                $gradebook[$student->id][$type.'_'.$assessment->id] = $score;
+
+                // បូកបញ្ចូលក្នុងពិន្ទុសរុប
+                $totalScore += (float) $score;
+            }
+
+            $student->temp_attendance = $attendanceScore;
+            $student->temp_total = $totalScore;
+
+            return $student;
+        });
+
+        // ៣. តម្រៀប Ranking តាមពិន្ទុសរុប
+        $students = $students->sortByDesc('temp_total')->values();
+
+        // ៤. ផ្ដល់ Rank និង Grade
+        foreach ($students as $index => $student) {
+            $student->rank = $index + 1;
+            $ts = $student->temp_total;
+
+            if ($ts >= 85) {
+                $student->letterGrade = 'A';
+            } elseif ($ts >= 80) {
+                $student->letterGrade = 'B+';
+            } elseif ($ts >= 70) {
+                $student->letterGrade = 'B';
+            } elseif ($ts >= 65) {
+                $student->letterGrade = 'C+';
+            } elseif ($ts >= 50) {
+                $student->letterGrade = 'C';
+            } else {
+                $student->letterGrade = 'F';
+            }
+        }
+
+        // ៥. បង្កើត HTML សម្រាប់ Word
+        $html = view('professor.grades.export_word', compact('courseOffering', 'students', 'assessments', 'gradebook'))->render();
+
+        // ប្តូរឈ្មោះ File និងការពារការខូចអក្សរខ្មែរ
+        $fileName = 'Gradebook_'.str_replace([' ', '/', '\\'], '_', $courseOffering->course->title_km).'.doc';
+
+        return response($html)
+            ->header('Content-Type', 'application/msword; charset=utf-8')
+            ->header('Content-Disposition', "attachment; filename*=UTF-8''".rawurlencode($fileName));
+    }
+    // ឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲ
+
+    public function notifyTelegram($chatId, $message)
     {
         $token = env('TELEGRAM_BOT_TOKEN');
-        
+
         // ឆែកមើលថាតើមាន Token និង Chat ID ឬអត់មុននឹងផ្ញើ
-        if (!$token || !$chatId) {
+        if (! $token || ! $chatId) {
             return false;
         }
 
         try {
             $response = Http::post("https://api.telegram.org/bot{$token}/sendMessage", [
                 'chat_id' => $chatId,
-                'text'    => $message,
-                'parse_mode' => 'HTML'
+                'text' => $message,
+                'parse_mode' => 'HTML',
             ]);
 
             return $response->successful();
         } catch (\Exception $e) {
-            \Log::error("Telegram Notification Error: " . $e->getMessage());
+            \Log::error('Telegram Notification Error: '.$e->getMessage());
+
             return false;
         }
     }
 
-
     public function publishGrades($offering_id)
-{
-    $courseOffering = CourseOffering::with('studentCourseEnrollments.student')->findOrFail($offering_id);
-    $courseName = $courseOffering->course->title_km;
+    {
+        $courseOffering = CourseOffering::with('studentCourseEnrollments.student')->findOrFail($offering_id);
+        $courseName = $courseOffering->course->title_km;
 
-    foreach ($courseOffering->studentCourseEnrollments as $enrollment) {
-        $student = $enrollment->student;
+        foreach ($courseOffering->studentCourseEnrollments as $enrollment) {
+            $student = $enrollment->student;
 
-        // ឆែកថាតើសិស្សម្នាក់ហ្នឹងបានភ្ជាប់ Telegram (មាន chat_id) ឬនៅ
-        if ($student->telegram_chat_id) {
-            $msg = "<b>🔔 ដំណឹងលទ្ធផលសិក្សាថ្មី!</b>\n\n";
-            $msg .= "មុខវិជ្ជា៖ <b>{$courseName}</b>\n";
-            $msg .= "ស្ថានភាព៖ ពិន្ទុត្រូវបានគ្រូបោះពុម្ពផ្សាយហើយ។\n";
-            $msg .= "🔗 ចូលមើលពិន្ទុ៖ <a href='".url('/student/my-grades')."'>ចុចទីនេះ</a>";
+            // ឆែកថាតើសិស្សម្នាក់ហ្នឹងបានភ្ជាប់ Telegram (មាន chat_id) ឬនៅ
+            if ($student->telegram_chat_id) {
+                $msg = "<b>🔔 ដំណឹងលទ្ធផលសិក្សាថ្មី!</b>\n\n";
+                $msg .= "មុខវិជ្ជា៖ <b>{$courseName}</b>\n";
+                $msg .= "ស្ថានភាព៖ ពិន្ទុត្រូវបានគ្រូបោះពុម្ពផ្សាយហើយ។\n";
+                $msg .= "🔗 ចូលមើលពិន្ទុ៖ <a href='".url('/student/my-grades')."'>ចុចទីនេះ</a>";
 
-            $this->notifyTelegram($student->telegram_chat_id, $msg);
+                $this->notifyTelegram($student->telegram_chat_id, $msg);
+            }
         }
+
+        return back()->with('success', 'បានផ្ញើដំណឹងទៅកាន់ Telegram របស់និស្សិតរួចរាល់!');
     }
 
-    return back()->with('success', 'បានផ្ញើដំណឹងទៅកាន់ Telegram របស់និស្សិតរួចរាល់!');
-}
+    public function sendGradeTelegram($enrollment_id)
+    {
+        // ទាញយក Enrollment ដោយភ្ជាប់ជាមួយ studentUser (Table users)
+        $enrollment = \App\Models\StudentCourseEnrollment::with(['studentUser', 'courseOffering.course'])
+            ->findOrFail($enrollment_id);
 
-public function sendGradeTelegram($enrollment_id)
-{
-    // ទាញយក Enrollment ដោយភ្ជាប់ជាមួយ studentUser (Table users)
-    $enrollment = \App\Models\StudentCourseEnrollment::with(['studentUser', 'courseOffering.course'])
-        ->findOrFail($enrollment_id);
-    
-    $studentUser = $enrollment->studentUser;
+        $studentUser = $enrollment->studentUser;
 
-    // ត្រួតពិនិត្យ Chat ID លើ studentUser មិនមែនលើ student ទេ
-    if (!$studentUser || !$studentUser->telegram_chat_id) {
-        return back()->with('error', 'និស្សិតនេះមិនទាន់បានភ្ជាប់ជាមួយ Telegram Bot នៅឡើយទេ!');
-    }
-
-    $token = env('TELEGRAM_BOT_TOKEN');
-    
-    $message = "<b>🔔 លទ្ធផលសិក្សា</b>\n\n";
-    $message .= "និស្សិត៖ <b>{$studentUser->name}</b>\n";
-    $message .= "មុខវិជ្ជា៖ <b>{$enrollment->courseOffering->course->title_km}</b>\n";
-    $message .= "ស្ថានភាព៖ ពិន្ទុត្រូវបានផ្សាយហើយ។";
-
-    // ហៅប្រើ function notifyTelegram ដែលអ្នកមានស្រាប់
-    $this->notifyTelegram($studentUser->telegram_chat_id, $message);
-
-    return back()->with('success', 'បានផ្ញើទៅ Telegram រួចរាល់!');
-}
-// professor.grades.store
-
-
-
-
-public function sendAllTelegram(Request $request, $offering_id)
-{
-    $courseOffering = CourseOffering::with('course', 'studentCourseEnrollments.student.profile')->findOrFail($offering_id);
-    
-    $assessmentId = $request->input('assessment_id');
-    $type = $request->input('assessment_type'); 
-
-    // ១. ទាញយកព័ត៌មានវិញ្ញាសា
-    $assessment = match($type) {
-        'assignment' => \App\Models\Assignment::find($assessmentId),
-        'quiz'       => \App\Models\Quiz::find($assessmentId),
-        'exam'       => \App\Models\Exam::find($assessmentId),
-        default      => null
-    };
-
-    if (!$assessment) {
-        return back()->with('error', "រកមិនឃើញទិន្នន័យវិញ្ញាសាឡើយ។");
-    }
-
-    // ២. រៀបចំព័ត៌មានសាស្ត្រាចារ្យ (Contact Link)
-    $professor = auth()->user();
-    // សន្មតថាទំនាក់ទំនងគឺ professorProfile ឬ userProfile
-    $profProfile = $professor->professorProfile ?: $professor->userProfile; 
-    
-    // បង្កើត Link ទៅកាន់ Telegram លោកគ្រូ (ប្រសិនបើគ្មាន វានឹងដាក់ Link ទៅកាន់ Bot)
-    $professorContact = ($profProfile && $profProfile->telegram_user) 
-        ? "https://t.me/" . str_replace('@', '', $profProfile->telegram_user) 
-        : "https://t.me/kong_grade_bot";
-
-    $typeName = match($type) {
-        'assignment' => 'កិច្ចការ (Assignment)',
-        'quiz'       => 'កម្រងសំណួរ (Quiz)',
-        'exam'       => 'ការប្រឡង (Exam)',
-        default      => 'វិញ្ញាសា'
-    };
-
-    $title = $assessment->title_km ?? $assessment->title_en;
-    $sentCount = 0;
-
-    foreach ($courseOffering->studentCourseEnrollments as $enrollment) {
-        $student = $enrollment->student;
-        
-        if ($student && $student->telegram_chat_id) {
-            
-            // ៣. ទាញយកពិន្ទុពី Table ExamResult
-            $result = \App\Models\ExamResult::where('assessment_id', $assessmentId)
-                ->where('assessment_type', $type)
-                ->where('student_user_id', $student->id)
-                ->first();
-
-            $score = $result ? number_format($result->score_obtained, 1) : '---';
-            $maxScore = $assessment->max_score ?? 100;
-
-            // ៤. រៀបចំ Template សារ Telegram
-            $message = "<b>📢 ដំណឹងលទ្ធផលសិក្សា</b>\n\n";
-            $message .= "សួស្តីនិស្សិត៖ <b>" . ($student->profile->full_name_km ?? $student->name) . "</b>\n";
-            $message .= "មុខវិជ្ជា៖ <b>{$courseOffering->course->title_en}</b>\n";
-            $message .= "ប្រភេទ៖ <b>{$typeName}</b>\n";
-            $message .= "វិញ្ញាសា៖ <b>{$title}</b>\n";
-            $message .= "--------------------------------\n";
-            $message .= "🎯 ពិន្ទុទទួលបាន៖ <code>{$score} / {$maxScore}</code>\n";
-            $message .= "--------------------------------\n\n";
-            
-            // បន្ថែម Link ទំនាក់ទំនងសាស្ត្រាចារ្យ
-            $message .= "💬 បើមានចម្ងល់សូមទាក់ទងសាស្ត្រាចារ្យ៖\n";
-            $message .= "👉 <a href='{$professorContact}'>ចុចទីនេះដើម្បីផ្ញើសារ</a>\n\n";
-            
-            $message .= "👉 សូមចូលពិនិត្យមើលពិន្ទុលម្អិតក្នុងប្រព័ន្ធ។";
-
-            $this->notifyTelegram($student->telegram_chat_id, $message);
-            $sentCount++;
+        // ត្រួតពិនិត្យ Chat ID លើ studentUser មិនមែនលើ student ទេ
+        if (! $studentUser || ! $studentUser->telegram_chat_id) {
+            return back()->with('error', 'និស្សិតនេះមិនទាន់បានភ្ជាប់ជាមួយ Telegram Bot នៅឡើយទេ!');
         }
+
+        $token = env('TELEGRAM_BOT_TOKEN');
+
+        $message = "<b>🔔 លទ្ធផលសិក្សា</b>\n\n";
+        $message .= "និស្សិត៖ <b>{$studentUser->name}</b>\n";
+        $message .= "មុខវិជ្ជា៖ <b>{$enrollment->courseOffering->course->title_km}</b>\n";
+        $message .= 'ស្ថានភាព៖ ពិន្ទុត្រូវបានផ្សាយហើយ។';
+
+        // ហៅប្រើ function notifyTelegram ដែលអ្នកមានស្រាប់
+        $this->notifyTelegram($studentUser->telegram_chat_id, $message);
+
+        return back()->with('success', 'បានផ្ញើទៅ Telegram រួចរាល់!');
     }
+    // professor.grades.store
 
-    return back()->with('success', "បានផ្ញើដំណឹងពិន្ទុ {$title} ទៅកាន់និស្សិតចំនួន {$sentCount} នាក់ រួចរាល់។");
-}   
+    public function sendAllTelegram(Request $request, $offering_id)
+    {
+        $courseOffering = CourseOffering::with('course', 'studentCourseEnrollments.student.profile')->findOrFail($offering_id);
 
-
-public function updateTelegram(Request $request)
-{
-    $request->validate([
-        'telegram_chat_id' => 'required|numeric',
-    ]);
-
-    $user = auth()->user();
-    $user->telegram_chat_id = $request->telegram_chat_id;
-    $user->save();
-
-    return back()->with('success', 'អបអរសាទរ! គណនី Telegram របស់អ្នកត្រូវបានភ្ជាប់ហើយ។');
-}
-
-public function sendTelegramSchedule($chatId, $message)
-{
-    $botToken = "8326400735:AAEIrI4k9r8ryOJETTV0F9jmaRh-tLeHKe0"; // យកពី BotFather
-    
-    $response = Http::post("https://api.telegram.org/bot{$botToken}/sendMessage", [
-        'chat_id' => $chatId,
-        'text' => $message,
-        'parse_mode' => 'HTML'
-    ]);
-
-    return $response->successful();
-}
-
-public function notifyProfessorSchedule()
-{
-    $user = auth()->user();
-    $chatId = $user->profile?->telegram_chat_id;
-
-    if (!$chatId) return;
-
-    // ទាញយកកាលវិភាគថ្ងៃនេះ (ឧទាហរណ៍)
-    $schedules = Schedule::where('professor_id', $user->id)
-                         ->whereDate('class_date', now())
-                         ->get();
-
-    if ($schedules->isEmpty()) {
-        $message = "📅 ជម្រាបសួរលោកគ្រូ! ថ្ងៃនេះលោកគ្រូមិនមានកាលវិភាគបង្រៀនទេ។";
-    } else {
-        $message = "📅 <b>កាលវិភាគបង្រៀនថ្ងៃនេះ៖</b>\n\n";
-        foreach ($schedules as $item) {
-            $message .= "🔹 ម៉ោង: {$item->start_time} - {$item->end_time}\n";
-            $message .= "🔹 មុខវិជ្ជា: {$item->subject_name}\n";
-            $message .= "🔹 បន្ទប់: {$item->room}\n";
-            $message .= "----------------------\n";
+        if ($courseOffering->lecturer_user_id !== auth()->id()) {
+            abort(403, 'អ្នកមិនមានសិទ្ធិចូលប្រើប្រាស់មុខវិជ្ជានេះទេ។');
         }
+
+        $assessmentId = $request->input('assessment_id');
+        $type = $request->input('assessment_type');
+
+        // ១. ទាញយកព័ត៌មានវិញ្ញាសា
+        $assessment = match ($type) {
+            'assignment' => \App\Models\Assignment::find($assessmentId),
+            'quiz' => \App\Models\Quiz::find($assessmentId),
+            'exam' => \App\Models\Exam::find($assessmentId),
+            default => null
+        };
+
+        if (! $assessment) {
+            return back()->with('error', 'រកមិនឃើញទិន្នន័យវិញ្ញាសាឡើយ។');
+        }
+
+        // ២. រៀបចំព័ត៌មានសាស្ត្រាចារ្យ (Contact Link)
+        $professor = auth()->user();
+        // សន្មតថាទំនាក់ទំនងគឺ professorProfile ឬ userProfile
+        $profProfile = $professor->professorProfile ?: $professor->userProfile;
+
+        // បង្កើត Link ទៅកាន់ Telegram លោកគ្រូ (ប្រសិនបើគ្មាន វានឹងដាក់ Link ទៅកាន់ Bot)
+        $professorContact = ($profProfile && $profProfile->telegram_user)
+            ? 'https://t.me/'.str_replace('@', '', $profProfile->telegram_user)
+            : 'https://t.me/kong_grade_bot';
+
+        $typeName = match ($type) {
+            'assignment' => 'កិច្ចការ (Assignment)',
+            'quiz' => 'កម្រងសំណួរ (Quiz)',
+            'exam' => 'ការប្រឡង (Exam)',
+            default => 'វិញ្ញាសា'
+        };
+
+        $title = $assessment->title_km ?? $assessment->title_en;
+        $sentCount = 0;
+
+        foreach ($courseOffering->studentCourseEnrollments as $enrollment) {
+            $student = $enrollment->student;
+
+            if ($student && $student->telegram_chat_id) {
+
+                // ៣. ទាញយកពិន្ទុពី Table ExamResult
+                $result = \App\Models\ExamResult::where('assessment_id', $assessmentId)
+                    ->where('assessment_type', $type)
+                    ->where('student_user_id', $student->id)
+                    ->first();
+
+                $score = $result ? number_format($result->score_obtained, 1) : '---';
+                $maxScore = $assessment->max_score ?? 100;
+
+                // ៤. រៀបចំ Template សារ Telegram
+                $message = "<b>📢 ដំណឹងលទ្ធផលសិក្សា</b>\n\n";
+                $message .= 'សួស្តីនិស្សិត៖ <b>'.($student->profile?->full_name_km ?? $student->name)."</b>\n";
+                $message .= "មុខវិជ្ជា៖ <b>{$courseOffering->course->title_en}</b>\n";
+                $message .= "ប្រភេទ៖ <b>{$typeName}</b>\n";
+                $message .= "វិញ្ញាសា៖ <b>{$title}</b>\n";
+                $message .= "--------------------------------\n";
+                $message .= "🎯 ពិន្ទុទទួលបាន៖ <code>{$score} / {$maxScore}</code>\n";
+                $message .= "--------------------------------\n\n";
+
+                // បន្ថែម Link ទំនាក់ទំនងសាស្ត្រាចារ្យ
+                $message .= "💬 បើមានចម្ងល់សូមទាក់ទងសាស្ត្រាចារ្យ៖\n";
+                $message .= "👉 <a href='{$professorContact}'>ចុចទីនេះដើម្បីផ្ញើសារ</a>\n\n";
+
+                $message .= '👉 សូមចូលពិនិត្យមើលពិន្ទុលម្អិតក្នុងប្រព័ន្ធ។';
+
+                $this->notifyTelegram($student->telegram_chat_id, $message);
+                $sentCount++;
+            }
+        }
+
+        return back()->with('success', "បានផ្ញើដំណឹងពិន្ទុ {$title} ទៅកាន់និស្សិតចំនួន {$sentCount} នាក់ រួចរាល់។");
     }
 
-    $this->sendTelegramSchedule($chatId, $message);
-}
-// professor.assessments
- protected function schedule(Schedule $schedule): void
+    public function updateTelegram(Request $request)
+    {
+        $request->validate([
+            'telegram_chat_id' => 'required|numeric',
+        ]);
+
+        $user = auth()->user();
+        $user->telegram_chat_id = $request->telegram_chat_id;
+        $user->save();
+
+        return back()->with('success', 'អបអរសាទរ! គណនី Telegram របស់អ្នកត្រូវបានភ្ជាប់ហើយ។');
+    }
+
+    public function sendTelegramSchedule($chatId, $message)
+    {
+        $botToken = env('TELEGRAM_BOT_TOKEN');
+
+        $response = Http::post("https://api.telegram.org/bot{$botToken}/sendMessage", [
+            'chat_id' => $chatId,
+            'text' => $message,
+            'parse_mode' => 'HTML',
+        ]);
+
+        return $response->successful();
+    }
+
+    public function notifyProfessorSchedule()
+    {
+        $user = auth()->user();
+        $chatId = $user->profile?->telegram_chat_id;
+
+        if (! $chatId) {
+            return;
+        }
+
+        // ទាញយកកាលវិភាគថ្ងៃនេះ (ឧទាហរណ៍)
+        $schedules = Schedule::where('professor_id', $user->id)
+            ->whereDate('class_date', now())
+            ->get();
+
+        if ($schedules->isEmpty()) {
+            $message = '📅 ជម្រាបសួរលោកគ្រូ! ថ្ងៃនេះលោកគ្រូមិនមានកាលវិភាគបង្រៀនទេ។';
+        } else {
+            $message = "📅 <b>កាលវិភាគបង្រៀនថ្ងៃនេះ៖</b>\n\n";
+            foreach ($schedules as $item) {
+                $message .= "🔹 ម៉ោង: {$item->start_time} - {$item->end_time}\n";
+                $message .= "🔹 មុខវិជ្ជា: {$item->subject_name}\n";
+                $message .= "🔹 បន្ទប់: {$item->room}\n";
+                $message .= "----------------------\n";
+            }
+        }
+
+        $this->sendTelegramSchedule($chatId, $message);
+    }
+
+    // professor.assessments
+    protected function schedule(Schedule $schedule): void
     {
         $schedule->call(function () {
             // ១. ទាញយកសាស្ត្រាចារ្យទាំងឡាយណាដែលមាន Telegram Chat ID
@@ -825,7 +795,7 @@ public function notifyProfessorSchedule()
                     ->get();
 
                 if ($todaySchedules->isNotEmpty()) {
-                    $message = "📅 <b>ជម្រាបសួរលោកគ្រូ " . ($user->profile->full_name_km ?? $user->name) . "</b>\n";
+                    $message = '📅 <b>ជម្រាបសួរលោកគ្រូ '.($user->profile->full_name_km ?? $user->name)."</b>\n";
                     $message .= "នេះគឺជាកាលវិភាគបង្រៀនរបស់លោកគ្រូសម្រាប់ថ្ងៃនេះ៖\n\n";
 
                     foreach ($todaySchedules as $index => $item) {
@@ -835,7 +805,7 @@ public function notifyProfessorSchedule()
                         $message .= "   📍 បន្ទប់: {$item->room_name}\n";
                         $message .= "--------------------------\n";
                     }
-                    
+
                     $message .= "\nសូមលោកគ្រូត្រៀមខ្លួនឱ្យបានរួចរាល់។ សូមអរគុណ!";
 
                     // ៣. ផ្ញើសារទៅកាន់ Telegram
@@ -848,7 +818,7 @@ public function notifyProfessorSchedule()
             }
         })->dailyAt('07:00');
     }
-   
-// --------------------------------------------------------------------------
+
+    // --------------------------------------------------------------------------
 }
 // showProfile

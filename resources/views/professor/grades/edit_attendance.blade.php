@@ -17,7 +17,7 @@
                 
                 {{-- Back Action --}}
                 <div class="flex items-center justify-center lg:justify-end gap-3">
-                    <a href="{{ route('professor.course-offering.grades', $courseOffering->id) }}"
+                    <a href="{{ route('professor.manage-grades', ['offering_id' => $courseOffering->id]) }}"
                         class="group inline-flex items-center justify-center px-5 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-2xl font-bold text-xs transition-all duration-200 shadow-sm hover:bg-slate-50">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
@@ -32,7 +32,7 @@
     <div class="py-12 bg-[#f8fafc] min-h-screen">
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             
-            <form action="{{ route('professor.grades.update-attendance') }}" method="POST" class="space-y-6">
+            <form action="{{ route('grades.update-attendance') }}" method="POST" class="space-y-6">
                 @csrf
                 <input type="hidden" name="student_id" value="{{ $student->id }}">
                 <input type="hidden" name="course_id" value="{{ $courseOffering->id }}">

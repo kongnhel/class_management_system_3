@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash; // Import Hash facade
-use Illuminate\Support\Carbon; // Import Carbon for now()
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Carbon; // Import Hash facade
+use Illuminate\Support\Facades\Hash; // Import Carbon for now()
 
 class UniversityRolesSeeder extends Seeder
 {
@@ -31,6 +31,5 @@ class UniversityRolesSeeder extends Seeder
             'email_verified_at' => Carbon::now(),
         ]);
 
-        
     }
 }

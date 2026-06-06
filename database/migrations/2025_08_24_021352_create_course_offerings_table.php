@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('course_offerings', function (Blueprint $table) {
             $table->id();
-             $table->foreignId('program_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('program_id')->nullable()->constrained()->onDelete('set null');
             $table->foreignId('course_id')->constrained('courses')->onDelete('cascade');
             // Professor ដែលបង្រៀនមុខវិជ្ជានេះ
             $table->foreignId('lecturer_user_id')->constrained('users')->onDelete('no action'); // កែពី 'restrict' ទៅ 'no action'

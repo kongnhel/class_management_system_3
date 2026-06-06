@@ -14,6 +14,6 @@ $_SERVER['SERVER_PORT'] = '443';
 $_SERVER['HTTPS'] = 'on';
 
 // Fix APP_ENV
-putenv('APP_ENV=' . ($_ENV['APP_ENV'] ?? 'production'));
+putenv('APP_ENV='.($_ENV['APP_ENV'] ?? 'production'));
 
-require __DIR__ . '/../public/index.php';
+require __DIR__.'/../public/index.php';

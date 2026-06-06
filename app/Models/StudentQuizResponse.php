@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class StudentQuizResponse extends Model
 {
-     use HasFactory;
+    use HasFactory;
 
     protected $fillable = [
         'quiz_question_id',

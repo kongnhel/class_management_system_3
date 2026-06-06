@@ -12,7 +12,6 @@ return [
     | other UI elements where an application name needs to be displayed.
     |
     */
-    
 
     'name' => env('APP_NAME', 'Class Management System'),
     'timezone' => 'Asia/Phnom_Penh',
@@ -30,9 +29,9 @@ return [
 
     'env' => env('APP_ENV', 'production'),
     // ក្នុង file config/app.php
-'nmu_lat' => env('NMU_LAT', 13.57952292),
-'nmu_lng' => env('NMU_LNG', 102.92898894),
-'nmu_radius' => env('NMU_RADIUS', 100),
+    'nmu_lat' => env('NMU_LAT', 13.57952292),
+    'nmu_lng' => env('NMU_LNG', 102.92898894),
+    'nmu_radius' => env('NMU_RADIUS', 100),
 
     /*
     |--------------------------------------------------------------------------
@@ -109,7 +108,7 @@ return [
         ...array_filter(
             explode(',', env('APP_PREVIOUS_KEYS', ''))
         ),
-        
+
     ],
 
     /*

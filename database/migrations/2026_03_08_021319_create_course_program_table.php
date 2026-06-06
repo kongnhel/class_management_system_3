@@ -9,21 +9,21 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-public function up()
-{
-    Schema::create('course_program', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('course_id')->constrained()->onDelete('cascade');
-        $table->foreignId('program_id')->constrained()->onDelete('cascade');
-        $table->timestamps();
-    });
+    public function up()
+    {
+        Schema::create('course_program', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('course_id')->constrained()->onDelete('cascade');
+            $table->foreignId('program_id')->constrained()->onDelete('cascade');
+            $table->timestamps();
+        });
 
-    // Optional: Remove the old single program_id from courses table
-    Schema::table('courses', function (Blueprint $table) {
-        $table->dropForeign(['program_id']);
-        $table->dropColumn('program_id');
-    });
-}
+        // Optional: Remove the old single program_id from courses table
+        Schema::table('courses', function (Blueprint $table) {
+            $table->dropForeign(['program_id']);
+            $table->dropColumn('program_id');
+        });
+    }
 
     /**
      * Reverse the migrations.

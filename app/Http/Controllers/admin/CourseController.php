@@ -1,88 +1,85 @@
 <?php
 
 namespace App\Http\Controllers\admin;
+
 use App\Http\Controllers\Controller;
 use App\Models\Course;
-use App\Models\Room;
-use App\Models\Program;    
 use App\Models\Department;
-use App\Models\User;
+use App\Models\Program;
+use App\Models\Room;
 use App\Models\StudentProfile;
-
-use Illuminate\Validate\Rule;
-use Illuminate\Facades\DB;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class CourseController extends Controller
 {
+    public function index()
+    {
+        $room = Room::all();
 
-public function index()
-{
-    $room = Room::all();
+        $coursesData = Course::with(['department', 'programs'])
+            ->orderBy('department_id')
+            ->get();
 
-    $coursesData = Course::with(['department', 'programs'])
-        ->orderBy('department_id')
-        ->get();
+        $flattenedCourses = $coursesData->flatMap(function ($course) {
+            if ($course->programs->isEmpty()) {
+                return [$course];
+            }
 
-    $flattenedCourses = $coursesData->flatMap(function ($course) {
-        if ($course->programs->isEmpty()) {
-            return [$course]; 
-        }
-        
-        return $course->programs->map(function ($program) use ($course) {
-            $clone = clone $course;
-            $clone->assigned_program_name = $program->name_km; 
-            return $clone;
+            return $course->programs->map(function ($program) use ($course) {
+                $clone = clone $course;
+                $clone->assigned_program_name = $program->name_km;
+
+                return $clone;
+            });
         });
-    });
 
-    $coursesGrouped = $flattenedCourses->groupBy([
-        function ($item) {
-            return $item->assigned_program_name ?? 'មិនទាន់មានកម្មវិធីសិក្សា';
-        },
-        function ($item) {
-            return $item->generation ? 'ជំនាន់ទី ' . $item->generation : 'មិនទាន់កំណត់ជំនាន់';
-        },
-    ]);
+        $coursesGrouped = $flattenedCourses->groupBy([
+            function ($item) {
+                return $item->assigned_program_name ?? 'មិនទាន់មានកម្មវិធីសិក្សា';
+            },
+            function ($item) {
+                return $item->generation ? 'ជំនាន់ទី '.$item->generation : 'មិនទាន់កំណត់ជំនាន់';
+            },
+        ]);
 
-    return view('admin.courses.index', compact('coursesGrouped', 'room'));
-}
+        return view('admin.courses.index', compact('coursesGrouped', 'room'));
+    }
 
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-      $departments = Department::all();
+        $departments = Department::all();
         $programs = Program::all();
         $generations = User::select('generation')->distinct()->pluck('generation')->filter()->all();
+
         return view('admin.courses.create', compact('departments', 'programs', 'generations'));
     }
 
-
     public function store(Request $request)
-{
-    // 1. Validation
-    $request->validate([
-        'title_km'       => 'required|string|max:255',
-        'title_en'       => 'required|string|max:255',
-        'description_km' => 'nullable|string',
-        'description_en' => 'nullable|string',
-        'credits'        => 'required|numeric|min:0.5',
-        'department_id'  => 'required|exists:departments,id',
-        'program_id'     => 'required|array|min:1', 
-        'program_id.*'   => 'required|exists:programs,id',
-        'generation'     => 'nullable|string|max:255',
-    ]);
+    {
+        // 1. Validation
+        $request->validate([
+            'title_km' => 'required|string|max:255',
+            'title_en' => 'required|string|max:255',
+            'description_km' => 'nullable|string',
+            'description_en' => 'nullable|string',
+            'credits' => 'required|numeric|min:0.5',
+            'department_id' => 'required|exists:departments,id',
+            'program_id' => 'required|array|min:1',
+            'program_id.*' => 'required|exists:programs,id',
+            'generation' => 'nullable|string|max:255',
+        ]);
 
-    $course = Course::create($request->except('program_id'));
+        $course = Course::create($request->except('program_id'));
 
-    $course->programs()->sync($request->program_id);
+        $course->programs()->sync($request->program_id);
 
-    return redirect()->route('admin.manage-courses')
-                     ->with('success', 'មុខវិជ្ជាត្រូវបានបង្កើតដោយជោគជ័យ!');
-}
-
+        return redirect()->route('admin.manage-courses')
+            ->with('success', 'មុខវិជ្ជាត្រូវបានបង្កើតដោយជោគជ័យ!');
+    }
 
     public function show(Course $course)
     {
@@ -93,7 +90,7 @@ public function index()
     {
         $departments = Department::all();
         $programs = Program::all();
-        
+
         $generations = StudentProfile::select('generation')
             ->distinct()
             ->pluck('generation')
@@ -114,19 +111,19 @@ public function index()
             'description_en' => 'nullable|string',
             'credits' => 'required|numeric|min:0.5',
             'department_id' => 'required|exists:departments,id',
-            'program_ids' => 'required|array', 
+            'program_ids' => 'required|array',
             'program_ids.*' => 'exists:programs,id',
             'generation' => 'nullable|string|max:255',
         ]);
 
         $course->update($request->only([
-            'title_km', 
-            'title_en', 
-            'description_km', 
-            'description_en', 
-            'credits', 
-            'department_id', 
-            'generation'
+            'title_km',
+            'title_en',
+            'description_km',
+            'description_en',
+            'credits',
+            'department_id',
+            'generation',
         ]));
 
         $course->programs()->sync($request->program_ids);
@@ -137,7 +134,8 @@ public function index()
 
     public function destroy(Course $course)
     {
-        $course->delete(); 
+        $course->delete();
+
         return redirect()->route('admin.manage-courses')->with('success', 'មុខវិជ្ជាត្រូវបានលុបដោយជោគជ័យ');
     }
 }

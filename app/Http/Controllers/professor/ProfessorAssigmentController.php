@@ -3,22 +3,19 @@
 namespace App\Http\Controllers\professor;
 
 use App\Http\Controllers\Controller;
-use App\Models\Assignment;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 
 class ProfessorAssigmentController extends Controller
 {
-        /**
+    /**
      * Manage exams for a specific course offering.
      */
     public function manageExams($offering_id)
     {
         $courseOffering = CourseOffering::with('course')->findOrFail($offering_id);
         $exams = Exam::where('course_offering_id', $offering_id)
-                     ->orderBy('exam_date', 'asc')
-                     ->paginate(10);
+            ->orderBy('exam_date', 'asc')
+            ->paginate(10);
 
         return view('professor.manage-exams', compact('courseOffering', 'exams'));
     }
@@ -38,14 +35,14 @@ class ProfessorAssigmentController extends Controller
             'max_score' => 'required|numeric|min:0',
         ]);
         $courseOffering = CourseOffering::where('id', $offering_id)
-                                         ->where('lecturer_user_id', Auth::id())
-                                         ->firstOrFail();
+            ->where('lecturer_user_id', Auth::id())
+            ->firstOrFail();
 
         $exam = new Exam($validatedData);
         $exam->course_offering_id = $courseOffering->id;
         $exam->save();
 
         return redirect()->route('professor.manage-exams', ['offering_id' => $offering_id])
-                         ->with('success', 'ការប្រលងត្រូវបានបន្ថែមដោយជោគជ័យ!');
+            ->with('success', 'ការប្រលងត្រូវបានបន្ថែមដោយជោគជ័យ!');
     }
 }

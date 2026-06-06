@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             // Check if student_id_code column exists before adding
-            if (!Schema::hasColumn('users', 'student_id_code')) {
+            if (! Schema::hasColumn('users', 'student_id_code')) {
                 $table->string('student_id_code')->nullable()->after('email');
             }
         });

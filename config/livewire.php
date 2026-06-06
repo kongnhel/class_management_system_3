@@ -110,20 +110,20 @@ return [
     | Inject Alpine
     |--------------------------------------------------------------------------
     |
-    | Livewire v3 automatically injects Alpine.js into the frontend. 
-    | Since you are including Alpine in your app.js, you might want 
+    | Livewire v3 automatically injects Alpine.js into the frontend.
+    | Since you are including Alpine in your app.js, you might want
     | to set this to "false" to avoid the "Multiple Instances" error.
     |
     */
 
-    'inject_alpine' => false, 
+    'inject_alpine' => false,
 
     /*
     |--------------------------------------------------------------------------
     | Inject Livewire Scripts & Styles
     |--------------------------------------------------------------------------
     |
-    | In Livewire v3, scripts and styles are injected automatically. 
+    | In Livewire v3, scripts and styles are injected automatically.
     | You can disable this if you prefer manual control.
     |
     */

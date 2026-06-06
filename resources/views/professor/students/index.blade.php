@@ -420,7 +420,7 @@
     <div class="mb-6 grid grid-cols-2 gap-y-2 text-[13px]">
         <div>
             <p><span class="font-bold">មុខវិជ្ជា៖</span> <span class="ml-1">{{ $courseOffering->course->title_en }}</span></p>
-            <p><span class="font-bold">ជំនាន់៖</span> <span class="ml-1">{{ $courseOffering->generation ?? '...' }}</span></p>
+            <p><span class="font-bold">ជំនាន់៖</span> <span class="ml-1">{{ $courseOffering->generation ?? $courseOffering->targetPrograms->pluck('generation')->filter()->first() ?? '...' }}</span></p>
         </div>
         <div class="text-right">
             <p><span class="font-bold">កាលបរិច្ឆេទបោះពុម្ព៖</span> <span class="ml-1">{{ now()->format('d/m/Y') }}</span></p>

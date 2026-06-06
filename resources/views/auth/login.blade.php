@@ -64,7 +64,7 @@
 
                 <div class="flex-1 pt-0.5">
                     <p class="text-sm font-bold text-gray-900 leading-tight">
-                        {{ session('success') ? __('ជោគជ័យ!') : __('បរាជ័យ!') }}
+                        {{ session('success') ? __('success') : __('error') }}
                     </p>
                     <p class="mt-1 text-sm text-gray-600 leading-relaxed">
                         {{ session('success') ?? session('error') }}
@@ -103,14 +103,14 @@
             {{-- Email Login Section --}}
             <div id="emailSection">
                 <div class="mb-10">
-                    <h2 class="text-3xl font-black text-white">{{ __('ចូលប្រើប្រាស់') }}</h2>
+                    <h2 class="text-3xl font-black text-white">{{ __('auth_login') }}</h2>
                     <p class="text-gray-400 text-[10px] uppercase opacity-60">Authentication via Credentials</p>
                 </div>
 
                 <form method="POST" action="{{ route('login') }}" class="space-y-6">
                     @csrf
                     <div>
-                        <label class="block text-[11px] font-bold text-emerald-500 uppercase mb-3 ml-1">អ៊ីម៉ែល</label>
+                        <label class="block text-[11px] font-bold text-emerald-500 uppercase mb-3 ml-1">{{ __('auth_email') }}</label>
                         <div class="relative group">
                             <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-500"><i class="fa-solid fa-envelope"></i></span>
                             <input id="email" type="email" name="email" required 
@@ -121,7 +121,7 @@
                     </div>
 
                     <div>
-                        <label class="block text-[11px] font-bold text-emerald-500 uppercase mb-3 ml-1">ពាក្យសម្ងាត់</label>
+                        <label class="block text-[11px] font-bold text-emerald-500 uppercase mb-3 ml-1">{{ __('auth_password') }}</label>
                         <div class="relative group">
                             <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-500"><i class="fa-solid fa-lock"></i></span>
                             <input id="password" type="password" name="password" required 
@@ -136,7 +136,7 @@
                     </div>
 
                     <button type="submit" class="w-full rounded-2xl bg-emerald-600 py-5 font-black text-white hover:bg-emerald-500 transition-all uppercase tracking-widest">
-                        ចូលប្រើប្រព័ន្ធ
+                        {{ __('auth_login_btn') }}
                     </button>
 
                     <div class="my-4">
@@ -150,30 +150,30 @@
                     <button type="button" onclick="loginWithGoogle()" 
                             class="w-full rounded-2xl bg-white py-4 font-bold text-gray-800 flex items-center justify-center gap-3 transition-all">
                         <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5"> 
-                        ចូលជាមួយ Google
+                        {{ __('auth_login_google') }}
                     </button>
                 </form>
             </div>
 
             {{-- QR Code Login Section --}}
             <div id="qrSection" class="hidden text-center">
-                <h2 class="text-2xl font-black text-white mb-2">{{ __('ចូលតាម QR Code') }}</h2>
+                <h2 class="text-2xl font-black text-white mb-2">{{ __('auth_login_qr') }}</h2>
                 <div class="qr-container inline-block p-4 bg-white rounded-[2rem] border-4 border-emerald-500/30 mt-6" id="qrContainer">
                     {!! $qrCode ?? '<div class="w-64 h-64 flex items-center justify-center text-gray-400">QR Loading...</div>' !!}
                 </div>
-                <p class="text-emerald-400 text-[11px] font-black mt-6 uppercase tracking-widest" id="qr-status">រង់ចាំការស្កែន...</p>
+                <p class="text-emerald-400 text-[11px] font-black mt-6 uppercase tracking-widest" id="qr-status">{{ __('auth_qr_waiting') }}</p>
                 
                 <button onclick="refreshQR()" 
                         class="mt-6 flex items-center gap-2 mx-auto text-emerald-400 hover:text-white text-sm font-medium">
-                    <i class="fa-solid fa-arrows-rotate"></i> បង្កើត QR ថ្មី
+                    <i class="fa-solid fa-arrows-rotate"></i> {{ __('auth_qr_refresh') }}
                 </button>
             </div>
 
             <div class="text-center mt-12">
                 <p class="text-sm text-gray-400 font-medium">
-                    {{ __('មិនទាន់មានគណនីមែនទេ?') }} 
+                    {{ __('auth_no_account') }} 
                     <a href="{{ route('register') }}" class="text-emerald-400 hover:text-emerald-300 font-black ml-2 underline underline-offset-8 decoration-2">
-                        {{ __('ចុះឈ្មោះទីនេះ') }}
+                        {{ __('auth_register_link') }}
                     </a>
                 </p>
             </div>
@@ -273,7 +273,7 @@
             channel.bind('login-success', function() {
                 const statusEl = document.getElementById('qr-status');
                 if (statusEl) {
-                    statusEl.innerHTML = `<span class="text-emerald-400 animate-pulse">ជោគជ័យ! កំពុងចូលប្រព័ន្ធ...</span>`;
+                    statusEl.innerHTML = `<span class="text-emerald-400 animate-pulse">{{ __('auth_logging_in') }}</span>`;
                 }
                 setTimeout(() => {
                     window.location.href = "/qr-login/finalize/" + currentToken;
@@ -304,11 +304,11 @@
                     subscribeChannel();
                 }
                 
-                document.getElementById('qr-status').textContent = "រង់ចាំការស្កែន...";
+                document.getElementById('qr-status').textContent = "{{ __('auth_qr_waiting') }}";
             })
             .catch(error => {
                 console.error('Refresh QR Error:', error);
-                document.getElementById('qr-status').innerHTML = `<span class="text-amber-400">មានបញ្ហា សូមព្យាយាមម្តងទៀត</span>`;
+                document.getElementById('qr-status').innerHTML = `<span class="text-amber-400">{{ __('auth_error') }}</span>`;
             });
         };
 

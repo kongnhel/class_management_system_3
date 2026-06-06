@@ -16,7 +16,7 @@ return new class extends Migration
         // Index on attendance_records for fast queries by course and user
         if (Schema::hasTable('attendance_records')) {
             Schema::table('attendance_records', function (Blueprint $table) {
-                if (!Schema::hasColumn('attendance_records', 'course_offering_id')) {
+                if (! Schema::hasColumn('attendance_records', 'course_offering_id')) {
                     return; // Table might not have this column
                 }
                 $table->index('course_offering_id', 'idx_attend_course');

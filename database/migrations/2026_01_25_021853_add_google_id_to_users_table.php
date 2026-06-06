@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-Schema::table('users', function (Blueprint $table) {
-    $table->string('google_id')->nullable()->after('email'); // ទុកសម្រាប់ផ្ទៀងផ្ទាត់
-    $table->string('avatar')->nullable(); // រូបភាពពី Google (បើចង់បាន)
-    $table->string('password')->nullable()->change(); // អនុញ្ញាតឱ្យទទេ
-});
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('google_id')->nullable()->after('email'); // ទុកសម្រាប់ផ្ទៀងផ្ទាត់
+            $table->string('avatar')->nullable(); // រូបភាពពី Google (បើចង់បាន)
+            $table->string('password')->nullable()->change(); // អនុញ្ញាតឱ្យទទេ
+        });
     }
 
     /**

@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\BelongsTo; // 💡 បានបន្ថែមការ import នេះ
-use Illuminate\Database\Eloquent\Relations\HasMany; // 💡 បានបន្ថែមការ import នេះ (សម្រាប់ schedules, attendanceRecords, etc.)
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany; // 💡 បានបន្ថែមការ import នេះ
+use Illuminate\Database\Eloquent\SoftDeletes; // 💡 បានបន្ថែមការ import នេះ (សម្រាប់ schedules, attendanceRecords, etc.)
 
 class CourseOffering extends Model
 {
@@ -120,7 +120,7 @@ class CourseOffering extends Model
     // {
     //     return $this->course->program(); // ចូលប្រើ Program តាមរយៈ Course
     // }
-      public function program(): BelongsTo
+    public function program(): BelongsTo
     {
         return $this->belongsTo(Program::class);
     }
@@ -129,27 +129,25 @@ class CourseOffering extends Model
     {
         return $this->belongsTo(Room::class, 'room_number', 'room_number');
     }
+
     public function studentProfile()
-{
-    return $this->hasOne(StudentProfile::class);
-}
-
-public function students()
-{
-    // return $this->belongsToMany(User::class, 'student_course_enrollments', 'course_offering_id', 'student_user_id')
-    //             ->withPivot('is_class_leader'); // បន្ថែមចំណុចនេះ
-    return $this->belongsToMany(User::class, 'student_course_enrollments', 'course_offering_id', 'student_user_id')
-    ->withPivot('is_class_leader');
-}
-
-
-
-public function professor()
     {
-        // ប្រសិនបើក្នុង Table course_offerings របស់អ្នកប្រើ column 'lecturer_id'
-        return $this->belongsTo(User::class, 'lecturer_id'); 
+        return $this->hasOne(StudentProfile::class);
     }
-    
+
+    public function students()
+    {
+        // return $this->belongsToMany(User::class, 'student_course_enrollments', 'course_offering_id', 'student_user_id')
+        //             ->withPivot('is_class_leader'); // បន្ថែមចំណុចនេះ
+        return $this->belongsToMany(User::class, 'student_course_enrollments', 'course_offering_id', 'student_user_id')
+            ->withPivot('is_class_leader');
+    }
+
+    public function professor()
+    {
+        return $this->belongsTo(User::class, 'lecturer_user_id');
+    }
+
     // ប្រសិនបើអ្នកមាន 'lecturer' រួចហើយ អ្នកអាចបង្កើត 'professor' ជា Alias ក៏បាន
     // public function lecturer()
     // {
@@ -159,9 +157,7 @@ public function professor()
     public function targetPrograms()
     {
         return $this->belongsToMany(Program::class, 'course_offering_program')
-                    ->withPivot('generation') // យកទិន្នន័យ generation មកប្រើ
-                    ->withTimestamps();
+            ->withPivot('generation') // យកទិន្នន័យ generation មកប្រើ
+            ->withTimestamps();
     }
-
-
 }
