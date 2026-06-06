@@ -313,15 +313,15 @@
                                 <th class="border border-black px-2 py-1" style="width:80px;">អត្តលេខ</th>
                                 <th class="border border-black px-2 py-1 text-left" style="width:150px;">ឈ្មោះជាខ្មែរ</th>
                                 <th class="border border-black px-2 py-1 text-left" style="width:120px;">ឈ្មោះជាអង់គ្លេស</th>
-                                <th class="border border-black px-2 py-1" style="width:50px;">ភេទ</th>
-                                <th class="border border-black px-2 py-1" style="width:50px;">វត្តមាន</th>
+                                <th class="border border-black px-2 py-1" style="width:50px;">{{ __('ភេទ') }}</th>
+                                <th class="border border-black px-2 py-1" style="width:50px;">{{ __('វត្តមាន') }}</th>
                                 @foreach($assessments as $assessment)
                                     <th class="border border-black px-2 py-1" style="min-width:60px;">
                                         {{ Str::limit($assessment->title_km, 15) }}
                                     </th>
                                 @endforeach
-                                <th class="border border-black px-2 py-1" style="width:50px;">សរុប</th>
-                                <th class="border border-black px-2 py-1" style="width:40px;">និទ្ទេស</th>
+                                <th class="border border-black px-2 py-1" style="width:50px;">{{ __('សរុប') }}</th>
+                                <th class="border border-black px-2 py-1" style="width:40px;">{{ __('និទ្ទេស') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -388,7 +388,7 @@
                                     <th class="px-4 py-6 text-center border-r border-slate-50 min-w-[175px] group relative bg-white transition-all">
                                         <div class="flex flex-col items-center gap-1.5">
                                             <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase border {{ $colors[$type] }}">
-                                                {{ $type === 'assignment' ? 'កិច្ចការ' : ($type === 'quiz' ? 'Quiz' : 'ប្រឡង') }}
+                                                {{ $type === 'assignment' ? __('កិច្ចការ') : ($type === 'quiz' ? 'Quiz' : __('ប្រឡង')) }}
                                             </span>
                                             <a href="{{ route('professor.grades.edit', ['assessment_id' => $assessment->id, 'type' => $type]) }}"
                                                class="text-[13px] font-extrabold text-slate-700 hover:text-indigo-600 hover:scale-105 transform transition-all line-clamp-1">
@@ -402,17 +402,17 @@
                                                 @csrf
                                                 <input type="hidden" name="assessment_id" value="{{ $assessment->id }}">
                                                 <input type="hidden" name="assessment_type" value="{{ $type }}">
-                                                <button type="submit" title="ផ្ញើដំណឹងពិន្ទុ"
+                                                <button type="submit" title="{{ __('ផ្ញើដំណឹងពិន្ទុ') }}"
                                                         class="p-1.5 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-600 hover:text-white transition-all shadow-sm flex items-center gap-1 text-[9px] font-bold print:hidden">
                                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
-                                                    ផ្ញើដំណឹង
+                                                    {{ __('ផ្ញើដំណឹង') }}
                                                 </button>
                                             </form>
                                         </div>
 
                                         <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-200 flex gap-1">
                                             <a href="{{ route('professor.assessments.edit', ['id' => $assessment->id, 'type' => $type]) }}"
-                                               class="p-1.5 bg-white text-slate-400 hover:text-indigo-600 border border-slate-100 rounded-lg shadow-sm" title="កែសម្រួល">
+                                               class="p-1.5 bg-white text-slate-400 hover:text-indigo-600 border border-slate-100 rounded-lg shadow-sm" title="{{ __('កែសម្រួល') }}">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                                             </a>
                                             <button type="button"

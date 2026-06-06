@@ -90,21 +90,21 @@
                                                     <label class="cursor-pointer">
                                                         <input type="radio" name="attendance[{{ $student->id }}]" value="present" checked class="hidden peer">
                                                         <span class="inline-flex items-center px-3 py-1.5 md:px-5 md:py-2 rounded-lg md:rounded-xl text-[9px] md:text-[11px] font-black uppercase text-slate-500 peer-checked:bg-white peer-checked:text-emerald-600 peer-checked:shadow-sm transition-all whitespace-nowrap">
-                                                            មក
+                                                            {{ __('មក') }}
                                                         </span>
                                                     </label>
                                                     
                                                     <label class="cursor-pointer">
                                                         <input type="radio" name="attendance[{{ $student->id }}]" value="permission" class="hidden peer">
                                                         <span class="inline-flex items-center px-3 py-1.5 md:px-5 md:py-2 rounded-lg md:rounded-xl text-[9px] md:text-[11px] font-black uppercase text-slate-500 peer-checked:bg-white peer-checked:text-amber-500 peer-checked:shadow-sm transition-all whitespace-nowrap">
-                                                            ច្បាប់
+                                                            {{ __('ច្បាប់') }}
                                                         </span>
                                                     </label>
                                                     
                                                     <label class="cursor-pointer">
                                                         <input type="radio" name="attendance[{{ $student->id }}]" value="absent" class="hidden peer">
                                                         <span class="inline-flex items-center px-3 py-1.5 md:px-5 md:py-2 rounded-lg md:rounded-xl text-[9px] md:text-[11px] font-black uppercase text-slate-500 peer-checked:bg-white peer-checked:text-rose-600 peer-checked:shadow-sm transition-all whitespace-nowrap">
-                                                            អវត្តមាន
+                                                            {{ __('អវត្តមាន') }}
                                                         </span>
                                                     </label>
                                                 </div>

@@ -71,13 +71,13 @@
                                 
                                 @php
                                     $details = [
-                                        ['label' => 'ឈ្មោះខ្មែរ', 'value' => $userProfile->full_name_km, 'icon' => 'fas fa-user-circle'],
-                                        ['label' => 'ឈ្មោះអង់គ្លេស', 'value' => $userProfile->full_name_en, 'icon' => 'fas fa-font'],
-                                        ['label' => 'ភេទ', 'value' => $userProfile->gender == 'male' ? 'ប្រុស' : ($userProfile->gender == 'female' ? 'ស្រី' : '---'), 'icon' => 'fas fa-venus-mars'],
-                                        ['label' => 'ថ្ងៃកំណើត', 'value' => $userProfile->date_of_birth ? \Carbon\Carbon::parse($userProfile->date_of_birth)->format('d-M-Y') : null, 'icon' => 'fas fa-calendar-alt'],
+                                        ['label' => __('ឈ្មោះខ្មែរ'), 'value' => $userProfile->full_name_km, 'icon' => 'fas fa-user-circle'],
+                                        ['label' => __('ឈ្មោះអង់គ្លេស'), 'value' => $userProfile->full_name_en, 'icon' => 'fas fa-font'],
+                                        ['label' => __('ភេទ'), 'value' => $userProfile->gender == 'male' ? __('ប្រុស') : ($userProfile->gender == 'female' ? __('ស្រី') : '---'), 'icon' => 'fas fa-venus-mars'],
+                                        ['label' => __('ថ្ងៃកំណើត'), 'value' => $userProfile->date_of_birth ? \Carbon\Carbon::parse($userProfile->date_of_birth)->format('d-M-Y') : null, 'icon' => 'fas fa-calendar-alt'],
                                         ['label' => 'Telegram', 'value' => $userProfile->telegram_user ? '@' . $userProfile->telegram_user : null, 'icon' => 'fab fa-telegram-plane'],
-                                        ['label' => 'ទូរស័ព្ទ', 'value' => $userProfile->phone_number, 'icon' => 'fas fa-phone-alt'],
-                                        ['label' => 'អាសយដ្ឋាន', 'value' => $userProfile->address, 'icon' => 'fas fa-map-marker-alt', 'fullWidth' => true],
+                                        ['label' => __('ទូរស័ព្ទ'), 'value' => $userProfile->phone_number, 'icon' => 'fas fa-phone-alt'],
+                                        ['label' => __('អាសយដ្ឋាន'), 'value' => $userProfile->address, 'icon' => 'fas fa-map-marker-alt', 'fullWidth' => true],
                                     ];
                                 @endphp
 

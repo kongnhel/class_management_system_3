@@ -58,7 +58,7 @@
 
                     
                     <div class="mb-4">
-                        <label for="name_km" class="block font-medium text-sm text-gray-700">ឈ្មោះមហាវិទ្យាល័យជាខ្មែរ</label>
+                        <label for="name_km" class="block font-medium text-sm text-gray-700">{{ __('ឈ្មោះមហាវិទ្យាល័យជាខ្មែរ') }}</label>
                         <input id="name_km" type="text" name="name_km" value="{{ old('name_km', $faculty->name_km) }}" required autofocus
                                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm @error('name_km') border-red-500 @enderror">
                         @error('name_km') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
@@ -66,7 +66,7 @@
 
                     <!-- Name English -->
                     <div class="mb-4">
-                        <label for="name_en" class="block font-medium text-sm text-gray-700">ឈ្មោះមហាវិទ្យាល័យជាអង់គ្លេស</label>
+                        <label for="name_en" class="block font-medium text-sm text-gray-700">{{ __('ឈ្មោះមហាវិទ្យាល័យជាអង់គ្លេស') }}</label>
                         <input id="name_en" type="text" name="name_en" value="{{ old('name_en', $faculty->name_en) }}" required
                                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm @error('name_en') border-red-500 @enderror">
                         @error('name_en') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
@@ -74,10 +74,10 @@
 
                     <!-- Dean (Professor) -->
                     <div class="mb-4">
-                        <label for="dean_user_id" class="block font-medium text-sm text-gray-700">ប្រធានមហាវិទ្យាល័យ (Dean)</label>
+                        <label for="dean_user_id" class="block font-medium text-sm text-gray-700">{{ __('ប្រធានមហាវិទ្យាល័យ (Dean)') }}</label>
                         <select id="dean_user_id" name="dean_user_id"
                                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm @error('dean_user_id') border-red-500 @enderror">
-                            <option value="">ជ្រើសរើសប្រធានមហាវិទ្យាល័យ (ស្រេចចិត្ត)</option>
+                            <option value="">{{ __('ជ្រើសរើសប្រធានមហាវិទ្យាល័យ (ស្រេចចិត្ត)') }}</option>
                             @foreach ($professors as $professor)
                                 <option value="{{ $professor->id }}" {{ old('dean_user_id', $faculty->dean_user_id) == $professor->id ? 'selected' : '' }}>
                                     {{ $professor->name }} ({{ $professor->email }})

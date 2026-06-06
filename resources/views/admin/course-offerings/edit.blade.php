@@ -83,14 +83,14 @@
 
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
-                                        <label for="academic_year" class="block text-sm font-medium text-gray-700">ឆ្នាំសិក្សា</label>
+                                        <label for="academic_year" class="block text-sm font-medium text-gray-700">{{ __('ឆ្នាំសិក្សា') }}</label>
                                         <input type="text" id="academic_year" name="academic_year" value="{{ $courseOffering->academic_year }}" class="mt-1 block w-full rounded-xl border-gray-300 shadow-sm" required>
                                     </div>
                                     <div>
-                                        <label for="semester" class="block text-sm font-medium text-gray-700">ឆមាស</label>
+                                        <label for="semester" class="block text-sm font-medium text-gray-700">{{ __('ឆមាស') }}</label>
                                         <select id="semester" name="semester" class="mt-1 block w-full rounded-xl border-gray-300 shadow-sm" required>
-                                            <option value="ឆមាសទី១" {{ $courseOffering->semester == 'ឆមាសទី១' ? 'selected' : '' }}>ឆមាសទី១</option>
-                                            <option value="ឆមាសទី២" {{ $courseOffering->semester == 'ឆមាសទី២' ? 'selected' : '' }}>ឆមាសទី២</option>
+                                            <option value="ឆមាសទី១" {{ $courseOffering->semester == 'ឆមាសទី១' ? 'selected' : '' }}>{{ __('ឆមាសទី១') }}</option>
+                                            <option value="ឆមាសទី២" {{ $courseOffering->semester == 'ឆមាសទី២' ? 'selected' : '' }}>{{ __('ឆមាសទី២') }}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -104,11 +104,11 @@
 
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
-                                        <label for="start_date" class="block text-sm font-medium text-gray-700">កាលបរិច្ឆេទចាប់ផ្តើម</label>
+                                        <label for="start_date" class="block text-sm font-medium text-gray-700">{{ __('កាលបរិច្ឆេទចាប់ផ្តើម') }}</label>
                                         <input type="date" id="start_date" name="start_date" value="{{ \Carbon\Carbon::parse($courseOffering->start_date)->format('Y-m-d') }}" class="mt-1 block w-full rounded-xl border-gray-300 shadow-sm" required>
                                     </div>
                                     <div>
-                                        <label for="end_date" class="block text-sm font-medium text-gray-700">កាលបរិច្ឆេទបញ្ចប់</label>
+                                        <label for="end_date" class="block text-sm font-medium text-gray-700">{{ __('កាលបរិច្ឆេទបញ្ចប់') }}</label>
                                         <input type="date" id="end_date" name="end_date" value="{{ \Carbon\Carbon::parse($courseOffering->end_date)->format('Y-m-d') }}" class="mt-1 block w-full rounded-xl border-gray-300 shadow-sm" required>
                                     </div>
                                 </div>
@@ -145,7 +145,7 @@
 
                                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                                             <div class="col-span-2 md:col-span-1">
-                                                <label class="block text-xs font-bold text-gray-400 uppercase mb-1">ថ្ងៃសិក្សា</label>
+                                                <label class="block text-xs font-bold text-gray-400 uppercase mb-1">{{ __('ថ្ងៃសិក្សា') }}</label>
                                                 <select name="schedules[{{ $index }}][day_of_week]" class="w-full rounded-xl border-gray-200 text-sm focus:ring-green-500" required>
                                                     @php $khmerDays = ['Monday' => 'ច័ន្ទ', 'Tuesday' => 'អង្គារ', 'Wednesday' => 'ពុធ', 'Thursday' => 'ព្រហស្បតិ៍', 'Friday' => 'សុក្រ', 'Saturday' => 'សៅរ៍', 'Sunday' => 'អាទិត្យ']; @endphp
                                                     @foreach ($khmerDays as $en => $kh)
@@ -154,7 +154,7 @@
                                                 </select>
                                             </div>
                                             <div class="col-span-2 md:col-span-1">
-                                                <label class="block text-xs font-bold text-gray-400 uppercase mb-1">បន្ទប់</label>
+                                                <label class="block text-xs font-bold text-gray-400 uppercase mb-1">{{ __('បន្ទប់') }}</label>
                                                 <select name="schedules[{{ $index }}][room_id]" class="w-full rounded-xl border-gray-200 text-sm focus:ring-green-500" required>
                                                     @foreach($rooms as $room)
                                                         <option value="{{ $room->id }}" {{ $schedule->room_id == $room->id ? 'selected' : '' }}>{{ $room->room_number }}</option>
@@ -162,11 +162,11 @@
                                                 </select>
                                             </div>
                                             <div class="col-span-1">
-                                                <label class="block text-xs font-bold text-gray-400 uppercase mb-1">ចាប់ផ្តើម</label>
+                                                <label class="block text-xs font-bold text-gray-400 uppercase mb-1">{{ __('ចាប់ផ្តើម') }}</label>
                                                 <input type="time" name="schedules[{{ $index }}][start_time]" value="{{ \Carbon\Carbon::parse($schedule->start_time)->format('H:i') }}" class="w-full rounded-xl border-gray-200 text-sm" required>
                                             </div>
                                             <div class="col-span-1">
-                                                <label class="block text-xs font-bold text-gray-400 uppercase mb-1">បញ្ចប់</label>
+                                                <label class="block text-xs font-bold text-gray-400 uppercase mb-1">{{ __('បញ្ចប់') }}</label>
                                                 <input type="time" name="schedules[{{ $index }}][end_time]" value="{{ \Carbon\Carbon::parse($schedule->end_time)->format('H:i') }}" class="w-full rounded-xl border-gray-200 text-sm">
                                             </div>
                                         </div>
@@ -283,19 +283,19 @@
                     </div>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <div class="col-span-2 md:col-span-1">
-                            <label class="block text-xs font-bold text-gray-400 uppercase mb-1">ថ្ងៃសិក្សា</label>
+                            <label class="block text-xs font-bold text-gray-400 uppercase mb-1">{{ __('ថ្ងៃសិក្សា') }}</label>
                             <select name="schedules[${index}][day_of_week]" class="w-full rounded-xl border-gray-200 text-sm focus:ring-green-500" required>${dayOptions}</select>
                         </div>
                         <div class="col-span-2 md:col-span-1">
-                            <label class="block text-xs font-bold text-gray-400 uppercase mb-1">បន្ទប់</label>
+                            <label class="block text-xs font-bold text-gray-400 uppercase mb-1">{{ __('បន្ទប់') }}</label>
                             <select name="schedules[${index}][room_id]" class="w-full rounded-xl border-gray-200 text-sm focus:ring-green-500" required>${roomOptions}</select>
                         </div>
                         <div class="col-span-1">
-                            <label class="block text-xs font-bold text-gray-400 uppercase mb-1">ចាប់ផ្តើម</label>
+                            <label class="block text-xs font-bold text-gray-400 uppercase mb-1">{{ __('ចាប់ផ្តើម') }}</label>
                             <input type="time" name="schedules[${index}][start_time]" class="w-full rounded-xl border-gray-200 text-sm" required>
                         </div>
                         <div class="col-span-1">
-                            <label class="block text-xs font-bold text-gray-400 uppercase mb-1">បញ្ចប់</label>
+                            <label class="block text-xs font-bold text-gray-400 uppercase mb-1">{{ __('បញ្ចប់') }}</label>
                             <input type="time" name="schedules[${index}][end_time]" class="w-full rounded-xl border-gray-200 text-sm">
                         </div>
                     </div>

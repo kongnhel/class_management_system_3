@@ -115,7 +115,7 @@
                                                 <div class="text-[11px] text-slate-400 mt-0.5">{{ $grade->course_name_km }}</div>
                                                 @if($grade->is_failed)
                                                     <span class="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded text-[10px] font-bold bg-rose-50 text-rose-600 border border-rose-100">
-                                                        <i class="fas fa-exclamation-circle"></i> ប្រឡងសង
+                                                        <i class="fas fa-exclamation-circle"></i> {{ __('ប្រឡងសង') }}
                                                     </span>
                                                 @endif
                                             </div>

@@ -5,7 +5,7 @@
                 {{ __('ការប្រឡងរបស់ខ្ញុំ') }}
             </h2>
             <a href="#" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition duration-300">
-                មើលតាមកាលបរិច្ឆេទ
+                {{ __('មើលតាមកាលបរិច្ឆេទ') }}
             </a>
         </div>
     </x-slot>
@@ -13,7 +13,7 @@
     <div class="py-10 bg-gray-100">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-2xl p-8">
-                <h3 class="text-3xl font-extrabold text-gray-800 mb-8">កាលវិភាគប្រឡង</h3>
+                <h3 class="text-3xl font-extrabold text-gray-800 mb-8">{{ __('កាលវិភាគប្រឡង') }}</h3>
 
                 @if (session('success'))
                     <div class="bg-green-50 border-l-4 border-green-400 text-green-700 p-4 mb-6 rounded-lg shadow-sm" role="alert">
@@ -34,10 +34,10 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gradient-to-r from-indigo-500 to-indigo-600">
                             <tr>
-                                <th class="px-6 py-4 text-left text-sm font-bold text-white uppercase tracking-wider rounded-tl-xl">ចំណងជើង</th>
-                                <th class="px-6 py-4 text-left text-sm font-bold text-white uppercase tracking-wider">មុខវិជ្ជា</th>
-                                <th class="px-6 py-4 text-left text-sm font-bold text-white uppercase tracking-wider">កាលបរិច្ឆេទប្រឡង</th>
-                                <th class="px-6 py-4 text-left text-sm font-bold text-white uppercase tracking-wider rounded-tr-xl">ពិន្ទុ</th>
+                                <th class="px-6 py-4 text-left text-sm font-bold text-white uppercase tracking-wider rounded-tl-xl">{{ __('ចំណងជើង') }}</th>
+                                <th class="px-6 py-4 text-left text-sm font-bold text-white uppercase tracking-wider">{{ __('មុខវិជ្ជា') }}</th>
+                                <th class="px-6 py-4 text-left text-sm font-bold text-white uppercase tracking-wider">{{ __('កាលបរិច្ឆេទប្រឡង') }}</th>
+                                <th class="px-6 py-4 text-left text-sm font-bold text-white uppercase tracking-wider rounded-tr-xl">{{ __('ពិន្ទុ') }}</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
@@ -52,7 +52,7 @@
                                                {{ $exam->result->score_obtained ?? '-' }}
                                             </span>
                                         @else
-                                            <span class="text-sm text-red-500 font-semibold">មិនទាន់មានពិន្ទុ</span>
+                                            <span class="text-sm text-red-500 font-semibold">{{ __('មិនទាន់មានពិន្ទុ') }}</span>
                                         @endif
                                     </td>
                                         </tr>
@@ -63,7 +63,7 @@
                                             <svg class="w-12 h-12 text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
                                             </svg>
-                                            <p>មិនមានកាលវិភាគប្រឡងនាពេលបច្ចុប្បន្នទេ។</p>
+                                            <p>{{ __('មិនមានកាលវិភាគប្រឡងនាពេលបច្ចុប្បន្នទេ។') }}</p>
                                         </div>
                                     </td>
                                 </tr>

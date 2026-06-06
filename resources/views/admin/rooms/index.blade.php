@@ -108,7 +108,7 @@
                                 <p class="text-gray-500 mt-1">{{ $room->location_of_room ?? '---' }}</p>
 
                                 <div class="w-full pt-6 border-t mt-8 flex justify-between items-center">
-                                    <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">សមត្ថភាព</span>
+                                    <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">{{ __('សមត្ថភាព') }}</span>
                                     <span class="px-5 py-2 bg-green-50 text-green-700 font-bold rounded-2xl text-sm flex items-center gap-2">
                                         {{ $room->capacity }} នាក់
                                     </span>
@@ -124,10 +124,10 @@
                         <table class="w-full">
                             <thead>
                                 <tr class="bg-gray-50 text-xs uppercase font-bold text-gray-500 border-b">
-                                    <th class="px-8 py-6 text-left">បន្ទប់</th>
-                                    <th class="px-8 py-6 text-left">ទីតាំង</th>
-                                    <th class="px-8 py-6 text-center">សមត្ថភាព</th>
-                                    <th class="px-8 py-6 text-right">សកម្មភាព</th>
+                                    <th class="px-8 py-6 text-left">{{ __('បន្ទប់') }}</th>
+                                    <th class="px-8 py-6 text-left">{{ __('ទីតាំង') }}</th>
+                                    <th class="px-8 py-6 text-center">{{ __('សមត្ថភាព') }}</th>
+                                    <th class="px-8 py-6 text-right">{{ __('សកម្មភាព') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y">
@@ -152,8 +152,8 @@
                                         </span>
                                     </td>
                                     <td class="px-8 py-6 text-right">
-                                        <a href="{{ route('admin.rooms.edit', $room->id) }}" class="text-blue-600 hover:text-blue-700 mr-6">កែប្រែ</a>
-                                        <button onclick="openDeleteModal({{ $room->id }})" class="text-red-600 hover:text-red-700">លុប</button>
+                                        <a href="{{ route('admin.rooms.edit', $room->id) }}" class="text-blue-600 hover:text-blue-700 mr-6">{{ __('កែប្រែ') }}</a>
+                                        <button onclick="openDeleteModal({{ $room->id }})" class="text-red-600 hover:text-red-700">{{ __('លុប') }}</button>
                                     </td>
                                 </tr>
                                 @endforeach
@@ -184,14 +184,14 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126z"/>
                     </svg>
                 </div>
-                <h3 class="text-2xl font-black mb-2">បញ្ជាក់ការលុប</h3>
+                <h3 class="text-2xl font-black mb-2">{{ __('បញ្ជាក់ការលុប') }}</h3>
                 <p class="text-gray-500 mb-8">តើអ្នកប្រាកដថាចង់លុបបន្ទប់នេះមែនទេ?</p>
             </div>
             <div class="flex gap-3">
-                <button onclick="closeDeleteModal()" class="flex-1 py-4 bg-gray-100 hover:bg-gray-200 rounded-2xl font-bold">បោះបង់</button>
+                <button onclick="closeDeleteModal()" class="flex-1 py-4 bg-gray-100 hover:bg-gray-200 rounded-2xl font-bold">{{ __('បោះបង់') }}</button>
                 <form id="delete-form" method="POST" class="flex-1">
                     @csrf @method('DELETE')
-                    <button type="submit" class="w-full py-4 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-bold">លុបចេញ</button>
+                    <button type="submit" class="w-full py-4 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-bold">{{ __('លុបចេញ') }}</button>
                 </form>
             </div>
         </div>

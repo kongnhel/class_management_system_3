@@ -6,8 +6,8 @@
     <x-slot name="header">
         <div class="flex justify-between items-center font-khmer">
             <div>
-                <h2 class="font-black text-3xl text-slate-800">ប្រវត្តិវត្តមានរបស់លោកគ្រូ</h2>
-                <p class="text-slate-500">កំណត់ត្រាចុះវត្តមានទាំងអស់</p>
+                <h2 class="font-black text-3xl text-slate-800">{{ __('ប្រវត្តិវត្តមានរបស់លោកគ្រូ') }}</h2>
+                <p class="text-slate-500">{{ __('កំណត់ត្រាចុះវត្តមានទាំងអស់') }}</p>
             </div>
             <a href="{{ route('professor.dashboard') }}" 
                class="px-5 py-3 bg-white border border-slate-200 rounded-2xl font-bold text-slate-700 hover:bg-slate-50 transition-all flex items-center gap-2">
@@ -31,7 +31,7 @@
                     </div>
                     <div>
                         <p class="text-2xl font-black text-slate-800">{{ $attendances->total() }}</p>
-                        <p class="text-xs text-slate-400 font-bold">សរុបវត្តមាន</p>
+                        <p class="text-xs text-slate-400 font-bold">{{ __('សរុបវត្តមាន') }}</p>
                     </div>
                 </div>
                 <div class="bg-white rounded-2xl border border-slate-100 p-5 flex items-center gap-4">
@@ -40,7 +40,7 @@
                     </div>
                     <div>
                         <p class="text-2xl font-black text-slate-800">{{ $attendances->where('verified_at', '>=', now()->startOfWeek())->count() }}</p>
-                        <p class="text-xs text-slate-400 font-bold">សប្តាហ៍នេះ</p>
+                        <p class="text-xs text-slate-400 font-bold">{{ __('សប្តាហ៍នេះ') }}</p>
                     </div>
                 </div>
                 <div class="bg-white rounded-2xl border border-slate-100 p-5 flex items-center gap-4">
@@ -49,7 +49,7 @@
                     </div>
                     <div>
                         <p class="text-2xl font-black text-slate-800">{{ $attendances->where('verified_at', '>=', now()->startOfMonth())->count() }}</p>
-                        <p class="text-xs text-slate-400 font-bold">ខែនេះ</p>
+                        <p class="text-xs text-slate-400 font-bold">{{ __('ខែនេះ') }}</p>
                     </div>
                 </div>
             </div>
@@ -57,7 +57,7 @@
             {{-- Attendance List --}}
             <div class="bg-white rounded-3xl border border-slate-100 overflow-hidden">
                 <div class="px-8 py-6 border-b border-slate-100">
-                    <h3 class="text-lg font-black text-slate-800">កំណត់ត្រាចុះវត្តមាន</h3>
+                    <h3 class="text-lg font-black text-slate-800">{{ __('កំណត់ត្រាចុះវត្តមាន') }}</h3>
                 </div>
 
                 @forelse($attendances as $att)
@@ -72,8 +72,8 @@
                                     {{ $att->courseOffering->course->title_km ?? $att->courseOffering->course->title_en }}
                                 </h4>
                                 <p class="text-xs text-slate-400 font-bold mt-1">
-                                    ជំនាន់ {{ $att->courseOffering->generation ?? $att->courseOffering->targetPrograms->pluck('generation')->filter()->first() ?? '...' }}
-                                    • បន្ទប់ {{ $att->courseOffering->room_number ?? 'Online' }}
+                                     {{ __('ជំនាន់') }} {{ $att->courseOffering->generation ?? $att->courseOffering->targetPrograms->pluck('generation')->filter()->first() ?? '...' }}
+                                     • {{ __('បន្ទប់') }} {{ $att->courseOffering->room_number ?? 'Online' }}
                                     • {{ $att->courseOffering->semester }}/{{ $att->courseOffering->academic_year }}
                                 </p>
                             </div>
@@ -89,7 +89,7 @@
                                 <span class="font-bold">{{ \Carbon\Carbon::parse($att->verified_at)->format('H:i') }}</span>
                             </div>
                             <span class="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full text-xs font-bold">
-                                <i class="fas fa-check-double"></i> វត្តមាន
+                                <i class="fas fa-check-double"></i> {{ __('វត្តមាន') }}
                             </span>
                         </div>
                     </div>
@@ -99,7 +99,7 @@
                         <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
                             <i class="fas fa-calendar-times text-2xl text-slate-300"></i>
                         </div>
-                        <p class="text-slate-400 font-bold">មិនទាន់មានកំណត់ត្រាវត្តមាននៅឡើយទេ</p>
+                        <p class="text-slate-400 font-bold">{{ __('មិនទាន់មានកំណត់ត្រាវត្តមាននៅឡើយទេ') }}</p>
                     </div>
                 @endforelse
             </div>

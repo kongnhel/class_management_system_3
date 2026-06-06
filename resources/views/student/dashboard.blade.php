@@ -253,7 +253,7 @@
                                     <h5 class="text-2xl font-black">{{ $studentProgram->name_km }}</h5>
                                 </div>
                                 <div class="bg-white/20 px-6 py-3 rounded-2xl backdrop-blur-md border border-white/30 text-center">
-                                    <p class="text-xs opacity-90">ជំនាន់</p>
+                                    <p class="text-xs opacity-90">{{ __('ជំនាន់') }}</p>
                                     <p class="text-xl font-black">{{ $user->generation }}</p>
                                 </div>
                             </div>
@@ -456,8 +456,8 @@
                 </div>
                 <input type="number" name="telegram_chat_id" required placeholder="បញ្ចូលលេខ Chat ID" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl mb-4 focus:ring-4 focus:ring-blue-500/10 outline-none">
                 <div class="flex gap-3">
-                    <button type="button" onclick="document.getElementById('telegramEntryModal').classList.add('hidden')" class="flex-1 py-4 bg-slate-100 rounded-2xl font-bold text-slate-500">បោះបង់</button>
-                    <button type="submit" class="flex-[2] py-4 bg-blue-600 text-white rounded-2xl font-bold">រក្សាទុក</button>
+                    <button type="button" onclick="document.getElementById('telegramEntryModal').classList.add('hidden')" class="flex-1 py-4 bg-slate-100 rounded-2xl font-bold text-slate-500">{{ __('បោះបង់') }}</button>
+                    <button type="submit" class="flex-[2] py-4 bg-blue-600 text-white rounded-2xl font-bold">{{ __('រក្សាទុក') }}</button>
                 </div>
             </form>
         </div>

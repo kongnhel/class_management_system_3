@@ -37,7 +37,7 @@
 
                         <div class="text-center mb-8">
                             <h1 class="text-2xl font-bold mb-1">តារាងពិន្ទុ</h1>
-                            <p class="text-sm text-gray-600 mb-1"><strong>មុខវិជ្ជា:</strong> {{ $courseOffering->course->title_km }} ({{ $courseOffering->course->code }})</p>
+                            <p class="text-sm text-gray-600 mb-1"><strong>{{ __('មុខវិជ្ជា:') }}</strong> {{ $courseOffering->course->title_km }} ({{ $courseOffering->course->code }})</p>
                             <p class="text-sm text-gray-600 mb-1"><strong>ឆ្នាំសិក្សា:</strong> {{ $courseOffering->academic_year }} | <strong>ឆមាស:</strong> {{ $courseOffering->semester }}</p>
                             <p class="text-sm text-gray-600"><strong>សាស្រ្តាចារ្យ:</strong> {{ $courseOffering->lecturer->name }}</p>
                         </div>

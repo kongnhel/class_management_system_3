@@ -12,21 +12,21 @@
     </style>
 </head>
 <body>
-    <div class="header">តារាងពិន្ទុរួម (Gradebook)</div>
-    <p>មុខវិជ្ជា៖ {{ $courseOffering->course->title_km ?? $courseOffering->course->title_en }}</p>
-    <p>សាស្ត្រាចារ្យ៖ {{ Auth::user()->name }}</p>
+    <div class="header">{{ __('តារាងពិន្ទុរួម') }} (Gradebook)</div>
+    <p>{{ __('មុខវិជ្ជា៖') }} {{ $courseOffering->course->title_km ?? $courseOffering->course->title_en }}</p>
+    <p>{{ __('សាស្ត្រាចារ្យ៖') }} {{ Auth::user()->name }}</p>
 
     <table>
         <thead>
             <tr>
                 <th style="width: 30px;">Rank</th>
-                <th style="width: 180px;">ឈ្មោះនិស្សិត</th>
-                <th style="width: 60px;">វត្តមាន<br>(15%)</th>
+                <th style="width: 180px;">{{ __('ឈ្មោះនិស្សិត') }}</th>
+                <th style="width: 60px;">{{ __('វត្តមាន') }}<br>(15%)</th>
                 
                 {{-- បង្ហាញក្បាលតារាងតាមប្រភេទការវាយតម្លៃ --}}
                 @foreach($assessments as $assessment)
                     @php 
-                        $typeLabel = ($assessment instanceof \App\Models\Assignment) ? 'កិច្ចការ' : (($assessment instanceof \App\Models\Quiz) ? 'Quiz' : 'ប្រឡង');
+                        $typeLabel = ($assessment instanceof \App\Models\Assignment) ? __('កិច្ចការ') : (($assessment instanceof \App\Models\Quiz) ? 'Quiz' : __('ប្រឡង'));
                     @endphp
                     <th>
                         {{ $typeLabel }}<br>
@@ -35,8 +35,8 @@
                     </th>
                 @endforeach
 
-                <th class="total-cell">សរុប (100)</th>
-                <th style="width: 50px;">និទ្ទេស</th>
+                <th class="total-cell">{{ __('សរុប') }} (100)</th>
+                <th style="width: 50px;">{{ __('និទ្ទេស') }}</th>
             </tr>
         </thead>
         <tbody>
@@ -85,7 +85,7 @@
     </table>
 
     <div style="margin-top: 20px; font-size: 10px;">
-        <p>កាលបរិច្ឆេទបញ្ចេញឯកសារ៖ {{ date('d/m/Y H:i') }}</p>
+        <p>{{ __('កាលបរិច្ឆេទបញ្ចេញឯកសារ៖') }} {{ date('d/m/Y H:i') }}</p>
     </div>
 </body>
 </html>

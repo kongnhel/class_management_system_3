@@ -13,7 +13,7 @@
                     <i class="fas fa-file-word mr-2"></i> Word
                 </button>
                 <button onclick="window.print()" class="flex-1 md:flex-none inline-flex items-center justify-center px-4 py-2.5 bg-emerald-600 text-white font-bold rounded-xl shadow-lg shadow-emerald-100 hover:bg-emerald-700 transition-all text-xs">
-                    <i class="fas fa-print mr-2"></i> បោះពុម្ព
+                    <i class="fas fa-print mr-2"></i> {{ __('បោះពុម្ព') }}
                 </button>
             </div>
         </div>
@@ -172,7 +172,7 @@
                 <div class="header-col header-logo">
                     <img id="logoImg" src="{{ asset('assets/image/nmu_Logo.png') }}" alt="Logo">
                     <h3 class="font-moul text-blue-custom header-title-km">សាកលវិទ្យាល័យជាតិមានជ័យ</h3>
-                    <h3 class="font-moul text-blue-custom header-title-km">ការិយាល័យសិក្សា</h3>
+                    <h3 class="font-moul text-blue-custom header-title-km">{{ __('ការិយាល័យសិក្សា') }}</h3>
                 </div>
                 <div class="header-col">
                     <h2 class="font-moul header-kingdom">ព្រះរាជាណាចក្រកម្ពុជា</h2>
@@ -244,7 +244,7 @@
                         <table class="custom-table">
                             <thead>
                                 <tr>
-                                    <th class="font-moul" style="width: 12%;">ថ្ងៃសិក្សា</th>
+                                    <th class="font-moul" style="width: 12%;">{{ __('ថ្ងៃសិក្សា') }}</th>
                                     @foreach($weekendTimeSlots as $time) <th class="font-moul">{{ $time }}</th> @endforeach
                                 </tr>
                             </thead>

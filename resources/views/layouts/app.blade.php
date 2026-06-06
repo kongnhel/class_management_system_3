@@ -183,7 +183,7 @@
      style="bottom: 24px; right: 24px; touch-action: none;">
     
     <div class="mb-3 bg-white text-gray-800 px-4 py-2 rounded-2xl shadow-xl border border-gray-100 text-xs font-medium opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 pointer-events-none relative mr-2">
-        សួរអ្វីមួយទៅកាន់ AI...
+        {{ __('សួរអ្វីមួយទៅកាន់ AI...') }}
         <div class="absolute -bottom-1 right-4 w-2 h-2 bg-white border-r border-b border-gray-100 rotate-45"></div>
     </div>
 
@@ -212,14 +212,14 @@
             </div>
             <div>
                 <h2 class="font-bold text-xl leading-none">NMU Smart Assistant</h2>
-                <span class="text-xs text-white/80">ប្រព័ន្ធគ្រប់គ្រងសាលា</span>
+                <span class="text-xs text-white/80">{{ __('ប្រព័ន្ធគ្រប់គ្រងសាលា') }}</span>
             </div>
         </div>
         <div class="flex items-center gap-3">
             <button onclick="showClearConfirm()" 
                     class="px-4 py-2 bg-white/20 hover:bg-white/30 text-white text-sm rounded-2xl transition-all flex items-center gap-2">
                 <i class="fas fa-trash-alt"></i>
-                <span class="hidden sm:inline">លុបប្រវត្តិ</span>
+                <span class="hidden sm:inline">{{ __('លុបប្រវត្តិ') }}</span>
             </button>
             
             <button onclick="toggleAIChat()" class="p-2 hover:bg-white/10 rounded-full transition-colors">
@@ -231,14 +231,14 @@
     </div>
 
     <div class="flex border-b border-gray-50 bg-gray-50/50 p-3 space-x-3">
-        <button type="button" onclick="setOption('info')" id="btn-info" class="flex-1 py-3 rounded-xl text-sm bg-white shadow-sm text-green-600 border border-green-200 font-bold transition-all">ព័ត៌មានទូទៅ</button>
-        <button type="button" onclick="setOption('process')" id="btn-process" class="flex-1 py-3 rounded-xl text-sm text-gray-500 hover:bg-white font-bold transition-all">របៀបប្រើប្រាស់</button>
+        <button type="button" onclick="setOption('info')" id="btn-info" class="flex-1 py-3 rounded-xl text-sm bg-white shadow-sm text-green-600 border border-green-200 font-bold transition-all">{{ __('ព័ត៌មានទូទៅ') }}</button>
+        <button type="button" onclick="setOption('process')" id="btn-process" class="flex-1 py-3 rounded-xl text-sm text-gray-500 hover:bg-white font-bold transition-all">{{ __('របៀបប្រើប្រាស់') }}</button>
     </div>
 
     <div id="chat-box" class="flex-grow overflow-y-auto p-6 space-y-6 bg-[#f8fafc] custom-scrollbar"></div>
 
     <div id="thinking-indicator" class="hidden px-6 py-3 bg-gray-50 border-t border-gray-100">
-        <span class="text-sm italic text-gray-500 animate-pulse">កំពុងគិត...</span>
+        <span class="text-sm italic text-gray-500 animate-pulse">{{ __('កំពុងគិត...') }}</span>
     </div>
 
     <div class="p-6 bg-white border-t border-gray-100">
@@ -247,7 +247,7 @@
             <input type="hidden" id="chat-option" value="info">
             <input type="text" id="user-input" autocomplete="off" 
                 class="flex-grow bg-gray-50 border border-gray-200 rounded-2xl px-6 py-4 text-base outline-none focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all" 
-                placeholder="សរសេរសំណួរនៅទីនេះ..." required>
+                placeholder="{{ __('សរសេរសំណួរនៅទីនេះ...') }}" required>
             <button type="submit" class="bg-green-600 text-white p-4 rounded-xl hover:bg-green-700 active:scale-95 shadow-lg transition-all">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
@@ -263,15 +263,15 @@
             <div class="mx-auto w-20 h-20 bg-red-100 rounded-3xl flex items-center justify-center mb-6">
                 <i class="fas fa-trash-alt text-red-600 text-4xl"></i>
             </div>
-            <h3 class="text-2xl font-bold text-gray-900 mb-3">លុបប្រវត្តិសន្ទនា?</h3>
+            <h3 class="text-2xl font-bold text-gray-900 mb-3">{{ __('លុបប្រវត្តិសន្ទនា?') }}</h3>
             <p class="text-gray-600">
-                សកម្មភាពនេះនឹងលុបប្រវត្តិសន្ទនាទាំងអស់ជាអចិន្ត្រៃយ៍។<br>
-                អ្នកពិតជាចង់បន្តទេ?
+                {{ __('សកម្មភាពនេះនឹងលុបប្រវត្តិសន្ទនាទាំងអស់ជាអចិន្ត្រៃយ៍។') }}<br>
+                {{ __('អ្នកពិតជាចង់បន្តទេ?') }}
             </p>
         </div>
         <div class="bg-gray-50 px-6 py-5 flex gap-3">
-            <button onclick="hideConfirmModal()" class="flex-1 py-4 font-semibold text-gray-700 bg-white border border-gray-300 rounded-2xl hover:bg-gray-50">បោះបង់</button>
-            <button onclick="confirmClearHistory()" class="flex-1 py-4 font-semibold text-white bg-red-600 rounded-2xl hover:bg-red-700">បាទ/ចាស លុបចោល</button>
+            <button onclick="hideConfirmModal()" class="flex-1 py-4 font-semibold text-gray-700 bg-white border border-gray-300 rounded-2xl hover:bg-gray-50">{{ __('បោះបង់') }}</button>
+            <button onclick="confirmClearHistory()" class="flex-1 py-4 font-semibold text-white bg-red-600 rounded-2xl hover:bg-red-700">{{ __('បាទ/ចាស លុបចោល') }}</button>
         </div>
     </div>
 </div>

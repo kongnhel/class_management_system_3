@@ -100,7 +100,7 @@
                         </svg>
                     </div>
                     <input type="text" name="search" value="{{ $search }}"
-                           placeholder="ស្វែងរកឈ្មោះ ឬ អត្តលេខ..."
+                           placeholder="{{ __('ស្វែងរកឈ្មោះ ឬ អត្តលេខ...') }}"
                            class="block w-full pl-11 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm">
                 </form>
 

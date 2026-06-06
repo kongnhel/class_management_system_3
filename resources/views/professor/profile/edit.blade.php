@@ -68,13 +68,13 @@
                         {{-- Input Fields Section --}}
                         @php
                             $fields = [
-                                ['id' => 'full_name_km', 'label' => 'ឈ្មោះពេញ (ខ្មែរ)', 'type' => 'text', 'placeholder' => 'សុវណ្ណ ភី', 'required' => true, 'icon' => 'fas fa-user'],
-                                ['id' => 'full_name_en', 'label' => 'ឈ្មោះពេញ (អង់គ្លេស)', 'type' => 'text', 'placeholder' => 'Sovann P', 'required' => false, 'icon' => 'fas fa-font'],
-                                ['id' => 'gender', 'label' => 'ភេទ', 'type' => 'select', 'required' => true, 'icon' => 'fas fa-venus-mars'],
-                                ['id' => 'date_of_birth', 'label' => 'ថ្ងៃខែឆ្នាំកំណើត', 'type' => 'date', 'required' => false, 'icon' => 'fas fa-calendar-day'],
-                                ['id' => 'phone_number', 'label' => 'លេខទូរស័ព្ទ', 'type' => 'text', 'placeholder' => '012345678', 'required' => false, 'icon' => 'fas fa-phone'],
-                                ['id' => 'telegram_user', 'label' => 'Telegram Username', 'type' => 'text', 'placeholder' => 'sovann_p', 'required' => false, 'icon' => 'fab fa-telegram-plane', 'color' => 'sky'],
-                                ['id' => 'address', 'label' => 'អាសយដ្ឋាន', 'type' => 'text', 'placeholder' => 'ភ្នំពេញ', 'required' => false, 'icon' => 'fas fa-map-marker-alt', 'full' => true],
+                                ['id' => 'full_name_km', 'label' => __('ឈ្មោះពេញ (ខ្មែរ)'), 'type' => 'text', 'placeholder' => 'សុវណ្ណ ភី', 'required' => true, 'icon' => 'fas fa-user'],
+                                ['id' => 'full_name_en', 'label' => __('ឈ្មោះពេញ (អង់គ្លេស)'), 'type' => 'text', 'placeholder' => 'Sovann P', 'required' => false, 'icon' => 'fas fa-font'],
+                                ['id' => 'gender', 'label' => __('ភេទ'), 'type' => 'select', 'required' => true, 'icon' => 'fas fa-venus-mars'],
+                                ['id' => 'date_of_birth', 'label' => __('ថ្ងៃខែឆ្នាំកំណើត'), 'type' => 'date', 'required' => false, 'icon' => 'fas fa-calendar-day'],
+                                ['id' => 'phone_number', 'label' => __('លេខទូរស័ព្ទ'), 'type' => 'text', 'placeholder' => '012345678', 'required' => false, 'icon' => 'fas fa-phone'],
+                                ['id' => 'telegram_user', 'label' => __('Telegram Username'), 'type' => 'text', 'placeholder' => 'sovann_p', 'required' => false, 'icon' => 'fab fa-telegram-plane', 'color' => 'sky'],
+                                ['id' => 'address', 'label' => __('អាសយដ្ឋាន'), 'type' => 'text', 'placeholder' => 'ភ្នំពេញ', 'required' => false, 'icon' => 'fas fa-map-marker-alt', 'full' => true],
                             ];
                         @endphp
 

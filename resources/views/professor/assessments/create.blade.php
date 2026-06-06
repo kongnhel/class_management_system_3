@@ -119,7 +119,7 @@
                                         <div class="group">
                                             <label for="assessment_date" class="flex items-center gap-2 text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                                <span id="dateLabel">កាលបរិច្ឆេទ</span> <span class="text-rose-500">*</span>
+                                                <span id="dateLabel">{{ __('កាលបរិច្ឆេទ') }}</span> <span class="text-rose-500">*</span>
                                             </label>
                                             <input type="date" name="assessment_date" id="assessment_date" value="{{ old('assessment_date', date('Y-m-d')) }}" required
                                                    class="w-full bg-gray-50 border-gray-200 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 rounded-xl py-3.5 px-5 transition-all font-bold text-gray-700">
@@ -280,7 +280,7 @@
                                 <span class="font-black">50%</span>
                             </li>
                             <li class="border-t border-indigo-200 pt-2 flex items-center justify-between font-black">
-                                <span>សរុប</span>
+                                <span>{{ __('សរុប') }}</span>
                                 <span>100%</span>
                             </li>
                         </ul>

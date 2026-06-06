@@ -113,10 +113,10 @@
                                                 </p>
                                                 <div class="grid grid-cols-2 gap-2 md:gap-3">
                                                     <a href="{{ route('student.leader.attendance', $enrollment->course_offering_id) }}" class="flex items-center justify-center bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded-xl text-[9px] md:text-[10px] font-bold transition shadow-sm">
-                                                        <i class="fas fa-clipboard-list mr-1"></i> វត្តមាន
+                                                        <i class="fas fa-clipboard-list mr-1"></i> {{ __('វត្តមាន') }}
                                                     </a>
                                                     <a href="{{ route('student.leader.report', $enrollment->course_offering_id) }}" class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-xl text-[9px] md:text-[10px] font-bold transition shadow-sm">
-                                                        <i class="fas fa-file-invoice mr-1"></i> របាយការណ៍
+                                                        <i class="fas fa-file-invoice mr-1"></i> {{ __('របាយការណ៍') }}
                                                     </a>
                                                 </div>
                                             </div>

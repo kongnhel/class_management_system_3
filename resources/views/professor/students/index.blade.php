@@ -206,9 +206,9 @@
             <div>
                 {{-- Breadcrumb --}}
                 <div class="kh" style="display:flex; align-items:center; gap:5px; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#9ca3af; margin-bottom:8px;">
-                    <span>សាស្ត្រាចារ្យ</span>
+                    <span>{{ __('prof_stu_breadcrumb_professor') }}</span>
                     <svg style="width:10px;height:10px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-width="3"/></svg>
-                    <span style="color:#16a34a;">បញ្ជីឈ្មោះនិស្សិត</span>
+                    <span style="color:#16a34a;">{{ __('prof_stu_breadcrumb_student_list') }}</span>
                 </div>
 
                 <div style="display:flex; align-items:center; gap:14px; margin-bottom:8px;">
@@ -253,10 +253,10 @@
         {{-- ===== Stats ===== --}}
         @php
             $statItems = [
-                ['label' => 'និស្សិតសរុប',  'value' => $stats['total']   ?? 0, 'icon' => '👥', 'bg' => '#eff6ff', 'color' => '#2563eb'],
-                ['label' => 'និស្សិតប្រុស', 'value' => $stats['male']    ?? 0, 'icon' => '♂',  'bg' => '#eef2ff', 'color' => '#4f46e5'],
-                ['label' => 'និស្សិតស្រី',  'value' => $stats['female']  ?? 0, 'icon' => '♀',  'bg' => '#fff1f2', 'color' => '#e11d48'],
-                ['label' => 'ប្រធានថ្នាក់',  'value' => $stats['leaders'] ?? 0, 'icon' => '★',  'bg' => '#fffbeb', 'color' => '#d97706'],
+                ['label' => __('និស្សិតសរុប'),  'value' => $stats['total']   ?? 0, 'icon' => '👥', 'bg' => '#eff6ff', 'color' => '#2563eb'],
+                ['label' => __('និស្សិតប្រុស'), 'value' => $stats['male']    ?? 0, 'icon' => '♂',  'bg' => '#eef2ff', 'color' => '#4f46e5'],
+                ['label' => __('និស្សិតស្រី'),  'value' => $stats['female']  ?? 0, 'icon' => '♀',  'bg' => '#fff1f2', 'color' => '#e11d48'],
+                ['label' => __('ប្រធានថ្នាក់'),  'value' => $stats['leaders'] ?? 0, 'icon' => '★',  'bg' => '#fffbeb', 'color' => '#d97706'],
             ];
         @endphp
         <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:14px; margin-bottom:24px;">
@@ -267,7 +267,7 @@
                     </div>
                     <div>
                         <div class="kh" style="font-size:0.68rem; font-weight:700; color:#9ca3af; text-transform:uppercase; letter-spacing:0.07em; margin-bottom:2px;">{{ $item['label'] }}</div>
-                        <div class="kh" style="font-size:1.25rem; font-weight:900; color:#111827; line-height:1;">{{ $item['value'] }} <span style="font-size:0.75rem; font-weight:600; color:#6b7280;">នាក់</span></div>
+                        <div class="kh" style="font-size:1.25rem; font-weight:900; color:#111827; line-height:1;">{{ $item['value'] }} <span style="font-size:0.75rem; font-weight:600; color:#6b7280;">{{ __('prof_stu_people') }}</span></div>
                     </div>
                 </div>
             @endforeach
@@ -279,10 +279,10 @@
                 <table class="students-table">
                     <thead>
                         <tr>
-                            <th class="kh" style="text-align:left;">ព័ត៌មាននិស្សិត</th>
-                            <th class="kh hide-sm" style="text-align:center;">លេខសម្គាល់</th>
-                            <th class="kh hide-lg" style="text-align:left;">ទំនាក់ទំនង</th>
-                            <th class="kh" style="text-align:right;">សកម្មភាព</th>
+                            <th class="kh" style="text-align:left;">{{ __('prof_stu_student_info') }}</th>
+                            <th class="kh hide-sm" style="text-align:center;">{{ __('prof_stu_id_label') }}</th>
+                            <th class="kh hide-lg" style="text-align:left;">{{ __('prof_stu_contact') }}</th>
+                            <th class="kh" style="text-align:right;">{{ __('prof_stu_actions') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -323,9 +323,9 @@
                                             </div>
                                             <div style="margin-top:4px;">
                                                 @if($isLeader)
-                                                    <span class="pill-leader kh">ប្រធានថ្នាក់</span>
+                                                    <span class="pill-leader kh">{{ __('prof_stu_class_leader') }}</span>
                                                 @else
-                                                    <span class="pill-student kh">និស្សិត</span>
+                                                    <span class="pill-student kh">{{ __('prof_stu_student_label') }}</span>
                                                 @endif
                                             </div>
                                         </div>
@@ -419,12 +419,12 @@
 
     <div class="mb-6 grid grid-cols-2 gap-y-2 text-[13px]">
         <div>
-            <p><span class="font-bold">មុខវិជ្ជា៖</span> <span class="ml-1">{{ $courseOffering->course->title_en }}</span></p>
-            <p><span class="font-bold">ជំនាន់៖</span> <span class="ml-1">{{ $courseOffering->generation ?? $courseOffering->targetPrograms->pluck('generation')->filter()->first() ?? '...' }}</span></p>
+            <p><span class="font-bold">{{ __('មុខវិជ្ជា៖') }}</span> <span class="ml-1">{{ $courseOffering->course->title_en }}</span></p>
+            <p><span class="font-bold">{{ __('ជំនាន់៖') }}</span> <span class="ml-1">{{ $courseOffering->generation ?? $courseOffering->targetPrograms->pluck('generation')->filter()->first() ?? '...' }}</span></p>
         </div>
         <div class="text-right">
-            <p><span class="font-bold">កាលបរិច្ឆេទបោះពុម្ព៖</span> <span class="ml-1">{{ now()->format('d/m/Y') }}</span></p>
-            <p><span class="font-bold">សរុបនិស្សិត៖</span> <span class="ml-1">{{ count($paginatedStudents) }} នាក់</span></p>
+            <p><span class="font-bold">{{ __('កាលបរិច្ឆេទបោះពុម្ព៖') }}</span> <span class="ml-1">{{ now()->format('d/m/Y') }}</span></p>
+            <p><span class="font-bold">{{ __('សរុបនិស្សិត៖') }}</span> <span class="ml-1">{{ count($paginatedStudents) }} {{ __('នាក់') }}</span></p>
         </div>
     </div>
 
@@ -432,12 +432,12 @@
         <thead>
             <tr class="bg-gray-100 border border-black">
                 <th class="border border-black px-2 py-3 w-[5%] text-center">ល.រ</th>
-                <th class="border border-black px-2 py-3 w-[12%] text-center">អត្តលេខ</th>
-                <th class="border border-black px-2 py-3 text-left w-[20%]">ឈ្មោះនិស្សិត</th>
-                <th class="border border-black px-2 py-3 w-[8%] text-center">ភេទ</th>
-                <th class="border border-black px-2 py-3 w-[12%] text-center">ថ្ងៃខែឆ្នាំកំណើត</th>
-                <th class="border border-black px-2 py-3 text-left w-[28%]">ដេប៉ាតឺម៉ង់ / កម្មវិធីសិក្សា</th>
-                <th class="border border-black px-2 py-3 w-[15%] text-center">លេខទូរស័ព្ទ</th>
+                <th class="border border-black px-2 py-3 w-[12%] text-center">{{ __('អត្តលេខ') }}</th>
+                <th class="border border-black px-2 py-3 text-left w-[20%]">{{ __('ឈ្មោះនិស្សិត') }}</th>
+                <th class="border border-black px-2 py-3 w-[8%] text-center">{{ __('ភេទ') }}</th>
+                <th class="border border-black px-2 py-3 w-[12%] text-center">{{ __('ថ្ងៃខែឆ្នាំកំណើត') }}</th>
+                <th class="border border-black px-2 py-3 text-left w-[28%]">{{ __('ដេប៉ាតឺម៉ង់ / កម្មវិធីសិក្សា') }}</th>
+                <th class="border border-black px-2 py-3 w-[15%] text-center">{{ __('លេខទូរស័ព្ទ') }}</th>
             </tr>
         </thead>
         <tbody>
@@ -455,7 +455,7 @@
                     <td class="border border-black px-2 py-2 text-center font-mono">
                         {{ $profile->date_of_birth ? \Carbon\Carbon::parse($profile->date_of_birth)->format('d/m/Y') : '-' }}
                     </td>
-                    <td class="border border-black px-2 py-2 leading-tight">{{ $enrollment->program->name_km ?? 'មិនទាន់កំណត់' }}</td>
+                    <td class="border border-black px-2 py-2 leading-tight">{{ $enrollment->program->name_km ?? __('មិនទាន់កំណត់') }}</td>
                     <td class="border border-black px-2 py-2 text-center font-mono">{{ $profile->phone_number ?? '-' }}</td>
                 </tr>
             @endforeach
@@ -464,7 +464,7 @@
 
     <div class="mt-12 flex justify-between">
         <div class="text-center w-1/3">
-            <p class="text-[13px]">បានពិនិត្យដោយ</p>
+            <p class="text-[13px]">{{ __('បានពិនិត្យដោយ') }}</p>
             <p class="mt-16 font-bold underline">..........................................</p>
         </div>
         <div class="text-center w-1/3">

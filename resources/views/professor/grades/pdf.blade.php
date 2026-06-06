@@ -63,7 +63,7 @@
 
     <div class="header">
         <h1>តារាងពិន្ទុ</h1>
-        <p><strong>មុខវិជ្ជា:</strong> {{ $courseOffering->course->title_km }} ({{ $courseOffering->course->code }})</p>
+        <p><strong>{{ __('មុខវិជ្ជា:') }}</strong> {{ $courseOffering->course->title_km }} ({{ $courseOffering->course->code }})</p>
         <p><strong>ឆ្នាំសិក្សា:</strong> {{ $courseOffering->academic_year }} | <strong>ឆមាស:</strong> {{ $courseOffering->semester }}</p>
         <p><strong>សាស្រ្តាចារ្យ:</strong> {{ $courseOffering->lecturer->name }}</p>
     </div>
@@ -71,7 +71,7 @@
     <table>
         <thead>
             <tr>
-                <th>ឈ្មោះនិស្សិត</th>
+                <th>{{ __('ឈ្មោះនិស្សិត') }}</th>
                 @foreach($assessments as $assessment)
                     <th>{{ $assessment->title_km }} ({{ $assessment->max_score }})</th>
                 @endforeach

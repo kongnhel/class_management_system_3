@@ -284,7 +284,7 @@
                                     </span>
                                     <input type="text" name="address" id="address" value="{{ old('address', $user->userProfile->address ?? '') }}" 
                                            class="block w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 focus:bg-white outline-none transition-all font-bold text-slate-700" 
-                                           placeholder="រាជធានីភ្នំពេញ, កម្ពុជា">
+                                           placeholder="{{ __('រាជធានីភ្នំពេញ, កម្ពុជា') }}">
                                 </div>
                             </div>
                         </div>

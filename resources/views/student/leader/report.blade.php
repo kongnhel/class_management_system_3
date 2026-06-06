@@ -11,7 +11,7 @@
                         </svg>
                     </div>
                     <div>
-                        <h2 class="text-xl md:text-2xl font-extrabold text-slate-800 tracking-tight leading-tight">របាយការណ៍វត្តមានរួម</h2>
+                        <h2 class="text-xl md:text-2xl font-extrabold text-slate-800 tracking-tight leading-tight">{{ __('របាយការណ៍វត្តមានរួម') }}</h2>
                         <p class="text-xs md:text-sm font-medium text-slate-500 mt-1 flex items-center gap-2">
                             <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
                             {{ $courseOffering->course->title_km ?? $courseOffering->course->name_km }}
@@ -24,7 +24,7 @@
                     <svg class="w-4 h-4 mr-2 transform group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
                     </svg>
-                    បោះពុម្ពរបាយការណ៍
+                    {{ __('បោះពុម្ពរបាយការណ៍') }}
                 </button>
             </div>
 
@@ -36,14 +36,14 @@
                     <table class="min-w-full divide-y divide-slate-100">
                         <thead>
                             <tr class="bg-slate-50/50">
-                                <th class="px-4 md:px-6 py-4 md:py-5 text-left text-[10px] md:text-[11px] font-black text-slate-400 uppercase tracking-wider md:tracking-[0.2em]">អត្តលេខ</th>
-                                <th class="px-4 md:px-6 py-4 md:py-5 text-left text-[10px] md:text-[11px] font-black text-slate-400 uppercase tracking-wider md:tracking-[0.2em]">ព័ត៌មាននិស្សិត</th>
+                                <th class="px-4 md:px-6 py-4 md:py-5 text-left text-[10px] md:text-[11px] font-black text-slate-400 uppercase tracking-wider md:tracking-[0.2em]">{{ __('អត្តលេខ') }}</th>
+                                <th class="px-4 md:px-6 py-4 md:py-5 text-left text-[10px] md:text-[11px] font-black text-slate-400 uppercase tracking-wider md:tracking-[0.2em]">{{ __('ព័ត៌មាននិស្សិត') }}</th>
                                 {{-- លាក់ Column មុខវិជ្ជាលើ Mobile ដើម្បីកុំឱ្យចង្អៀត --}}
-                                <th class="hidden md:table-cell px-6 py-5 text-left text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">មុខវិជ្ជា</th>
-                                <th class="px-2 md:px-4 py-4 md:py-5 text-center text-[10px] md:text-[11px] font-black text-emerald-600 uppercase">មក</th>
-                                <th class="px-2 md:px-4 py-4 md:py-5 text-center text-[10px] md:text-[11px] font-black text-amber-500 uppercase">ច្បាប់</th>
-                                <th class="px-2 md:px-4 py-4 md:py-5 text-center text-[10px] md:text-[11px] font-black text-rose-500 uppercase">អវត្តមាន</th>
-                                <th class="px-4 md:px-6 py-4 md:py-5 text-right text-[10px] md:text-[11px] font-black text-slate-400 uppercase tracking-wider">ភាគរយ</th>
+                                <th class="hidden md:table-cell px-6 py-5 text-left text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">{{ __('មុខវិជ្ជា') }}</th>
+                                <th class="px-2 md:px-4 py-4 md:py-5 text-center text-[10px] md:text-[11px] font-black text-emerald-600 uppercase">{{ __('មក') }}</th>
+                                <th class="px-2 md:px-4 py-4 md:py-5 text-center text-[10px] md:text-[11px] font-black text-amber-500 uppercase">{{ __('ច្បាប់') }}</th>
+                                <th class="px-2 md:px-4 py-4 md:py-5 text-center text-[10px] md:text-[11px] font-black text-rose-500 uppercase">{{ __('អវត្តមាន') }}</th>
+                                <th class="px-4 md:px-6 py-4 md:py-5 text-right text-[10px] md:text-[11px] font-black text-slate-400 uppercase tracking-wider">{{ __('ភាគរយ (%)') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-50">
@@ -109,7 +109,7 @@
                     * ចំណុចសម្គាល់៖ វត្តមាន < ៧៥% បង្ហាញជាពណ៌ក្រហម។
                 </p>
                 <p class="text-[9px] md:text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-                    កាលបរិច្ឆេទបញ្ចេញ៖ {{ date('d-M-Y') }}
+                    {{ __('កាលបរិច្ឆេទបញ្ចេញ៖') }} {{ date('d-M-Y') }}
                 </p>
             </div>
         </div>

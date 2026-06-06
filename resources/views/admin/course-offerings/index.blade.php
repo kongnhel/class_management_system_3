@@ -171,7 +171,7 @@
                                 <i class="fas fa-file-word"></i> Word
                             </button>
                             <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2.5 rounded-lg font-bold shadow-lg transition-all flex items-center gap-2 text-sm">
-                                <i class="fas fa-print"></i> បោះពុម្ព
+                                <i class="fas fa-print"></i> {{ __('print') }}
                             </button>
                         </div>
                         <div class="bg-slate-800 p-1 rounded-lg border border-slate-700 flex">
@@ -194,7 +194,7 @@
                 {{-- 1. Search Box --}}
                 <div class="md:col-span-3">
                     <label class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 block">{{ __('ស្វែងរកមុខវិជ្ជា/សាស្ត្រាចារ្យ') }}</label>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="ស្វែងរក..." class="block w-full rounded-lg border-gray-200 bg-gray-50 focus:bg-white sm:text-sm py-2.5 shadow-sm">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('ស្វែងរក...') }}" class="block w-full rounded-lg border-gray-200 bg-gray-50 focus:bg-white sm:text-sm py-2.5 shadow-sm">
                 </div>
                 
                 {{-- 2. Program --}}
@@ -361,13 +361,13 @@
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-slate-50">
                         <tr>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">មុខវិជ្ជា</th>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">សាស្ត្រាចារ្យ</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">{{ __('មុខវិជ្ជា') }}</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">{{ __('សាស្ត្រាចារ្យ') }}</th>
                             <th class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">ឆមាស / ឆ្នាំ</th>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">ជំនាញ</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">{{ __('ជំនាញ') }}</th>
                             <th class="px-6 py-4 text-center text-xs font-bold text-slate-600 uppercase tracking-wider">កាលវិភាគ</th>
-                            <th class="px-6 py-4 text-center text-xs font-bold text-slate-600 uppercase tracking-wider">ស្ថានភាព</th>
-                            <th class="px-6 py-4 text-center text-xs font-bold text-slate-600 uppercase tracking-wider">សកម្មភាព</th>
+                            <th class="px-6 py-4 text-center text-xs font-bold text-slate-600 uppercase tracking-wider">{{ __('ស្ថានភាព') }}</th>
+                            <th class="px-6 py-4 text-center text-xs font-bold text-slate-600 uppercase tracking-wider">{{ __('សកម្មភាព') }}</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-100">
@@ -476,7 +476,7 @@
                 <div class="header-left uni-logo-text">
                     <img src="{{ asset('assets/image/nmu_Logo.png') }}" alt="Logo">
                     <h3 class="font-moul">សាកលវិទ្យាល័យជាតិមានជ័យ</h3>
-                    <h3 class="font-moul">ការិយាល័យសិក្សា</h3>
+                    <h3 class="font-moul">{{ __('ការិយាល័យសិក្សា') }}</h3>
                 </div>
                 <div class="header-center kingdom-header">
                     <h2 class="font-moul">ព្រះរាជាណាចក្រកម្ពុជា</h2>
@@ -531,7 +531,7 @@
                 <table class="matrix-table">
                     <thead>
                         <tr>
-                            <th class="font-moul" style="width: 12%;">ថ្ងៃសិក្សា</th>
+                            <th class="font-moul" style="width: 12%;">{{ __('ថ្ងៃសិក្សា') }}</th>
                             @foreach($weekendTimeSlots as $timeSlot) <th class="font-moul">{{ $timeSlot }}</th> @endforeach
                         </tr>
                     </thead>
@@ -616,9 +616,9 @@
                         <p class="text-sm text-gray-500 mt-4 text-center leading-relaxed">តើអ្នកប្រាកដទេថាចង់លុបទិន្នន័យនេះ? ប្រតិបត្តិការនេះមិនអាចត្រឡប់ថយក្រោយវិញបានឡើយ。</p>
                     </div>
                     <div class="bg-slate-50 px-8 py-5 flex justify-center gap-3">
-                        <button onclick="closeDeleteModal()" class="bg-white border border-slate-200 px-6 py-2.5 rounded-2xl text-sm font-bold text-slate-600 hover:bg-slate-100 transition-colors">បោះបង់</button>
+                        <button onclick="closeDeleteModal()" class="bg-white border border-slate-200 px-6 py-2.5 rounded-2xl text-sm font-bold text-slate-600 hover:bg-slate-100 transition-colors">{{ __('បោះបង់') }}</button>
                         <form id="delete-form" method="POST" action=""> @csrf @method('DELETE')
-                            <button type="submit" class="bg-red-600 text-white px-8 py-2.5 rounded-2xl text-sm font-black shadow-lg shadow-red-500/30 hover:bg-red-500 transition-all">យល់ព្រមលុប</button>
+                            <button type="submit" class="bg-red-600 text-white px-8 py-2.5 rounded-2xl text-sm font-black shadow-lg shadow-red-500/30 hover:bg-red-500 transition-all">{{ __('យល់ព្រមលុប') }}</button>
                         </form>
                     </div>
                 </div>

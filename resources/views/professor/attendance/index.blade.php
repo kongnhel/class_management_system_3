@@ -7,7 +7,7 @@
             <div class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
                     <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">
-                        ស្រង់វត្តមាននិស្សិត
+                        {{ __('ស្រង់វត្តមាននិស្សិត') }}
                     </h1>
                     <p class="text-slate-500 mt-1 flex items-center">
                         <svg class="w-4 h-4 mr-2 text-green-600" fill="currentColor" viewBox="0 0 20 20">
@@ -24,11 +24,11 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                         </svg>
-                        ផ្ទៀងផ្ទាត់ទីតាំងគ្រូ
+                        {{ __('ផ្ទៀងផ្ទាត់ទីតាំងគ្រូ') }}
                     </button>
 
                     <div class="bg-white p-2 rounded-xl shadow-sm border border-slate-200 inline-flex items-center">
-                        <span class="px-3 text-sm font-semibold text-slate-600">ថ្ងៃទី:</span>
+                        <span class="px-3 text-sm font-semibold text-slate-600">{{ __('ថ្ងៃទី:') }}</span>
                         <input type="date" 
                                form="attendanceForm"
                                name="attendance_date" 
@@ -46,8 +46,8 @@
                         <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr class="bg-slate-50 border-b border-slate-200">
-                                    <th class="px-8 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">ឈ្មោះនិស្សិត</th>
-                                    <th class="px-8 py-4 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">ស្ថានភាពវត្តមាន</th>
+                                    <th class="px-8 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">{{ __('ឈ្មោះនិស្សិត') }}</th>
+                                    <th class="px-8 py-4 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">{{ __('ស្ថានភាពវត្តមាន') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100">
@@ -69,9 +69,9 @@
                                         <td class="px-8 py-5">
                                             <div class="flex justify-center items-center gap-2">
                                                 @php $statuses = [
-                                                    'present' => ['label' => 'មក', 'color' => 'green'],
-                                                    'permission' => ['label' => 'ច្បាប់', 'color' => 'blue'],
-                                                    'absent' => ['label' => 'អវត្តមាន', 'color' => 'red']
+                                                    'present' => ['label' => __('មក'), 'color' => 'green'],
+                                                    'permission' => ['label' => __('ច្បាប់'), 'color' => 'blue'],
+                                                    'absent' => ['label' => __('អវត្តមាន'), 'color' => 'red']
                                                 ]; @endphp
 
                                                 @foreach($statuses as $value => $info)
@@ -95,7 +95,7 @@
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                             </svg>
-                            រក្សាទុកវត្តមាន
+                            {{ __('រក្សាទុកវត្តមាន') }}
                         </button>
                     </div>
                 </form>

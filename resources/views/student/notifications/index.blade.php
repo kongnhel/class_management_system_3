@@ -26,17 +26,17 @@
                         <button @click="filter = 'all'"
                                 :class="{ 'bg-green-600 text-white': filter === 'all', 'bg-gray-200 text-gray-700': filter !== 'all' }"
                                 class="px-4 py-2 rounded-full font-semibold transition">
-                            ទាំងអស់
+                            {{ __('ទាំងអស់') }}
                         </button>
                         <button @click="filter = 'unread'"
                                 :class="{ 'bg-green-600 text-white': filter === 'unread', 'bg-gray-200 text-gray-700': filter !== 'unread' }"
                                 class="px-4 py-2 rounded-full font-semibold transition">
-                            មិនទាន់អាន
+                            {{ __('មិនទាន់អាន') }}
                         </button>
                         {{-- ✅ Bulk mark all as read --}}
                         <button @click="markAllAsRead"
                                 class="px-4 py-2 rounded-full bg-green-100 text-green-700 font-semibold hover:bg-green-200 transition">
-                            សម្គាល់ថាអានទាំងអស់
+                            {{ __('សម្គាល់ថាអានទាំងអស់') }}
                         </button>
                     </div>
                 </div>
@@ -55,24 +55,24 @@
 
                             <div class="flex-grow">
                                 <p class="font-bold text-gray-800 text-lg">
-                                    {{ $notification->data['title'] ?? 'ការជូនដំណឹង' }}
+                                    {{ $notification->data['title'] ?? __('ការជូនដំណឹង') }}
                                 </p>
                                 <p class="text-gray-600 mt-1">
                                     {{ $notification->data['message'] ?? '' }}
                                 </p>
                                 <div class="text-xs text-gray-400 mt-2 flex items-center justify-between">
                                     <span>
-                                        ដោយ៖ <strong>{{ $notification->data['from_user_name'] ?? 'System' }}</strong>
+                                        {{ __('ដោយ៖') }} <strong>{{ $notification->data['from_user_name'] ?? 'System' }}</strong>
                                         - {{ $notification->created_at->locale('km')->diffForHumans() }}
                                     </span>
                                     @if (!$notification->read_at)
                                         <button @click="markAsRead('{{ $notification->id }}', $el)"
                                                 class="text-sm font-semibold text-green-600 hover:text-green-800 hover:underline">
-                                            សម្គាល់ថាបានអាន
+                                            {{ __('សម្គាល់ថាបានអាន') }}
                                         </button>
                                     @else
                                          <span class="text-sm text-green-600 font-semibold flex items-center gap-1">
-                                             <i class="fas fa-check-circle"></i> បានអាន
+                                             <i class="fas fa-check-circle"></i> {{ __('បានអាន') }}
                                          </span>
                                     @endif
                                 </div>

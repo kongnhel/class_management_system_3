@@ -36,13 +36,13 @@
         <thead>
             <tr style="background-color: #f1f5f9;">
                 <th class="rank-col">Rank</th>
-                <th>ឈ្មោះនិស្សិត</th>
-                <th class="attendance-col">វត្តមាន<br>(15%)</th>
+                <th>{{ __('ឈ្មោះនិស្សិត') }}</th>
+                <th class="attendance-col">{{ __('វត្តមាន') }}<br>(15%)</th>
                 
                 @foreach($assessments as $assessment)
                     @php 
                         $type = ($assessment instanceof \App\Models\Assignment) ? 'assignment' : (($assessment instanceof \App\Models\Quiz) ? 'quiz' : 'exam');
-                        $typeLabel = ($type === 'assignment' ? 'កិច្ចការ' : ($type === 'quiz' ? 'Quiz' : 'ប្រឡង'));
+                        $typeLabel = ($type === 'assignment' ? __('កិច្ចការ') : ($type === 'quiz' ? 'Quiz' : __('ប្រឡង')));
                     @endphp
                     <th>
                         <span class="label-{{ $type }}">{{ $typeLabel }}</span><br>
@@ -51,8 +51,8 @@
                     </th>
                 @endforeach
 
-                <th class="total-col">សរុប<br>(100)</th>
-                <th class="grade-col">និទ្ទេស</th>
+                <th class="total-col">{{ __('សរុប') }}<br>(100)</th>
+                <th class="grade-col">{{ __('និទ្ទេស') }}</th>
             </tr>
         </thead>
         <tbody>

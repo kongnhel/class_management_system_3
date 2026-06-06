@@ -248,13 +248,13 @@
                 $menuItems = [
                     [
                         'route' => 'professor.students.in-course-offering',
-                        'label' => 'មើលនិស្សិត',
+                        'label' => __('មើលនិស្សិត'),
                         'desc'  => 'View enrolled students',
                         'icon'  => 'M17 20h5v-2a3 3 0 01-5.356-1.857M17 20H7m5-2v-2c0-.656-.126-1.284-.356-1.852M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.284.356-1.852m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z',
                     ],
                     [
                         'route' => 'professor.manage-grades',
-                        'label' => 'គ្រប់គ្រងពិន្ទុ',
+                        'label' => __('គ្រប់គ្រងពិន្ទុ'),
                         'desc'  => 'Manage student grades',
                         'icon'  => 'M19 21V5a2 2 0 01-2 2H7a2 2 0 01-2 2v16m14 0h2m-2 0h-5m-4 0H3',
                     ],

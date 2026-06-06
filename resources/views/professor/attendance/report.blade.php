@@ -7,7 +7,7 @@
                     <h2 class="text-xl md:text-2xl font-extrabold text-slate-800 tracking-tight">
                         {{ __('របាយការណ៍វត្តមានសរុប') }}
                     </h2>
-                    <p class="text-slate-500 text-xs md:text-sm mt-1">គ្រប់គ្រង និងតាមដានវត្តមាននិស្សិតប្រចាំឆមាស</p>
+                    <p class="text-slate-500 text-xs md:text-sm mt-1">{{ __('គ្រប់គ្រង និងតាមដានវត្តមាននិស្សិតប្រចាំឆមាស') }}</p>
                 </div>
                 <div class="w-full sm:w-auto">
                     <button onclick="window.print()" 
@@ -30,14 +30,14 @@
                     </div>
                     <div class="flex justify-between text-left text-sm mt-8">
                         <div>
-                            <p class="font-bold">គ្រឹះស្ថានសិក្សា៖ ............................................</p>
-                            <p class="font-bold mt-2">មុខវិជ្ជា៖ {{ $courseOffering->course->name_km }}</p>
+                            <p class="font-bold">{{ __('គ្រឹះស្ថានសិក្សា៖') }} ............................................</p>
+                            <p class="font-bold mt-2">{{ __('មុខវិជ្ជា៖') }} {{ $courseOffering->course->name_km }}</p>
                         </div>
                         <div class="text-right">
-                            <p>កាលបរិច្ឆេទ៖ {{ date('d-m-Y') }}</p>
+                            <p>{{ __('កាលបរិច្ឆេទ៖') }} {{ date('d-m-Y') }}</p>
                         </div>
                     </div>
-                    <h3 class="text-xl font-bold mt-10 underline decoration-double uppercase tracking-wider">របាយការណ៍វត្តមានសរុប</h3>
+                    <h3 class="text-xl font-bold mt-10 underline decoration-double uppercase tracking-wider">{{ __('របាយការណ៍វត្តមានសរុប') }}</h3>
                 </div>
 
                 <div class="p-6 md:p-12 border-b border-slate-50 text-center relative overflow-hidden no-print">
@@ -50,7 +50,7 @@
                     </h3>
                     <div class="flex items-center justify-center gap-2 text-slate-400 text-xs md:text-sm font-medium">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                        <span>កាលបរិច្ឆេទ៖ {{ date('d-m-Y') }}</span>
+                        <span>{{ __('កាលបរិច្ឆេទ៖') }} {{ date('d-m-Y') }}</span>
                     </div>
                 </div>
 
@@ -58,13 +58,13 @@
                     <table class="min-w-full print:text-black">
                         <thead>
                             <tr class="border-b border-slate-100 print:border-b-2 print:border-black">
-                                <th class="px-6 py-5 text-left text-[11px] font-black text-slate-400 uppercase tracking-widest print:text-black print:px-2">អត្តលេខ</th>
-                                <th class="px-6 py-5 text-left text-[11px] font-black text-slate-400 uppercase tracking-widest print:text-black print:px-2">ឈ្មោះនិស្សិត</th>
+                                <th class="px-6 py-5 text-left text-[11px] font-black text-slate-400 uppercase tracking-widest print:text-black print:px-2">{{ __('អត្តលេខ') }}</th>
+                                <th class="px-6 py-5 text-left text-[11px] font-black text-slate-400 uppercase tracking-widest print:text-black print:px-2">{{ __('ឈ្មោះនិស្សិត') }}</th>
                                 <th class="px-4 py-5 text-center text-[11px] font-black text-emerald-600 uppercase tracking-widest print:text-black print:px-1">P</th>
                                 <th class="px-4 py-5 text-center text-[11px] font-black text-amber-500 uppercase tracking-widest print:text-black print:px-1">L</th>
                                 <th class="px-4 py-5 text-center text-[11px] font-black text-rose-500 uppercase tracking-widest print:text-black print:px-1">A</th>
-                                <th class="px-6 py-5 text-center text-[11px] font-black text-slate-400 uppercase tracking-widest print:text-black print:px-2">សរុប</th>
-                                <th class="px-6 py-5 text-right text-[11px] font-black text-slate-400 uppercase tracking-widest print:text-black print:px-2">ភាគរយ (%)</th>
+                                <th class="px-6 py-5 text-center text-[11px] font-black text-slate-400 uppercase tracking-widest print:text-black print:px-2">{{ __('សរុប') }}</th>
+                                <th class="px-6 py-5 text-right text-[11px] font-black text-slate-400 uppercase tracking-widest print:text-black print:px-2">{{ __('ភាគរយ (%)') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-50 print:divide-y-0">

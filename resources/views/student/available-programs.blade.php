@@ -14,19 +14,19 @@
 
                 @if (session('success'))
                     <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4 rounded" role="alert">
-                        <p class="font-bold">ជោគជ័យ!</p>
+                        <p class="font-bold">{{ __('ជោគជ័យ!') }}</p>
                         <p>{{ session('success') }}</p>
                     </div>
                 @endif
                 @if (session('info'))
                     <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4 rounded" role="alert">
-                        <p class="font-bold">ព័ត៌មាន!</p>
+                        <p class="font-bold">{{ __('ព័ត៌មាន!') }}</p>
                         <p>{{ session('info') }}</p>
                     </div>
                 @endif
                 @if (session('error'))
                     <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded" role="alert">
-                        <p class="font-bold">កំហុស!</p>
+                        <p class="font-bold">{{ __('កំហុស!') }}</p>
                         <p>{{ session('error') }}</p>
                     </div>
                 @endif
@@ -34,8 +34,8 @@
                 @if ($availablePrograms->isEmpty())
                     <div class="flex flex-col items-center justify-center py-10 text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-inner">
                         <svg class="w-16 h-16 text-gray-400 dark:text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <p class="text-xl font-medium">បច្ចុប្បន្ននេះ គ្មានកម្មវិធីសិក្សាណាមួយត្រូវបានបើកសម្រាប់ការចុះឈ្មោះដោយខ្លួនឯងទេ។</p>
-                        <p class="text-base mt-2">សូមពិនិត្យមើលនៅពេលក្រោយ ឬទាក់ទងការិយាល័យរដ្ឋបាលសម្រាប់ព័ត៌មានបន្ថែម។</p>
+                        <p class="text-xl font-medium">{{ __('បច្ចុប្បន្ននេះ គ្មានកម្មវិធីសិក្សាណាមួយត្រូវបានបើកសម្រាប់ការចុះឈ្មោះដោយខ្លួនឯងទេ។') }}</p>
+                        <p class="text-base mt-2">{{ __('សូមពិនិត្យមើលនៅពេលក្រោយ ឬទាក់ទងការិយាល័យរដ្ឋបាលសម្រាប់ព័ត៌មានបន្ថែម។') }}</p>
                     </div>
                 @else
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -46,10 +46,10 @@
                                     {{ $program->description_km ?? $program->description }}
                                 </p>
                                 <p class="mt-4 text-gray-700 dark:text-gray-300">
-                                    <span class="font-semibold">មហាវិទ្យាល័យ៖</span> {{ $program->faculty->name ?? 'N/A' }}
+                                    <span class="font-semibold">{{ __('មហាវិទ្យាល័យ៖') }}</span> {{ $program->faculty->name ?? 'N/A' }}
                                 </p>
                                 <p class="text-gray-700 dark:text-gray-300">
-                                    <span class="font-semibold">នាយកដ្ឋាន៖</span> {{ $program->department->name ?? 'N/A' }}
+                                    <span class="font-semibold">{{ __('នាយកដ្ឋាន៖') }}</span> {{ $program->department->name ?? 'N/A' }}
                                 </p>
 
                                 <div class="mt-5 flex justify-end items-center">
@@ -57,7 +57,7 @@
                                         @csrf
                                         <input type="hidden" name="program_id" value="{{ $program->id }}"> {{-- 💡 ប្រើ program_id --}}
                                         <x-primary-button type="submit" class="w-full justify-center">
-                                            ចុះឈ្មោះកម្មវិធីសិក្សា
+                                            {{ __('ចុះឈ្មោះកម្មវិធីសិក្សា') }}
                                         </x-primary-button>
                                     </form>
                                 </div>

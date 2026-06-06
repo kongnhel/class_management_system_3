@@ -43,18 +43,18 @@
                     @endphp
                     <div class="mb-4">
                         <div class="flex justify-between mb-1">
-                            <span class="text-base font-medium text-blue-700">ភាគរយសរុប</span>
+                            <span class="text-base font-medium text-blue-700">{{ __('ភាគរយសរុប') }}</span>
                             <span class="text-sm font-medium text-blue-700">{{ $totalWeight }}% / 100%</span>
                         </div>
                         <div class="w-full bg-gray-200 rounded-full h-2.5">
                             <div class="bg-blue-600 h-2.5 rounded-full" style="width: {{ $totalWeight }}%"></div>
                         </div>
                          @if($totalWeight < 100)
-                            <p class="text-sm text-yellow-600 mt-2">នៅសល់ {{ 100 - $totalWeight }}% ទៀតដែលត្រូវបំពេញ។</p>
+                             <p class="text-sm text-yellow-600 mt-2">{{ __('នៅសល់') }} {{ 100 - $totalWeight }}% {{ __('ទៀតដែលត្រូវបំពេញ។') }}</p>
                         @elseif($totalWeight > 100)
-                            <p class="text-sm text-red-600 mt-2">ភាគរយសរុបលើស 100%!</p>
+                            <p class="text-sm text-red-600 mt-2">{{ __('ភាគរយសរុបលើស 100%!') }}</p>
                         @else
-                             <p class="text-sm text-green-600 mt-2">ភាគរយសរុបបានពេញ 100%។</p>
+                             <p class="text-sm text-green-600 mt-2">{{ __('ភាគរយសរុបបានពេញ 100%។') }}</p>
                         @endif
                     </div>
                     <div class="space-y-3">
@@ -76,7 +76,7 @@
                                 </div>
                             </div>
                         @empty
-                            <p class="text-center text-gray-500 py-8">មិនទាន់មានប្រភេទពិន្ទុត្រូវបានបង្កើតទេ។</p>
+                            <p class="text-center text-gray-500 py-8">{{ __('មិនទាន់មានប្រភេទពិន្ទុត្រូវបានបង្កើតទេ។') }}</p>
                         @endforelse
                     </div>
                 </div>

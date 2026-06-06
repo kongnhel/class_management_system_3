@@ -379,7 +379,7 @@
                         <i class="fab fa-telegram-plane text-3xl"></i>
                     </div>
                     <div>
-                        <h3 class="text-2xl font-black text-slate-800 tracking-tight">ភ្ជាប់ Telegram</h3>
+                        <h3 class="text-2xl font-black text-slate-800 tracking-tight">{{ __('prof_connect_telegram') }}</h3>
                         <p class="text-[11px] text-slate-400 font-bold uppercase tracking-widest">Bot Smart Notification</p>
                     </div>
                 </div>
