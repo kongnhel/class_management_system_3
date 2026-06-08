@@ -19,7 +19,6 @@ use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\Auth\QrLoginController;
 use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\professor\ProfessorAttendanceController;
 use App\Http\Controllers\professor\ProfessorController;
 use App\Http\Controllers\professor\ProfessorCourseOfferingController;
@@ -37,11 +36,6 @@ use App\Http\Controllers\StudentProfileController;
 use App\Http\Controllers\TelegramController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-
-// ========================================================
-// LANGUAGE SWITCH ROUTE
-// ========================================================
-Route::get('/lang/{locale}', [LocaleController::class, 'switch'])->name('lang.switch');
 
 // ========================================================
 // AUTHENTICATED ROUTES - AI Chat (All Authenticated Users)

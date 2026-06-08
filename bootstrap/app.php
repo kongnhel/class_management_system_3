@@ -23,8 +23,6 @@ return Application::configure(basePath: dirname(__DIR__))
         // Register global middleware for security headers
         $middleware->append(\App\Http\Middleware\AddSecurityHeaders::class);
 
-        // Set locale for all requests
-        $middleware->append(\App\Http\Middleware\SetLocaleMiddleware::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         // បន្ថែម Logic Redirect នៅទីនេះ

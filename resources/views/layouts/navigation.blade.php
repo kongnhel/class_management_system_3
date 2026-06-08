@@ -493,21 +493,6 @@
             @endif
         </div>
 
-        {{-- Language Toggle --}}
-        <div class="px-5 py-3 border-t border-gray-700/50">
-            <div class="flex items-center justify-center space-x-2">
-                <a href="{{ route('lang.switch', 'km') }}" 
-                   class="px-3 py-1.5 text-sm font-bold rounded-lg transition-all duration-200 {{ app()->getLocale() === 'km' ? 'bg-green-600 text-white shadow-lg' : 'text-gray-400 hover:text-green-300 hover:bg-gray-700/50' }}">
-                    KM
-                </a>
-                <span class="text-gray-600">|</span>
-                <a href="{{ route('lang.switch', 'en') }}" 
-                   class="px-3 py-1.5 text-sm font-bold rounded-lg transition-all duration-200 {{ app()->getLocale() === 'en' ? 'bg-green-600 text-white shadow-lg' : 'text-gray-400 hover:text-green-300 hover:bg-gray-700/50' }}">
-                    EN
-                </a>
-            </div>
-        </div>
-
         {{-- Footer Dropdown (User Account Management) --}}
         <div class="mt-auto pt-8 border-t border-gray-700/50">
             <x-dropdown align="bottom-right" width="56">
