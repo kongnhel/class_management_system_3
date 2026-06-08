@@ -25,8 +25,8 @@ class ProfessorAttendanceController extends Controller
                     ->where('course_offering_id', $request->course_offering_id),
             ],
             'date' => 'required|date',
-            'status' => 'required|in:present,absent,late,excused',
-            'note' => 'nullable|string|max:255',
+            'status' => 'required|in:present,absent,late,permission',
+            'remarks' => 'nullable|string|max:255',
         ], [
             'student_user_id.required' => 'អត្តសញ្ញាណសិស្សតម្រូវឱ្យបញ្ចូល។',
             'student_user_id.exists' => 'អត្តសញ្ញាណសិស្សមិនមានឈ្មោះក្នុងបញ្ជីរៀននៃវគ្គសិក្សានេះទេ។',
@@ -40,7 +40,7 @@ class ProfessorAttendanceController extends Controller
             'student_user_id' => $request->input('student_user_id'),
             'date' => $request->input('date'),
             'status' => $request->input('status'),
-            'note' => $request->input('note'),
+            'remarks' => $request->input('remarks'),
         ]);
 
         return redirect()->route('professor.manage-attendance', ['offering_id' => $request->input('course_offering_id')])
@@ -60,8 +60,8 @@ class ProfessorAttendanceController extends Controller
                     ->where('course_offering_id', $request->course_offering_id),
             ],
             'date' => 'required|date',
-            'status' => 'required|in:present,absent,late,excused',
-            'note' => 'nullable|string|max:255',
+            'status' => 'required|in:present,absent,late,permission',
+            'remarks' => 'nullable|string|max:255',
         ], [
             'student_user_id.required' => 'អត្តសញ្ញាណសិស្សតម្រូវឱ្យបញ្ចូល។',
             'student_user_id.exists' => 'អត្តសញ្ញាណសិស្សមិនមានឈ្មោះក្នុងបញ្ជីរៀននៃវគ្គសិក្សានេះទេ។',
@@ -70,7 +70,7 @@ class ProfessorAttendanceController extends Controller
             'status.required' => 'ស្ថានភាពវត្តមានតម្រូវឱ្យបញ្ចូល។',
         ]);
 
-        $attendance->update($request->only(['course_offering_id', 'student_user_id', 'date', 'status', 'note']));
+        $attendance->update($request->only(['course_offering_id', 'student_user_id', 'date', 'status', 'remarks']));
 
         return redirect()->route('professor.manage-attendance', ['offering_id' => $attendance->course_offering_id])
             ->with('success', __('កំណត់ត្រាវត្តមានត្រូវបានកែប្រែដោយជោគជ័យ។'));
@@ -170,9 +170,8 @@ class ProfessorAttendanceController extends Controller
         $existing = AttendanceProfessor::where([
             'professor_id' => $professorId,
             'course_offering_id' => $request->course_offering_id,
-            'verified_at' => $today,
             'session_id' => $request->session_id,
-        ])->first();
+        ])->whereDate('verified_at', $today)->first();
 
         if ($existing) {
             return response()->json([
@@ -228,9 +227,8 @@ class ProfessorAttendanceController extends Controller
         $exists = AttendanceProfessor::where([
             'professor_id' => auth()->id(),
             'course_offering_id' => $request->course_offering_id,
-            'verified_at' => Carbon::now('Asia/Phnom_Penh')->toDateString(),
             'session_id' => $request->session_id,
-        ])->exists();
+        ])->whereDate('verified_at', Carbon::now('Asia/Phnom_Penh')->toDateString())->exists();
 
         return response()->json(['checked_in' => $exists]);
     }

@@ -47,4 +47,15 @@ class AttendanceRecord extends Model
     {
         return $this->belongsTo(CourseOffering::class);
     }
+
+    public function getStatusKmAttribute(): string
+    {
+        return match ($this->status) {
+            'present' => 'មានវត្តមាន',
+            'absent' => 'អវត្តមាន',
+            'late' => 'មកយឺត',
+            'permission' => 'មានច្បាប់',
+            default => 'មិនស្គាល់',
+        };
+    }
 }

@@ -206,9 +206,7 @@ function handleStartScan(sessionId) {
                     if (response.data.success) {
                         // បើទីតាំងត្រូវ៖ ប្រាប់ Livewire ឱ្យបើក Modal
                         // ចំណាំ៖ ត្រូវប្រាកដថាបងមាន Method openAttendance($id) ក្នុង Livewire Component
-                        window.livewire.emit('openAttendanceModal', sessionId); 
-                        
-                        // បើប្រើ Livewire v3 ប្រើ៖ Livewire.dispatch('openAttendanceModal', { id: sessionId });
+                        Livewire.dispatch('openAttendanceModal', { courseOfferingId: sessionId }); 
                     }
                 })
                 .catch(error => {

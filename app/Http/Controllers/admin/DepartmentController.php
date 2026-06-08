@@ -6,41 +6,15 @@ use App\Http\Controllers\Controller;
 use App\Models\Department;
 use App\Models\Faculty;
 use App\Models\User;
+use App\Traits\AuditableTrait;
+use App\Traits\FirebaseSyncTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
-use Kreait\Firebase\Factory;
 
 class DepartmentController extends Controller
 {
-    private function getFirebaseDatabase()
-    {
-        $credentialPath = storage_path('app/firebase/classmanagementsystem.json');
-
-        if (! is_file($credentialPath)) {
-            throw new \Exception('រកមិនឃើញ File JSON របស់ Firebase ទេ។');
-        }
-
-        return (new Factory)
-            ->withServiceAccount($credentialPath)
-            ->withDatabaseUri('https://classmanagementsystem-cd57f-default-rtdb.firebaseio.com/')
-            ->createDatabase();
-    }
-
-    private function syncWithFirebase($message = 'ទិន្នន័យដេប៉ាតឺម៉ង់ត្រូវបានកែប្រែ')
-    {
-        try {
-            $this->getFirebaseDatabase()
-                ->getReference('departments_sync')
-                ->set([
-                    'updated_at' => now()->timestamp,
-                    'message' => $message,
-                ]);
-        } catch (\Exception $e) {
-            Log::error('Firebase Sync Error: '.$e->getMessage());
-        }
-    }
+    use AuditableTrait, FirebaseSyncTrait;
 
     public function index()
     {
@@ -59,63 +33,33 @@ class DepartmentController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name_km' => 'required|string|max:255|unique:departments',
             'name_en' => 'required|string|max:255|unique:departments',
             'faculty_id' => 'required|exists:faculties,id',
             'head_user_id' => 'nullable|exists:users,id',
         ]);
 
-        $department = Department::create($request->all());
+        $department = Department::create($validated);
 
-        try {
-            $db = $this->getFirebaseDatabase();
-            $db->getReference('departments/'.$department->id)->set([
-                'name_km' => $department->name_km,
-                'name_en' => $department->name_en,
-                'updated_at' => now()->toDateTimeString(),
-            ]);
-
-            $this->syncWithFirebase("ដេប៉ាតឺម៉ង់ '".$department->name_km."' ត្រូវបានបង្កើតថ្មី!");
-        } catch (\Exception $e) {
-            Log::error('Firebase Store Error: '.$e->getMessage());
-        }
+        $this->logCreated($department);
 
         return redirect()->route('admin.manage-departments')->with('success', 'ដេប៉ាតឺម៉ង់ត្រូវបានបង្កើតដោយជោគជ័យ!');
     }
 
-    public function edit(Department $department)
-    {
-        $faculties = Faculty::all();
-        $professors = User::where('role', 'professor')->get();
-
-        return view('admin.departments.edit', compact('department', 'faculties', 'professors'));
-    }
-
     public function update(Request $request, Department $department)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name_km' => ['required', 'string', 'max:255', Rule::unique('departments')->ignore($department->id)],
             'name_en' => ['required', 'string', 'max:255', Rule::unique('departments')->ignore($department->id)],
             'faculty_id' => 'required|exists:faculties,id',
             'head_user_id' => 'nullable|exists:users,id',
         ]);
 
-        $department->update($request->all());
+        $oldAttributes = $department->attributesToArray();
+        $department->update($validated);
 
-        try {
-            $this->getFirebaseDatabase()
-                ->getReference('departments/'.$department->id)
-                ->update([
-                    'name_km' => $department->name_km,
-                    'name_en' => $department->name_en,
-                    'updated_at' => now()->toDateTimeString(),
-                ]);
-
-            $this->syncWithFirebase("ដេប៉ាតឺម៉ង់ '".$department->name_km."' ត្រូវបានធ្វើបច្ចុប្បន្នភាព!");
-        } catch (\Exception $e) {
-            Log::error('Firebase Update Error: '.$e->getMessage());
-        }
+        $this->logUpdated($department, $oldAttributes);
 
         return redirect()->route('admin.manage-departments')->with('success', 'ដេប៉ាតឺម៉ង់ត្រូវបានធ្វើបច្ចុបន្បភាពដោយជោគជ័យ');
     }
@@ -128,6 +72,8 @@ class DepartmentController extends Controller
         try {
             DB::beginTransaction();
 
+            $oldAttributes = $department->attributesToArray();
+
             $programs = $department->programs()->get();
             foreach ($programs as $program) {
                 $program->courses()->delete();
@@ -137,12 +83,7 @@ class DepartmentController extends Controller
 
             DB::commit();
 
-            try {
-                $this->getFirebaseDatabase()->getReference('departments/'.$deptId)->remove();
-                $this->syncWithFirebase("ដេប៉ាតឺម៉ង់ '".$deptName."' ត្រូវបានលុបចេញពីប្រព័ន្ធ!");
-            } catch (\Exception $e) {
-                Log::error('Firebase Delete Error: '.$e->getMessage());
-            }
+            $this->logAction('delete', null, $oldAttributes, null, "Deleted department: {$deptName}");
 
             return redirect()->route('admin.manage-departments')->with('success', 'ដេប៉ាតឺម៉ង់ត្រូវបានលុបដោយជោគជ័យ។');
 

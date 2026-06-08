@@ -93,11 +93,12 @@
             </div>
 
             {{-- 1. Statistics Cards --}}
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-12">
                 @php
                     $stats = [
                         ['title' => 'ថ្នាក់បង្រៀនថ្ងៃនេះ', 'value' => $todaySchedules->pluck('course_offering_id')->unique()->count(), 'icon' => 'fa-chalkboard-teacher', 'color' => 'from-blue-600 to-indigo-700', 'shadow' => 'shadow-blue-200'],
                         ['title' => 'សិស្សសរុប', 'value' => $totalStudents, 'icon' => 'fa-users', 'color' => 'from-emerald-500 to-teal-600', 'shadow' => 'shadow-emerald-200'],
+                        ['title' => 'វត្តមានថ្ងៃនេះ', 'value' => $todayAttendanceCount ?? 0, 'icon' => 'fa-clipboard-check', 'color' => 'from-violet-500 to-purple-600', 'shadow' => 'shadow-violet-200'],
                         ['title' => 'កិច្ចការដាក់ឱ្យសិស្ស', 'value' => $upcomingAssignments->count(), 'icon' => 'fa-file-signature', 'color' => 'from-amber-500 to-orange-600', 'shadow' => 'shadow-amber-200'],
                         ['title' => 'ការប្រឡង/ឃ្វីស', 'value' => $upcomingExams->count() + $upcomingQuizzes->count(), 'icon' => 'fa-award', 'color' => 'from-rose-500 to-pink-600', 'shadow' => 'shadow-rose-200'],
                     ];

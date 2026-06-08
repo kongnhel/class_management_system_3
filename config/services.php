@@ -44,4 +44,8 @@ return [
         'app_id' => env('VITE_FIREBASE_APP_ID'),
     ],
 
+    'imagekit' => [
+        'private_key' => env('IMAGEKIT_PRIVATE_KEY', ''),
+    ],
+
 ];

@@ -1,20 +1,25 @@
 <?php
 
+use App\Http\Controllers\admin\AcademicYearController;
+use App\Http\Controllers\admin\AdminAttendanceController;
 use App\Http\Controllers\admin\AdminController;
+use App\Http\Controllers\admin\AdminGradeController;
 use App\Http\Controllers\admin\AnnouncementController;
+use App\Http\Controllers\admin\BulkImportController;
 use App\Http\Controllers\admin\CourseController;
 use App\Http\Controllers\admin\CourseOfferingController;
 use App\Http\Controllers\admin\DepartmentController;
 use App\Http\Controllers\admin\FacultyController;
 use App\Http\Controllers\admin\ProgramController;
 use App\Http\Controllers\admin\RoomController;
+use App\Http\Controllers\admin\SystemSettingController;
 use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\AIChatController;
 use App\Http\Controllers\AttendanceController;
-use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\Auth\QrLoginController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\professor\ProfessorAttendanceController;
 use App\Http\Controllers\professor\ProfessorController;
 use App\Http\Controllers\professor\ProfessorCourseOfferingController;
@@ -140,7 +145,7 @@ Route::get('/qr-refresh', [QrLoginController::class, 'refreshQr'])->name('qr.ref
 | Admin Routes (Protected by 'role:admin' middleware)
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'role:admin', 'throttle:120,1'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::get('/get-courses-by-program-and-generation', [CourseOfferingController::class, 'getCoursesByProgramAndGeneration'])->name('get-courses-by-program-and-generation');
     Route::get('/users', [UserController::class, 'manageUsers'])->name('manage-users');
@@ -150,7 +155,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::put('/users/{user}', [UserController::class, 'updateUser'])->name('update-user');
     Route::delete('/users/{user}', [UserController::class, 'deleteUser'])->name('delete-user');
     Route::get('/users/show/{user}', [UserController::class, 'showUser'])->name('show-user');
-    Route::get('/admin/users/export', [UserController::class, 'exportUsers'])->name('users.export');
+    Route::get('/users/export', [UserController::class, 'exportUsers'])->name('users.export');
 
     Route::get('/faculties', [FacultyController::class, 'index'])->name('manage-faculties');
     Route::get('/faculties/create', [FacultyController::class, 'create'])->name('create-faculty');
@@ -215,6 +220,37 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/get-courses-by-program/{program}', [AdminController::class, 'getCoursesByProgram'])->name('get-courses-by-program');
     Route::get('/course-offerings/{courseOffering}', [AdminController::class, 'showCourseOffering'])->name('show-course-offering');
 
+    // Academic Year Management
+    Route::get('/academic-years', [AcademicYearController::class, 'index'])->name('academic-years.index');
+    Route::get('/academic-years/create', [AcademicYearController::class, 'create'])->name('academic-years.create');
+    Route::post('/academic-years', [AcademicYearController::class, 'store'])->name('academic-years.store');
+    Route::get('/academic-years/{academicYear}/edit', [AcademicYearController::class, 'edit'])->name('academic-years.edit');
+    Route::put('/academic-years/{academicYear}', [AcademicYearController::class, 'update'])->name('academic-years.update');
+    Route::delete('/academic-years/{academicYear}', [AcademicYearController::class, 'destroy'])->name('academic-years.destroy');
+    Route::post('/academic-years/{academicYear}/set-current', [AcademicYearController::class, 'setCurrent'])->name('academic-years.set-current');
+
+    // System Settings
+    Route::get('/settings', [SystemSettingController::class, 'index'])->name('settings.index');
+    Route::put('/settings', [SystemSettingController::class, 'update'])->name('settings.update');
+
+    // Grade Management
+    Route::get('/grades', [AdminGradeController::class, 'index'])->name('grades.index');
+    Route::get('/grades/{courseOffering}', [AdminGradeController::class, 'show'])->name('grades.show');
+    Route::get('/grades/{courseOffering}/export', [AdminGradeController::class, 'exportGrades'])->name('grades.export');
+
+    // Attendance Dashboard
+    Route::get('/attendance', [AdminAttendanceController::class, 'index'])->name('attendance.index');
+    Route::get('/attendance/{courseOffering}', [AdminAttendanceController::class, 'show'])->name('attendance.show');
+
+    // Bulk Import
+    Route::get('/import', [BulkImportController::class, 'index'])->name('import.index');
+    Route::post('/import/users', [BulkImportController::class, 'importUsers'])->name('import.users');
+    Route::get('/import/template', [BulkImportController::class, 'downloadTemplate'])->name('import.template');
+
+    // Audit Logs
+    Route::get('/audit-logs', [\App\Http\Controllers\admin\AuditLogController::class, 'index'])->name('audit-logs.index');
+    Route::get('/audit-logs/{auditLog}', [\App\Http\Controllers\admin\AuditLogController::class, 'show'])->name('audit-logs.show');
+
 });
 
 /*
@@ -248,9 +284,9 @@ Route::middleware(['auth', 'role:professor'])->prefix('professor')->name('profes
     Route::put('/course-offering/{offering_id}/exams/{exam}', [ProfessorController::class, 'updateExam'])->name('exams.update');
     Route::delete('/course-offering/{offering_id}/exams/{exam}', [ProfessorController::class, 'destroyExam'])->name('exams.destroy');
     Route::get('/all-attendance', [ProfessorController::class, 'allAttendance'])->name('all-attendance');
-    Route::post('/attendances', [ProfessorController::class, 'storeAttendance'])->name('attendances.store');
-    Route::put('/attendances/{attendance}', [ProfessorController::class, 'updateAttendance'])->name('attendances.update');
-    Route::delete('/attendances/{attendance}', [ProfessorController::class, 'destroyAttendance'])->name('attendances.destroy');
+    Route::post('/attendances', [ProfessorAttendanceController::class, 'storeAttendance'])->name('attendances.store');
+    Route::put('/attendances/{attendance}', [ProfessorAttendanceController::class, 'updateAttendance'])->name('attendances.update');
+    Route::delete('/attendances/{attendance}', [ProfessorAttendanceController::class, 'destroyAttendance'])->name('attendances.destroy');
     Route::get('/professor/my-schedule', [ProfessorController::class, 'mySchedule'])->name('my-schedule');
     Route::get('/api/course-offerings-with-students', [ProfessorController::class, 'getCourseOfferingsWithStudents']);
     Route::get('/all-data', [ProfessorController::class, 'allDataView'])->name('all-data-view');

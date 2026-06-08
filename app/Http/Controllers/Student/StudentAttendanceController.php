@@ -123,15 +123,11 @@ class StudentAttendanceController extends Controller
 
     public function getAttendanceScore($studentId, $courseOfferingId)
     {
-        $absentCount = \App\Models\AttendanceRecord::where('student_user_id', $studentId)
-            ->where('course_offering_id', $courseOfferingId)
-            ->where('status', 'absent')
-            ->count();
+        $student = \App\Models\User::find($studentId);
+        if (! $student) {
+            return 0;
+        }
 
-        $maxScore = 15;
-        $deduction = floor($absentCount / 2);
-        $finalScore = $maxScore - $deduction;
-
-        return $finalScore < 0 ? 0 : $finalScore;
+        return $student->getAttendanceScoreByCourse($courseOfferingId);
     }
 }

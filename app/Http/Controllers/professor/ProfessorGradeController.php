@@ -388,8 +388,8 @@ class ProfessorGradeController extends Controller
             'course_offering_id' => 'required|exists:course_offerings,id',
             'student_user_id' => 'required|exists:users,id',
             'date' => 'required|date',
-            'status' => 'required|in:present,absent,late,excused',
-            'notes' => 'nullable|string|max:255',
+            'status' => 'required|in:present,absent,late,permission',
+            'remarks' => 'nullable|string|max:255',
         ]);
 
         AttendanceRecord::create([
@@ -397,7 +397,7 @@ class ProfessorGradeController extends Controller
             'student_user_id' => $validatedData['student_user_id'],
             'date' => $validatedData['date'],
             'status' => $validatedData['status'],
-            'notes' => $validatedData['notes'] ?? null,
+            'remarks' => $validatedData['remarks'] ?? null,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);
@@ -415,10 +415,10 @@ class ProfessorGradeController extends Controller
 
         $attendanceRecords->each(function ($record) {
             $record->status_km = match ($record->status) {
-                // 'present' => 'មានវត្តមាន',
+                'present' => 'មានវត្តមាន',
                 'absent' => 'អវត្តមាន',
                 'late' => 'មកយឺត',
-                'excused' => 'មានច្បាប់',
+                'permission' => 'មានច្បាប់',
                 default => 'មិនស្គាល់',
             };
         });

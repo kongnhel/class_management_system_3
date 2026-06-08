@@ -12,7 +12,7 @@ class SetLocaleMiddleware
     {
         $locale = session('locale', config('app.locale', 'km'));
 
-        if (!in_array($locale, ['km', 'en'])) {
+        if (! in_array($locale, ['km', 'en'])) {
             $locale = 'km';
         }
 

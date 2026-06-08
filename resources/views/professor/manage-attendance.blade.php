@@ -98,19 +98,19 @@
                         <div>
                             <label for="status" class="block text-sm font-medium text-gray-700">{{ __('ស្ថានភាព') }}</label>
                             <select id="status" name="status" required class="mt-1 block w-full p-3 text-base border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300">
-                                {{-- <option value="present">{{ __('មានវត្តមាន') }}</option> --}}
+                                <option value="present">{{ __('មានវត្តមាន') }}</option>
                                 <option value="absent">{{ __('អវត្តមាន') }}</option>
                                 <option value="late">{{ __('មកយឺត') }}</option>
-                                <option value="excused">{{ __('មានច្បាប់') }}</option>
+                                <option value="permission">{{ __('មានច្បាប់') }}</option>
                             </select>
                             @error('status') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
 
-                        {{-- <div class="md:col-span-2 lg:col-span-3">
-                            <label for="notes" class="block text-sm font-medium text-gray-700">{{ __('កំណត់ចំណាំ (ស្រេចចិត្ត)') }}</label>
-                            <textarea id="notes" name="notes" rows="3" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 transition-all duration-300"></textarea>
-                            @error('notes') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                        </div> --}}
+                        <div class="md:col-span-2 lg:col-span-3">
+                            <label for="remarks" class="block text-sm font-medium text-gray-700">{{ __('កំណត់ចំណាំ (ស្រេចចិត្ត)') }}</label>
+                            <textarea id="remarks" name="remarks" rows="3" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 transition-all duration-300"></textarea>
+                            @error('remarks') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        </div>
 
                         <div class="md:col-span-2 lg:col-span-3 flex justify-end mt-4">
                             <button type="submit" class="w-full md:w-auto px-8 py-4 text-white font-extrabold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out transform hover:scale-[1.01] bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800">
@@ -156,6 +156,7 @@
                             if ($record->status === 'present') $color = 'green';
                             elseif ($record->status === 'absent') $color = 'red';
                             elseif ($record->status === 'late') $color = 'yellow';
+                            elseif ($record->status === 'permission') $color = 'blue';
                             else $color = 'gray';
                         @endphp
                         <span class="inline-block px-3 py-1 font-extrabold text-{{ $color }}-800 bg-{{ $color }}-200 rounded-full text-xs uppercase">
@@ -173,7 +174,7 @@
                                 data-student-user-id="{{ $record->student_user_id }}"
                                 data-date="{{ \Carbon\Carbon::parse($record->date)->format('Y-m-d') }}"
                                 data-status="{{ $record->status }}"
-                                data-notes="{{ $record->notes ?? '' }}">
+                                data-remarks="{{ $record->remarks ?? '' }}">
                             {{ __('កែសម្រួល') }}
                         </button>
                         {{-- Delete Form (Card View) --}}
@@ -197,13 +198,14 @@
                             if ($record->status === 'present') $color = 'green';
                             elseif ($record->status === 'absent') $color = 'red';
                             elseif ($record->status === 'late') $color = 'yellow';
+                            elseif ($record->status === 'permission') $color = 'blue';
                             else $color = 'gray';
                         @endphp
                         <span class="inline-block px-3 py-1 font-semibold text-{{ $color }}-800 bg-{{ $color }}-200 rounded-full text-xs">
                             {{ $record->status_km }}
                         </span>
                     </div>
-                    {{-- <div class="sm:table-cell py-4 px-6 text-gray-600">{{ $record->notes ?? '' }}</div> --}}
+                    {{-- <div class="sm:table-cell py-4 px-6 text-gray-600">{{ $record->remarks ?? '' }}</div> --}}
                     <div class="sm:table-cell py-4 px-6 text-center space-x-2 flex justify-center items-center">
                         {{-- Edit Button --}}
                         <button type="button" class="text-purple-600 hover:text-white font-semibold py-2 px-4 rounded-full text-sm transition-all duration-200 hover:bg-purple-600 edit-attendance shadow-sm"
@@ -211,7 +213,7 @@
                                 data-student-user-id="{{ $record->student_user_id }}"
                                 data-date="{{ \Carbon\Carbon::parse($record->date)->format('Y-m-d') }}"
                                 data-status="{{ $record->status }}"
-                                data-notes="{{ $record->notes ?? '' }}">
+                                data-remarks="{{ $record->remarks ?? '' }}">
                             {{ __('កែសម្រួល') }}
                         </button>
 
@@ -251,7 +253,7 @@
             studentUserId: '', 
             date: '', 
             status: '', 
-            notes: '',
+            remarks: '',
             // FIX: Generate the route with a placeholder (0) to satisfy the required parameter.
             updateRoute: '{{ route('professor.attendances.update', 0) }}' 
         }"
@@ -261,7 +263,7 @@
             studentUserId = $event.detail.studentUserId; 
             date = $event.detail.date; 
             status = $event.detail.status; 
-            notes = $event.detail.notes;">
+            remarks = $event.detail.remarks;">
         
         <div x-show="open" class="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center p-4 z-50" style="display: none;">
             <div @click.away="open = false" class="bg-white rounded-2xl shadow-2xl p-6 md:p-8 w-full max-w-lg mx-auto transform transition-all duration-300 scale-95"
@@ -299,17 +301,16 @@
                     <div class="mb-4">
                         <label for="edit_status" class="block text-sm font-medium text-gray-700">{{ __('ស្ថានភាព') }}</label>
                         <select id="edit_status" name="status" x-model="status" required class="mt-1 block w-full p-3 text-base border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300">
-                            {{-- <option value="present">{{ __('មានវត្តមាន') }}</option> --}}
+                            <option value="present">{{ __('មានវត្តមាន') }}</option>
                             <option value="absent">{{ __('អវត្តមាន') }}</option>
                             <option value="late">{{ __('មកយឺត') }}</option>
-                            <option value="excused">{{ __('មានច្បាប់') }}</option>
+                            <option value="permission">{{ __('មានច្បាប់') }}</option>
                         </select>
                     </div>
-{{-- 
                     <div class="mb-6">
-                        <label for="edit_notes" class="block text-sm font-medium text-gray-700">{{ __('កំណត់ចំណាំ (ស្រេចចិត្ត)') }}</label>
-                        <input type="text" id="edit_notes" name="notes" x-model="notes" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 transition-all duration-300">
-                    </div> --}}
+                        <label for="edit_remarks" class="block text-sm font-medium text-gray-700">{{ __('កំណត់ចំណាំ (ស្រេចចិត្ត)') }}</label>
+                        <input type="text" id="edit_remarks" name="remarks" x-model="remarks" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 transition-all duration-300">
+                    </div>
 
                     <div class="flex justify-end space-x-3">
                         <button type="button" @click="open = false" class="px-6 py-3 text-gray-700 font-semibold rounded-xl shadow-sm transition-all duration-200 hover:bg-gray-200">
@@ -329,7 +330,7 @@
             document.querySelectorAll('.edit-attendance').forEach(button => {
                 button.addEventListener('click', function() {
                     const data = this.dataset;
-                    const notesValue = data.notes === undefined ? '' : data.notes; 
+                    const remarksValue = data.remarks === undefined ? '' : data.remarks; 
 
                     window.dispatchEvent(new CustomEvent('open-edit-modal', {
                         detail: {
@@ -337,7 +338,7 @@
                             studentUserId: data.studentUserId,
                             date: data.date,
                             status: data.status,
-                            notes: notesValue,
+                            remarks: remarksValue,
                         }
                     }));
                 });

@@ -61,6 +61,11 @@ class ProfessorController extends Controller
             $q->where('lecturer_user_id', $user->id);
         })->distinct('student_user_id')->count('student_user_id');
 
+        // 3b. Count today's attendance records for this professor's courses
+        $todayAttendanceCount = AttendanceRecord::whereHas('courseOffering', function ($q) use ($user) {
+            $q->where('lecturer_user_id', $user->id);
+        })->where('date', $todayDate)->count();
+
         // 4. Upcoming Assignments
         $upcomingAssignments = \App\Models\Assignment::whereHas('courseOffering', function ($query) use ($user) {
             $query->where('lecturer_user_id', $user->id);
@@ -103,6 +108,7 @@ class ProfessorController extends Controller
             'professor',
             'todaySchedules',
             'totalStudents',
+            'todayAttendanceCount',
             'courseOfferingsCount',
             'upcomingAssignments',
             'upcomingExams',
@@ -178,16 +184,33 @@ class ProfessorController extends Controller
     {
         $user = Auth::user();
 
-        $allCourseOfferings = $this->viewAllCourseOfferings()->getData()->courseOfferings;
-        $allAssignments = $this->allAssignments($request)->getData()->assignments;
-        $allExams = $this->allExams($request)->getData()->exams;
-        $allQuizzes = $this->allQuizzes($request)->getData()->quizzes;
-        $allAttendance = $this->allAttendance($request)->getData()->attendances;
-        $allGrades = $this->allGrades($request)->getData()->grades; // This already handles custom pagination
+        $allCourseOfferings = CourseOffering::where('lecturer_user_id', $user->id)
+            ->with(['course', 'targetPrograms'])
+            ->paginate(10);
 
-        $allDepartments = $this->viewDepartments()->getData()->departments;
-        $allPrograms = $this->viewPrograms()->getData()->programs;
-        $allCourses = $this->viewCourses()->getData()->courses;
+        $allAssignments = Assignment::whereHas('courseOffering', function ($q) use ($user) {
+            $q->where('lecturer_user_id', $user->id);
+        })->with('courseOffering.course')->paginate(10);
+
+        $allExams = Exam::whereHas('courseOffering', function ($q) use ($user) {
+            $q->where('lecturer_user_id', $user->id);
+        })->with('courseOffering.course')->paginate(10);
+
+        $allQuizzes = Quiz::whereHas('courseOffering', function ($q) use ($user) {
+            $q->where('lecturer_user_id', $user->id);
+        })->with('courseOffering.course')->paginate(10);
+
+        $allAttendance = AttendanceRecord::whereHas('courseOffering', function ($q) use ($user) {
+            $q->where('lecturer_user_id', $user->id);
+        })->with('student', 'courseOffering.course')->orderBy('date', 'desc')->paginate(10);
+
+        $allGrades = \App\Models\StudentCourseEnrollment::whereHas('courseOffering', function ($q) use ($user) {
+            $q->where('lecturer_user_id', $user->id);
+        })->with(['student', 'courseOffering.course'])->paginate(10);
+
+        $allDepartments = Department::all();
+        $allPrograms = Program::all();
+        $allCourses = Course::all();
 
         return view('professor.all-data-view', compact(
             'allCourseOfferings',
@@ -333,6 +356,11 @@ class ProfessorController extends Controller
     public function attendanceIndex($courseOfferingId)
     {
         $courseOffering = CourseOffering::with('students.studentProfile')->findOrFail($courseOfferingId);
+
+        if ($courseOffering->lecturer_user_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $students = $courseOffering->students; // យកបញ្ជីនិស្សិតក្នុងថ្នាក់នោះ
         $today = now()->format('Y-m-d');
 
@@ -341,6 +369,12 @@ class ProfessorController extends Controller
 
     public function attendanceStore(Request $request, $courseOfferingId)
     {
+        $courseOffering = CourseOffering::findOrFail($courseOfferingId);
+
+        if ($courseOffering->lecturer_user_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $request->validate([
             'attendance_date' => 'required|date',
             'attendance' => 'required|array',
@@ -398,6 +432,64 @@ class ProfessorController extends Controller
         return view('professor.attendance.report', compact('courseOffering', 'students'));
     }
 
+    public function allAttendance(Request $request)
+    {
+        $user = Auth::user();
+
+        $professorCourseOfferings = CourseOffering::where('lecturer_user_id', $user->id)
+            ->with('course')
+            ->get();
+
+        $attendances = AttendanceRecord::whereHas('courseOffering', function ($q) use ($user) {
+            $q->where('lecturer_user_id', $user->id);
+        })
+            ->with('student.profile', 'courseOffering.course')
+            ->orderBy('date', 'desc')
+            ->paginate(15);
+
+        $attendances->each(function ($record) {
+            $record->status_km = match ($record->status) {
+                'present' => 'មានវត្តមាន',
+                'absent' => 'អវត្តមាន',
+                'late' => 'មកយឺត',
+                'permission' => 'មានច្បាប់',
+                default => 'មិនស្គាល់',
+            };
+        });
+
+        $students = \App\Models\User::where('role', 'student')
+            ->with('profile')
+            ->get();
+
+        return view('professor.all-attendance', compact('professorCourseOfferings', 'attendances', 'students'));
+    }
+
+    public function manageAttendance($offering_id)
+    {
+        $courseOffering = CourseOffering::with(['course', 'studentCourseEnrollments.student.profile'])->findOrFail($offering_id);
+
+        if ($courseOffering->lecturer_user_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $attendanceRecords = AttendanceRecord::where('course_offering_id', $offering_id)
+            ->with('student.profile')
+            ->orderBy('date', 'desc')
+            ->paginate(10);
+
+        $attendanceRecords->each(function ($record) {
+            $record->status_km = match ($record->status) {
+                'present' => 'មានវត្តមាន',
+                'absent' => 'អវត្តមាន',
+                'late' => 'មកយឺត',
+                'permission' => 'មានច្បាប់',
+                default => 'មិនស្គាល់',
+            };
+        });
+
+        return view('professor.manage-attendance', compact('courseOffering', 'attendanceRecords'));
+    }
+
     // សម្រាប់បង្ហាញទំព័រ Edit
 
     public function showGradebook($offering_id)
@@ -441,19 +533,12 @@ class ProfessorController extends Controller
     // totalAttendanceWeight
     public function getAttendanceScore($studentId, $courseOfferingId)
     {
-        // ១. រាប់ចំនួនអវត្តមានសរុប (Absents) របស់និស្សិតក្នុងមុខវិជ្ជានោះ
-        $absentCount = \App\Models\AttendanceRecord::where('student_user_id', $studentId)
-            ->where('course_offering_id', $courseOfferingId)
-            ->where('status', 'absent')
-            ->count();
+        $student = User::find($studentId);
+        if (! $student) {
+            return 0;
+        }
 
-        // ២. គណនាពិន្ទុ (ឈប់ ២ដង ដក ១ពិន្ទុ)
-        $maxScore = 15;
-        $deduction = floor($absentCount / 2); // ប្រើ floor ដើម្បីយកចំនួនគត់
-        $finalScore = $maxScore - $deduction;
-
-        // ការពារកុំឱ្យពិន្ទុធ្លាក់ក្រោម ០
-        return $finalScore < 0 ? 0 : $finalScore;
+        return $student->getAttendanceScoreByCourse($courseOfferingId);
     }
 
     public function exportStudentsDocx($offering_id)

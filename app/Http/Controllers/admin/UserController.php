@@ -10,15 +10,25 @@ use App\Models\Program;
 use App\Models\StudentProfile;
 use App\Models\User;
 use App\Models\UserProfile;
+use App\Services\ImageKitService;
+use App\Traits\AuditableTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
 {
+    use AuditableTrait;
+
+    protected $imageKitService;
+
+    public function __construct(ImageKitService $imageKitService)
+    {
+        $this->imageKitService = $imageKitService;
+    }
+
     public function manageUsers(Request $request)
     {
         $search = $request->input('search');
@@ -240,30 +250,9 @@ class UserController extends Controller
             $profile->user_id = $user->id;
 
             if ($request->hasFile('profile_picture')) {
-                $image = $request->file('profile_picture');
-
-                $privateKey = env('IMAGEKIT_PRIVATE_KEY', '');
-
-                if (! empty($privateKey)) {
-                    $response = Http::withBasicAuth($privateKey, '')
-                        ->attach(
-                            'file',
-                            file_get_contents($image->getRealPath()),
-                            $image->getClientOriginalName()
-                        )
-                        ->post('https://upload.imagekit.io/api/v1/files/upload', [
-                            'fileName' => 'profile_'.time(),
-                            'useUniqueFileName' => 'true',
-                            'folder' => '/profiles',
-                        ]);
-
-                    if ($response->successful()) {
-                        $profile->profile_picture_url = $response->json()['url'];
-                    } else {
-                        \Log::error('ImageKit Upload Failed: '.$response->body());
-                    }
-                } else {
-                    \Log::warning('ImageKit upload skipped: IMAGEKIT_PRIVATE_KEY is not set in .env');
+                $url = $this->imageKitService->uploadProfilePicture($request->file('profile_picture'));
+                if ($url) {
+                    $profile->profile_picture_url = $url;
                 }
             }
 
@@ -274,9 +263,14 @@ class UserController extends Controller
             }
         }
 
+        $this->logCreated($user);
+
         return redirect()->route('admin.manage-users')->with('success', 'អ្នកបានបង្កើតអ្នកប្រើប្រាស់ថ្មីដោយជោគជ័យ។');
     }
 
+    /**
+     * Show the form for editing the specified user.
+     */
     public function editUser(User $user)
     {
         $user->load('profile', 'studentProfile', 'department.faculty', 'program');
@@ -321,7 +315,8 @@ class UserController extends Controller
 
         $request->validate($rules, $messages);
 
-        // ១. Update User Core Data
+        $oldAttributes = $user->attributesToArray();
+
         $user->name = $request->name;
         $user->role = $request->role;
         $user->student_id_code = ($request->role === 'student') ? $request->student_id_code : null;
@@ -337,7 +332,7 @@ class UserController extends Controller
         }
         $user->save();
 
-        // ២. Profile Logic
+        $profile = null;
         if ($request->role === 'student') {
             $profile = $user->studentProfile()->firstOrNew(['user_id' => $user->id]);
             if ($user->profile) {
@@ -353,28 +348,29 @@ class UserController extends Controller
         $profile->fill($request->only(['full_name_km', 'full_name_en', 'gender', 'date_of_birth', 'phone_number', 'address']));
 
         if ($request->hasFile('profile_picture')) {
-            $image = $request->file('profile_picture');
-
-            $response = Http::withBasicAuth(env('IMAGEKIT_PRIVATE_KEY'), '')
-                ->attach('file', file_get_contents($image), $image->getClientOriginalName())
-                ->post('https://upload.imagekit.io/api/v1/files/upload', [
-                    'fileName' => 'profile_'.time(),
-                    'useUniqueFileName' => 'true',
-                    'folder' => '/profiles',
-                ]);
-
-            if ($response->successful()) {
-                $profile->profile_picture_url = $response->json()['url'];
-                $profile->save();
+            $url = $this->imageKitService->uploadProfilePicture($request->file('profile_picture'));
+            if ($url) {
+                $profile->profile_picture_url = $url;
             }
         }
+
+        $profile->save();
+
+        $this->logUpdated($user, $oldAttributes);
 
         return redirect()->route('admin.manage-users')->with('success', 'ព័ត៌មានត្រូវបានធ្វើបច្ចុប្បន្នភាព។');
     }
 
     public function deleteUser(User $user)
     {
+        if ($user->id === auth()->id()) {
+            return redirect()->route('admin.manage-users')
+                ->with('error', 'អ្នកមិនអាចលុបគណនីផ្ទាល់ខ្លួនបានទេ។');
+        }
+
         try {
+            $oldAttributes = $user->attributesToArray();
+
             \DB::transaction(function () use ($user) {
                 \App\Models\CourseOffering::where('lecturer_user_id', $user->id)->delete();
                 \App\Models\StudentCourseEnrollment::where('student_user_id', $user->id)->delete();
@@ -390,6 +386,8 @@ class UserController extends Controller
 
                 $user->delete();
             });
+
+            $this->logDeleted((new User), $oldAttributes, "Deleted user: {$user->name}");
 
             return redirect()->route('admin.manage-users')
                 ->with('success', 'អ្នកប្រើប្រាស់ និងទិន្នន័យពាក់ព័ន្ធត្រូវបានលុបដោយជោគជ័យ។');

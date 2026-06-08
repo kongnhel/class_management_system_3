@@ -65,16 +65,16 @@
                                     <option value="present">{{ __('មានវត្តមាន') }}</option>
                                     <option value="absent">{{ __('អវត្តមាន') }}</option>
                                     <option value="late">{{ __('មកយឺត') }}</option>
-                                    <option value="excused">{{ __('មានច្បាប់') }}</option>
+                                    <option value="permission">{{ __('មានច្បាប់') }}</option>
                                 </select>
                                 @error('status') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                             </div>
                         </div>
 
                         <div class="col-span-1 lg:col-span-2">
-                            <label for="note" class="block text-sm font-medium text-gray-700 mb-1">{{ __('កំណត់ចំណាំ (ស្រេចចិត្ត)') }}</label>
-                            <textarea id="note" name="note" rows="3" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 transition-all duration-300"></textarea>
-                            @error('note') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                            <label for="remarks" class="block text-sm font-medium text-gray-700 mb-1">{{ __('កំណត់ចំណាំ (ស្រេចចិត្ត)') }}</label>
+                            <textarea id="remarks" name="remarks" rows="3" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 transition-all duration-300"></textarea>
+                            @error('remarks') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
 
                         <div class="col-span-1 lg:col-span-2 flex justify-end">
@@ -109,10 +109,10 @@
                                     <td class="py-4 px-6 text-gray-800 font-medium">{{ $record->student->profile->full_name_km ?? $record->student->name ?? 'N/A' }}</td>
                                     <td class="py-4 px-6 text-gray-600">{{ $record->courseOffering->course->title_km ?? 'N/A' }}</td>
                                     <td class="py-4 px-6 text-gray-600">{{ \Carbon\Carbon::parse($record->date)->format('Y-m-d') }}</td>
-                                    <td class="py-4 px-6 text-{{ $record->status === 'present' ? 'green' : ($record->status === 'absent' ? 'red' : ($record->status === 'late' ? 'yellow' : 'gray')) }}-600 font-bold uppercase">
+                                    <td class="py-4 px-6 text-{{ $record->status === 'present' ? 'green' : ($record->status === 'absent' ? 'red' : ($record->status === 'late' ? 'yellow' : ($record->status === 'permission' ? 'blue' : 'gray'))) }}-600 font-bold uppercase">
                                         {{ $record->status_km }}
                                     </td>
-                                    <td class="py-4 px-6 text-gray-600">{{ $record->note ?? '' }}</td>
+                                    <td class="py-4 px-6 text-gray-600">{{ $record->remarks ?? '' }}</td>
                                 </tr>
                             @empty
                                 <tr>

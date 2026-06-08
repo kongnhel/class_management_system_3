@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Program extends Model
 {
@@ -24,9 +24,10 @@ class Program extends Model
     | Relationships
     |--------------------------------------------------------------------------
     */
-    public function courseOfferings(): HasMany
+    public function courseOfferings(): BelongsToMany
     {
-        return $this->hasMany(CourseOffering::class);
+        return $this->belongsToMany(CourseOffering::class, 'course_offering_program', 'program_id', 'course_offering_id')
+            ->withPivot('generation');
     }
 
     /**

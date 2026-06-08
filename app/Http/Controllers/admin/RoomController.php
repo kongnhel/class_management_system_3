@@ -4,39 +4,19 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Room;
+use App\Services\ImageKitService;
+use App\Traits\FirebaseSyncTrait;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
-use Kreait\Firebase\Factory;
 
 class RoomController extends Controller
 {
-    private function getFirebaseDatabase()
+    use FirebaseSyncTrait;
+
+    protected $imageKitService;
+
+    public function __construct(ImageKitService $imageKitService)
     {
-        $credentialPath = storage_path('app/firebase/classmanagementsystem.json');
-
-        if (! is_file($credentialPath)) {
-            throw new \Exception('រកមិនឃើញ File JSON របស់ Firebase ទេ។');
-        }
-
-        return (new Factory)
-            ->withServiceAccount($credentialPath)
-            ->withDatabaseUri('https://classmanagementsystem-cd57f-default-rtdb.firebaseio.com/')
-            ->createDatabase();
-    }
-
-    private function syncWithFirebase($message = 'ទិន្នន័យបន្ទប់ត្រូវបានធ្វើបច្ចុប្បន្នភាព')
-    {
-        try {
-            $this->getFirebaseDatabase()
-                ->getReference('rooms_sync')
-                ->set([
-                    'updated_at' => now()->timestamp,
-                    'message' => $message,
-                ]);
-        } catch (\Exception $e) {
-            Log::error('Firebase Sync Error: '.$e->getMessage());
-        }
+        $this->imageKitService = $imageKitService;
     }
 
     public function index()
@@ -69,38 +49,25 @@ class RoomController extends Controller
         $data = $request->except('wifi_qr_code');
 
         if ($request->hasFile('wifi_qr_code')) {
-            $file = $request->file('wifi_qr_code');
-
-            $response = Http::withBasicAuth(env('IMAGEKIT_PRIVATE_KEY'), '') // ប្រើ Private Key ជា Username
-                ->attach(
-                    'file',
-                    file_get_contents($file->getRealPath()),
-                    $file->getClientOriginalName()
-                )
-                ->post('https://upload.imagekit.io/api/v1/files/upload', [
-                    'fileName' => 'wifi_qr_'.time(),
-                    'useUniqueFileName' => 'true',
-                    'folder' => '/room_wifi',
-                ]);
-
-            if ($response->successful()) {
-                $data['wifi_qr_code'] = $response->json()['url'];
+            $url = $this->imageKitService->uploadWifiQrCode($request->file('wifi_qr_code'));
+            if ($url) {
+                $data['wifi_qr_code'] = $url;
             } else {
-                return back()->withErrors(['wifi_qr_code' => 'ការ Upload ទៅ ImageKit បរាជ័យ៖ '.$response->body()]);
+                return back()->withErrors(['wifi_qr_code' => 'ការ Upload ទៅ ImageKit បរាជ័យ។']);
             }
         }
 
         $room = Room::create($data);
 
         try {
-            $this->getFirebaseDatabase()->getReference('rooms/'.$room->id)->set([
+            $this->syncFirebaseNode('rooms/'.$room->id, [
                 'room_number' => $room->room_number,
                 'capacity' => $room->capacity,
                 'updated_at' => now()->toDateTimeString(),
             ]);
-            $this->syncWithFirebase('បន្ទប់លេខ '.$room->room_number.' ត្រូវបានបង្កើតថ្មី!');
+            $this->syncWithFirebase('rooms_sync', 'បន្ទប់លេខ '.$room->room_number.' ត្រូវបានបង្កើតថ្មី!');
         } catch (\Exception $e) {
-            Log::error('Firebase Store Error: '.$e->getMessage());
+            \Log::error('Firebase Store Error: '.$e->getMessage());
         }
 
         return redirect()->route('admin.rooms.index')->with('success', 'បន្ទប់ត្រូវបានបង្កើតដោយជោគជ័យ!');
@@ -124,39 +91,25 @@ class RoomController extends Controller
         $data = $request->except('wifi_qr_code');
 
         if ($request->hasFile('wifi_qr_code')) {
-            $file = $request->file('wifi_qr_code');
-
-            $response = Http::withBasicAuth(env('IMAGEKIT_PRIVATE_KEY'), '')
-                ->attach(
-                    'file',
-                    file_get_contents($file->getRealPath()),
-                    $file->getClientOriginalName()
-                )
-                ->post('https://upload.imagekit.io/api/v1/files/upload', [
-                    'fileName' => 'wifi_qr_'.time(),
-                    'useUniqueFileName' => 'true',
-                    'folder' => '/room_wifi',
-                ]);
-
-            if ($response->successful()) {
-
-                $data['wifi_qr_code'] = $response->json()['url'];
+            $url = $this->imageKitService->uploadWifiQrCode($request->file('wifi_qr_code'));
+            if ($url) {
+                $data['wifi_qr_code'] = $url;
             } else {
-                return back()->withErrors(['wifi_qr_code' => 'ការ Upload ទៅ ImageKit បរាជ័យ៖ '.$response->body()]);
+                return back()->withErrors(['wifi_qr_code' => 'ការ Upload ទៅ ImageKit បរាជ័យ។']);
             }
         }
 
         $room->update($data);
 
         try {
-            $this->getFirebaseDatabase()->getReference('rooms/'.$room->id)->update([
+            $this->updateFirebaseNode('rooms/'.$room->id, [
                 'room_number' => $room->room_number,
                 'capacity' => $room->capacity,
                 'updated_at' => now()->toDateTimeString(),
             ]);
-            $this->syncWithFirebase('ទិន្នន័យបន្ទប់លេខ '.$room->room_number.' ត្រូវបានកែប្រែ!');
+            $this->syncWithFirebase('rooms_sync', 'ទិន្នន័យបន្ទប់លេខ '.$room->room_number.' ត្រូវបានកែប្រែ!');
         } catch (\Exception $e) {
-            Log::error('Firebase Update Error: '.$e->getMessage());
+            \Log::error('Firebase Update Error: '.$e->getMessage());
         }
 
         return redirect()->route('admin.rooms.index')->with('success', 'បន្ទប់ត្រូវបានកែប្រែដោយជោគជ័យ!');
@@ -170,10 +123,10 @@ class RoomController extends Controller
         $room->delete();
 
         try {
-            $this->getFirebaseDatabase()->getReference('rooms/'.$roomId)->remove();
-            $this->syncWithFirebase('បន្ទប់លេខ '.$roomNumber.' ត្រូវបានលុបចេញពីប្រព័ន្ធ!');
+            $this->removeFirebaseNode('rooms/'.$roomId);
+            $this->syncWithFirebase('rooms_sync', 'បន្ទប់លេខ '.$roomNumber.' ត្រូវបានលុបចេញពីប្រព័ន្ធ!');
         } catch (\Exception $e) {
-            Log::error('Firebase Delete Error: '.$e->getMessage());
+            \Log::error('Firebase Delete Error: '.$e->getMessage());
         }
 
         return redirect()->route('admin.rooms.index')->with('success', 'បន្ទប់ត្រូវបានលុបដោយជោគជ័យ!');
