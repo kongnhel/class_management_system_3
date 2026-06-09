@@ -130,34 +130,24 @@ class CourseOffering extends Model
         return $this->belongsTo(Room::class, 'room_number', 'room_number');
     }
 
-    public function studentProfile()
-    {
-        return $this->hasOne(StudentProfile::class);
-    }
-
     public function students()
     {
-        // return $this->belongsToMany(User::class, 'student_course_enrollments', 'course_offering_id', 'student_user_id')
-        //             ->withPivot('is_class_leader'); // បន្ថែមចំណុចនេះ
         return $this->belongsToMany(User::class, 'student_course_enrollments', 'course_offering_id', 'student_user_id')
             ->withPivot('is_class_leader');
     }
-
-    public function professor()
-    {
-        return $this->belongsTo(User::class, 'lecturer_user_id');
-    }
-
-    // ប្រសិនបើអ្នកមាន 'lecturer' រួចហើយ អ្នកអាចបង្កើត 'professor' ជា Alias ក៏បាន
-    // public function lecturer()
-    // {
-    //     return $this->belongsTo(User::class, 'lecturer_id');
-    // }
 
     public function targetPrograms()
     {
         return $this->belongsToMany(Program::class, 'course_offering_program')
             ->withPivot('generation') // យកទិន្នន័យ generation មកប្រើ
             ->withTimestamps();
+    }
+
+    /**
+     * Get the academic year record that matches this offering's academic_year string.
+     */
+    public function academicYear(): BelongsTo
+    {
+        return $this->belongsTo(AcademicYear::class, 'academic_year', 'name');
     }
 }

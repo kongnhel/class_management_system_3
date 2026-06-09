@@ -214,6 +214,17 @@ return [
     'prof_add_attendance' => 'បន្ថែមកំណត់ត្រាវត្តមានថ្មី',
     'prof_student' => 'និស្សិត',
 
+    // Professor Students Page
+    'prof_stu_breadcrumb_professor' => 'សាស្ត្រាចារ្យ',
+    'prof_stu_breadcrumb_student_list' => 'បញ្ជីនិស្សិត',
+    'prof_stu_people' => 'នាក់',
+    'prof_stu_student_info' => 'ព័ត៌មាននិស្សិត',
+    'prof_stu_id_label' => 'លេខសម្គាល់',
+    'prof_stu_contact' => 'ទំនាក់ទំនង',
+    'prof_stu_actions' => 'សកម្មភាព',
+    'prof_stu_student_label' => 'និស្សិត',
+    'prof_stu_class_leader' => 'ប្រធានថ្នាក់',
+
     // Professor Exams
     'prof_exams_title' => 'គ្រប់គ្រងការប្រលងសម្រាប់មុខវិជ្ជា',
     'prof_exams_add' => 'បន្ថែមការប្រលងថ្មី',

@@ -4,7 +4,6 @@ namespace App\Http\Controllers\professor;
 
 use App\Http\Controllers\Controller;
 use App\Models\Assignment;
-use App\Models\AttendanceRecord;
 use App\Models\Course;
 use App\Models\CourseOffering;
 use App\Models\Exam;
@@ -15,7 +14,6 @@ use App\Models\StudentCourseEnrollment;
 use App\Models\User;
 use App\Services\GradingService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -380,50 +378,6 @@ class ProfessorGradeController extends Controller
 
             return back()->with('error', 'មានបញ្ហាបច្ចេកទេស។ សូមព្យាយាមម្តងទៀត។');
         }
-    }
-
-    public function store(Request $request)
-    {
-        $validatedData = $request->validate([
-            'course_offering_id' => 'required|exists:course_offerings,id',
-            'student_user_id' => 'required|exists:users,id',
-            'date' => 'required|date',
-            'status' => 'required|in:present,absent,late,permission',
-            'remarks' => 'nullable|string|max:255',
-        ]);
-
-        AttendanceRecord::create([
-            'course_offering_id' => $validatedData['course_offering_id'],
-            'student_user_id' => $validatedData['student_user_id'],
-            'date' => $validatedData['date'],
-            'status' => $validatedData['status'],
-            'remarks' => $validatedData['remarks'] ?? null,
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now(),
-        ]);
-
-        return back()->with('success', 'កំណត់ត្រាវត្តមានត្រូវបានរក្សាទុកដោយជោគជ័យ!');
-    }
-
-    public function manageAttendance($offering_id)
-    {
-        $courseOffering = CourseOffering::with(['course', 'studentCourseEnrollments.student.profile'])->findOrFail($offering_id);
-        $attendanceRecords = AttendanceRecord::where('course_offering_id', $offering_id)
-            ->with('student.profile')
-            ->orderBy('date', 'desc')
-            ->paginate(10);
-
-        $attendanceRecords->each(function ($record) {
-            $record->status_km = match ($record->status) {
-                'present' => 'មានវត្តមាន',
-                'absent' => 'អវត្តមាន',
-                'late' => 'មកយឺត',
-                'permission' => 'មានច្បាប់',
-                default => 'មិនស្គាល់',
-            };
-        });
-
-        return view('professor.manage-attendance', compact('courseOffering', 'attendanceRecords'));
     }
 
     public function exportCSV(Request $request, $id)

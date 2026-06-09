@@ -46,26 +46,9 @@ class StudentCourseEnrollment extends Model
 
     /**
      * Get the course offering that the student is enrolled in.
-     * កំណត់ទំនាក់ទំនងថាការចុះឈ្មោះនេះគឺសម្រាប់មុខវិជ្ជាអ្វី (CourseOffering Model)។
      */
     public function courseOffering()
     {
         return $this->belongsTo(CourseOffering::class);
     }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'student_user_id');
-    }
-
-    // នៅក្នុង Model StudentCourseEnrollment
-    public function studentUser()
-    {
-        // សន្មតថា column ក្នុង table enrollments ដែលភ្ជាប់ទៅ user គឺ student_user_id
-        return $this->belongsTo(\App\Models\User::class, 'student_user_id');
-    }
-    /**
-     * It's also good practice to have a relationship named 'student'.
-     * This is an alias for the 'user' relationship.
-     */
 }

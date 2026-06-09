@@ -28,15 +28,8 @@ class ProfessorController extends Controller
     public function dashboard()
     {
         $user = \Illuminate\Support\Facades\Auth::user();
-        $todayName = now()->format('l'); // e.g., "Monday"
+        $todayName = now()->format('l');
         $todayDate = now()->toDateString();
-
-        $unreadNotificationsCount = $user->unreadNotifications()->count();
-
-        // 1. Get Professor Info with Department
-        $professor = \App\Models\User::where('id', $user->id)
-            ->with('department')
-            ->first();
 
         $todaySchedules = \App\Models\Schedule::whereHas('courseOffering', function ($query) use ($user) {
             $query->where('lecturer_user_id', $user->id);
@@ -44,17 +37,17 @@ class ProfessorController extends Controller
             ->where('day_of_week', $todayName)
             ->with(['courseOffering.course.programs', 'courseOffering.targetPrograms', 'room'])
             ->orderBy('start_time', 'asc')
-            ->get()
-            ->map(function ($schedule) use ($todayDate) {
+            ->get();
 
-                $hasRecord = \App\Models\AttendanceRecord::where('course_offering_id', $schedule->course_offering_id)
-                    ->where('date', $todayDate)
-                    ->exists();
+        $todayOfferingIds = $todaySchedules->pluck('course_offering_id')->unique()->toArray();
+        $completedOfferingIds = AttendanceRecord::whereIn('course_offering_id', $todayOfferingIds)
+            ->where('date', $todayDate)
+            ->pluck('course_offering_id')
+            ->toArray();
 
-                $schedule->is_completed_today = $hasRecord;
-
-                return $schedule;
-            });
+        $todaySchedules->each(function ($schedule) use ($completedOfferingIds) {
+            $schedule->is_completed_today = in_array($schedule->course_offering_id, $completedOfferingIds);
+        });
 
         // 3. Count Total Unique Students (for all courses taught by this professor)
         $totalStudents = \App\Models\StudentCourseEnrollment::whereHas('courseOffering', function ($q) use ($user) {
@@ -100,21 +93,70 @@ class ProfessorController extends Controller
             ->take(5)
             ->get();
 
-        // 8. Count Total Courses (for stats card)
-        $courseOfferingsCount = \App\Models\CourseOffering::where('lecturer_user_id', $user->id)->count();
+        // 8. Professor's course offerings
+        $myCourseOfferings = \App\Models\CourseOffering::where('lecturer_user_id', $user->id)
+            ->with('course')
+            ->get();
+
+        // 9. At-risk students (attendance < 75% or low grades)
+        $atRiskStudents = collect();
+        foreach ($myCourseOfferings as $offering) {
+            $enrollments = \App\Models\StudentCourseEnrollment::where('course_offering_id', $offering->id)
+                ->with('student')
+                ->get();
+
+            foreach ($enrollments as $enrollment) {
+                $student = $enrollment->student;
+                if (! $student) {
+                    continue;
+                }
+
+                // Check attendance
+                $totalClasses = \App\Models\Schedule::where('course_offering_id', $offering->id)->count();
+                $attendedClasses = AttendanceRecord::where('course_offering_id', $offering->id)
+                    ->where('student_user_id', $student->id)
+                    ->where('status', 'present')
+                    ->count();
+
+                $attendanceRate = $totalClasses > 0 ? ($attendedClasses / $totalClasses) * 100 : 100;
+
+                if ($attendanceRate < 75) {
+                    $atRiskStudents->push([
+                        'student' => $student,
+                        'course' => $offering->course->title_km ?? $offering->course->title_en,
+                        'reason' => 'វត្តមាន '.round($attendanceRate).'%',
+                        'type' => 'attendance',
+                    ]);
+                }
+            }
+        }
+        $atRiskStudents = $atRiskStudents->take(5);
+
+        // 10. Ungraded submissions count
+        $ungradedSubmissionsCount = \App\Models\Submission::whereHas('assignment.courseOffering', function ($q) use ($user) {
+            $q->where('lecturer_user_id', $user->id);
+        })->whereNull('grade_received')->count();
+
+        // 11. Total assessments pending grades
+        $pendingAssessments = \App\Models\Assignment::whereHas('courseOffering', function ($q) use ($user) {
+            $q->where('lecturer_user_id', $user->id);
+        })->whereDate('due_date', '<', $todayDate)
+            ->whereDoesntHave('examResults')
+            ->count();
 
         return view('professor.dashboard', compact(
             'user',
-            'professor',
             'todaySchedules',
             'totalStudents',
             'todayAttendanceCount',
-            'courseOfferingsCount',
             'upcomingAssignments',
             'upcomingExams',
             'upcomingQuizzes',
             'announcements',
-            'unreadNotificationsCount'
+            'myCourseOfferings',
+            'atRiskStudents',
+            'ungradedSubmissionsCount',
+            'pendingAssessments'
         ));
     }
 
@@ -381,6 +423,9 @@ class ProfessorController extends Controller
         ]);
 
         foreach ($request->attendance as $studentId => $status) {
+            if (! in_array($status, ['present', 'absent', 'late', 'permission'])) {
+                continue;
+            }
             DB::table('attendances')->updateOrInsert(
                 [
                     'course_offering_id' => $courseOfferingId,
@@ -388,6 +433,7 @@ class ProfessorController extends Controller
                     'date' => $request->attendance_date,
                 ],
                 [
+                    'student_user_id' => $studentId,
                     'status' => $status,
                     'updated_at' => now(),
                     'created_at' => now(),
@@ -409,20 +455,19 @@ class ProfessorController extends Controller
             $query->where('course_offering_id', $courseOfferingId);
         })
             ->withCount([
-                // ប្រើឈ្មោះ 'attendances' ឱ្យដូចក្នុង User.php
-                'attendances as present_count' => function ($query) use ($courseOfferingId) {
+                'attendanceRecords as present_count' => function ($query) use ($courseOfferingId) {
                     $query->where('course_offering_id', $courseOfferingId)
                         ->where('status', 'present');
                 },
-                'attendances as absent_count' => function ($query) use ($courseOfferingId) {
+                'attendanceRecords as absent_count' => function ($query) use ($courseOfferingId) {
                     $query->where('course_offering_id', $courseOfferingId)
                         ->where('status', 'absent');
                 },
-                'attendances as permission_count' => function ($query) use ($courseOfferingId) {
+                'attendanceRecords as permission_count' => function ($query) use ($courseOfferingId) {
                     $query->where('course_offering_id', $courseOfferingId)
                         ->where('status', 'permission');
                 },
-                'attendances as late_count' => function ($query) use ($courseOfferingId) {
+                'attendanceRecords as late_count' => function ($query) use ($courseOfferingId) {
                     $query->where('course_offering_id', $courseOfferingId)
                         ->where('status', 'late');
                 },
@@ -706,7 +751,7 @@ class ProfessorController extends Controller
         $enrollment = \App\Models\StudentCourseEnrollment::with(['studentUser', 'courseOffering.course'])
             ->findOrFail($enrollment_id);
 
-        $studentUser = $enrollment->studentUser;
+        $studentUser = $enrollment->student;
 
         // ត្រួតពិនិត្យ Chat ID លើ studentUser មិនមែនលើ student ទេ
         if (! $studentUser || ! $studentUser->telegram_chat_id) {

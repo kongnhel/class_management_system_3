@@ -4,6 +4,7 @@ namespace App\Http\Controllers\admin;
 
 use App\Exports\CourseStudentsExport;
 use App\Http\Controllers\Controller;
+use App\Models\AcademicYear;
 use App\Models\Course;
 use App\Models\CourseOffering;
 use App\Models\Program;
@@ -56,6 +57,9 @@ class CourseOfferingController extends Controller
         if ($request->filled('semester')) {
             $query->where('semester', '=', $request->input('semester'));
         }
+        if ($request->filled('academic_year')) {
+            $query->where('academic_year', '=', $request->input('academic_year'));
+        }
         if ($request->filled('shift')) {
             $shift = $request->shift;
             $query->whereHas('schedules', function ($q) use ($shift) {
@@ -79,10 +83,7 @@ class CourseOfferingController extends Controller
 
         $programs = Program::orderBy('name_km')->get();
 
-        $academicYears = CourseOffering::select('academic_year')
-            ->distinct()
-            ->orderBy('academic_year', 'desc')
-            ->pluck('academic_year');
+        $academicYears = AcademicYear::orderBy('name', 'desc')->get();
 
         $assignedLecturerIds = CourseOffering::distinct()->pluck('lecturer_user_id')->filter()->unique();
         $lecturers = User::whereIn('id', $assignedLecturerIds)
@@ -104,8 +105,9 @@ class CourseOfferingController extends Controller
         $professors = User::where('role', 'professor')->get();
         $programs = Program::all();
         $rooms = Room::all();
+        $academicYears = AcademicYear::orderBy('name', 'desc')->get();
 
-        return view('admin.course-offerings.create', compact('courses', 'professors', 'programs', 'rooms'));
+        return view('admin.course-offerings.create', compact('courses', 'professors', 'programs', 'rooms', 'academicYears'));
     }
 
     public function store(Request $request)
@@ -276,6 +278,7 @@ class CourseOfferingController extends Controller
         $lecturers = User::where('role', 'professor')->get();
         $rooms = Room::all();
         $selectedCourse = Course::find($courseOffering->course_id);
+        $academicYears = AcademicYear::orderBy('name', 'desc')->get();
 
         return view('admin.course-offerings.edit', compact(
             'courseOffering',
@@ -284,6 +287,7 @@ class CourseOfferingController extends Controller
             'rooms',
             'selectedCourse',
             'courses',
+            'academicYears',
         ));
     }
 

@@ -121,6 +121,7 @@ class BulkImportController extends Controller
 
         $callback = function () use ($headers) {
             $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
             fputcsv($file, $headers);
 
             // Add sample row
@@ -139,7 +140,7 @@ class BulkImportController extends Controller
         };
 
         return response()->stream($callback, 200, [
-            'Content-Type' => 'text/csv',
+            'Content-Type' => 'text/csv; charset=UTF-8',
             'Content-Disposition' => 'attachment; filename="import_template.csv"',
         ]);
     }

@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
 class IsClassLeader
@@ -15,8 +16,22 @@ class IsClassLeader
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (auth()->user()->enrolledCourses()->where('course_offering_id', $id)->where('is_class_leader', true)->exists()) {
-            return $next($request);
+        $courseOfferingId = $request->route('courseOffering') ?? $request->route('courseOfferingId');
+
+        if (! $courseOfferingId) {
+            abort(403, 'មិនអនុញ្ញាត។');
         }
+
+        $isLeader = auth()->check() && DB::table('student_course_enrollments')
+            ->where('course_offering_id', $courseOfferingId)
+            ->where('student_user_id', auth()->id())
+            ->where('is_class_leader', 1)
+            ->exists();
+
+        if (! $isLeader) {
+            abort(403, 'អ្នកមិនមែនជាប្រធានថ្នាក់សម្រាប់មុខវិជ្ជានេះទេ។');
+        }
+
+        return $next($request);
     }
 }

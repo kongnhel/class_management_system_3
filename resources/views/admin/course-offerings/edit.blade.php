@@ -84,7 +84,17 @@
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
                                         <label for="academic_year" class="block text-sm font-medium text-gray-700">{{ __('ឆ្នាំសិក្សា') }}</label>
-                                        <input type="text" id="academic_year" name="academic_year" value="{{ $courseOffering->academic_year }}" class="mt-1 block w-full rounded-xl border-gray-300 shadow-sm" required>
+                                        <select id="academic_year" name="academic_year" class="mt-1 block w-full rounded-xl border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500" required>
+                                            <option value="">{{ __('ជ្រើសរើសឆ្នាំសិក្សា') }}</option>
+                                            @foreach ($academicYears as $year)
+                                                <option value="{{ $year->name }}" 
+                                                        data-start="{{ \Carbon\Carbon::parse($year->start_date)->format('Y-m-d') }}" 
+                                                        data-end="{{ \Carbon\Carbon::parse($year->end_date)->format('Y-m-d') }}"
+                                                        {{ $courseOffering->academic_year == $year->name ? 'selected' : '' }}>
+                                                    {{ $year->name }} {{ $year->is_current ? '('.__('បច្ចុប្បន្ន').')' : '' }}
+                                                </option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                     <div>
                                         <label for="semester" class="block text-sm font-medium text-gray-700">{{ __('ឆមាស') }}</label>
@@ -196,6 +206,27 @@
             const allPrograms = {!! json_encode($programs) !!};
             const existingPrograms = {!! json_encode($courseOffering->targetPrograms) !!}; // From pivot table
             const rooms = {!! json_encode($rooms->map(fn($r) => ['id' => $r->id, 'room_number' => $r->room_number])) !!};
+            
+            // --- 0. Academic Year Auto-Fill Dates ---
+            const academicYearSelect = document.getElementById('academic_year');
+            const startDateInput = document.getElementById('start_date');
+            const endDateInput = document.getElementById('end_date');
+
+            academicYearSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                const startDate = selectedOption.getAttribute('data-start');
+                const endDate = selectedOption.getAttribute('data-end');
+                
+                if (startDate && endDate) {
+                    startDateInput.value = startDate;
+                    endDateInput.value = endDate;
+                }
+            });
+
+            // Auto-fill on page load if a year is already selected
+            if (academicYearSelect.value) {
+                academicYearSelect.dispatchEvent(new Event('change'));
+            }
             
             // --- 1. Program Logic ---
             const programsContainer = document.getElementById('programs-container');

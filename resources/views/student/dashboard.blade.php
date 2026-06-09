@@ -1,10 +1,4 @@
 <x-app-layout>
-    {{-- Meta for CSRF --}}
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-
-    {{-- Font Awesome --}}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
     <div class="bg-[#f8fafc] min-h-screen font-['Battambang'] antialiased">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             
@@ -140,7 +134,7 @@
                                         </div>
                                         <div>
                                             <h5 class="font-black text-gray-800 group-hover:text-purple-600 transition-colors">
-                                                {{ $schedule->courseOffering->course->name_km ?? $schedule->courseOffering->course->title_en }}
+                                                {{ $schedule->courseOffering->course->name_km ?? ($schedule->courseOffering->course->title_en ?? '') }}
                                             </h5>
                                             <div class="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-xs text-gray-500">
                                                 <span><i class="fas fa-door-open text-gray-300"></i> {{ $schedule->room->room_number ?? 'N/A' }}</span>
@@ -150,7 +144,13 @@
                                     </div>
                                 </div>
                             @empty
-                                <div class="bg-gray-50 rounded-[2.5rem] p-10 text-center border-2 border-dashed border-gray-200 text-gray-400 italic">{{ __('stu_no_schedule') }}</div>
+                                <div class="bg-gray-50 rounded-[2.5rem] p-10 text-center border-2 border-dashed border-gray-200">
+                                    <div class="w-16 h-16 bg-gray-100 text-gray-300 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <i class="fas fa-calendar-times text-3xl"></i>
+                                    </div>
+                                    <p class="text-gray-400 font-bold">{{ __('stu_no_schedule') }}</p>
+                                    <p class="text-xs text-gray-300 mt-1">{{ __('មិនមានកាលវិភាគសម្រាប់ថ្ងៃនេះទេ។') }}</p>
+                                </div>
                             @endforelse
                         </div>
                     </section>
@@ -197,7 +197,7 @@
                                     <div class="flex flex-col justify-between h-full">
                                         <div class="mb-6 max-w-[70%]">
                                             <h3 class="font-black text-gray-800 leading-tight text-lg mb-1">
-                                                {{ $course->course->title_en ?? $course->course->name }}
+                                                {{ $course->course->title_en ?? ($course->course->name ?? '') }}
                                             </h3>
                                             <p class="text-[10px] text-blue-500 uppercase font-black tracking-widest">
                                                 {{ $course->academic_year }} • ឆមាស {{ $course->semester }}
@@ -210,7 +210,7 @@
                                             </div>
                                             <div>
                                                 <p class="text-[10px] text-gray-400 font-bold uppercase">{{ __('សាស្ត្រាចារ្យ') }}</p>
-                                                <p class="text-sm font-bold text-gray-700">{{ $course->lecturer->name }}</p>
+                                                <p class="text-sm font-bold text-gray-700">{{ $course->lecturer->name ?? 'N/A' }}</p>
                                             </div>
                                         </div>
 
@@ -295,69 +295,40 @@
                         @endif
                 </div>
 
-                {{-- <div class="space-y-6">
-                    <div class="bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm sticky top-8">
-                        <div class="flex items-center justify-between mb-8">
-                            <div class="flex items-center gap-3">
-                                <div class="h-6 w-1 bg-blue-600 rounded-full"></div>
-                                <h4 class="text-xl font-black text-gray-800">{{ __('ព័ត៌មានថ្មីៗ') }}</h4>
-                            </div>
-                            <span class="bg-blue-50 text-blue-600 text-[10px] font-black px-2 py-1 rounded-lg">LIVE</span>
-                        </div>
-
-                        <div class="space-y-4">
-                            @forelse ($combinedFeed as $item)
-                                <div id="{{ $item->type }}-{{ $item->id }}" 
-                                     class="group relative p-5 rounded-[2rem] border transition-all duration-300 {{ $item->is_read ? 'bg-gray-50/50 border-gray-100 opacity-75' : 'bg-white border-blue-100 shadow-md shadow-blue-50/50' }}">
-                                    
-                                    <div class="flex gap-5">
-
-                                        <div class="flex-shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center {{ $item->type === 'announcement' ? 'bg-emerald-100 text-emerald-600' : 'bg-indigo-100 text-indigo-600' }}">
-                                            <i class="fas {{ $item->type === 'announcement' ? 'fa-bullhorn' : 'fa-bell' }} text-lg"></i>
-                                        </div>
-
-                                        <div class="flex-grow min-w-0">
-                                            <div class="flex flex-col mb-2">
-                                                <div class="flex items-center gap-2 mb-1">
-                                                    <span class="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md {{ $item->type === 'announcement' ? 'bg-emerald-50 text-emerald-700' : 'bg-indigo-50 text-indigo-700' }}">
-                                                        {{ $item->type === 'announcement' ? __('សេចក្តីជូនដំណឹង') : __('ការជូនដំណឹង') }}
-                                                    </span>
-                                                    <span class="text-[10px] text-gray-400 font-bold">• {{ $item->created_at->diffForHumans() }}</span>
-                                                </div>
-                                                <h5 class="text-sm font-black text-gray-800 leading-snug">{{ $item->title }}</h5>
-                                            </div>
-
-                                            <p class="text-[12px] text-gray-500 line-clamp-2 leading-relaxed mb-3">{{ $item->content }}</p>
-
-                                            <div class="flex items-center justify-between pt-3 border-t border-gray-50">
-                                                <div class="flex items-center gap-2">
-                                                    <div class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center">
-                                                        <i class="fas fa-user-tie text-[10px] text-slate-400"></i>
-                                                    </div>
-                                                    <span class="text-[11px] font-extrabold text-slate-600">{{ $item->sender_name }}</span>
-                                                </div>
-
-                                                @if(!$item->is_read)
-                                                    <button onclick="markAsRead('{{ $item->type }}', '{{ $item->id }}')" 
-                                                            class="px-3 py-1 rounded-xl bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-wider hover:bg-blue-600 hover:text-white transition-all">
-                                                        {{ __('អានរួច') }}
-                                                    </button>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            @empty
-                                <div class="text-center py-6 text-gray-500">
-                                    <svg class="w-12 h-12 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                                    <p>{{ __('មិនមានសេចក្តីប្រកាសថ្មីនៅឡើយទេ។') }}</p>
-                                </div>
-                            @endforelse
-                        </div>
-                    </div>
-                </div> --}}
                 {{-- ៤. ផ្នែកខាងស្តាំ (Feed & Notifications) --}}
 <div class="space-y-6">
+    {{-- Attendance Score Card --}}
+    <div class="bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm">
+        <div class="flex items-center gap-3 mb-6">
+            <div class="h-6 w-1 bg-emerald-600 rounded-full"></div>
+            <h4 class="text-xl font-black text-gray-800">{{ __('stu_attendance_score') }}</h4>
+        </div>
+        <div class="text-center mb-4">
+            @php
+                $scoreColor = $attendanceScore >= 12 ? 'emerald' : ($attendanceScore >= 8 ? 'yellow' : 'red');
+            @endphp
+            <div class="w-24 h-24 mx-auto bg-{{ $scoreColor }}-50 rounded-full flex items-center justify-center border-4 border-{{ $scoreColor }}-100 mb-3">
+                <span class="text-3xl font-black text-{{ $scoreColor }}-600">{{ $attendanceScore }}</span>
+            </div>
+            <p class="text-sm font-bold text-gray-400">/ 15</p>
+        </div>
+        <div class="bg-gray-50 rounded-2xl p-4 space-y-2">
+            <div class="flex items-center justify-between text-xs">
+                <span class="text-gray-500 font-bold"><i class="fas fa-user-check text-green-500 mr-1"></i> {{ __('stu_present') }}</span>
+                <span class="font-black text-gray-700">{{ $totalPresent ?? 0 }}</span>
+            </div>
+            <div class="flex items-center justify-between text-xs">
+                <span class="text-gray-500 font-bold"><i class="fas fa-user-times text-red-500 mr-1"></i> {{ __('stu_absent') }}</span>
+                <span class="font-black text-gray-700">{{ $totalAbsent ?? 0 }}</span>
+            </div>
+            <div class="flex items-center justify-between text-xs">
+                <span class="text-gray-500 font-bold"><i class="fas fa-file-contract text-blue-500 mr-1"></i> {{ __('stu_permission') }}</span>
+                <span class="font-black text-gray-700">{{ $totalPermission ?? 0 }}</span>
+            </div>
+        </div>
+    </div>
+
+    {{-- Feed & Notifications --}}
     <div class="bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm sticky top-8">
         <div class="flex items-center justify-between mb-8">
             <div class="flex items-center gap-3">
@@ -411,9 +382,12 @@
                     </div>
                 </div>
             @empty
-                <div class="text-center py-6 text-gray-500">
-                    <svg class="w-12 h-12 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                    <p>{{ __('មិនមានសេចក្តីប្រកាសថ្មីនៅឡើយទេ។') }}</p>
+                <div class="text-center py-10 text-gray-500">
+                    <div class="w-16 h-16 bg-gray-100 text-gray-300 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-bell-slash text-3xl"></i>
+                    </div>
+                    <p class="font-bold text-gray-400">{{ __('មិនមានសេចក្តីប្រកាសថ្មីនៅឡើយទេ។') }}</p>
+                    <p class="text-xs text-gray-300 mt-1">{{ __('សូមពិនិត្យមើលនៅពេលក្រោយ។') }}</p>
                 </div>
             @endforelse
         </div>
@@ -462,61 +436,6 @@
             </form>
         </div>
     </div>
-
-{{-- 🚀 ផ្នែក Firebase SDK សម្រាប់ Dashboard --}}
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-const firebaseConfig = {
-    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-    appId: import.meta.env.VITE_FIREBASE_APP_ID
-};
-
-// Initialize Firebase...
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
-
-    // បង្កើត Function ឱ្យត្រូវនឹងឈ្មោះ onclick="linkWithGoogle()" ក្នុងប៊ូតុងបង
-    window.linkWithGoogle = () => {
-        signInWithPopup(auth, provider)
-            .then((result) => {
-                const user = result.user;
-                
-                // ផ្ញើទិន្នន័យទៅរក្សាទុកក្នុង Database របស់ Laravel
-                fetch('{{ route("user.link-google") }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                    },
-                    body: JSON.stringify({
-                        uid: user.uid,
-                        photoURL: user.photoURL
-                    })
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if(data.status === 'linked') {
-                        // បើរក្សាទុកក្នុង Database ជាប់ វានឹង Refresh ទំព័រ រួចបាត់ប៊ូតុងភ្ជាប់
-                        window.location.reload();
-                    }
-                });
-            })
-            .catch((error) => {
-                console.error("Firebase Error:", error.code);
-                if(error.code === 'auth/unauthorized-domain') {
-                    alert("Error: បងត្រូវបន្ថែម domain 127.0.0.1 ក្នុង Firebase Console ជាមុនសិន!");
-                }
-            });
-    };
-</script>
 
     {{-- Notification Script --}}
     <script>

@@ -340,13 +340,21 @@
         div.className = sender === 'user' ? 'flex justify-end mb-6' : 'flex justify-start mb-6';
         const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-        let content = sender === 'user' 
-            ? `<div class="flex flex-col items-end max-w-[85%]"><div class="bg-green-600 text-white p-4 rounded-2xl rounded-tr-none shadow-sm text-base">${text}</div><span class="text-[10px] text-gray-400 mt-1">${time}</span></div>`
-            : `<div class="flex items-start space-x-3 max-w-[92%] group"><div class="w-10 h-10 rounded-xl bg-green-100 flex-shrink-0 flex items-center justify-center border border-green-200"><span class="text-xs font-bold text-green-600">NMU</span></div><div class="flex flex-col"><div class="bg-white border border-gray-100 text-gray-800 p-5 rounded-2xl rounded-tl-none shadow-sm prose prose-sm prose-green max-w-full text-base leading-relaxed">${marked.parse(text)}</div><div class="flex items-center space-x-2 mt-2 ml-1"><span class="text-[10px] text-gray-400 italic font-medium">NMU Smart Assistant</span><span class="text-[10px] text-gray-400">•</span><span class="text-[10px] text-gray-400">${time}</span></div></div></div>`;
+        const safeText = sender === 'user' ? escapeHtml(text) : text;
+
+        let content = sender === 'user'
+            ? `<div class="flex flex-col items-end max-w-[85%]"><div class="bg-green-600 text-white p-4 rounded-2xl rounded-tr-none shadow-sm text-base">${safeText}</div><span class="text-[10px] text-gray-400 mt-1">${time}</span></div>`
+            : `<div class="flex items-start space-x-3 max-w-[92%] group"><div class="w-10 h-10 rounded-xl bg-green-100 flex-shrink-0 flex items-center justify-center border border-green-200"><span class="text-xs font-bold text-green-600">NMU</span></div><div class="flex flex-col"><div class="bg-white border border-gray-100 text-gray-800 p-5 rounded-2xl rounded-tl-none shadow-sm prose prose-sm prose-green max-w-full text-base leading-relaxed">${marked.parse(safeText)}</div><div class="flex items-center space-x-2 mt-2 ml-1"><span class="text-[10px] text-gray-400 italic font-medium">NMU Smart Assistant</span><span class="text-[10px] text-gray-400">•</span><span class="text-[10px] text-gray-400">${time}</span></div></div></div>`;
 
         div.innerHTML = content;
         chatBox.appendChild(div);
         if (scroll) chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
     }
 
     function showClearConfirm() {
@@ -458,7 +466,14 @@
 
                     const data = await response.json();
                     thinkingIndicator.classList.add('hidden');
-                    appendMessage('ai', data.message || 'សុំទោស មានបញ្ហា។');
+
+                    if (response.status === 429) {
+                        appendMessage('ai', data.message || 'សូមរង់ចាំមួយភ្លែត សូមព្យាយាមម្តងទៀត។');
+                    } else if (response.ok) {
+                        appendMessage('ai', data.message || 'សុំទោស មានបញ្ហា។');
+                    } else {
+                        appendMessage('ai', data.message || 'សុំទោស មានបញ្ហាបច្ចេកទេស។');
+                    }
                 } catch (error) {
                     thinkingIndicator.classList.add('hidden');
                     appendMessage('ai', 'មិនអាចភ្ជាប់ទៅ AI បានទេ។');

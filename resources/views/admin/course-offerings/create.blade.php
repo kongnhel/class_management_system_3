@@ -112,7 +112,17 @@
                                     <div class="grid grid-cols-2 gap-4">
                                         <div class="space-y-2">
                                             <label for="academic_year" class="block text-sm font-medium text-gray-700">{{ __('ឆ្នាំសិក្សា') }}</label>
-                                            <input type="text" name="academic_year" id="academic_year" class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500" value="{{ old('academic_year') }}" placeholder="2024-2025" required>
+                                            <select name="academic_year" id="academic_year" class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500" required>
+                                                <option value="">{{ __('ជ្រើសរើសឆ្នាំសិក្សា') }}</option>
+                                                @foreach ($academicYears as $year)
+                                                    <option value="{{ $year->name }}" 
+                                                            data-start="{{ \Carbon\Carbon::parse($year->start_date)->format('Y-m-d') }}" 
+                                                            data-end="{{ \Carbon\Carbon::parse($year->end_date)->format('Y-m-d') }}"
+                                                            {{ old('academic_year') == $year->name ? 'selected' : '' }}>
+                                                        {{ $year->name }} {{ $year->is_current ? '('.__('បច្ចុប្បន្ន').')' : '' }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                         <div class="space-y-2">
                                             <label for="semester" class="block text-sm font-medium text-gray-700">{{ __('ឆមាស') }}</label>
@@ -195,6 +205,28 @@
         document.addEventListener('DOMContentLoaded', function() {
             const courseSelect = document.getElementById('course_id');
             const programsContainer = document.getElementById('programs-container');
+            const academicYearSelect = document.getElementById('academic_year');
+            const startDateInput = document.getElementById('start_date');
+            const endDateInput = document.getElementById('end_date');
+
+            // ============================================
+            // AUTO-FILL DATES FROM ACADEMIC YEAR
+            // ============================================
+            academicYearSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                const startDate = selectedOption.getAttribute('data-start');
+                const endDate = selectedOption.getAttribute('data-end');
+                
+                if (startDate && endDate) {
+                    startDateInput.value = startDate;
+                    endDateInput.value = endDate;
+                }
+            });
+
+            // Auto-fill on page load if a year is already selected
+            if (academicYearSelect.value) {
+                academicYearSelect.dispatchEvent(new Event('change'));
+            }
 
             // ============================================
             // 1. AUTO-POPULATE PROGRAM & GENERATION

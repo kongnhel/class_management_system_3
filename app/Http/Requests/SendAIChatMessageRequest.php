@@ -23,11 +23,10 @@ class SendAIChatMessageRequest extends FormRequest
             'message' => [
                 'required',
                 'string',
-                'max:1000',
+                'max:2000',
                 'min:1',
-                // ពិនិត្យថាមិនមាន XSS ផ្តាច់ខ្លួន
-                'regex:/^[\p{L}\p{N}\s\p{P}]+$/u',
             ],
+            'option' => 'required|string|in:info,process',
         ];
     }
 

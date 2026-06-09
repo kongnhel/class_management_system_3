@@ -97,7 +97,7 @@
 @endif
 
             {{-- Key Metrics Section --}}
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
                 
                 {{-- Total Users --}}
                 <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:-translate-y-1 group">
@@ -111,7 +111,7 @@
                         </div>
                     </div>
                     <div class="mt-4 w-full bg-gray-100 rounded-full h-1.5">
-                        <div class="bg-green-500 h-1.5 rounded-full" style="width: 70%"></div>
+                        <div class="bg-green-500 h-1.5 rounded-full" style="width: {{ min(100, max(5, $totalUsers * 2)) }}%"></div>
                     </div>
                 </div>
 
@@ -127,7 +127,7 @@
                         </div>
                     </div>
                     <div class="mt-4 w-full bg-gray-100 rounded-full h-1.5">
-                        <div class="bg-teal-500 h-1.5 rounded-full" style="width: 85%"></div>
+                        <div class="bg-teal-500 h-1.5 rounded-full" style="width: {{ $totalUsers > 0 ? round($totalStudents / $totalUsers * 100) : 0 }}%"></div>
                     </div>
                 </div>
 
@@ -143,7 +143,7 @@
                         </div>
                     </div>
                     <div class="mt-4 w-full bg-gray-100 rounded-full h-1.5">
-                        <div class="bg-orange-500 h-1.5 rounded-full" style="width: 45%"></div>
+                        <div class="bg-orange-500 h-1.5 rounded-full" style="width: {{ $totalUsers > 0 ? round($totalProfessors / $totalUsers * 100) : 0 }}%"></div>
                     </div>
                 </div>
 
@@ -159,7 +159,23 @@
                         </div>
                     </div>
                     <div class="mt-4 w-full bg-gray-100 rounded-full h-1.5">
-                        <div class="bg-purple-500 h-1.5 rounded-full" style="width: 60%"></div>
+                        <div class="bg-purple-500 h-1.5 rounded-full" style="width: {{ min(100, max(5, $totalFaculties * 20)) }}%"></div>
+                    </div>
+                </div>
+
+                {{-- Active Course Offerings --}}
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:-translate-y-1 group">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 mb-1">{{ __('admin_active_course_offerings') }}</p>
+                            <h3 class="text-3xl font-extrabold text-gray-800">{{ $activeCourseOfferings }}</h3>
+                        </div>
+                        <div class="p-3 bg-cyan-50 rounded-xl text-cyan-600 group-hover:bg-cyan-600 group-hover:text-white transition-colors duration-300">
+                            <i class="fas fa-calendar-check text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4 w-full bg-gray-100 rounded-full h-1.5">
+                        <div class="bg-cyan-500 h-1.5 rounded-full" style="width: {{ min(100, max(5, $activeCourseOfferings * 10)) }}%"></div>
                     </div>
                 </div>
             </div>
@@ -285,6 +301,135 @@
                 </div>
 
             </div>
+
+            {{-- Today's Attendance Summary --}}
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:-translate-y-1 group">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 mb-1">{{ __('admin_today_total_attendance') }}</p>
+                            <h3 class="text-3xl font-extrabold text-gray-800">{{ $todayAttendanceCount }}</h3>
+                        </div>
+                        <div class="p-3 bg-blue-50 rounded-xl text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
+                            <i class="fas fa-clipboard-list text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:-translate-y-1 group">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 mb-1">{{ __('admin_today_present') }}</p>
+                            <h3 class="text-3xl font-extrabold text-green-600">{{ $todayPresentCount }}</h3>
+                        </div>
+                        <div class="p-3 bg-green-50 rounded-xl text-green-600 group-hover:bg-green-600 group-hover:text-white transition-colors duration-300">
+                            <i class="fas fa-check-circle text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:-translate-y-1 group">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 mb-1">{{ __('admin_today_absent') }}</p>
+                            <h3 class="text-3xl font-extrabold text-red-600">{{ $todayAbsentCount }}</h3>
+                        </div>
+                        <div class="p-3 bg-red-50 rounded-xl text-red-600 group-hover:bg-red-600 group-hover:text-white transition-colors duration-300">
+                            <i class="fas fa-times-circle text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Recent Users & Announcements --}}
+            <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+
+                {{-- Recent Users (2/3 width) --}}
+                <div class="xl:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="p-6 border-b border-gray-50 flex items-center justify-between">
+                        <h4 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                            <i class="fas fa-user-clock text-indigo-500"></i>
+                            {{ __('admin_recent_users') }}
+                        </h4>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left">
+                            <thead class="text-xs text-gray-500 uppercase bg-gray-50/80">
+                                <tr>
+                                    <th class="px-6 py-3 font-semibold">{{ __('admin_user_name') }}</th>
+                                    <th class="px-6 py-3 font-semibold">{{ __('admin_role') }}</th>
+                                    <th class="px-6 py-3 font-semibold">{{ __('admin_joined_date') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-50">
+                                @forelse($recentUsers as $user)
+                                <tr class="hover:bg-gray-50/50 transition-colors">
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-3">
+                                            <div class="h-9 w-9 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-gray-600 font-bold text-sm">
+                                                {{ strtoupper(substr($user->name, 0, 2)) }}
+                                            </div>
+                                            <span class="font-medium text-gray-800">{{ $user->name }}</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        @if($user->role === 'admin')
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-700">{{ __('admin_role_admin') }}</span>
+                                        @elseif($user->role === 'professor')
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-orange-100 text-orange-700">{{ __('admin_role_professor') }}</span>
+                                        @else
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-teal-100 text-teal-700">{{ __('admin_role_student') }}</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-6 py-4 text-gray-500">
+                                        {{ $user->created_at->format('d M Y') }}
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="3" class="px-6 py-8 text-center text-gray-400">
+                                        <i class="fas fa-users-slash text-2xl mb-2 block"></i>
+                                        {{ __('admin_no_users') }}
+                                    </td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                {{-- Latest Announcements (1/3 width) --}}
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
+                    <div class="p-6 border-b border-gray-50 flex items-center justify-between">
+                        <h4 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                            <i class="fas fa-bullhorn text-amber-500"></i>
+                            {{ __('admin_latest_announcements') }}
+                        </h4>
+                    </div>
+                    <div class="p-6 flex-1">
+                        @forelse($announcements as $announcement)
+                        <div class="flex items-start gap-3 {{ !$loop->last ? 'pb-4 mb-4 border-b border-gray-50' : '' }}">
+                            <div class="mt-1 flex-shrink-0">
+                                <div class="h-2 w-2 rounded-full bg-amber-400"></div>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="font-medium text-gray-800 text-sm leading-tight truncate">{{ $announcement->title }}</p>
+                                <p class="text-xs text-gray-400 mt-1">{{ $announcement->created_at->format('d M Y') }}</p>
+                            </div>
+                        </div>
+                        @empty
+                        <div class="flex flex-col items-center justify-center py-8 text-center">
+                            <div class="h-12 w-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 mb-3">
+                                <i class="fas fa-megaphone text-lg"></i>
+                            </div>
+                            <p class="text-sm text-gray-400">{{ __('admin_no_announcements') }}</p>
+                        </div>
+                        @endforelse
+                    </div>
+                </div>
+
+            </div>
+
         </div>
     </div>
 </x-app-layout>

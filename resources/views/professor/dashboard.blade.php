@@ -120,6 +120,153 @@
                 @endforeach
             </div>
 
+            {{-- 1.5 Attendance Summary Card --}}
+            <div class="mb-12">
+                <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 p-8 overflow-hidden relative">
+                    <div class="absolute top-0 right-0 opacity-5 pointer-events-none">
+                        <i class="fas fa-clipboard-check text-[150px]"></i>
+                    </div>
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="h-10 w-2 bg-violet-500 rounded-full shadow-lg shadow-violet-200"></div>
+                        <h4 class="text-xl font-black text-slate-800 tracking-tight">{{ __('វត្តមានថ្ងៃនេះ') }}</h4>
+                    </div>
+                    @php
+                        $todayPresent = $todayAttendancePresent ?? 0;
+                        $todayAbsent = $todayAttendanceAbsent ?? 0;
+                        $todayTotal = $todayAttendanceCount ?? ($todayPresent + $todayAbsent);
+                    @endphp
+                    <div class="grid grid-cols-3 gap-6 relative z-10">
+                        <div class="bg-emerald-50 rounded-3xl p-6 text-center border border-emerald-100 hover:shadow-lg transition-all">
+                            <div class="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                                <i class="fas fa-user-check text-emerald-600 text-xl"></i>
+                            </div>
+                            <p class="text-3xl font-black text-emerald-700">{{ $todayPresent }}</p>
+                            <p class="text-xs font-bold text-emerald-500 mt-1">{{ __('វត្តមាន') }}</p>
+                        </div>
+                        <div class="bg-red-50 rounded-3xl p-6 text-center border border-red-100 hover:shadow-lg transition-all">
+                            <div class="w-12 h-12 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                                <i class="fas fa-user-times text-red-600 text-xl"></i>
+                            </div>
+                            <p class="text-3xl font-black text-red-700">{{ $todayAbsent }}</p>
+                            <p class="text-xs font-bold text-red-500 mt-1">{{ __('អវត្តមាន') }}</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-3xl p-6 text-center border border-slate-100 hover:shadow-lg transition-all">
+                            <div class="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                                <i class="fas fa-users text-slate-600 text-xl"></i>
+                            </div>
+                            <p class="text-3xl font-black text-slate-700">{{ $todayTotal }}</p>
+                            <p class="text-xs font-bold text-slate-500 mt-1">{{ __('សរុប') }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Quick Actions & Stats Row --}}
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+                {{-- Quick Actions --}}
+                <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 p-8">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="h-10 w-2 bg-blue-500 rounded-full shadow-lg shadow-blue-200"></div>
+                        <h4 class="text-xl font-black text-slate-800 tracking-tight">{{ __('សកម្មភាពរហ័ស') }}</h4>
+                    </div>
+                    <div class="space-y-3">
+                        <a href="{{ route('professor.my-course-offerings') }}" class="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 hover:bg-blue-50 border border-transparent hover:border-blue-100 transition-all group">
+                            <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                                <i class="fas fa-book text-blue-600"></i>
+                            </div>
+                            <div>
+                                <p class="font-bold text-slate-700 text-sm">{{ __('មុខវិជ្ជារបស់ខ្ញុំ') }}</p>
+                                <p class="text-[11px] text-slate-400">{{ $myCourseOfferings->count() }} {{ __('មុខវិជ្ជា') }}</p>
+                            </div>
+                        </a>
+                        <a href="{{ route('professor.grades.all') }}" class="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 hover:bg-green-50 border border-transparent hover:border-green-100 transition-all group">
+                            <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center group-hover:bg-green-200 transition-colors">
+                                <i class="fas fa-chart-line text-green-600"></i>
+                            </div>
+                            <div>
+                                <p class="font-bold text-slate-700 text-sm">{{ __('ពិន្ទុសរុប') }}</p>
+                                <p class="text-[11px] text-slate-400">{{ __('មើលពិន្ទុទាំងអស់') }}</p>
+                            </div>
+                        </a>
+                        <a href="{{ route('professor.all-attendance') }}" class="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 hover:bg-violet-50 border border-transparent hover:border-violet-100 transition-all group">
+                            <div class="w-10 h-10 bg-violet-100 rounded-xl flex items-center justify-center group-hover:bg-violet-200 transition-colors">
+                                <i class="fas fa-clipboard-check text-violet-600"></i>
+                            </div>
+                            <div>
+                                <p class="font-bold text-slate-700 text-sm">{{ __('វត្តមានសរុប') }}</p>
+                                <p class="text-[11px] text-slate-400">{{ __('មើលវត្តមានទាំងអស់') }}</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                {{-- Pending Work Stats --}}
+                <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 p-8">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="h-10 w-2 bg-amber-500 rounded-full shadow-lg shadow-amber-200"></div>
+                        <h4 class="text-xl font-black text-slate-800 tracking-tight">{{ __('ការងារដែលមិនទាន់ធ្វើ') }}</h4>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-4 rounded-2xl bg-amber-50 border border-amber-100">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-file-alt text-amber-600"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-slate-700 text-sm">{{ __('ការដាក់ស្នើមិនទាន់ពិន្ទុ') }}</p>
+                                    <p class="text-[11px] text-slate-400">{{ __('សិស្សបានដាក់ស្នើហើយ') }}</p>
+                                </div>
+                            </div>
+                            <span class="text-2xl font-black text-amber-600">{{ $ungradedSubmissionsCount }}</span>
+                        </div>
+                        <div class="flex items-center justify-between p-4 rounded-2xl bg-rose-50 border border-rose-100">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-rose-100 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-exclamation-triangle text-rose-600"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-slate-700 text-sm">{{ __('ការវាយតម្លៃខុសកាលកំណត់') }}</p>
+                                    <p class="text-[11px] text-slate-400">{{ __('កិច្ចការផុតកំណត់មិនទាន់ពិន្ទុ') }}</p>
+                                </div>
+                            </div>
+                            <span class="text-2xl font-black text-rose-600">{{ $pendingAssessments }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- At-Risk Students --}}
+                <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 p-8">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="h-10 w-2 bg-red-500 rounded-full shadow-lg shadow-red-200"></div>
+                        <h4 class="text-xl font-black text-slate-800 tracking-tight">{{ __('សិស្សដែលត្រូវយកចិត្តទុកដាក់') }}</h4>
+                    </div>
+                    <div class="space-y-3 max-h-[300px] overflow-y-auto">
+                        @forelse($atRiskStudents as $risk)
+                            <div class="flex items-center gap-3 p-3 rounded-2xl bg-red-50/50 border border-red-100/50 hover:bg-red-50 transition-all">
+                                <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-user text-red-500 text-sm"></i>
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <p class="font-bold text-slate-700 text-sm truncate">{{ $risk['student']->name ?? 'N/A' }}</p>
+                                    <p class="text-[11px] text-slate-400 truncate">{{ $risk['course'] }}</p>
+                                </div>
+                                <span class="px-2 py-1 text-[10px] font-bold rounded-lg bg-red-100 text-red-600 flex-shrink-0">
+                                    {{ $risk['reason'] }}
+                                </span>
+                            </div>
+                        @empty
+                            <div class="text-center py-8">
+                                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <i class="fas fa-check-circle text-green-500 text-2xl"></i>
+                                </div>
+                                <p class="text-sm text-slate-400 font-bold">{{ __('ទាំងអស់គ្នាល្អ') }}</p>
+                                <p class="text-[11px] text-slate-300">{{ __('មិនមានសិស្សបញ្ហាទេ') }}</p>
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
                 
                 {{-- Left Column: Teaching Schedule --}}
@@ -209,6 +356,17 @@
                                             </div>
                                         </div>
                                     </div>
+
+                                    {{-- Student Count --}}
+                                    @php
+                                        $enrolledCount = $courseOffering->studentCourseEnrollments->count() ?? 0;
+                                    @endphp
+                                    <div class="flex items-center gap-2 mb-6 bg-slate-50 px-4 py-2.5 rounded-2xl border border-slate-100 group-hover:bg-indigo-50/50 transition-colors">
+                                        <i class="fas fa-user-graduate text-indigo-400 text-sm"></i>
+                                        <span class="text-sm font-bold text-slate-600">
+                                            {{ __('សិស្សចុះឈ្មោះ') }}: <span class="text-indigo-600 font-black">{{ $enrolledCount }}</span> {{ __('នាក់') }}
+                                        </span>
+                                    </div>
                                     
                                     {{-- Action Button --}}
                                     <button type="button"
@@ -265,12 +423,26 @@
     {{-- Announcements List with Modern Scroll --}}
     <div class="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-modern-scroll">
         @forelse ($announcements as $announcement)
-            <div class="group p-5 rounded-[2rem] border border-transparent bg-slate-50/50 hover:bg-white hover:border-amber-100 hover:shadow-[0_15px_30px_rgba(245,158,11,0.08)] transition-all duration-500 relative overflow-hidden">
+            @php
+                $isUnread = !isset($announcement->read_at) || is_null($announcement->read_at);
+                $announcementDate = \Carbon\Carbon::parse($announcement->created_at);
+            @endphp
+            <div class="group p-5 rounded-[2rem] border border-transparent bg-slate-50/50 {{ $isUnread ? 'bg-amber-50/40 border-amber-100/60' : '' }} hover:bg-white hover:border-amber-100 hover:shadow-[0_15px_30px_rgba(245,158,11,0.08)] transition-all duration-500 relative overflow-hidden">
+                {{-- Unread Indicator --}}
+                @if($isUnread)
+                    <div class="absolute top-4 right-4 flex items-center gap-1.5">
+                        <span class="relative flex h-2.5 w-2.5">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
+                        </span>
+                    </div>
+                @endif
+
                 {{-- Hover Decorative Element --}}
                 <div class="absolute top-0 right-0 w-24 h-24 bg-amber-50 rounded-full -mr-12 -mt-12 transition-transform group-hover:scale-150 duration-700 opacity-50"></div>
                 
                 <div class="relative">
-                    <h5 class="font-black text-slate-800 text-[15px] leading-snug mb-2 group-hover:text-amber-600 transition-colors duration-300">
+                    <h5 class="font-black text-slate-800 text-[15px] leading-snug mb-2 group-hover:text-amber-600 transition-colors duration-300 {{ $isUnread ? 'text-slate-900' : '' }}">
                         {{ $announcement->title_km ?? ($announcement->title_en ?? 'គ្មានចំណងជើង') }}
                     </h5>
                     
@@ -286,7 +458,7 @@
                                 </div>
                             </div>
                             <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                                {{ \Carbon\Carbon::parse($announcement->created_at)->diffForHumans() }}
+                                {{ $announcementDate->isToday() ? $announcementDate->format('H:i') . ' · ថ្ងៃនេះ' : $announcementDate->diffForHumans() }}
                             </span>
                         </div>
                         
@@ -327,42 +499,6 @@
         background: #fde68a; /* amber-200 */
     }
 </style>
-
-                    {{-- Upcoming Tasks --}}
-                    {{-- <div class="bg-slate-900 text-white p-8 rounded-[2.8rem] shadow-2xl relative overflow-hidden group">
-                        <div class="absolute -top-10 -right-10 w-40 h-40 bg-indigo-500/20 rounded-full blur-3xl transition-transform group-hover:scale-150"></div>
-                        <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-blue-500/20 rounded-full blur-2xl transition-transform group-hover:scale-150"></div>
-
-                        <h4 class="text-xl font-black mb-8 relative z-10 flex items-center gap-3">
-                            <div class="bg-white/10 p-2.5 rounded-xl border border-white/5">
-                                <i class="fas fa-tasks text-indigo-400"></i>
-                            </div>
-                            {{ __('កិច្ចការត្រូវធ្វើ') }}
-                        </h4>
-
-                        <div class="space-y-5 relative z-10">
-                            @forelse ($upcomingAssignments as $assignment)
-                                <a href="{{ route('professor.manage-grades', ['offering_id' => $assignment->course_offering_id]) }}" 
-                                   class="block bg-white/5 backdrop-blur-md border border-white/10 p-5 rounded-[1.8rem] hover:bg-white/10 transition-all group/task">
-                                    <div class="flex items-center gap-3 mb-3">
-                                        <span class="px-2.5 py-1 rounded-lg bg-indigo-500 text-white text-[9px] font-black uppercase tracking-widest shadow-lg shadow-indigo-900/50">
-                                            Assignment
-                                        </span>
-                                        <p class="text-[10px] text-indigo-300 font-mono font-bold">
-                                            <i class="far fa-calendar-alt mr-1"></i> Due: {{ \Carbon\Carbon::parse($assignment->due_date)->format('d M') }}
-                                        </p>
-                                    </div>
-                                    <h5 class="font-bold text-sm text-white group-hover/task:text-indigo-300 transition-colors leading-relaxed">
-                                        {{ $assignment->title_km ?? ($assignment->title_en ?? 'គ្មានចំណងជើង') }}
-                                    </h5>
-                                </a>
-                            @empty
-                                <div class="text-center py-10 bg-white/5 rounded-[2rem] border border-dashed border-white/10">
-                                    <p class="text-sm text-slate-400 font-bold">{{ __('កិច្ចការទាំងអស់ត្រូវបានរួចរាល់!') }}</p>
-                                </div>
-                            @endforelse
-                        </div>
-                    </div> --}}
 
                 </div>
             </div>

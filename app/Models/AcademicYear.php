@@ -37,4 +37,12 @@ class AcademicYear extends Model
         static::query()->update(['is_current' => false]);
         $this->update(['is_current' => true]);
     }
+
+    /**
+     * Get the course offerings for this academic year.
+     */
+    public function courseOfferings()
+    {
+        return $this->hasMany(CourseOffering::class, 'academic_year', 'name');
+    }
 }

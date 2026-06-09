@@ -86,13 +86,6 @@ class User extends Authenticatable
         return $this->hasOne(UserProfile::class);
     }
 
-    // In App\Models\User.php
-
-    // public function professorProfile()
-    // {
-    //     return $this->hasOne(ProfessorProfile::class);
-    // }
-
     /**
      * Get the department that the professor user belongs to.
      */
@@ -158,14 +151,6 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the quiz responses for this student user.
-     */
-    public function quizResponses()
-    {
-        return $this->hasMany(StudentQuizResponse::class, 'student_user_id');
-    }
-
-    /**
      * Get the announcements posted by this user.
      */
     public function announcementsPosted()
@@ -224,14 +209,6 @@ class User extends Authenticatable
         );
     }
 
-    /**
-     * Relationship ទៅកាន់តារាងវត្តមាន
-     * ប្រើដើម្បីរាប់ចំនួនវត្តមានក្នុងរបាយការណ៍
-     */
-    public function attendances()
-    {
-        return $this->hasMany(\App\Models\AttendanceRecord::class, 'student_user_id');
-    }
     // You may also have other relationships here, like department() or program()
     // You can also add the studentCourseEnrollments relationship here for consistency
 
@@ -293,19 +270,7 @@ class User extends Authenticatable
 
         return max(0, $score);
     }
-    // // នៅក្នុង Student Model
-    // public function calculateAutoAttendanceScore($courseOfferingId) {
-    //     $totalSessions = Attendance::where('course_offering_id', $courseOfferingId)->count();
-    //     $presentSessions = Attendance::where('course_offering_id', $courseOfferingId)
-    //                         ->where('student_id', $this->id)
-    //                         ->where('status', 'present')
-    //                         ->count();
 
-    //     if($totalSessions == 0) return 0;
-
-    //     $attendanceWeight = 15; // ឬទាញពី $courseOffering->attendance_weight
-    //     return ($presentSessions / $totalSessions) * $attendanceWeight;
-    // }
     /**
      * យកពិន្ទុចុងក្រោយ (Manual Override vs Auto)
      */

@@ -67,6 +67,9 @@
                             </thead>
                             <tbody class="divide-y divide-slate-50">
                                 @foreach ($students as $student)
+                                    @if ($student->id == $leaderId)
+                                        @continue
+                                    @endif
                                     <tr class="group hover:bg-blue-50/30 transition-colors">
                                         <td class="px-4 md:px-8 py-4 whitespace-nowrap">
                                             <div class="flex items-center gap-3 md:gap-4">

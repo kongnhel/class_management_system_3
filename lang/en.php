@@ -166,6 +166,16 @@
   'prof_enrolled_count' => 'Enrolled Students:',
   'prof_add_attendance' => 'Add New Attendance Record',
   'prof_student' => 'Student',
+
+  // Professor Students Page
+  'prof_stu_people' => '',
+  'prof_stu_student_info' => 'Student Info',
+  'prof_stu_id_label' => 'Student ID',
+  'prof_stu_contact' => 'Contact',
+  'prof_stu_actions' => 'Actions',
+  'prof_stu_student_label' => 'Student',
+  'prof_stu_class_leader' => 'Class Leader',
+
   'prof_exams_title' => 'Manage Course Exams',
   'prof_exams_add' => 'Add New Exam',
   'stu_dashboard_greeting' => 'Hello Student',

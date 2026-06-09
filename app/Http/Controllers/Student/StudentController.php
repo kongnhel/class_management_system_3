@@ -35,21 +35,18 @@ class StudentController extends Controller
             ->with(['course', 'lecturer', 'studentCourseEnrollments' => function ($query) use ($studentId) {
                 $query->where('student_user_id', $studentId);
             }])
-            ->get()
-            ->map(function ($offering) use ($studentId, $todayDate) {
-                $record = \App\Models\AttendanceRecord::where('student_user_id', $studentId)
-                    ->where('course_offering_id', $offering->id)
-                    ->where('date', $todayDate)
-                    ->first();
-
-                $offering->today_status = $record ? $record->status : null;
-
-                return $offering;
-            });
-
-        $enrollments = StudentCourseEnrollment::where('student_user_id', $user->id)
-            ->with('courseOffering.course', 'courseOffering.lecturer')
             ->get();
+
+        $todayOfferingIdList = $enrolledCourses->pluck('id')->toArray();
+        $todayRecords = \App\Models\AttendanceRecord::where('student_user_id', $studentId)
+            ->whereIn('course_offering_id', $todayOfferingIdList)
+            ->where('date', $todayDate)
+            ->pluck('status', 'course_offering_id')
+            ->toArray();
+
+        $enrolledCourses->each(function ($offering) use ($todayRecords) {
+            $offering->today_status = $todayRecords[$offering->id] ?? null;
+        });
 
         $upcomingAssignments = Assignment::whereHas('courseOffering.studentCourseEnrollments', function ($query) use ($user) {
             $query->where('student_user_id', $user->id);
@@ -151,6 +148,19 @@ class StudentController extends Controller
 
         $combinedFeed = $allAnnouncements->merge($allNotifications)->sortByDesc('created_at');
 
+        // Attendance score
+        $absentDeduction = floor($totalAbsent / 2);
+        $permissionDeduction = floor($totalPermission / 4);
+        $attendanceScore = max(0, 15 - $absentDeduction - $permissionDeduction);
+
+        // Submission stats
+        $totalSubmissions = \App\Models\Submission::where('student_user_id', $user->id)->count();
+        $pendingSubmissions = \App\Models\Assignment::whereHas('courseOffering.studentCourseEnrollments', function ($q) use ($user) {
+            $q->where('student_user_id', $user->id);
+        })->whereNotIn('id', function ($q) use ($user) {
+            $q->select('assignment_id')->from('submissions')->where('student_user_id', $user->id);
+        })->count();
+
         // 7. បញ្ជូនទិន្នន័យទៅ View
         return view('student.dashboard', compact(
             'user',
@@ -159,7 +169,6 @@ class StudentController extends Controller
             'totalPermission',
             'totalLate',
             'enrolledCourses',
-            'enrollments',
             'upcomingAssignments',
             'upcomingExams',
             'upcomingQuizzes',
@@ -169,7 +178,10 @@ class StudentController extends Controller
             'completedCoursesCount',
             'totalCoursesInProgram',
             'combinedFeed',
-            'todayName'
+            'todayName',
+            'attendanceScore',
+            'totalSubmissions',
+            'pendingSubmissions'
         ));
     }
 
@@ -184,5 +196,10 @@ class StudentController extends Controller
         $user->save();
 
         return back()->with('success', 'អបអរសាទរ! គណនី Telegram របស់អ្នកត្រូវបានភ្ជាប់ហើយ។');
+    }
+
+    public function myTimetable()
+    {
+        return redirect()->route('student.my-schedule');
     }
 }

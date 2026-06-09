@@ -3,8 +3,13 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Assignment;
 use App\Models\CourseOffering;
+use App\Models\Exam;
+use App\Models\ExamResult;
 use App\Models\Program;
+use App\Models\Quiz;
+use App\Services\GradingService;
 use Illuminate\Http\Request;
 
 class AdminGradeController extends Controller
@@ -52,22 +57,76 @@ class AdminGradeController extends Controller
             'course',
             'lecturer',
             'targetPrograms',
-            'studentCourseEnrollments.student.profile',
+            'studentCourseEnrollments.student.studentProfile',
         ]);
 
-        $enrollments = $courseOffering->studentCourseEnrollments
-            ->sortBy('student.name')
-            ->values();
+        // Load all assessments for this course offering
+        $assignments = Assignment::where('course_offering_id', $courseOffering->id)->get();
+        $exams = Exam::where('course_offering_id', $courseOffering->id)->get();
+        $quizzes = Quiz::where('course_offering_id', $courseOffering->id)->get();
+
+        $assessments = collect($assignments)->concat($exams)->concat($quizzes)->sortBy('created_at');
+
+        // Load all exam results for enrolled students
+        $allResults = ExamResult::whereIn('student_user_id', $courseOffering->studentCourseEnrollments->pluck('student_user_id'))
+            ->get();
+
+        // Build gradebook and compute totals
+        $gradebook = [];
+        $students = $courseOffering->studentCourseEnrollments->map(function ($enrollment) use ($assessments, $allResults, &$gradebook, $courseOffering) {
+            $student = $enrollment->student;
+
+            // Attendance score (15% weight)
+            $attendanceScore = (float) ($student->getAttendanceScoreByCourse($courseOffering->id) ?? 0);
+            $totalScore = $attendanceScore;
+
+            foreach ($assessments as $assessment) {
+                $type = ($assessment instanceof Assignment) ? 'assignment' :
+                       (($assessment instanceof Quiz) ? 'quiz' : 'exam');
+
+                $scoreRecord = $allResults->where('assessment_id', $assessment->id)
+                    ->where('student_user_id', $student->id)
+                    ->where('assessment_type', $type)
+                    ->first();
+
+                $score = $scoreRecord ? (float) $scoreRecord->score_obtained : 0;
+                $gradebook[$student->id][$type.'_'.$assessment->id] = $score;
+
+                $totalScore += $score;
+            }
+
+            $student->temp_total = (float) $totalScore;
+            $student->letterGrade = GradingService::getLetterGrade($totalScore);
+            $student->isPassing = GradingService::isPassing($student->letterGrade);
+
+            return $student;
+        });
+
+        // Sort by total score descending
+        $students = $students->sortByDesc('temp_total')->values();
+
+        // Assign ranks
+        foreach ($students as $index => $student) {
+            $student->rank = $index + 1;
+        }
+
+        // Compute stats
+        $totalStudents = $students->count();
+        $passCount = $students->where('isPassing', true)->count();
+        $avgScore = $totalStudents > 0 ? $students->avg('temp_total') : 0;
+        $maxScore = $totalStudents > 0 ? $students->max('temp_total') : 0;
+        $minScore = $totalStudents > 0 ? $students->min('temp_total') : 0;
 
         $stats = [
-            'total' => $enrollments->count(),
-            'graded' => $enrollments->where('final_grade', '!=', null)->count(),
-            'avg_grade' => $enrollments->where('final_grade', '!=', null)->avg('final_grade'),
-            'max_grade' => $enrollments->where('final_grade', '!=', null)->max('final_grade'),
-            'min_grade' => $enrollments->where('final_grade', '!=', null)->min('final_grade'),
+            'total' => $totalStudents,
+            'graded' => $students->where('temp_total', '>', 0)->count(),
+            'avg_grade' => $avgScore,
+            'max_grade' => $maxScore,
+            'min_grade' => $minScore,
+            'pass_rate' => $totalStudents > 0 ? ($passCount / $totalStudents) * 100 : 0,
         ];
 
-        return view('admin.grades.show', compact('courseOffering', 'enrollments', 'stats'));
+        return view('admin.grades.show', compact('courseOffering', 'students', 'assessments', 'gradebook', 'stats'));
     }
 
     public function exportGrades(CourseOffering $courseOffering)
@@ -76,31 +135,84 @@ class AdminGradeController extends Controller
             'course',
             'lecturer',
             'targetPrograms',
-            'studentCourseEnrollments.student.profile',
+            'studentCourseEnrollments.student.studentProfile',
         ]);
+
+        // Re-use the same grade computation logic
+        $assignments = Assignment::where('course_offering_id', $courseOffering->id)->get();
+        $exams = Exam::where('course_offering_id', $courseOffering->id)->get();
+        $quizzes = Quiz::where('course_offering_id', $courseOffering->id)->get();
+        $assessments = collect($assignments)->concat($exams)->concat($quizzes)->sortBy('created_at');
+
+        $allResults = ExamResult::whereIn('student_user_id', $courseOffering->studentCourseEnrollments->pluck('student_user_id'))
+            ->get();
+
+        $gradebook = [];
+        $students = $courseOffering->studentCourseEnrollments->map(function ($enrollment) use ($assessments, $allResults, &$gradebook, $courseOffering) {
+            $student = $enrollment->student;
+            $attendanceScore = (float) ($student->getAttendanceScoreByCourse($courseOffering->id) ?? 0);
+            $totalScore = $attendanceScore;
+
+            foreach ($assessments as $assessment) {
+                $type = ($assessment instanceof Assignment) ? 'assignment' :
+                       (($assessment instanceof Quiz) ? 'quiz' : 'exam');
+                $scoreRecord = $allResults->where('assessment_id', $assessment->id)
+                    ->where('student_user_id', $student->id)
+                    ->where('assessment_type', $type)
+                    ->first();
+                $score = $scoreRecord ? (float) $scoreRecord->score_obtained : 0;
+                $gradebook[$student->id][$type.'_'.$assessment->id] = $score;
+                $totalScore += $score;
+            }
+            $student->temp_total = (float) $totalScore;
+            $student->letterGrade = GradingService::getLetterGrade($totalScore);
+            $student->isPassing = GradingService::isPassing($student->letterGrade);
+
+            return $student;
+        });
+
+        $students = $students->sortByDesc('temp_total')->values();
 
         $fileName = 'grades_'.$courseOffering->course->title_en.'_'.$courseOffering->academic_year.'.csv';
 
         $headers = [
-            'Content-Type' => 'text/csv',
+            'Content-Type' => 'text/csv; charset=UTF-8',
             'Content-Disposition' => "attachment; filename=\"{$fileName}\"",
         ];
 
-        $callback = function () use ($courseOffering) {
+        $callback = function () use ($courseOffering, $students, $assessments, $gradebook) {
+            // UTF-8 BOM for Excel to recognize Khmer characters
+            echo "\xEF\xBB\xBF";
             $file = fopen('php://output', 'w');
 
             // Header
-            fputcsv($file, ['Student ID', 'Name', 'Email', 'Grade', 'Status']);
+            $header = ['Rank', 'Student ID', 'Name', 'Email', 'Attendance'];
+            foreach ($assessments as $assessment) {
+                $typeLabel = $assessment instanceof Assignment ? 'Assign' : ($assessment instanceof Quiz ? 'Quiz' : 'Exam');
+                $header[] = $typeLabel.': '.$assessment->title_km;
+            }
+            $header = array_merge($header, ['Total', 'Letter Grade', 'Status']);
+            fputcsv($file, $header);
 
             // Data
-            foreach ($courseOffering->studentCourseEnrollments as $enrollment) {
-                fputcsv($file, [
-                    $enrollment->student->student_id_code ?? '',
-                    $enrollment->student->name ?? '',
-                    $enrollment->student->email ?? '',
-                    $enrollment->final_grade ?? 'N/A',
-                    $enrollment->status,
-                ]);
+            foreach ($students as $index => $student) {
+                $row = [
+                    $index + 1,
+                    $student->student_id_code ?? '',
+                    $student->studentProfile->full_name_km ?? $student->name,
+                    $student->email ?? '',
+                    $student->getAttendanceScoreByCourse($courseOffering->id) ?? 0,
+                ];
+                foreach ($assessments as $assessment) {
+                    $type = ($assessment instanceof Assignment) ? 'assignment' :
+                           (($assessment instanceof Quiz) ? 'quiz' : 'exam');
+                    $key = $type.'_'.$assessment->id;
+                    $row[] = $gradebook[$student->id][$key] ?? '';
+                }
+                $row[] = number_format($student->temp_total, 1);
+                $row[] = $student->letterGrade;
+                $row[] = $student->isPassing ? 'Pass' : 'Fail';
+                fputcsv($file, $row);
             }
 
             fclose($file);

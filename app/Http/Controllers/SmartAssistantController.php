@@ -12,15 +12,15 @@ use Illuminate\Support\Facades\RateLimiter;
 
 class SmartAssistantController extends Controller
 {
-    /**
-     * មុខងារចម្បងសម្រាប់ទាក់ទងជាមួយ Dify AI ដោយប្រើ Context ពី Database
-     */
     public function generateResponse(Request $request)
     {
-        // ១. Validate ទិន្នន័យ
         $request->validate([
-            'message' => 'required|string|max:2000',
-            'option' => 'required|string', // 'info' ឬ 'process'
+            'message' => [
+                'required',
+                'string',
+                'max:2000',
+            ],
+            'option' => 'required|string|in:info,process',
         ]);
 
         $user = Auth::user();
@@ -28,41 +28,50 @@ class SmartAssistantController extends Controller
             return response()->json(['message' => 'សូមចូលប្រព័ន្ធសិនមេ!'], 401);
         }
 
-        // ២. Rate Limiting (ការពារការ Spam)
         $rateKey = 'ai-chat:'.$user->id;
-        if (RateLimiter::tooManyAttempts($rateKey, 10)) {
+        $maxAttempts = config('dify.rate_limit.max_attempts', 10);
+
+        if (RateLimiter::tooManyAttempts($rateKey, $maxAttempts)) {
+            $seconds = RateLimiter::availableIn($rateKey);
+
             return response()->json([
-                'message' => 'មេផ្ញើសារលឿនពេកហើយ! សម្រាក ១ នាទីសិនទៅ ចាំសួរទៀត... ☕',
+                'message' => "មេផ្ញើសារលឿនពេកហើយ! សូមរង់ចាំ {$seconds} វិនាទីទៀត... ☕",
+                'retry_after' => $seconds,
             ], 429);
         }
         RateLimiter::hit($rateKey, 60);
 
         try {
-            // ៣. រក្សាទុកសារ User ចូល DB ក្នុងស្រុក
             ChatMessage::create([
                 'user_id' => $user->id,
                 'message' => $request->message,
                 'sender' => 'user',
             ]);
 
-            // ៤. ទាញ Context ពេញលេញពី Database (Full Connection)
             $dbContext = $this->getDatabaseContext($user);
 
-            // ៥. ហៅទៅកាន់ Dify API
-            $response = Http::withHeaders([
-                'Authorization' => 'Bearer '.env('DIFY_API_KEY'),
-                'Content-Type' => 'application/json',
-            ])->timeout(40)->post('https://api.dify.ai/v1/chat-messages', [
+            $conversationId = $this->getConversationId($user->id);
+
+            $payload = [
                 'inputs' => [
                     'user_name' => $user->name,
                     'user_role' => $user->role,
                     'chat_option' => $request->option,
-                    'db_context' => $dbContext, // បោះទិន្នន័យពិតទៅឱ្យ AI
+                    'db_context' => $dbContext,
                 ],
                 'query' => $request->message,
                 'response_mode' => 'blocking',
                 'user' => 'nmu-user-'.$user->id,
-            ]);
+            ];
+
+            if ($conversationId) {
+                $payload['conversation_id'] = $conversationId;
+            }
+
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer '.config('dify.api_key'),
+                'Content-Type' => 'application/json',
+            ])->timeout(config('dify.timeout', 45))->post(config('dify.api_url'), $payload);
 
             if ($response->failed()) {
                 Log::error('Dify Error: '.$response->body());
@@ -70,9 +79,14 @@ class SmartAssistantController extends Controller
                 return response()->json(['message' => 'សុំទោសបង! AI ដើរខុសបច្ចេកទេសបន្តិចហើយ។'], 500);
             }
 
-            $aiAnswer = $response->json()['answer'] ?? 'ខ្ញុំមិនដឹងឆ្លើយថាម៉េចទេមេ...';
+            $data = $response->json();
+            $aiAnswer = $data['answer'] ?? 'ខ្ញុំមិនដឹងឆ្លើយថាម៉េចទេមេ...';
+            $newConversationId = $data['conversation_id'] ?? null;
 
-            // ៦. រក្សាទុកសារ AI ចូល DB
+            if ($newConversationId && ! $conversationId) {
+                $this->saveConversationId($user->id, $newConversationId);
+            }
+
             ChatMessage::create([
                 'user_id' => $user->id,
                 'message' => $aiAnswer,
@@ -88,9 +102,24 @@ class SmartAssistantController extends Controller
         }
     }
 
-    /**
-     * ទាញទិន្នន័យពិតៗពី Database តាមតួនាទី (The Core Connection)
-     */
+    private function getConversationId($userId)
+    {
+        $lastMessage = ChatMessage::where('user_id', $userId)
+            ->where('sender', 'ai')
+            ->whereNotNull('conversation_id')
+            ->latest()
+            ->first();
+
+        return $lastMessage?->conversation_id;
+    }
+
+    private function saveConversationId($userId, $conversationId)
+    {
+        ChatMessage::where('user_id', $userId)
+            ->whereNull('conversation_id')
+            ->update(['conversation_id' => $conversationId]);
+    }
+
     private function getDatabaseContext($user)
     {
         $role = $user->role;
@@ -98,7 +127,6 @@ class SmartAssistantController extends Controller
 
         try {
             if ($role === 'student') {
-                // ១. មុខវិជ្ជាដែលកំពុងរៀន
                 $courses = DB::table('student_course_enrollments')
                     ->join('course_offerings', 'student_course_enrollments.course_offering_id', '=', 'course_offerings.id')
                     ->join('courses', 'course_offerings.course_id', '=', 'courses.id')
@@ -109,7 +137,6 @@ class SmartAssistantController extends Controller
                 $courseNames = $courses->map(fn ($c) => "{$c->title_km} (Section: {$c->section})")->implode(', ');
                 $context .= '- មុខវិជ្ជាកំពុងរៀន៖ '.($courseNames ?: 'មិនទាន់មាន')."\n";
 
-                // ២. សង្ខេបវត្តមាន
                 $attendance = DB::table('attendance_records')
                     ->where('student_user_id', $user->id)
                     ->selectRaw("COUNT(CASE WHEN status = 'present' THEN 1 END) as present_count")
@@ -117,7 +144,6 @@ class SmartAssistantController extends Controller
                     ->first();
                 $context .= "- វត្តមាន៖ មក ({$attendance->present_count}), អវត្តមាន ({$attendance->absent_count})\n";
 
-                // ៣. កាលវិភាគ
                 $schedules = DB::table('schedules')
                     ->join('course_offerings', 'schedules.course_offering_id', '=', 'course_offerings.id')
                     ->join('courses', 'course_offerings.course_id', '=', 'courses.id')
@@ -126,16 +152,46 @@ class SmartAssistantController extends Controller
                     ->select('courses.title_km', 'schedules.day_of_week', 'schedules.start_time')
                     ->get();
                 $context .= '- កាលវិភាគ៖ '.$schedules->map(fn ($s) => "{$s->title_km} ថ្ងៃ{$s->day_of_week} ({$s->start_time})")->implode(' | ')."\n";
+
+                $assignments = DB::table('assignments')
+                    ->join('course_offerings', 'assignments.course_offering_id', '=', 'course_offerings.id')
+                    ->join('student_course_enrollments', 'course_offerings.id', '=', 'student_course_enrollments.course_offering_id')
+                    ->where('student_course_enrollments.student_user_id', $user->id)
+                    ->where('assignments.due_date', '>=', now())
+                    ->select('assignments.title', 'assignments.due_date')
+                    ->orderBy('assignments.due_date')
+                    ->limit(5)
+                    ->get();
+                $assignmentList = $assignments->map(fn ($a) => "{$a->title} (ផុតកំណត់: {$a->due_date})")->implode(', ');
+                $context .= '- កិច្ចការនិស្សិត៖ '.($assignmentList ?: 'គ្មាន')."\n";
+
+                $grades = DB::table('student_course_enrollments')
+                    ->join('course_offerings', 'student_course_enrollments.course_offering_id', '=', 'course_offerings.id')
+                    ->join('courses', 'course_offerings.course_id', '=', 'courses.id')
+                    ->where('student_course_enrollments.student_user_id', $user->id)
+                    ->whereNotNull('student_course_enrollments.final_grade')
+                    ->select('courses.title_km', 'student_course_enrollments.final_grade')
+                    ->get();
+                $gradeList = $grades->map(fn ($g) => "{$g->title_km}: {$g->final_grade}")->implode(', ');
+                $context .= '- ពិន្ទុចុងក្រោយ៖ '.($gradeList ?: 'មិនទាន់មាន')."\n";
+
             } elseif ($role === 'professor') {
-                // ១. ថ្នាក់ដែលត្រូវបង្រៀន
                 $teachings = DB::table('course_offerings')
                     ->join('courses', 'course_offerings.course_id', '=', 'courses.id')
                     ->where('lecturer_user_id', $user->id)
                     ->select('courses.title_km', 'course_offerings.section', 'course_offerings.capacity')
                     ->get();
                 $context .= '- លោកគ្រូមានបង្រៀនមុខវិជ្ជា៖ '.$teachings->map(fn ($t) => "{$t->title_km} (Section: {$t->section}, និស្សិត: {$t->capacity}នាក់)")->implode(', ')."\n";
+
+                $studentCounts = DB::table('course_offerings')
+                    ->join('student_course_enrollments', 'course_offerings.id', '=', 'student_course_enrollments.course_offering_id')
+                    ->where('course_offerings.lecturer_user_id', $user->id)
+                    ->select('course_offerings.id', DB::raw('COUNT(student_course_enrollments.id) as enrolled'))
+                    ->groupBy('course_offerings.id')
+                    ->get();
+                $context .= '- និស្សិតសរុប៖ '.$studentCounts->sum('enrolled')."នាក់។\n";
+
             } elseif ($role === 'admin') {
-                // ១. ទាញយកស្ថិតិទូទៅ
                 $stats = [
                     'users' => DB::table('users')->count(),
                     'faculties' => DB::table('faculties')->count(),
@@ -146,17 +202,12 @@ class SmartAssistantController extends Controller
                     'offerings' => DB::table('course_offerings')->whereNull('deleted_at')->count(),
                 ];
 
-                // ២. ទាញយកបញ្ជីដេប៉ាតឺម៉ង់ (យកទាំងអស់ដើម្បីឱ្យ AI ស្គាល់)
                 $depts = DB::table('departments')->pluck('name_km')->implode(', ');
-
-                // ៣. ទាញយកមុខវិជ្ជាសំខាន់ៗ (យក ១០ មុខវិជ្ជាចុងក្រោយដែលទើបបង្កើត)
                 $courses = DB::table('courses')->latest()->limit(10)->pluck('title_km')->implode(', ');
 
-                // ៤. ទាញយកសកម្មភាពបើកថ្នាក់ (Course Offerings) ដែលកំពុងដំណើរការ
                 $activeOfferings = DB::table('course_offerings')
                     ->join('courses', 'course_offerings.course_id', '=', 'courses.id')
                     ->join('users', 'course_offerings.lecturer_user_id', '=', 'users.id')
-                    ->join('rooms', 'course_offerings.room_number', '=', 'rooms.id', 'left') // បើមាន Table rooms
                     ->whereNull('course_offerings.deleted_at')
                     ->select('courses.title_km', 'users.name as teacher', 'course_offerings.section')
                     ->limit(5)
@@ -166,10 +217,8 @@ class SmartAssistantController extends Controller
                     return "ថ្នាក់ {$o->title_km} (គ្រូ: {$o->teacher}, Section: {$o->section})";
                 })->implode('; ');
 
-                // ៥. ទាញយកសេចក្តីប្រកាសចុងក្រោយ
                 $announcements = DB::table('announcements')->latest()->limit(2)->pluck('title_km')->implode(' និង ');
 
-                // រៀបចំ Context ឱ្យ AI យល់ពី Database ទាំងមូល
                 $context .= "--- របាយការណ៍គ្រប់គ្រង NMU ---\n";
                 $context .= "- ស្ថិតិ៖ និស្សិត/បុគ្គលិក {$stats['users']} នាក់, {$stats['faculties']} មហាវិទ្យាល័យ, {$stats['departments']} ដេប៉ាតឺម៉ង់, {$stats['programs']} កម្មវិធីសិក្សា។\n";
                 $context .= "- ធនធាន៖ មុខវិជ្ជាសរុប {$stats['courses']} មុខ (មានដូចជា៖ {$courses}...), បន្ទប់សិក្សា {$stats['rooms']} បន្ទប់។\n";
@@ -178,7 +227,6 @@ class SmartAssistantController extends Controller
                 $context .= '- ប្រកាសចុងក្រោយ៖ '.($announcements ?: 'គ្មាន')."។\n";
             }
 
-            // សេចក្តីប្រកាសចុងក្រោយ (សម្រាប់គ្រប់គ្នា)
             $latestAnnounce = DB::table('announcements')->latest()->first();
             if ($latestAnnounce) {
                 $context .= '- សេចក្តីប្រកាសចុងក្រោយ៖ '.$latestAnnounce->title_km."\n";
@@ -191,9 +239,6 @@ class SmartAssistantController extends Controller
         return $context;
     }
 
-    /**
-     * ទាញប្រវត្តិសន្ទនា
-     */
     public function getHistory()
     {
         $user = Auth::user();
@@ -209,9 +254,6 @@ class SmartAssistantController extends Controller
         return response()->json(['messages' => $messages]);
     }
 
-    /**
-     * លុបប្រវត្តិសន្ទនា
-     */
     public function clearHistory()
     {
         $user = Auth::user();

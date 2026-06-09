@@ -1,178 +1,148 @@
 <link rel="icon" type="image/png" href="{{ asset('assets/image/nmu_Logo.png') }}">
-<title>{{ config('', 'Class Management System') }}</title>
+<title>{{ config('app.name', 'Class Management System') }}</title>
 
 <x-guest-layout>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Kantumruy+Pro:wght@300;400;700&display=swap');
-        :root { --primary-green: #10b981; --primary-hover: #059669; }
-        body { font-family: 'Inter', 'Kantumruy Pro', sans-serif; margin: 0; background: #020617; }
-        .portal-wrapper { width: 100vw; min-height: 100vh; background-image: linear-gradient(rgba(2, 6, 23, 0.75), rgba(2, 6, 23, 0.85)), url('{{ asset('assets/image/download (5).jpg') }}'); background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; }
-        .glass-portal-card { background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(25px); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 3rem; width: 100%; max-width: 460px; padding: 3rem; }
-        .tab-btn { flex: 1; padding: 0.75rem; border-radius: 1rem; font-weight: bold; color: #6b7280; transition: all 0.3s; }
-        .tab-btn.active { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.5); }
-        .hidden { display: none; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Battambang:wght@400;700&display=swap');
+        body { font-family: 'Inter', 'Battambang', sans-serif; margin: 0; }
+        .min-h-screen { padding: 0 !important; justify-content: stretch !important; align-items: stretch !important; max-width: 100% !important; }
     </style>
 
-    {{-- Modern Floating Toast --}}
+    {{-- Toast --}}
     @if (session('success') || session('error'))
-    <div 
-        x-data="{ 
-            show: false, 
-            progress: 100,
-            startTimer() {
-                this.show = true;
-                let interval = setInterval(() => {
-                    this.progress -= 1;
-                    if (this.progress <= 0) {
-                        this.show = false;
-                        clearInterval(interval);
-                    }
-                }, 50);
-            }
-        }" 
-        x-init="startTimer()"
-        x-show="show" 
-        x-transition:enter="transition ease-out duration-500"
-        x-transition:enter-start="translate-y-12 opacity-0 sm:translate-y-0 sm:translate-x-12"
-        x-transition:enter-end="translate-y-0 opacity-100 sm:translate-x-0"
-        x-transition:leave="transition ease-in duration-300"
-        x-transition:leave-start="opacity-100"
-        x-transition:leave-end="opacity-0"
-        class="fixed top-6 right-6 z-[9999] w-full max-w-sm"
-    >
-        <div class="relative overflow-hidden bg-white/80 backdrop-blur-xl border border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.1)] rounded-2xl p-4 ring-1 ring-black/5">
-            <div class="flex items-start gap-4">
-                <div class="flex-shrink-0">
+    <div x-data="{ show: true, progress: 100 }" x-init="setInterval(() => { progress -= 1; if (progress <= 0) show = false; }, 50)" x-show="show" x-transition class="fixed top-6 right-6 z-[9999] w-full max-w-sm">
+        <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl {{ session('success') ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600' }} flex items-center justify-center shrink-0">
                     @if(session('success'))
-                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-green-500/10 text-green-600">
-                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
-                            </svg>
-                        </div>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                     @else
-                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-red-500/10 text-red-600">
-                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
-                        </div>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
                     @endif
                 </div>
-
-                <div class="flex-1 pt-0.5">
-                    <p class="text-sm font-bold text-gray-900 leading-tight">
-                        {{ session('success') ? __('success') : __('error') }}
-                    </p>
-                    <p class="mt-1 text-sm text-gray-600 leading-relaxed">
-                        {{ session('success') ?? session('error') }}
-                    </p>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-bold text-gray-900">{{ session('success') ? __('success') : __('error') }}</p>
+                    <p class="text-sm text-gray-500 truncate">{{ session('success') ?? session('error') }}</p>
                 </div>
-
-                <button @click="show = false" class="text-gray-400 hover:text-gray-600 transition-colors">
-                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
+                <button @click="show = false" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
-
-            <div class="absolute bottom-0 left-0 h-1 bg-gray-100 w-full">
-                <div 
-                    class="h-full transition-all duration-75 ease-linear {{ session('success') ? 'bg-green-500' : 'bg-red-500' }}"
-                    :style="`width: ${progress}%`"
-                ></div>
+            <div class="mt-3 h-1 bg-gray-100 rounded-full overflow-hidden">
+                <div class="h-full {{ session('success') ? 'bg-green-500' : 'bg-red-500' }} transition-all duration-75" :style="`width: ${progress}%`"></div>
             </div>
         </div>
     </div>
     @endif
 
-    <div class="portal-wrapper">
-        <div class="glass-portal-card">
-            {{-- Tab Switcher --}}
-            <div class="flex p-1 bg-white/5 rounded-2xl mb-10 border border-white/5">
-                <button id="emailTabBtn" class="tab-btn active uppercase tracking-widest text-[11px]">
-                    <i class="fa-solid fa-envelope"></i> Email
-                </button>
-                <button id="qrTabBtn" class="tab-btn uppercase tracking-widest text-[11px]">
-                    <i class="fa-solid fa-qrcode"></i> QR Code
-                </button>
+    <div class="min-h-screen flex">
+        {{-- Left: Branding --}}
+        <div class="hidden lg:flex lg:w-1/2 relative overflow-hidden items-center justify-center">
+            <img src="{{ asset('assets/image/download (5).jpg') }}" alt="" class="absolute inset-0 w-full h-full object-cover">
+            <div class="absolute inset-0 bg-emerald-900/70"></div>
+            <div class="relative z-10 text-center px-12">
+                <img src="{{ asset('assets/image/nmu_Logo.png') }}" alt="Logo" class="w-28 h-28 mx-auto mb-8 drop-shadow-2xl">
+                <h1 class="text-4xl font-extrabold text-white leading-tight mb-4">Class Management<br>System</h1>
+                <p class="text-emerald-100 text-lg max-w-sm mx-auto leading-relaxed">ប្រព័ន្ធគ្រប់គ្រងសិក្សា សម្រាប់មហាវិទ្យាល័យ</p>
+                <div class="mt-10 flex items-center justify-center gap-3">
+                    <div class="w-3 h-3 rounded-full bg-emerald-300 animate-pulse"></div>
+                    <span class="text-emerald-200 text-sm font-medium">សូមចូលប្រព័ន្ធដើម្បីបន្ត</span>
+                </div>
             </div>
+        </div>
 
-            {{-- Email Login Section --}}
-            <div id="emailSection">
-                <div class="mb-10">
-                    <h2 class="text-3xl font-black text-white">{{ __('auth_login') }}</h2>
-                    <p class="text-gray-400 text-[10px] uppercase opacity-60">Authentication via Credentials</p>
+        {{-- Right: Login Form --}}
+        <div class="w-full lg:w-1/2 flex items-center justify-center px-6 py-12 bg-gray-50">
+            <div class="w-full max-w-md">
+                {{-- Mobile Logo --}}
+                <div class="lg:hidden text-center mb-8">
+                    <img src="{{ asset('assets/image/nmu_Logo.png') }}" alt="Logo" class="w-16 h-16 mx-auto mb-3">
+                    <h2 class="text-xl font-bold text-gray-800">Class Management System</h2>
                 </div>
 
-                <form method="POST" action="{{ route('login') }}" class="space-y-6">
-                    @csrf
-                    <div>
-                        <label class="block text-[11px] font-bold text-emerald-500 uppercase mb-3 ml-1">{{ __('auth_email') }}</label>
-                        <div class="relative group">
-                            <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-500"><i class="fa-solid fa-envelope"></i></span>
+                {{-- Header --}}
+                <div class="mb-8">
+                    <h2 class="text-3xl font-extrabold text-gray-900">{{ __('auth_login') }}</h2>
+                    <p class="text-gray-500 mt-2 text-sm">សូមបញ្ចូលព័ត៌មានគណនីរបស់អ្នកដើម្បីចូល</p>
+                </div>
+
+                {{-- Tab Switcher --}}
+                <div class="flex bg-gray-100 rounded-xl p-1 mb-8">
+                    <button id="emailTabBtn" onclick="switchTab('email')" class="flex-1 py-2.5 text-sm font-bold rounded-lg bg-white text-gray-900 shadow-sm transition-all">
+                        អ៊ីមែល
+                    </button>
+                    <button id="qrTabBtn" onclick="switchTab('qr')" class="flex-1 py-2.5 text-sm font-bold rounded-lg text-gray-500 hover:text-gray-700 transition-all">
+                        QR Code
+                    </button>
+                </div>
+
+                {{-- Email Login --}}
+                <div id="emailSection">
+                    <form method="POST" action="{{ route('login') }}" class="space-y-5">
+                        @csrf
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('auth_email') }}</label>
                             <input id="email" type="email" name="email" required 
-                                   class="block w-full pl-12 pr-4 py-4 rounded-2xl bg-white/5 text-white border-white/10 outline-none focus:border-emerald-500" 
-                                   placeholder="example@gmail.com" />
+                                   class="block w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none" 
+                                   placeholder="example@gmail.com" value="{{ old('email') }}" />
+                            <x-input-error :messages="$errors->get('email')" class="mt-1.5 text-xs text-red-500" />
                         </div>
-                        <x-input-error :messages="$errors->get('email')" class="mt-2 text-xs text-red-400" />
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('auth_password') }}</label>
+                            <div class="relative">
+                                <input id="password" type="password" name="password" required 
+                                       class="block w-full px-4 py-3 pr-12 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none" 
+                                       placeholder="••••••••" />
+                                <button type="button" onclick="togglePassword()" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600">
+                                    <svg id="eyeOpen" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                    <svg id="eyeClosed" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/></svg>
+                                </button>
+                            </div>
+                            <x-input-error :messages="$errors->get('password')" class="mt-1.5 text-xs text-red-500" />
+                        </div>
+
+                        <button type="submit" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-emerald-200 hover:shadow-emerald-300 transition-all duration-200 text-sm">
+                            {{ __('auth_login_btn') }}
+                        </button>
+                    </form>
+
+                    <div class="flex items-center gap-4 my-6">
+                        <div class="flex-1 h-px bg-gray-200"></div>
+                        <span class="text-xs font-bold text-gray-400 uppercase">ឬ</span>
+                        <div class="flex-1 h-px bg-gray-200"></div>
                     </div>
 
-                    <div>
-                        <label class="block text-[11px] font-bold text-emerald-500 uppercase mb-3 ml-1">{{ __('auth_password') }}</label>
-                        <div class="relative group">
-                            <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-500"><i class="fa-solid fa-lock"></i></span>
-                            <input id="password" type="password" name="password" required 
-                                   class="block w-full pl-12 pr-12 py-4 rounded-2xl bg-white/5 text-white border-white/10 outline-none focus:border-emerald-500" 
-                                   placeholder="Enter the password"/>
-                            <button type="button" id="togglePassword" 
-                                    class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-500 hover:text-emerald-400">
-                                <i id="eyeIcon" class="fa-solid fa-eye"></i>
-                            </button>
-                        </div>
-                        <x-input-error :messages="$errors->get('password')" class="mt-2 text-xs text-red-400" />
-                    </div>
-
-                    <button type="submit" class="w-full rounded-2xl bg-emerald-600 py-5 font-black text-white hover:bg-emerald-500 transition-all uppercase tracking-widest">
-                        {{ __('auth_login_btn') }}
+                    <button onclick="loginWithGoogle()" 
+                            class="w-full py-3.5 bg-white border border-gray-200 hover:border-gray-300 text-gray-700 font-bold rounded-xl flex items-center justify-center gap-3 transition-all text-sm shadow-sm">
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5">
+                        ចូលជាមួយ Google
                     </button>
-
-                    <div class="my-4">
-                        <div class="grid grid-cols-[1fr_max-content_1fr] items-center dark:text-gray-500">
-                            <div class="h-px bg-[var(--border-heavy)]"></div>
-                            <div class="mx-6 text-[13px] font-medium uppercase">OR</div>
-                            <div class="h-px bg-[var(--border-heavy)]"></div>
-                        </div>
-                    </div>
-
-                    <button type="button" onclick="loginWithGoogle()" 
-                            class="w-full rounded-2xl bg-white py-4 font-bold text-gray-800 flex items-center justify-center gap-3 transition-all">
-                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5"> 
-                        {{ __('auth_login_google') }}
-                    </button>
-                </form>
-            </div>
-
-            {{-- QR Code Login Section --}}
-            <div id="qrSection" class="hidden text-center">
-                <h2 class="text-2xl font-black text-white mb-2">{{ __('auth_login_qr') }}</h2>
-                <div class="qr-container inline-block p-4 bg-white rounded-[2rem] border-4 border-emerald-500/30 mt-6" id="qrContainer">
-                    {!! $qrCode ?? '<div class="w-64 h-64 flex items-center justify-center text-gray-400">QR Loading...</div>' !!}
                 </div>
-                <p class="text-emerald-400 text-[11px] font-black mt-6 uppercase tracking-widest" id="qr-status">{{ __('auth_qr_waiting') }}</p>
-                
-                <button onclick="refreshQR()" 
-                        class="mt-6 flex items-center gap-2 mx-auto text-emerald-400 hover:text-white text-sm font-medium">
-                    <i class="fa-solid fa-arrows-rotate"></i> {{ __('auth_qr_refresh') }}
-                </button>
-            </div>
 
-            <div class="text-center mt-12">
-                <p class="text-sm text-gray-400 font-medium">
-                    {{ __('auth_no_account') }} 
-                    <a href="{{ route('register') }}" class="text-emerald-400 hover:text-emerald-300 font-black ml-2 underline underline-offset-8 decoration-2">
+                {{-- QR Code Login --}}
+                <div id="qrSection" class="hidden text-center">
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">{{ __('auth_login_qr') }}</h3>
+                    <p class="text-sm text-gray-500 mb-6">ស្កេន QR Code ដោយប្រើទូរស័ព្ទដៃរបស់អ្នក</p>
+                    
+                    <div class="inline-block p-4 bg-white rounded-2xl border-2 border-gray-100 shadow-sm" id="qrContainer">
+                        {!! $qrCode ?? '<div class="w-56 h-56 flex items-center justify-center text-gray-400 text-sm">QR Loading...</div>' !!}
+                    </div>
+                    
+                    <p class="text-emerald-600 text-sm font-bold mt-4" id="qr-status">{{ __('auth_qr_waiting') }}</p>
+                    
+                    <button onclick="refreshQR()" class="mt-4 inline-flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-emerald-600 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                        {{ __('auth_qr_refresh') }}
+                    </button>
+                </div>
+
+                {{-- Register Link --}}
+                <p class="text-center text-sm text-gray-500 mt-8">
+                    {{ __('auth_no_account') }}
+                    <a href="{{ route('register') }}" class="font-bold text-emerald-600 hover:text-emerald-700 ml-1">
                         {{ __('auth_register_link') }}
                     </a>
                 </p>
@@ -181,37 +151,39 @@
     </div>
 
     <script>
-        // Password Toggle
-        const passwordInput = document.getElementById('password');
-        const toggleButton = document.getElementById('togglePassword');
-        const eyeIcon = document.getElementById('eyeIcon');
+        function togglePassword() {
+            const input = document.getElementById('password');
+            const open = document.getElementById('eyeOpen');
+            const closed = document.getElementById('eyeClosed');
+            if (input.type === 'password') {
+                input.type = 'text';
+                open.classList.add('hidden');
+                closed.classList.remove('hidden');
+            } else {
+                input.type = 'password';
+                open.classList.remove('hidden');
+                closed.classList.add('hidden');
+            }
+        }
 
-        toggleButton.addEventListener('click', function() {
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-            eyeIcon.classList.toggle('fa-eye');
-            eyeIcon.classList.toggle('fa-eye-slash');
-        });
+        function switchTab(tab) {
+            const emailSection = document.getElementById('emailSection');
+            const qrSection = document.getElementById('qrSection');
+            const emailBtn = document.getElementById('emailTabBtn');
+            const qrBtn = document.getElementById('qrTabBtn');
 
-        // Tab Switching
-        const emailTabBtn = document.getElementById('emailTabBtn');
-        const qrTabBtn = document.getElementById('qrTabBtn');
-        const emailSection = document.getElementById('emailSection');
-        const qrSection = document.getElementById('qrSection');
-
-        emailTabBtn.addEventListener('click', () => {
-            emailSection.classList.remove('hidden');
-            qrSection.classList.add('hidden');
-            emailTabBtn.classList.add('active');
-            qrTabBtn.classList.remove('active');
-        });
-
-        qrTabBtn.addEventListener('click', () => {
-            qrSection.classList.remove('hidden');
-            emailSection.classList.add('hidden');
-            qrTabBtn.classList.add('active');
-            emailTabBtn.classList.remove('active');
-        });
+            if (tab === 'email') {
+                emailSection.classList.remove('hidden');
+                qrSection.classList.add('hidden');
+                emailBtn.className = 'flex-1 py-2.5 text-sm font-bold rounded-lg bg-white text-gray-900 shadow-sm transition-all';
+                qrBtn.className = 'flex-1 py-2.5 text-sm font-bold rounded-lg text-gray-500 hover:text-gray-700 transition-all';
+            } else {
+                qrSection.classList.remove('hidden');
+                emailSection.classList.add('hidden');
+                qrBtn.className = 'flex-1 py-2.5 text-sm font-bold rounded-lg bg-white text-gray-900 shadow-sm transition-all';
+                emailBtn.className = 'flex-1 py-2.5 text-sm font-bold rounded-lg text-gray-500 hover:text-gray-700 transition-all';
+            }
+        }
     </script>
 
     {{-- Firebase Google Login --}}
@@ -252,14 +224,13 @@
         };
     </script>
 
-    {{-- Pusher + QR Refresh (កែប្រែថ្មី) --}}
+    {{-- Pusher + QR Refresh --}}
     @if(isset($token))
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     <script>
         let currentToken = "{{ $token }}";
         let pusher;
 
-        // Initialize Pusher
         function initPusher() {
             pusher = new Pusher('{{ config("broadcasting.connections.pusher.key") }}', { 
                 cluster: '{{ config("broadcasting.connections.pusher.options.cluster") }}',
@@ -273,7 +244,7 @@
             channel.bind('login-success', function() {
                 const statusEl = document.getElementById('qr-status');
                 if (statusEl) {
-                    statusEl.innerHTML = `<span class="text-emerald-400 animate-pulse">{{ __('auth_logging_in') }}</span>`;
+                    statusEl.innerHTML = `<span class="text-emerald-600 animate-pulse">{{ __('auth_logging_in') }}</span>`;
                 }
                 setTimeout(() => {
                     window.location.href = "/qr-login/finalize/" + currentToken;
@@ -281,7 +252,6 @@
             });
         }
 
-        // Refresh QR Code Function
         window.refreshQR = function() {
             fetch('/qr-refresh', {
                 method: 'POST',
@@ -290,36 +260,27 @@
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                 }
             })
-            .then(response => {
-                if (!response.ok) throw new Error('Network error');
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
                 document.getElementById('qrContainer').innerHTML = data.qrCode;
                 currentToken = data.token;
-                
-                // Re-subscribe new channel
                 if (pusher) {
                     pusher.unsubscribe('login-channel-' + currentToken);
                     subscribeChannel();
                 }
-                
                 document.getElementById('qr-status').textContent = "{{ __('auth_qr_waiting') }}";
             })
             .catch(error => {
-                console.error('Refresh QR Error:', error);
-                document.getElementById('qr-status').innerHTML = `<span class="text-amber-400">{{ __('auth_error') }}</span>`;
+                console.error('QR Refresh Error:', error);
             });
         };
 
-        // Auto refresh every 3 minutes
         setInterval(() => {
             if (!document.getElementById('qrSection').classList.contains('hidden')) {
                 refreshQR();
             }
         }, 180000);
 
-        // Start everything
         window.onload = initPusher;
     </script>
     @endif

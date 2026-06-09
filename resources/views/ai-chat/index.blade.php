@@ -170,17 +170,25 @@
     function appendMessage(sender, text) {
         const div = document.createElement('div');
         div.className = sender === 'user' ? 'flex justify-end' : 'flex justify-start';
-        
-        const content = sender === 'user' 
-            ? `<div class="bg-green-600 text-white p-3 rounded-2xl rounded-tr-none max-w-[85%] shadow-md text-sm">${text}</div>`
+
+        const safeText = sender === 'user' ? escapeHtml(text) : text;
+
+        const content = sender === 'user'
+            ? `<div class="bg-green-600 text-white p-3 rounded-2xl rounded-tr-none max-w-[85%] shadow-md text-sm">${safeText}</div>`
             : `<div class="flex flex-col space-y-1 max-w-[90%]">
-                 <div class="bg-white border border-gray-100 text-gray-800 p-4 rounded-2xl rounded-tl-none shadow-sm prose prose-sm prose-green text-sm">${marked.parse(text)}</div>
+                 <div class="bg-white border border-gray-100 text-gray-800 p-4 rounded-2xl rounded-tl-none shadow-sm prose prose-sm prose-green text-sm">${marked.parse(safeText)}</div>
                  <span class="text-[9px] text-gray-400 ml-1 italic">NMU AI Assistant</span>
                </div>`;
-        
+
         div.innerHTML = content;
         chatBox.appendChild(div);
         chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
     }
 </script>
 @endsection

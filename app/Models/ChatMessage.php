@@ -21,6 +21,7 @@ class ChatMessage extends Model
         'user_id',
         'message',
         'sender',
+        'conversation_id',
     ];
 
     /**

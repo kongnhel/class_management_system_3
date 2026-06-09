@@ -225,7 +225,7 @@
                 </div>
 
                 {{-- 5. Semester --}}
-                <div class="md:col-span-2">
+                <div class="md:col-span-1">
                     <label class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 block">{{ __('ឆមាស') }}</label>
                     <select name="semester" class="block w-full rounded-lg border-gray-200 bg-gray-50 focus:bg-white sm:text-sm py-2.5">
                         <option value="">{{ __('ទាំងអស់') }}</option>
@@ -234,8 +234,19 @@
                     </select>
                 </div>
 
-                {{-- 6. Lecturer --}}
+                {{-- 6. Academic Year --}}
                 <div class="md:col-span-2">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 block">{{ __('ឆ្នាំសិក្សា') }}</label>
+                    <select name="academic_year" class="block w-full rounded-lg border-gray-200 bg-gray-50 focus:bg-white sm:text-sm py-2.5">
+                        <option value="">{{ __('ទាំងអស់') }}</option>
+                        @foreach($academicYears as $year)
+                            <option value="{{ $year->name }}" {{ request('academic_year') == $year->name ? 'selected' : '' }}>{{ $year->name }} {{ $year->is_current ? '('.__('បច្ចុប្បន្ន').')' : '' }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                {{-- 7. Lecturer --}}
+                <div class="md:col-span-1">
                     <label class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 block">{{ __('សាស្ត្រាចារ្យ') }}</label>
                     <select name="lecturer_id" class="block w-full rounded-lg border-gray-200 bg-gray-50 focus:bg-white sm:text-sm py-2.5">
                         <option value="">{{ __('ទាំងអស់') }}</option>
