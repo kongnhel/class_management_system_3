@@ -366,8 +366,17 @@
                                 <tr class="hover:bg-gray-50/50 transition-colors">
                                     <td class="px-6 py-4">
                                         <div class="flex items-center gap-3">
-                                            <div class="h-9 w-9 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-gray-600 font-bold text-sm">
-                                                {{ strtoupper(substr($user->name, 0, 2)) }}
+                                            <div class="h-9 w-9 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-gray-600 font-bold text-sm overflow-hidden">
+                                                @php
+                                                    $profilePic = $user->profile?->profile_picture_url ?? $user->avatar ?? null;
+                                                @endphp
+                                                @if(!empty($profilePic) && $profilePic !== 'null')
+                                                    <img src="{{ $profilePic }}" alt="{{ $user->name }}" class="h-9 w-9 object-cover"
+                                                         onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                                                    <span class="h-9 w-9 items-center justify-center" style="display:none;">{{ strtoupper(mb_substr($user->name, 0, 2)) }}</span>
+                                                @else
+                                                    {{ strtoupper(mb_substr($user->name, 0, 2)) }}
+                                                @endif
                                             </div>
                                             <span class="font-medium text-gray-800">{{ $user->name }}</span>
                                         </div>

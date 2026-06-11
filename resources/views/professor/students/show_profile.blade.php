@@ -14,10 +14,18 @@
             {{-- Hero Card --}}
             <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden">
                 <div class="flex items-center gap-4 px-5 py-5 border-b border-gray-100">
-                    @if($student->studentProfile && $student->studentProfile->profile_picture_url)
-                        <img src="{{ $student->studentProfile->profile_picture_url }}"
-                             alt="{{ $student->name }}"
+                    @php
+                        $pic = $student->studentProfile->profile_picture_url ?? null;
+                        $av = $student->avatar ?? null;
+                        $hasPic = (!empty($pic) && $pic !== 'null') || (!empty($av) && $av !== 'null');
+                        $profilePic = $hasPic ? (($pic && $pic !== 'null') ? $pic : $av) : null;
+                    @endphp
+                    @if($profilePic)
+                        <img src="{{ $profilePic }}" alt="{{ $student->name }}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
                              class="w-16 h-16 rounded-full object-cover border-2 border-green-300 flex-shrink-0">
+                        <div class="w-16 h-16 rounded-full bg-green-50 border-2 border-green-200 items-center justify-center text-green-700 text-2xl font-medium flex-shrink-0 hidden">
+                            {{ Str::upper(Str::substr($student->studentProfile->full_name_km ?? $student->name, 0, 1)) }}
+                        </div>
                     @else
                         <div class="w-16 h-16 rounded-full bg-green-50 border-2 border-green-200 flex items-center justify-center text-green-700 text-2xl font-medium flex-shrink-0">
                             {{ Str::upper(Str::substr($student->studentProfile->full_name_km ?? $student->name, 0, 1)) }}

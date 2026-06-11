@@ -152,7 +152,7 @@
 
         {{-- Main Content Wrapper --}}
         {{-- កែ lg:ml-64 (Sidebar Width) និងដក max-w-7xl ចេញពី Header --}}
-        <div class="flex flex-col min-h-screen lg:ml-64 pt-16 lg:pt-0">
+        <div class="flex flex-col min-h-screen lg:ml-72 pt-16 lg:pt-0">
             @isset($header)
                 <header class="bg-white border-b border-gray-100">
                     {{-- ប្តូរ max-w-7xl ទៅ max-w-full ដើម្បីឱ្យ Header រត់ពេញអេក្រង់ដែរ --}}

@@ -7,6 +7,7 @@ use App\Models\Department;
 use App\Models\Faculty;
 use App\Models\Program;
 use App\Models\User;
+use App\Services\StudentIdGeneratorService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -14,6 +15,13 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class BulkImportController extends Controller
 {
+    protected $studentIdGenerator;
+
+    public function __construct(StudentIdGeneratorService $studentIdGenerator)
+    {
+        $this->studentIdGenerator = $studentIdGenerator;
+    }
+
     public function index()
     {
         $faculties = Faculty::all();
@@ -72,11 +80,17 @@ class BulkImportController extends Controller
                         'email' => $rowData['email'],
                         'role' => $request->role,
                         'password' => Hash::make($rowData['password'] ?? 'password123'),
-                        'student_id_code' => $request->role === 'student' ? ($rowData['student_id'] ?? null) : null,
                         'program_id' => $request->role === 'student' ? $request->program_id : null,
                         'department_id' => $request->role === 'professor' ? $request->department_id : null,
                         'generation' => $request->role === 'student' ? $request->generation : null,
                     ]);
+
+                    // Auto-generate student_id_code for students
+                    if ($request->role === 'student' && $request->generation) {
+                        $studentId = $this->studentIdGenerator->generate($request->program_id, $request->generation);
+                        $user->student_id_code = $studentId;
+                        $user->save();
+                    }
 
                     // Create profile
                     $profileData = [

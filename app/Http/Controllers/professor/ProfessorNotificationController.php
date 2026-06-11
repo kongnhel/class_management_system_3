@@ -100,6 +100,8 @@ class ProfessorNotificationController extends Controller
 
     public function notificationsIndex()
     {
+        $user = Auth::user();
+
         $sentNotifications = Notification::where('data->from_user_id', Auth::id())
             ->select('notifications.*')
             ->orderByDesc('created_at')
@@ -107,8 +109,45 @@ class ProfessorNotificationController extends Controller
             ->groupBy(fn ($item) => $item->data['batch_uuid'] ?? $item->id)
             ->map(fn ($group) => $group->first());
 
+        $receivedNotifications = $user->notifications()->latest()->get();
+
+        $courseOfferingIds = \App\Models\StudentCourseEnrollment::where('student_user_id', $user->id)->pluck('course_offering_id');
+        $announcements = \App\Models\Announcement::where(function ($q) use ($user) {
+            $q->where('target_role', 'all')
+              ->orWhere('target_role', $user->role);
+        })->with('poster')->get();
+
+        $combinedReceived = collect();
+        foreach ($receivedNotifications as $notification) {
+            $combinedReceived->push((object) [
+                'id' => $notification->id,
+                'type' => 'notification',
+                'title' => $notification->data['title'] ?? 'ការជូនដំណឹងថ្មី',
+                'content' => $notification->data['message'] ?? '',
+                'from_user_name' => $notification->data['from_user_name'] ?? 'System',
+                'created_at' => $notification->created_at,
+                'is_read' => $notification->read_at ? true : false,
+            ]);
+        }
+        foreach ($announcements as $announcement) {
+            $isRead = \App\Models\AnnouncementRead::where('announcement_id', $announcement->id)
+                ->where('user_id', $user->id)
+                ->exists();
+            $combinedReceived->push((object) [
+                'id' => $announcement->id,
+                'type' => 'announcement',
+                'title' => $announcement->title_km ?? $announcement->title_en,
+                'content' => $announcement->content_km ?? $announcement->content_en,
+                'from_user_name' => $announcement->poster->name ?? 'Admin',
+                'created_at' => $announcement->created_at,
+                'is_read' => $isRead,
+            ]);
+        }
+        $combinedReceived = $combinedReceived->sortByDesc('created_at')->values();
+
         return view('professor.notifications.index', [
             'sentNotifications' => $sentNotifications,
+            'receivedNotifications' => $combinedReceived,
         ]);
     }
 
@@ -135,6 +174,27 @@ class ProfessorNotificationController extends Controller
         Session::flash('success', 'ការជូនដំណឹងត្រូវបានលុបដោយជោគជ័យ!');
 
         return redirect()->route('professor.notifications.index');
+    }
+
+    public function markAsRead($id)
+    {
+        $user = Auth::user();
+        $notification = $user->notifications()->find($id);
+
+        if ($notification) {
+            $notification->markAsRead();
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Notification not found.'], 404);
+    }
+
+    public function markAllAsRead()
+    {
+        $user = Auth::user();
+        $user->unreadNotifications->markAsRead();
+
+        return response()->json(['success' => true]);
     }
 
     public function getStudentsInCourseOffering($offering_id)

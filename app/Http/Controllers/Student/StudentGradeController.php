@@ -23,6 +23,36 @@ class StudentGradeController extends Controller
     {
         $user = Auth::user();
 
+        // Get student's enrolled course offering IDs
+        $enrolledOfferingIds = StudentCourseEnrollment::where('student_user_id', $user->id)
+            ->where('status', 'enrolled')
+            ->pluck('course_offering_id');
+
+        // Available academic years and semesters for filter
+        $availableFilters = CourseOffering::whereIn('id', $enrolledOfferingIds)
+            ->select('academic_year', 'semester')
+            ->distinct()
+            ->orderByDesc('academic_year')
+            ->get();
+
+        $academicYears = $availableFilters->pluck('academic_year')->unique()->values();
+        $semesters = $availableFilters->pluck('semester')->unique()->values();
+
+        // Filter by academic year and semester
+        $filterYear = $request->input('academic_year');
+        $filterSemester = $request->input('semester');
+
+        $filteredOfferingIds = CourseOffering::whereIn('id', $enrolledOfferingIds)
+            ->when($filterYear, fn ($q) => $q->where('academic_year', $filterYear))
+            ->when($filterSemester, fn ($q) => $q->where('semester', $filterSemester))
+            ->pluck('id');
+
+        // Get current academic year display
+        $currentYear = $filterYear ?? $academicYears->first() ?? date('Y').'-'.(date('Y') + 1);
+        $currentSemester = $filterSemester ?? $semesters->first() ?? '';
+
+        // Get all exam results for enrolled courses
+        // exam_results has no course_offering_id — link through assessment tables
         $allExamResults = \App\Models\ExamResult::where('student_user_id', $user->id)
             ->get()
             ->map(function ($result) {
@@ -36,23 +66,30 @@ class StudentGradeController extends Controller
                 }
 
                 $result->course_id = $assessment->course_offering_id;
-
-                $result->course_name_en = $assessment->courseOffering?->course?->title_en ?? 'Unknown Course';
-                $result->course_name_km = $assessment->courseOffering?->course?->title_km ?? 'មិនមានមុខវិជ្ជា';
-
+                $result->course_name_en = $assessment->courseOffering?->course?->title_en ?? 'Unknown';
+                $result->course_name_km = $assessment->courseOffering?->course?->title_km ?? 'មិនមាន';
+                $result->course_code = $assessment->courseOffering?->course?->code ?? '';
+                $result->credits = (int) ($assessment->courseOffering?->course?->credits ?? 3);
+                $result->academic_year = $assessment->courseOffering?->academic_year ?? '';
+                $result->semester = $assessment->courseOffering?->semester ?? '';
                 $result->max_score = (float) $assessment->max_score;
-
                 $result->grade = $this->calculateGrade($result->score_obtained, $result->max_score);
 
-                if ($result->assessment_type === 'exam') {
-                    $result->display_type = ($result->max_score == 15) ? 'midterm' : 'final';
-                } else {
-                    $result->display_type = $result->assessment_type;
-                }
+                // Better display labels
+                $result->display_type = match (true) {
+                    $result->assessment_type === 'assignment' => 'Assignment',
+                    $result->assessment_type === 'quiz' => 'Quiz',
+                    $result->assessment_type === 'exam' && $result->max_score == 15 => 'Midterm',
+                    $result->assessment_type === 'exam' && $result->max_score != 15 => 'Final',
+                    default => ucfirst($result->assessment_type),
+                };
 
                 return $result;
-            })->filter();
+            })
+            ->filter()
+            ->filter(fn ($result) => $filteredOfferingIds->contains($result->course_id));
 
+        // Build per-course grade objects
         $courseGrades = $allExamResults->groupBy('course_id')->map(function ($items, $courseId) use ($user) {
             $attendanceScore = $user->getAttendanceScoreByCourse($courseId);
 
@@ -63,24 +100,25 @@ class StudentGradeController extends Controller
                 ->where('course_offering_id', $courseId)
                 ->where('status', 'permission')->count();
 
-            $finalExamScore = $items->where('display_type', 'final')->sum('score_obtained');
-            $midtermScore = $items->where('display_type', 'midterm')->sum('score_obtained');
-            $assignmentScore = $items->where('display_type', 'assignment')->sum('score_obtained');
-            $extraQuizScore = $items->where('display_type', 'quiz')->sum('score_obtained');
-
             $totalObtained = $items->sum('score_obtained') + $attendanceScore;
 
-            $isFailed = ($finalExamScore < 24 || $midtermScore < 9 || $assignmentScore < 9 || $attendanceScore < 9);
+            $finalExamScore = $items->where('display_type', 'Final')->sum('score_obtained');
+            $midtermScore = $items->where('display_type', 'Midterm')->sum('score_obtained');
+            $assignmentScore = $items->where('display_type', 'Assignment')->sum('score_obtained');
 
-            $enrollments = \App\Models\StudentCourseEnrollment::where('course_offering_id', $courseId)->get();
+            $isFailed = ($finalExamScore < 24 || $midtermScore < 9 || $assignmentScore < 9 || $attendanceScore < 9);
+            $letterGrade = $isFailed ? 'F' : $this->calculateGrade($totalObtained, 100);
+
+            // Per-course rank
+            $enrollments = StudentCourseEnrollment::where('course_offering_id', $courseId)->get();
             $rankings = $enrollments->map(function ($enrol) use ($courseId) {
-                $student = \App\Models\User::find($enrol->student_user_id);
+                $student = User::find($enrol->student_user_id);
                 $att = $student ? $student->getAttendanceScoreByCourse($courseId) : 0;
                 $allPoints = \App\Models\ExamResult::where('student_user_id', $enrol->student_user_id)
                     ->whereIn('assessment_id', function ($q) use ($courseId) {
                         $q->select('id')->from('assignments')->where('course_offering_id', $courseId)
-                            ->union(\DB::table('quizzes')->select('id')->where('course_offering_id', $courseId))
-                            ->union(\DB::table('exams')->select('id')->where('course_offering_id', $courseId));
+                            ->union(DB::table('quizzes')->select('id')->where('course_offering_id', $courseId))
+                            ->union(DB::table('exams')->select('id')->where('course_offering_id', $courseId));
                     })->sum('score_obtained');
 
                 return ['id' => $enrol->student_user_id, 'total' => (float) $att + (float) $allPoints];
@@ -89,47 +127,127 @@ class StudentGradeController extends Controller
             $rankIndex = $rankings->search(fn ($r) => $r['id'] == $user->id);
 
             return (object) [
-                'course_rank' => ($rankIndex !== false) ? $rankIndex + 1 : 'មិនចាត់ថ្នាក់',
+                'course_id' => $courseId,
+                'course_code' => $items->first()->course_code,
                 'course_name_en' => $items->first()->course_name_en,
                 'course_name_km' => $items->first()->course_name_km,
+                'credits' => $items->first()->credits,
+                'academic_year' => $items->first()->academic_year,
+                'semester' => $items->first()->semester,
+                'course_rank' => ($rankIndex !== false) ? $rankIndex + 1 : '-',
+                'total_students' => $rankings->count(),
                 'attendance_score' => $attendanceScore,
                 'absent_count' => $absCount,
                 'permission_count' => $perCount,
                 'total_score' => $totalObtained,
-                'grade' => $isFailed ? 'F' : $this->calculateGrade($totalObtained, 100),
+                'grade' => $letterGrade,
+                'grade_points' => $this->gradeToPoints($letterGrade),
                 'is_failed' => $isFailed,
                 'assessments' => $items,
             ];
         })->values();
 
-        $overallRank = 'មិនចាត់ថ្នាក់';
+        // --- Overall rank: compare with peers using SAME filtered data ---
+        $overallRank = '-';
+        $totalClassmates = 0;
         if ($courseGrades->isNotEmpty()) {
-            $firstOfferingId = $courseGrades->first()->course_id ?? \App\Models\StudentCourseEnrollment::where('student_user_id', $user->id)->first()->course_offering_id;
-            $enrollments = \App\Models\StudentCourseEnrollment::where('course_offering_id', $firstOfferingId)->get();
-            $overallRankings = $enrollments->map(function ($enrol) {
-                $sid = $enrol->student_user_id;
-                $studentModel = \App\Models\User::find($sid);
-                $totalPoints = \App\Models\ExamResult::where('student_user_id', $sid)->sum('score_obtained');
-                $totalAtt = 0;
-                foreach (\App\Models\StudentCourseEnrollment::where('student_user_id', $sid)->pluck('course_offering_id') as $cId) {
-                    $totalAtt += $studentModel ? $studentModel->getAttendanceScoreByCourse($cId) : 0;
+            // Find peers: students enrolled in at least one of the filtered course offerings
+            $peerIds = StudentCourseEnrollment::whereIn('course_offering_id', $filteredOfferingIds)
+                ->pluck('student_user_id')
+                ->unique();
+
+            // For each peer, calculate their total score using ONLY filtered offerings
+            $peerTotals = $peerIds->map(function ($peerId) use ($filteredOfferingIds) {
+                $peerStudent = User::find($peerId);
+                if (! $peerStudent) {
+                    return ['id' => $peerId, 'total' => 0];
                 }
 
-                return ['id' => $sid, 'total' => (float) $totalPoints + (float) $totalAtt];
+                $total = 0;
+                foreach ($filteredOfferingIds as $offeringId) {
+                    // Sum exam results for this specific course offering
+                    $courseExamPoints = \App\Models\ExamResult::where('student_user_id', $peerId)
+                        ->whereIn('assessment_id', function ($q) use ($offeringId) {
+                            $q->select('id')->from('assignments')->where('course_offering_id', $offeringId)
+                                ->union(DB::table('quizzes')->select('id')->where('course_offering_id', $offeringId))
+                                ->union(DB::table('exams')->select('id')->where('course_offering_id', $offeringId));
+                        })->sum('score_obtained');
+
+                    // Add attendance for this specific course offering
+                    $att = $peerStudent->getAttendanceScoreByCourse($offeringId);
+                    $total += (float) $courseExamPoints + (float) $att;
+                }
+
+                return ['id' => $peerId, 'total' => $total];
             })->sortByDesc('total')->values();
-            $overallRank = $overallRankings->search(fn ($r) => $r['id'] == $user->id) + 1;
+
+            $totalClassmates = $peerTotals->count();
+            $rankIndex = $peerTotals->search(fn ($r) => $r['id'] == $user->id);
+            $overallRank = ($rankIndex !== false) ? $rankIndex + 1 : '-';
         }
 
+        // --- Summary stats ---
         $averageScore = $courseGrades->avg('total_score') ?? 0;
         $totalFinalScore = $courseGrades->sum('total_score');
-        $overallGrade = $this->calculateGrade($averageScore, 100);
 
+        // Credit-weighted GPA
+        $totalCredits = $courseGrades->sum('credits');
+        $weightedPoints = $courseGrades->sum(fn ($g) => $g->grade_points * $g->credits);
+        $gpa = $totalCredits > 0 ? round($weightedPoints / $totalCredits, 2) : 0;
+        $overallGrade = $this->pointsToGrade($gpa);
+
+        // Paginate
         $grades = new \Illuminate\Pagination\LengthAwarePaginator(
             $courseGrades->slice((($request->page ?? 1) - 1) * 10, 10)->values(),
-            $courseGrades->count(), 10, $request->page ?? 1, ['path' => $request->url()]
+            $courseGrades->count(), 10, $request->page ?? 1,
+            ['path' => $request->url(), 'query' => $request->query()]
         );
 
-        return view('student.my-grades', compact('user', 'grades', 'averageScore', 'totalFinalScore', 'overallRank', 'overallGrade'));
+        return view('student.my-grades', compact(
+            'user', 'grades', 'averageScore', 'totalFinalScore',
+            'overallRank', 'overallGrade', 'gpa', 'totalCredits',
+            'totalClassmates', 'academicYears', 'semesters',
+            'currentYear', 'currentSemester', 'courseGrades'
+        ));
+    }
+
+    /**
+     * Convert letter grade to grade points (4.0 scale).
+     */
+    private function gradeToPoints(string $grade): float
+    {
+        return match ($grade) {
+            'A' => 4.0,
+            'B' => 3.0,
+            'C' => 2.0,
+            'D' => 1.0,
+            'E' => 0.5,
+            default => 0.0,
+        };
+    }
+
+    /**
+     * Convert GPA to letter grade.
+     */
+    private function pointsToGrade(float $gpa): string
+    {
+        if ($gpa >= 3.5) {
+            return 'A';
+        }
+        if ($gpa >= 2.5) {
+            return 'B';
+        }
+        if ($gpa >= 1.5) {
+            return 'C';
+        }
+        if ($gpa >= 1.0) {
+            return 'D';
+        }
+        if ($gpa >= 0.5) {
+            return 'E';
+        }
+
+        return 'F';
     }
 
     private function calculateGrade($score, $maxScore)

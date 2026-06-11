@@ -288,7 +288,9 @@
                     <tbody>
                         @forelse ($paginatedStudents as $student)
                             @php
-                                $profilePictureUrl = $student->userProfile?->profile_picture_url ?? $student->studentProfile?->profile_picture_url;
+                                $rawPic = $student->userProfile?->profile_picture_url ?? $student->studentProfile?->profile_picture_url ?? null;
+                                $rawAv = $student->avatar ?? null;
+                                $profilePictureUrl = ((!empty($rawPic) && $rawPic !== 'null') ? $rawPic : ((!empty($rawAv) && $rawAv !== 'null') ? $rawAv : null));
                                 $isLeader = DB::table('student_course_enrollments')
                                     ->where('course_offering_id', $courseOffering->id)
                                     ->where('student_user_id', $student->id)
@@ -302,7 +304,11 @@
                                             <div class="avatar-wrap {{ $isLeader ? 'is-leader' : '' }}">
                                                 @if($profilePictureUrl)
                                                     <img src="{{ $profilePictureUrl }}?tr=w-100,h-100,fo-face"
+                                                         onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
                                                          style="width:100%;height:100%;object-fit:cover;" alt="Profile">
+                                                    <span class="kh" style="font-size:1rem; font-weight:900; color:#16a34a; display:none;">
+                                                        {{ Str::substr($student->studentProfile->full_name_km ?? $student->name, 0, 1) }}
+                                                    </span>
                                                 @else
                                                     <span class="kh" style="font-size:1rem; font-weight:900; color:#16a34a;">
                                                         {{ Str::substr($student->studentProfile->full_name_km ?? $student->name, 0, 1) }}

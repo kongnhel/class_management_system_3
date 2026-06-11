@@ -20,8 +20,9 @@ class ProgramController extends Controller
     public function create()
     {
         $departments = Department::all();
+        $programs = Program::where('duration_years', '<=', 2)->get();
 
-        return view('admin.programs.create', compact('departments'));
+        return view('admin.programs.create', compact('departments', 'programs'));
     }
 
     public function store(Request $request)
@@ -32,11 +33,14 @@ class ProgramController extends Controller
             'department_id' => 'required|exists:departments,id',
             'duration_years' => 'required|integer|min:1',
             'degree_level' => 'required|string|max:50',
+            'pathway_program_id' => 'nullable|exists:programs,id',
         ]);
 
-        Program::create($request->all());
+        Program::create($request->except('pathway_program_id') + [
+            'pathway_program_id' => $request->pathway_program_id ?: null,
+        ]);
 
-        return redirect()->route('admin.manage-programs')->with('success', 'កម្មវិធីសសិក្សាបង្កើតដោយជោគជ័យ!');
+        return redirect()->route('admin.manage-programs')->with('success', 'កម្មវិធីសិក្សាបង្កើតដោយជោគជ័យ!');
     }
 
     public function show(string $id) {}
@@ -44,8 +48,9 @@ class ProgramController extends Controller
     public function edit(Program $program)
     {
         $departments = Department::all();
+        $programs = Program::where('id', '!=', $program->id)->where('duration_years', '<=', 2)->get();
 
-        return view('admin.programs.edit', compact('program', 'departments'));
+        return view('admin.programs.edit', compact('program', 'departments', 'programs'));
     }
 
     public function update(Request $request, Program $program)
@@ -56,9 +61,12 @@ class ProgramController extends Controller
             'department_id' => 'required|exists:departments,id',
             'duration_years' => 'required|integer|min:1',
             'degree_level' => 'required|string|max:50',
+            'pathway_program_id' => 'nullable|exists:programs,id',
         ]);
 
-        $program->update($request->all());
+        $program->update($request->except('pathway_program_id') + [
+            'pathway_program_id' => $request->pathway_program_id ?: null,
+        ]);
 
         return redirect()->route('admin.manage-programs')->with('success', 'កម្មវិធីសិក្សាត្រូវបានធ្វើបច្ចុប្បន្នភាពដោយជោគជ័យ!');
     }

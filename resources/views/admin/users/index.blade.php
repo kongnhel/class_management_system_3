@@ -483,6 +483,7 @@
                                                                 <thead class="bg-gray-50/50">
                                                                     <tr>
                                                                         <th class="px-6 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ __('រូបភាព') }}</th>
+                                                                        <th class="px-6 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ __('អត្តសញ្ញាណ') }}</th>
                                                                         <th class="px-6 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ __('ឈ្មោះអ្នកប្រើ / ពេញ') }}</th>
                                                                         <th class="px-6 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ __('អ៊ីម៉ែល') }}</th>
                                                                         <th class="px-6 py-3 text-right text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ __('សកម្មភាព') }}</th>
@@ -501,6 +502,9 @@
                                                                                         {{ strtoupper(substr($student->name, 0, 1)) }}
                                                                                     </div>
                                                                                 @endif
+                                                                            </td>
+                                                                            <td class="px-6 py-3">
+                                                                                <span class="font-mono text-xs font-bold text-green-700 bg-green-50 px-2 py-1 rounded-md border border-green-100">{{ $student->student_id_code ?? 'N/A' }}</span>
                                                                             </td>
                                                                             <td class="px-6 py-3">
                                                                                 <div class="text-sm font-bold text-gray-900 uppercase tracking-tighter">{{ $student->name }}</div>
@@ -544,6 +548,7 @@
                                                                             <div class="min-w-0">
                                                                                 <h5 class="text-sm font-black text-gray-900 uppercase truncate">{{ $student->name }}</h5>
                                                                                 <p class="text-[10px] text-gray-500 truncate font-medium">{{ $student->email }}</p>
+                                                                                <span class="inline-block font-mono text-[10px] font-bold text-green-700 bg-green-50 px-1.5 py-0.5 rounded border border-green-100 mt-1">{{ $student->student_id_code ?? 'N/A' }}</span>
                                                                             </div>
                                                                         </div>
                                                                     </div>

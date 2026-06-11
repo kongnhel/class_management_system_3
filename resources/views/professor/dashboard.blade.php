@@ -162,7 +162,7 @@
             </div>
 
             {{-- Quick Actions & Stats Row --}}
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
                 {{-- Quick Actions --}}
                 <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 p-8">
                     <div class="flex items-center gap-4 mb-6">
@@ -200,39 +200,7 @@
                     </div>
                 </div>
 
-                {{-- Pending Work Stats --}}
-                <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 p-8">
-                    <div class="flex items-center gap-4 mb-6">
-                        <div class="h-10 w-2 bg-amber-500 rounded-full shadow-lg shadow-amber-200"></div>
-                        <h4 class="text-xl font-black text-slate-800 tracking-tight">{{ __('ការងារដែលមិនទាន់ធ្វើ') }}</h4>
-                    </div>
-                    <div class="space-y-4">
-                        <div class="flex items-center justify-between p-4 rounded-2xl bg-amber-50 border border-amber-100">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center">
-                                    <i class="fas fa-file-alt text-amber-600"></i>
-                                </div>
-                                <div>
-                                    <p class="font-bold text-slate-700 text-sm">{{ __('ការដាក់ស្នើមិនទាន់ពិន្ទុ') }}</p>
-                                    <p class="text-[11px] text-slate-400">{{ __('សិស្សបានដាក់ស្នើហើយ') }}</p>
-                                </div>
-                            </div>
-                            <span class="text-2xl font-black text-amber-600">{{ $ungradedSubmissionsCount }}</span>
-                        </div>
-                        <div class="flex items-center justify-between p-4 rounded-2xl bg-rose-50 border border-rose-100">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 bg-rose-100 rounded-xl flex items-center justify-center">
-                                    <i class="fas fa-exclamation-triangle text-rose-600"></i>
-                                </div>
-                                <div>
-                                    <p class="font-bold text-slate-700 text-sm">{{ __('ការវាយតម្លៃខុសកាលកំណត់') }}</p>
-                                    <p class="text-[11px] text-slate-400">{{ __('កិច្ចការផុតកំណត់មិនទាន់ពិន្ទុ') }}</p>
-                                </div>
-                            </div>
-                            <span class="text-2xl font-black text-rose-600">{{ $pendingAssessments }}</span>
-                        </div>
-                    </div>
-                </div>
+
 
                 {{-- At-Risk Students --}}
                 <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 p-8">

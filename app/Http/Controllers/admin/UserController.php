@@ -11,6 +11,7 @@ use App\Models\StudentProfile;
 use App\Models\User;
 use App\Models\UserProfile;
 use App\Services\ImageKitService;
+use App\Services\StudentIdGeneratorService;
 use App\Traits\AuditableTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -24,9 +25,12 @@ class UserController extends Controller
 
     protected $imageKitService;
 
-    public function __construct(ImageKitService $imageKitService)
+    protected $studentIdGenerator;
+
+    public function __construct(ImageKitService $imageKitService, StudentIdGeneratorService $studentIdGenerator)
     {
         $this->imageKitService = $imageKitService;
+        $this->studentIdGenerator = $studentIdGenerator;
     }
 
     public function manageUsers(Request $request)
@@ -149,6 +153,9 @@ class UserController extends Controller
     {
         $user->load(['profile', 'studentProfile']);
 
+        $isEligibleForTransition = false;
+        $transitionPrograms = collect();
+
         if ($user->role === 'professor') {
             $user->load(['taughtCourseOfferings' => function ($query) {
                 $query->with(['course', 'program'])->orderBy('academic_year', 'desc');
@@ -157,9 +164,14 @@ class UserController extends Controller
             $user->load(['studentCourseEnrollments' => function ($query) {
                 $query->with(['courseOffering.course', 'courseOffering.program'])->orderBy('created_at', 'desc');
             }]);
+            $user->load('studentProgramEnrollments.program');
+
+            $progressionService = app(\App\Services\StudentProgressionService::class);
+            $isEligibleForTransition = $progressionService->isEligibleForTransition($user);
+            $transitionPrograms = $progressionService->getTransitionPrograms($user);
         }
 
-        return view('admin.users.show', compact('user'));
+        return view('admin.users.show', compact('user', 'isEligibleForTransition', 'transitionPrograms'));
     }
 
     public function createUser()
@@ -191,9 +203,8 @@ class UserController extends Controller
         ];
 
         if ($request->role === 'student') {
-            $rules['student_id_code'] = ['required', 'string', 'max:255', Rule::unique('users', 'student_id_code')];
             $rules['program_id'] = 'required|exists:programs,id';
-            $rules['generation'] = 'nullable|string|max:255';
+            $rules['generation'] = 'required|string|max:255';
         } elseif ($request->role === 'professor') {
             $rules['email'] = 'required|string|email|max:255|unique:users';
             $rules['password'] = [
@@ -228,13 +239,19 @@ class UserController extends Controller
 
             'name' => $request->name,
             'role' => $request->role,
-            'student_id_code' => ($request->role === 'student') ? $request->student_id_code : null,
             'department_id' => ($request->role === 'professor') ? $request->department_id : null,
             'program_id' => ($request->role === 'student') ? $request->program_id : null,
             'email' => ($request->role !== 'student') ? $request->email : null,
             'password' => ($request->role !== 'student') ? Hash::make($request->password) : null,
             'generation' => ($request->role === 'student') ? $request->generation : null,
         ]);
+
+        // Auto-generate student_id_code for students
+        if ($request->role === 'student') {
+            $studentId = $this->studentIdGenerator->generate($request->program_id, $request->generation);
+            $user->student_id_code = $studentId;
+            $user->save();
+        }
 
         $profileData = $request->only(['full_name_km', 'full_name_en', 'gender', 'date_of_birth', 'phone_number', 'address']);
 
@@ -303,7 +320,6 @@ class UserController extends Controller
         ];
 
         if ($request->role === 'student') {
-            $rules['student_id_code'] = ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)];
             $rules['program_id'] = 'required|exists:programs,id';
         } else {
             $rules['email'] = ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)];
@@ -319,7 +335,6 @@ class UserController extends Controller
 
         $user->name = $request->name;
         $user->role = $request->role;
-        $user->student_id_code = ($request->role === 'student') ? $request->student_id_code : null;
         $user->department_id = ($request->role === 'professor') ? $request->department_id : null;
         $user->program_id = ($request->role === 'student') ? $request->program_id : null;
         $user->generation = ($request->role === 'student') ? $request->generation : null;

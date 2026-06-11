@@ -12,6 +12,8 @@ class StudentProgramEnrollment extends Model
     protected $fillable = [
         'student_user_id',
         'program_id',
+        'starting_year_level',
+        'is_transition_eligible',
         'enrollment_date',
         'graduation_date',
         'status',
@@ -20,6 +22,7 @@ class StudentProgramEnrollment extends Model
     protected $casts = [
         'enrollment_date' => 'date',
         'graduation_date' => 'date',
+        'is_transition_eligible' => 'boolean',
     ];
 
     /*
@@ -28,17 +31,11 @@ class StudentProgramEnrollment extends Model
     |--------------------------------------------------------------------------
     */
 
-    /**
-     * Get the student (user) that is enrolled in the program.
-     */
     public function student()
     {
         return $this->belongsTo(User::class, 'student_user_id');
     }
 
-    /**
-     * Get the program that the student is enrolled in.
-     */
     public function program()
     {
         return $this->belongsTo(Program::class);

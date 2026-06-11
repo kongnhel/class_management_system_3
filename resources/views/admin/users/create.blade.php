@@ -130,14 +130,16 @@
                             <h4 class="text-lg font-bold text-blue-800 flex items-center">
                                 <i class="fas fa-graduation-cap mr-2"></i> {{ __('ព័ត៌មាននិស្សិត') }}
                             </h4>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <div>
-                                    <x-input-label for="student_id_code" class="font-semibold text-blue-700 mb-1">{{ __('អត្តសញ្ញាណប័ណ្ណនិស្សិត') }}</x-input-label>
-                                    <x-text-input id="student_id_code" name="student_id_code" class="block w-full rounded-xl border-blue-200" type="text" placeholder="e.g. STU-123" />
-                                </div>
+                            <div class="bg-blue-100/50 border border-blue-200 rounded-xl p-3 mb-4">
+                                <p class="text-sm text-blue-700 flex items-center">
+                                    <i class="fas fa-info-circle mr-2"></i>
+                                    {{ __('លេខសម្គាល់និស្សិតនឹងត្រូវបានបង្កើតដោយស្វ័យប្រវត្តិ។ ទម្រង់៖ [Prefix]-[Generation]-[Serial]') }}
+                                </p>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <x-input-label for="program_id" class="font-semibold text-blue-700 mb-1">{{ __('កម្មវិធីសិក្សា') }}</x-input-label>
-                                    <select id="program_id" name="program_id" class="block w-full rounded-xl border-blue-200">
+                                    <select id="program_id" name="program_id" class="block w-full rounded-xl border-blue-200" required>
                                         <option value="">{{ __('ជ្រើសរើស') }}</option>
                                         @foreach($programs as $program)
                                             <option value="{{ $program->id }}">{{ $program->name_km }}</option>
@@ -146,7 +148,7 @@
                                 </div>
                                 <div>
                                     <x-input-label for="generation" class="font-semibold text-blue-700 mb-1">{{ __('ជំនាន់') }}</x-input-label>
-                                    <x-text-input id="generation" name="generation" type="number" class="block w-full rounded-xl border-blue-200" placeholder="16" />
+                                    <x-text-input id="generation" name="generation" type="number" class="block w-full rounded-xl border-blue-200" placeholder="16" required />
                                 </div>
                             </div>
 

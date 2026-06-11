@@ -91,6 +91,20 @@
                                 <option value="ផ្សេងៗ" {{ old('degree_level') == 'ផ្សេងៗ' ? 'selected' : '' }}>{{ __('ផ្សេងៗ') }}</option>
                             </select>
                         </div>
+
+                        <!-- Pathway Program (for bachelor's programs that accept associate's graduates) -->
+                        <div>
+                            <label for="pathway_program_id" class="block text-sm font-semibold text-gray-700 mb-1">{{ __('កម្មវិធីសិក្សាផ្លូវបន្ត') }}</label>
+                            <select id="pathway_program_id" name="pathway_program_id" class="form-select w-full rounded-xl border-gray-300 shadow-sm focus:ring-green-500 focus:border-green-500 transition duration-150 ease-in-out">
+                                <option value="">{{ __('មិនមានផ្លូវបន្ត') }}</option>
+                                @foreach ($programs as $program)
+                                    <option value="{{ $program->id }}" {{ old('pathway_program_id') == $program->id ? 'selected' : '' }}>
+                                        {{ $program->name_km }} ({{ $program->name_en }}) - {{ $program->duration_years }} ឆ្នាំ
+                                    </option>
+                                @endforeach
+                            </select>
+                            <p class="mt-1 text-xs text-gray-500">{{ __('ជ្រើសរើសកម្មវិធីសិក្សាបរិញ្ញាបត្ររងដែលសិស្សអាចផ្ទេរពី។ សិស្សនឹងចាប់ផ្តើមពីឆ្នាំទី ៣។') }}</p>
+                        </div>
                     </div>
 
                     <div class="mt-12 flex justify-between items-center">

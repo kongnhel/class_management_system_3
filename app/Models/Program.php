@@ -4,7 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Program extends Model
 {
@@ -16,7 +18,7 @@ class Program extends Model
         'name_en',
         'degree_level',
         'duration_years',
-
+        'pathway_program_id',
     ];
 
     /*
@@ -30,29 +32,39 @@ class Program extends Model
             ->withPivot('generation');
     }
 
-    /**
-     * Get the department that the program belongs to.
-     */
-    public function department()
+    public function department(): BelongsTo
     {
         return $this->belongsTo(Department::class);
     }
 
-    public function users() // Changed from studentProgramEnrollments to users
+    public function users(): HasMany
     {
         return $this->hasMany(User::class);
     }
 
-    public function courses()
+    public function courses(): HasMany
     {
         return $this->hasMany(Course::class);
     }
 
-    /**
-     * Get the student program enrollments for this program.
-     */
-    public function studentProgramEnrollments()
+    public function studentProgramEnrollments(): HasMany
     {
         return $this->hasMany(StudentProgramEnrollment::class);
+    }
+
+    /**
+     * The associate's program that leads into this bachelor's program.
+     */
+    public function pathwayProgram(): BelongsTo
+    {
+        return $this->belongsTo(Program::class, 'pathway_program_id');
+    }
+
+    /**
+     * Bachelor's programs that accept students from this associate's program.
+     */
+    public function pathwayPrograms(): HasMany
+    {
+        return $this->hasMany(Program::class, 'pathway_program_id');
     }
 }

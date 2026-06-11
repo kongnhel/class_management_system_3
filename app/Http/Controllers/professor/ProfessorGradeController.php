@@ -645,4 +645,60 @@ class ProfessorGradeController extends Controller
 
         return response()->json(['duplicate' => false]);
     }
+
+    public function allGrades()
+    {
+        $user = Auth::user();
+
+        $query = DB::table('exam_results as er')
+            ->join('users as u', 'er.student_user_id', '=', 'u.id')
+            ->leftJoin('exams as e', function ($join) {
+                $join->on('er.assessment_id', '=', 'e.id')
+                     ->where('er.assessment_type', '=', 'exam');
+            })
+            ->leftJoin('assignments as a', function ($join) {
+                $join->on('er.assessment_id', '=', 'a.id')
+                     ->where('er.assessment_type', '=', 'assignment');
+            })
+            ->leftJoin('course_offerings as co_exam', 'e.course_offering_id', '=', 'co_exam.id')
+            ->leftJoin('courses as c_exam', 'co_exam.course_id', '=', 'c_exam.id')
+            ->leftJoin('course_offerings as co_assign', 'a.course_offering_id', '=', 'co_assign.id')
+            ->leftJoin('courses as c_assign', 'co_assign.course_id', '=', 'c_assign.id')
+            ->where(function ($q) use ($user) {
+                $q->where('co_exam.lecturer_user_id', $user->id)
+                  ->orWhere('co_assign.lecturer_user_id', $user->id);
+            })
+            ->select(
+                'u.name as student_name',
+                DB::raw("CASE WHEN er.assessment_type = 'exam' THEN c_exam.title_km ELSE c_assign.title_km END as course_title_km"),
+                'er.assessment_type',
+                'er.score_obtained as score',
+                DB::raw("CASE WHEN er.assessment_type = 'exam' THEN e.max_score ELSE a.max_score END as max_score"),
+                'er.recorded_at as date'
+            )
+            ->orderBy('er.recorded_at', 'desc');
+
+        $paginator = $query->paginate(10);
+
+        $grades = $paginator->getCollection()->map(function ($row) {
+            return (object) [
+                'student_name' => $row->student_name ?? 'N/A',
+                'course_title_km' => $row->course_title_km ?? 'N/A',
+                'assessment_type' => $row->assessment_type,
+                'score' => $row->score,
+                'max_score' => $row->max_score ?? 100,
+                'date' => $row->date,
+            ];
+        });
+
+        $grades = new \Illuminate\Pagination\LengthAwarePaginator(
+            $grades,
+            $paginator->total(),
+            $paginator->perPage(),
+            $paginator->currentPage(),
+            ['path' => url('/professor/all-grades')]
+        );
+
+        return view('professor.all-grades', compact('grades'));
+    }
 }

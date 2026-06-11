@@ -132,8 +132,10 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <x-input-label for="student_id_code" class="flex items-center text-lg text-gray-700 font-semibold mb-2"><i class="fas fa-id-card mr-3 text-green-500"></i> {{ __('លេខកូដអត្តសញ្ញាណសិស្ស') }}</x-input-label>
-                                    <x-text-input id="student_id_code" class="block w-full rounded-xl py-3 px-4" type="text" name="student_id_code" :value="old('student_id_code', $user->student_id_code)" />
-                                    <x-input-error :messages="$errors->get('student_id_code')" class="mt-2" />
+                                    <div class="block w-full rounded-xl py-3 px-4 bg-gray-100 border border-gray-200 text-gray-600 font-mono font-bold">
+                                        {{ $user->student_id_code ?? __('មិនទាន់បង្កើត') }}
+                                    </div>
+                                    <p class="text-xs text-gray-400 mt-1">{{ __('លេខសម្គាល់នេះត្រូវបានបង្កើតដោយស្វ័យប្រវត្តិ ហើយមិនអាចកែប្រែបានទេ។') }}</p>
                                 </div>
                                 <div>
                                     <x-input-label for="program_id" class="flex items-center text-lg text-gray-700 font-semibold mb-2"><i class="fas fa-graduation-cap mr-3 text-green-500"></i> {{ __('កម្មវិធីសិក្សា') }}</x-input-label>

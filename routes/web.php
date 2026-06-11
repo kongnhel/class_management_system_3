@@ -12,7 +12,9 @@ use App\Http\Controllers\admin\DepartmentController;
 use App\Http\Controllers\admin\FacultyController;
 use App\Http\Controllers\admin\ProgramController;
 use App\Http\Controllers\admin\RoomController;
+use App\Http\Controllers\admin\StudentProgressionController;
 use App\Http\Controllers\admin\SystemSettingController;
+use App\Http\Controllers\admin\TransitionController;
 use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\Auth\GoogleAuthController;
@@ -144,6 +146,9 @@ Route::middleware(['auth', 'role:admin', 'throttle:120,1'])->prefix('admin')->na
     Route::get('/users/show/{user}', [UserController::class, 'showUser'])->name('show-user');
     Route::get('/users/export', [UserController::class, 'exportUsers'])->name('users.export');
 
+    Route::get('/students/{student}/transition', [TransitionController::class, 'create'])->name('students.transition');
+    Route::post('/students/{student}/transition', [TransitionController::class, 'store'])->name('students.transition.store');
+
     Route::get('/faculties', [FacultyController::class, 'index'])->name('manage-faculties');
     Route::get('/faculties/create', [FacultyController::class, 'create'])->name('create-faculty');
     Route::post('/faculties', [FacultyController::class, 'store'])->name('store-faculty');
@@ -238,6 +243,12 @@ Route::middleware(['auth', 'role:admin', 'throttle:120,1'])->prefix('admin')->na
     // Route::get('/audit-logs', [\App\Http\Controllers\admin\AuditLogController::class, 'index'])->name('audit-logs.index');
     // Route::get('/audit-logs/{auditLog}', [\App\Http\Controllers\admin\AuditLogController::class, 'show'])->name('audit-logs.show');
 
+    // Student Progression
+    Route::get('/progression', [StudentProgressionController::class, 'index'])->name('progression.index');
+    Route::get('/progression/advance', [StudentProgressionController::class, 'advance'])->name('progression.advance');
+    Route::post('/progression/advance', [StudentProgressionController::class, 'executeAdvance'])->name('progression.executeAdvance');
+    Route::post('/progression/auto-graduate', [StudentProgressionController::class, 'autoGraduate'])->name('progression.autoGraduate');
+
 });
 
 /*
@@ -290,6 +301,8 @@ Route::middleware(['auth', 'role:professor'])->prefix('professor')->name('profes
     Route::get('/notifications/{id}/edit', [ProfessorNotificationController::class, 'notificationsEdit'])->name('notifications.edit');
     Route::put('/notifications/{id}', [ProfessorNotificationController::class, 'notificationsUpdate'])->name('notifications.update');
     Route::delete('/notifications/{id}', [ProfessorNotificationController::class, 'notificationsDestroy'])->name('notifications.destroy');
+    Route::post('/notifications/{id}/mark-as-read', [ProfessorNotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+    Route::post('/notifications/mark-all-as-read', [ProfessorNotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
     Route::get('/course/{course}/grading-categories', [ProfessorController::class, 'manageGradingCategories'])->name('grading-categories.index');
     Route::post('/course/{course}/grading-categories', [ProfessorController::class, 'storeGradingCategory'])->name('grading-categories.store');
     Route::delete('/grading-categories/{category}', [ProfessorController::class, 'destroyGradingCategory'])->name('grading-categories.destroy');
