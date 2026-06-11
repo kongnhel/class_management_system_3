@@ -41,6 +41,10 @@ class AdminGradeController extends Controller
             $query->where('semester', $request->input('semester'));
         }
 
+        if ($request->filled('academic_year')) {
+            $query->where('academic_year', $request->input('academic_year'));
+        }
+
         $courseOfferings = $query->orderBy('academic_year', 'desc')
             ->orderBy('semester', 'desc')
             ->paginate(20)

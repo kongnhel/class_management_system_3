@@ -1,131 +1,185 @@
 <x-app-layout>
-    <div class="py-12 bg-gray-100 min-h-screen">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-2xl sm:rounded-3xl p-8 lg:p-12 border border-gray-200 transition-all duration-300 transform hover:shadow-3xl">
+    <div class="bg-gray-50 min-h-screen">
+        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8 py-10">
 
-                {{-- <div class="mb-8 pb-4 border-b border-gray-200">
-                    <h2 class="font-extrabold text-4xl text-gray-900 leading-tight">
-                        {{ __('បង្កើតសេចក្តីប្រកាសថ្មី') }}
-                    </h2>
-                    <p class="mt-2 text-lg text-gray-500">{{ __('បំពេញព័ត៌មានលម្អិតខាងក្រោមដើម្បីបង្កើតសេចក្តីប្រកាស') }}</p>
-                </div> --}}
-                <x-slot name="header">
-                    <div class="flex justify-between items-center">
-                        <h2 class="text-3xl font-bold text-gray-900 leading-tight">
-                            {{ __('បង្កើតសេចក្តីប្រកាសថ្មី') }} 
-                        </h2>
-                        <a href="{{ route('admin.announcements.index') }}" class="px-3 md:px-5 py-2 bg-gray-200 text-gray-700 font-semibold rounded-full hover:bg-gray-300 transition">
-                            
-                            <span class="md:hidden">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0a9 9 0 01-18 0z" />
+            {{-- Header --}}
+            <div class="flex items-center justify-between mb-8">
+                <div class="flex items-center gap-4">
+                    <div class="bg-blue-100 rounded-2xl p-3">
+                        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900">{{ __('បង្កើតសេចក្តីប្រកាសថ្មី') }}</h1>
+                        <p class="text-gray-500 mt-1">{{ __('បំពេញព័ត៌មានខាងក្រោមដើម្បីបង្កើតសេចក្តីប្រកាស') }}</p>
+                    </div>
+                </div>
+                <a href="{{ route('admin.announcements.index') }}" class="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors duration-200">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                    {{ __('ត្រឡប់') }}
+                </a>
+            </div>
+
+            {{-- Toast --}}
+            @if (session('success') || session('error'))
+            <div
+                x-data="{ show: false, progress: 100, init() { this.show = true; const t = setInterval(() => { this.progress -= 1; if (this.progress <= 0) { this.show = false; clearInterval(t); } }, 50); } }"
+                x-show="show"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 translate-y-4"
+                x-transition:enter-end="opacity-100 translate-y-0"
+                x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0 translate-y-4"
+                class="fixed top-6 right-6 z-[9999] w-full max-w-sm"
+            >
+                <div class="bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200 p-4">
+                    <div class="flex items-center gap-3">
+                        @if(session('success'))
+                            <div class="flex-shrink-0 w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center">
+                                <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                 </svg>
-                            </span>
-
-                            <span class="hidden md:inline-block">
-                                &larr; {{ __('ត្រឡប់ទៅបញ្ជីវិញ') }}
-                            </span>
-                        </a>
-                    </div>
-                </x-slot>
-
-                @if (session('success'))
-                    <div class="bg-green-50 border border-green-200 text-green-700 px-6 py-4 rounded-2xl relative mb-8 flex items-center space-x-3 shadow-md" role="alert">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-500" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                        </svg>
-                        <span class="block sm:inline font-medium">{{ session('success') }}</span>
-                    </div>
-                @endif
-                @if (session('error'))
-                    <div class="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-2xl relative mb-8 flex items-center space-x-3 shadow-md" role="alert">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-500" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586l-1.293-1.293z" clip-rule="evenodd" />
-                        </svg>
-                        <span class="block sm:inline font-medium">{{ session('error') }}</span>
-                    </div>
-                @endif
-                @if ($errors->any())
-                    <div class="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-2xl relative mb-8 flex items-start space-x-3 shadow-md" role="alert">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-500 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-                        </svg>
-                        <div>
-                            <strong class="font-bold block">{{ __('មានបញ្ហា!') }}</strong>
-                            <span class="block sm:inline mt-1">{{ __('សូមពិនិត្យមើលកំហុសឆ្គងខាងក្រោម។') }}</span>
-                            <ul class="mt-2 list-disc list-inside text-sm">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
+                            </div>
+                        @else
+                            <div class="flex-shrink-0 w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
+                                <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            </div>
+                        @endif
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-bold text-gray-900">{{ session('success') ? 'ជោគជ័យ!' : 'បរាជ័យ!' }}</p>
+                            <p class="text-sm text-gray-600 truncate">{{ session('success') ?? session('error') }}</p>
                         </div>
-                    </div>
-                @endif
-
-                <form method="POST" action="{{ route('admin.announcements.store') }}">
-                    @csrf
-                    <div class="space-y-8">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div>
-                                <label for="title_km" class="block text-sm font-semibold text-gray-700 mb-1">{{ __('ចំណងជើង (ខ្មែរ)') }}</label>
-                                <input type="text" name="title_km" id="title_km" value="{{ old('title_km') }}" required class="form-input w-full rounded-xl border-gray-300 shadow-sm focus:ring-green-500 focus:border-green-500 transition duration-150 ease-in-out placeholder-gray-400" placeholder="{{ __('បញ្ចូលចំណងជើងជាភាសាខ្មែរ') }}">
-                            </div>
-                            <div>
-                                <label for="title_en" class="block text-sm font-semibold text-gray-700 mb-1">{{ __('ចំណងជើង (អង់គ្លេស)') }}</label>
-                                <input type="text" name="title_en" id="title_en" value="{{ old('title_en') }}"  class="form-input w-full rounded-xl border-gray-300 shadow-sm focus:ring-green-500 focus:border-green-500 transition duration-150 ease-in-out placeholder-gray-400" placeholder="{{ __('បញ្ចូលចំណងជើងជាភាសាអង់គ្លេស') }}">
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div>
-                                <label for="content_km" class="block text-sm font-semibold text-gray-700 mb-1">{{ __('ខ្លឹមសារ (ខ្មែរ)') }}</label>
-                                <textarea name="content_km" id="content_km" rows="6" required class="form-textarea w-full rounded-xl border-gray-300 shadow-sm focus:ring-green-500 focus:border-green-500 transition duration-150 ease-in-out placeholder-gray-400" placeholder="{{ __('បញ្ចូលខ្លឹមសារជាភាសាខ្មែរ') }}">{{ old('content_km') }}</textarea>
-                            </div>
-                            <div>
-                                <label for="content_en" class="block text-sm font-semibold text-gray-700 mb-1">{{ __('ខ្លឹមសារ (អង់គ្លេស)') }}</label>
-                                <textarea name="content_en" id="content_en" rows="6"  class="form-textarea w-full rounded-xl border-gray-300 shadow-sm focus:ring-green-500 focus:border-green-500 transition duration-150 ease-in-out placeholder-gray-400" placeholder="{{ __('បញ្ចូលខ្លឹមសារជាភាសាអង់គ្លេស') }}">{{ old('content_en') }}</textarea>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div>
-                                <label for="target_role" class="block text-sm font-semibold text-gray-700 mb-1">{{ __('កំណត់គោលដៅអ្នកប្រើប្រាស់') }}</label>
-                                <select name="target_role" id="target_role" class="form-select w-full rounded-xl border-gray-300 shadow-sm focus:ring-green-500 focus:border-green-500 transition duration-150 ease-in-out">
-                                    <option value="all" {{ old('target_role') == 'all' ? 'selected' : '' }}>{{ __('ជ្រើសរើស') }}</option>
-                                    @foreach ($role as $role)
-                                        <option value="{{ $role }}" {{ old('target_role') == $role ? 'selected' : '' }}>
-                                            {{ __($role) }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            {{-- <div>
-                                <label for="course_offering_id" class="block text-sm font-semibold text-gray-700 mb-1">{{ __('ការផ្តល់ជូនវគ្គសិក្សា (ស្រេចចិត្ត)') }}</label>
-                                <select name="course_offering_id" id="course_offering_id" class="form-select w-full rounded-xl border-gray-300 shadow-sm focus:ring-green-500 focus:border-green-500 transition duration-150 ease-in-out">
-                                    <option value="">{{ __('សេចក្តីប្រកាសទូទៅ') }}</option>
-                                    @foreach ($courseOfferings as $offering)
-                                        <option value="{{ $offering->id }}" {{ old('course_offering_id') == $offering->id ? 'selected' : '' }}>
-                                           ({{ $offering->program->name_km }}) {{ $offering->course->name_en }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div> --}}
-                        </div>
-                    </div>
-                    
-                    <div class="mt-12 flex justify-between items-center">
-                        <a href="{{ route('admin.announcements.index') }}" class="px-6 py-3 text-gray-600 font-semibold rounded-full hover:bg-gray-200 transition duration-300 transform hover:scale-105">{{ __('ត្រឡប់ក្រោយ') }}</a>
-
-                        <button type="submit" class="px-8 py-3 bg-gradient-to-r from-blue-500 to-green-600 text-white font-bold rounded-full shadow-lg hover:from-blue-600 hover:to-green-700 transition duration-300 transform hover:scale-105 flex items-center space-x-2">
-                            <span>{{ __('បង្កើតសេចក្តីប្រកាស') }}</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                        <button @click="show = false" class="text-gray-400 hover:text-gray-600 transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                             </svg>
                         </button>
                     </div>
-                </form>
+                    <div class="absolute bottom-0 left-0 right-0 h-1 bg-gray-100 rounded-b-2xl overflow-hidden">
+                        <div class="h-full transition-all duration-75 ease-linear {{ session('success') ? 'bg-emerald-500' : 'bg-red-500' }}" :style="`width: ${progress}%`"></div>
+                    </div>
+                </div>
             </div>
+            @endif
+
+            {{-- Validation Errors --}}
+            @if ($errors->any())
+            <div class="mb-6 bg-red-50 border border-red-200 rounded-2xl p-4">
+                <div class="flex items-start gap-3">
+                    <div class="flex-shrink-0 w-8 h-8 bg-red-100 rounded-xl flex items-center justify-center mt-0.5">
+                        <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-sm font-bold text-red-800">{{ __('មានបញ្ហា!') }}</p>
+                        <ul class="mt-1 text-sm text-red-700 list-disc list-inside">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            @endif
+
+            {{-- Form --}}
+            <form method="POST" action="{{ route('admin.announcements.store') }}">
+                @csrf
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 space-y-6">
+
+                    {{-- Titles --}}
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                            <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                            {{ __('ចំណងជើង') }}
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="title_km" class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('ចំណងជើង (ខ្មែរ)') }} <span class="text-red-500">*</span></label>
+                                <input type="text" name="title_km" id="title_km" value="{{ old('title_km') }}" required
+                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder-gray-400"
+                                    placeholder="{{ __('បញ្ចូលចំណងជើងជាភាសាខ្មែរ') }}">
+                            </div>
+                            <div>
+                                <label for="title_en" class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('ចំណងជើង (អង់គ្លេស)') }}</label>
+                                <input type="text" name="title_en" id="title_en" value="{{ old('title_en') }}"
+                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder-gray-400"
+                                    placeholder="{{ __('បញ្ចូលចំណងជើងជាភាសាអង់គ្លេស') }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="border-gray-100">
+
+                    {{-- Content --}}
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                            <div class="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                            {{ __('ខ្លឹមសារ') }}
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="content_km" class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('ខ្លឹមសារ (ខ្មែរ)') }} <span class="text-red-500">*</span></label>
+                                <textarea name="content_km" id="content_km" rows="6" required
+                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder-gray-400 resize-none"
+                                    placeholder="{{ __('បញ្ចូលខ្លឹមសារជាភាសាខ្មែរ') }}">{{ old('content_km') }}</textarea>
+                            </div>
+                            <div>
+                                <label for="content_en" class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('ខ្លឹមសារ (អង់គ្លេស)') }}</label>
+                                <textarea name="content_en" id="content_en" rows="6"
+                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder-gray-400 resize-none"
+                                    placeholder="{{ __('បញ្ចូលខ្លឹមសារជាភាសាអង់គ្លេស') }}">{{ old('content_en') }}</textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="border-gray-100">
+
+                    {{-- Settings --}}
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                            <div class="w-2 h-2 bg-purple-500 rounded-full"></div>
+                            {{ __('ការកំណត់') }}
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="target_role" class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('កំណត់គោលដៅអ្នកប្រើប្រាស់') }}</label>
+                                <select name="target_role" id="target_role"
+                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 appearance-none bg-no-repeat bg-right pr-10"
+                                    style="background-image: url('data:image/svg+xml;utf8,<svg fill=&quot;%236B7280&quot; viewBox=&quot;0 0 20 20&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;><path fill-rule=&quot;evenodd&quot; d=&quot;M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z&quot; clip-rule=&quot;evenodd&quot;/></svg>'); background-position: right 0.75rem center; background-size: 1.25rem;">
+                                    <option value="all" {{ old('target_role') == 'all' ? 'selected' : '' }}>{{ __('ទាំងអស់') }}</option>
+                                    <option value="student" {{ old('target_role') == 'student' ? 'selected' : '' }}>{{ __('សិស្ស') }}</option>
+                                    <option value="professor" {{ old('target_role') == 'professor' ? 'selected' : '' }}>{{ __('គ្រូបង្រៀន') }}</option>
+                                    <option value="admin" {{ old('target_role') == 'admin' ? 'selected' : '' }}>{{ __('អ្នកគ្រប់គ្រង') }}</option>
+                                </select>
+                            </div>
+                            <div></div>
+                        </div>
+                    </div>
+
+                </div>
+
+                {{-- Actions --}}
+                <div class="flex items-center justify-between mt-6">
+                    <a href="{{ route('admin.announcements.index') }}" class="px-6 py-3 text-sm font-bold text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors duration-200">
+                        {{ __('ត្រឡប់ក្រោយ') }}
+                    </a>
+                    <button type="submit" class="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold text-sm rounded-xl shadow-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 hover:shadow-xl">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        {{ __('បង្កើតសេចក្តីប្រកាស') }}
+                    </button>
+                </div>
+            </form>
+
         </div>
     </div>
 </x-app-layout>

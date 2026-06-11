@@ -1,460 +1,347 @@
 <x-app-layout>
-    {{-- នាំចូល Font --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Moul&display=swap" rel="stylesheet">
 
     <style>
-        :root { 
-            --font-header: 'Moul', serif; 
-            --font-body: 'Battambang', system-ui, sans-serif; 
-            
-        }
-
-        /* ----------------------------------------- */
-        /* 🖨️ CSS សម្រាប់ PRINT ONLY (UPDATED SIZE) */
-        /* ----------------------------------------- */
-        #printable-schedule-container { display: none; } 
-
+        :root { --font-header: 'Moul', serif; --font-body: 'Battambang', system-ui, sans-serif; }
+        #printable-schedule-container { display: none; }
         @media print {
-            @page { 
-                size: A4 landscape; 
-                margin: 5mm; /* Margin តូចបំផុត */
-            }
-            
-            body { 
-                background: white !important; 
-                -webkit-print-color-adjust: exact; 
-                margin: 0;
-                padding: 0;
-                font-family: 'Battambang', system-ui !important;
-                /* 🔥 ZOOM: ដំឡើងមក 90% វិញឱ្យធំពេញភ្នែក */
-                zoom: 90%; 
-            }
-            
-            .no-print { display: none !important; } 
-            
-            #printable-schedule-container { 
-                display: flex !important;
-                flex-direction: column;
-                width: 100% !important; 
-                height: 98vh; /* ពេញកម្ពស់ */
-                justify-content: space-between; 
-            }
-
-            /* --- Header Layout --- */
-            .header-print-layout {
-                display: grid;
-                grid-template-columns: 1fr 1fr 1fr;
-                align-items: start;
-                border-bottom: 2px solid #000;
-                padding-bottom: 10px;
-                margin-bottom: 15px;
-            }
-            
-            .header-left { 
-                text-align: center; 
-                display: flex; flex-direction: column; align-items: center; justify-content: center;
-            }
-            .header-center { 
-                text-align: center; 
-                display: flex; flex-direction: column; align-items: center; justify-content: center;
-            }
+            @page { size: A4 landscape; margin: 5mm; }
+            body { background: white !important; -webkit-print-color-adjust: exact; margin: 0; padding: 0; font-family: 'Battambang', system-ui !important; zoom: 90%; }
+            .no-print { display: none !important; }
+            #printable-schedule-container { display: flex !important; flex-direction: column; width: 100% !important; height: 98vh; justify-content: space-between; }
+            .header-print-layout { display: grid; grid-template-columns: 1fr 1fr 1fr; align-items: start; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; }
+            .header-left { text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+            .header-center { text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
             .header-right { text-align: right; }
-
-            /* Font Fixing */
-            .font-moul { 
-                font-family: 'Moul', serif !important; 
-                font-weight: normal !important; 
-            }
-
-            .uni-logo-text h3 { 
-                font-size: 11pt; /* ធំជាងមុន */
-                color: #2a58ad; 
-                margin: 3px 0; 
-                line-height: 1.4; 
-            }
-            .uni-logo-text img { width: 85px; height: auto; margin-bottom: 5px; } /* Logo ធំជាងមុន */
-
-            .kingdom-header h2 { 
-                font-size: 12pt; /* ធំជាងមុន */
-                margin: 3px 0; 
-                color: black; 
-                line-height: 1.4;
-            }
+            .font-moul { font-family: 'Moul', serif !important; font-weight: normal !important; }
+            .uni-logo-text h3 { font-size: 11pt; color: #2a58ad; margin: 3px 0; line-height: 1.4; }
+            .uni-logo-text img { width: 85px; height: auto; margin-bottom: 5px; }
+            .kingdom-header h2 { font-size: 12pt; margin: 3px 0; color: black; line-height: 1.4; }
             .kingdom-header img { width: 110px; height: auto; margin-top: 5px; }
-
             .schedule-title-block { text-align: center; margin-bottom: 20px; }
-            .schedule-title-block h1 { 
-                font-size: 13pt; /* ធំជាងមុន */
-                margin: 5px 0; 
-                color: black;
-            }
+            .schedule-title-block h1 { font-size: 13pt; margin: 5px 0; color: black; }
             .schedule-title-block p { font-size: 10pt; font-weight: bold; margin: 0; }
-
-            /* --- Table Styles --- */
-            .table-wrapper { 
-                flex-grow: 1; 
-                display: flex;
-                flex-direction: column;
-                gap: 20px; 
-            }
-
-            .matrix-table { 
-                width: 100%; 
-                border-collapse: collapse; 
-                border: 1.5pt solid black; 
-            }
-            
-            .matrix-table th, .matrix-table td { 
-                border: 1pt solid black; 
-                padding: 8px; /* 🔥 PADDING ធំជាងមុន (ពី 4px ទៅ 8px) ឱ្យ Table ធំ */
-                text-align: center; 
-                vertical-align: middle; 
-                font-size: 9.5pt; /* អក្សរធំជាងមុន */
-                line-height: 1.4;
-            }
-            
-            .matrix-table th { 
-                font-size: 9.5pt; 
-                background-color: #f1f5f9 !important; 
-                height: 35px; 
-                color: black;
-            }
-            
-            /* Content inside cells */
+            .table-wrapper { flex-grow: 1; display: flex; flex-direction: column; gap: 20px; }
+            .matrix-table { width: 100%; border-collapse: collapse; border: 1.5pt solid black; }
+            .matrix-table th, .matrix-table td { border: 1pt solid black; padding: 8px; text-align: center; vertical-align: middle; font-size: 9.5pt; line-height: 1.4; }
+            .matrix-table th { font-size: 9.5pt; background-color: #f1f5f9 !important; height: 35px; color: black; }
             .cell-subject { font-weight: bold; display: block; font-size: 9.5pt; margin-bottom: 4px; }
             .cell-lecturer { display: block; font-size: 9pt; color: #000; }
             .cell-room { display: block; font-weight: bold; font-size: 9pt; color: #000000; }
-
-            /* --- Footer Signatures --- */
-            /* .f-sigs { 
-                display: flex; 
-                justify-content: space-between; 
-                margin-top: 10px; 
-                padding-bottom: 10px;
-            } */
-            .f-sigs { 
-    page-break-inside: avoid; 
-    display: flex; 
-    justify-content: space-between; 
-    margin-top: 20px; 
-}
+            .f-sigs { page-break-inside: avoid; display: flex; justify-content: space-between; margin-top: 20px; }
             .sig-block { text-align: center; width: 35%; }
-            
             .sig-title-top { font-size: 10pt; margin-bottom: 10px; }
             .sig-role { font-size: 10pt; margin: 0; }
-            .sig-spacer { height: 80px; } /* កន្លែងហត្ថលេខាធំជាងមុន */
+            .sig-spacer { height: 80px; }
             .sig-name { font-size: 11pt; font-weight: bold; color: #2a58ad; }
             .sig-date { font-size: 9pt; margin-bottom: 5px; }
         }
     </style>
 
-    {{-- UI ដើមរបស់ Admin (SCREEN VIEW - មិនកែប្រែ) --}}
-    <div class="min-h-screen bg-gray-100 font-sans text-gray-900 no-print">
-        <div class="bg-slate-900 text-white pb-32 pt-12 shadow-md">
+    {{-- SCREEN VIEW --}}
+    <div class="min-h-screen bg-gray-50 font-sans text-gray-900 no-print">
+        {{-- Header --}}
+        <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white pb-28 pt-10 shadow-lg">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                    <div>
-                        <div class="flex items-center gap-3 mb-2">
-                            <span class="px-2.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 text-xs font-bold uppercase tracking-wider border border-emerald-500/30">
-                                Academic Year {{ date('Y') }}
-                            </span>
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-blue-500/20 flex items-center justify-center">
+                            <i class="fas fa-book-open text-blue-300 text-xl"></i>
                         </div>
-                        <h2 class="text-3xl font-extrabold tracking-tight text-white">{{ __('ការផ្តល់ជូនមុខវិជ្ជា') }}</h2>
-                        <p class="text-slate-400 mt-2 max-w-2xl text-sm leading-relaxed">{{ __('គ្រប់គ្រង និងតាមដានការបែងចែកមុខវិជ្ជាទៅតាមជំនាញ សាស្ត្រាចារ្យ និងកាលវិភាគសិក្សា។') }}</p>
+                        <div>
+                            <h2 class="text-3xl font-bold tracking-tight">{{ __('ការផ្តល់ជូនមុខវិជ្ជា') }}</h2>
+                            <p class="text-slate-400 mt-1 text-sm">{{ __('គ្រប់គ្រងការបែងចែកមុខវិជ្ជាទៅតាមជំនាញ និងកាលវិភាគ') }}</p>
+                        </div>
                     </div>
-
-                    <div class="flex flex-wrap items-center gap-3" x-data="{ viewMode: '{{ request('view', 'grid') }}' }">
-                        <div class="flex gap-2 mr-2">
-                            <button onclick="exportToWord()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2.5 rounded-lg font-bold shadow-lg transition-all flex items-center gap-2 text-sm">
-                                <i class="fas fa-file-word"></i> Word
-                            </button>
-                            <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2.5 rounded-lg font-bold shadow-lg transition-all flex items-center gap-2 text-sm">
-                                <i class="fas fa-print"></i> {{ __('print') }}
-                            </button>
-                        </div>
-                        <div class="bg-slate-800 p-1 rounded-lg border border-slate-700 flex">
-                            <button @click="viewMode = 'grid'; $dispatch('view-changed', 'grid')" :class="viewMode === 'grid' ? 'bg-slate-700 text-white' : 'text-slate-400 hover:text-slate-200'" class="p-2 rounded-md transition-all"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg></button>
-                            <button @click="viewMode = 'table'; $dispatch('view-changed', 'table')" :class="viewMode === 'table' ? 'bg-slate-700 text-white' : 'text-slate-400 hover:text-slate-200'" class="p-2 rounded-md transition-all"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg></button>
-                        </div>
-                        <a href="{{ route('admin.create-course-offering') }}" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-lg font-bold shadow-lg transition-all transform hover:-translate-y-0.5">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                            <span>{{ __('បន្ថែមថ្មី') }}</span>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <button onclick="exportToWord()" class="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2.5 rounded-xl font-bold transition-all text-sm backdrop-blur-sm">
+                            <i class="fas fa-file-word"></i> <span>Word</span>
+                        </button>
+                        <button onclick="window.print()" class="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2.5 rounded-xl font-bold transition-all text-sm backdrop-blur-sm">
+                            <i class="fas fa-print"></i> <span>{{ __('បោះពុម្ព') }}</span>
+                        </button>
+                        <a href="{{ route('admin.create-course-offering') }}" class="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white px-5 py-2.5 rounded-xl font-bold shadow-lg transition-all text-sm">
+                            <i class="fas fa-plus"></i> <span>{{ __('បន្ថែមថ្មី') }}</span>
                         </a>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-24 pb-12 relative z-10">
-        <div class="bg-white rounded-xl shadow-xl border border-gray-100 p-5 mb-8">
-            <form action="{{ route('admin.manage-course-offerings') }}" method="GET" class="grid grid-cols-1 md:grid-cols-12 gap-5 items-end">
-                
-                {{-- 1. Search Box --}}
-                <div class="md:col-span-3">
-                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 block">{{ __('ស្វែងរកមុខវិជ្ជា/សាស្ត្រាចារ្យ') }}</label>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('ស្វែងរក...') }}" class="block w-full rounded-lg border-gray-200 bg-gray-50 focus:bg-white sm:text-sm py-2.5 shadow-sm">
-                </div>
-                
-                {{-- 2. Program --}}
-                <div class="md:col-span-2">
-                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 block">{{ __('កម្មវិធីសិក្សា') }}</label>
-                    <select name="program_id" class="block w-full rounded-lg border-gray-200 bg-gray-50 focus:bg-white sm:text-sm py-2.5">
-                        <option value="">{{ __('បង្ហាញទាំងអស់') }}</option>
-                        @foreach($programs as $program)
-                            <option value="{{ $program->id }}" {{ request('program_id') == $program->id ? 'selected' : '' }}>{{ $program->name_km }}</option>
-                        @endforeach
-                    </select>
-                </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-20 pb-12 relative z-10">
+            {{-- Filter Card --}}
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-8">
+                <form action="{{ route('admin.manage-course-offerings') }}" method="GET" class="space-y-4">
+                    {{-- Row 1: Search --}}
+                    <div>
+                        <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('ស្វែងរកមុខវិជ្ជា / សាស្ត្រាចារ្យ') }}</label>
+                        <div class="relative">
+                            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('វាយឈ្មោះមុខវិជ្ជា ឬសាស្ត្រាចារ្យ...') }}" class="w-full pl-10 pr-4 rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+                        </div>
+                    </div>
 
-                {{-- 3. Generation --}}
-                <div class="md:col-span-1">
-                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 block">{{ __('ជំនាន់') }}</label>
-                    <input type="text" name="generation" value="{{ request('generation') }}" placeholder="Ex: 17" class="block w-full rounded-lg border-gray-200 bg-gray-50 focus:bg-white sm:text-sm py-2.5">
-                </div>
+                    {{-- Row 2: Filters --}}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
+                        <div>
+                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('កម្មវិធីសិក្សា') }}</label>
+                            <select name="program_id" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 text-sm">
+                                <option value="">{{ __('ទាំងអស់') }}</option>
+                                @foreach($programs as $program)
+                                    <option value="{{ $program->id }}" {{ request('program_id') == $program->id ? 'selected' : '' }}>{{ $program->name_km }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('ជំនាន់') }}</label>
+                            <input type="text" name="generation" value="{{ request('generation') }}" placeholder="Ex: 17" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 text-sm">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('វេនសិក្សា') }}</label>
+                            <select name="shift" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 text-sm">
+                                <option value="">{{ __('ទាំងអស់') }}</option>
+                                <option value="weekday" {{ request('shift') == 'weekday' ? 'selected' : '' }}>{{ __('ចន្ទ-សុក្រ') }}</option>
+                                <option value="weekend" {{ request('shift') == 'weekend' ? 'selected' : '' }}>{{ __('សៅរ៍-អាទិត្យ') }}</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('ឆមាស') }}</label>
+                            <select name="semester" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 text-sm">
+                                <option value="">{{ __('ទាំងអស់') }}</option>
+                                <option value="ឆមាសទី១" {{ request('semester') == 'ឆមាសទី១' ? 'selected' : '' }}>{{ __('ឆមាសទី១') }}</option>
+                                <option value="ឆមាសទី២" {{ request('semester') == 'ឆមាសទី២' ? 'selected' : '' }}>{{ __('ឆមាសទី២') }}</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('ឆ្នាំសិក្សា') }}</label>
+                            <select name="academic_year" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 text-sm">
+                                <option value="">{{ __('ទាំងអស់') }}</option>
+                                @foreach($academicYears as $year)
+                                    <option value="{{ $year->name }}" {{ request('academic_year') == $year->name ? 'selected' : '' }}>{{ $year->name }} {{ $year->is_current ? '('.__('បច្ចុប្បន្ន').')' : '' }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('សាស្ត្រាចារ្យ') }}</label>
+                            <select name="lecturer_id" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 text-sm">
+                                <option value="">{{ __('ទាំងអស់') }}</option>
+                                @foreach($lecturers as $lecturer)
+                                    <option value="{{ $lecturer->id }}" {{ request('lecturer_id') == $lecturer->id ? 'selected' : '' }}>{{ $lecturer->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
 
-                {{-- 🔥 4. SHIFT FILTER (ថ្មី) 🔥 --}}
-                <div class="md:col-span-2">
-                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 block">{{ __('វេនសិក្សា (Shift)') }}</label>
-                    <select name="shift" class="block w-full rounded-lg border-gray-200 bg-gray-50 focus:bg-white sm:text-sm py-2.5">
-                        <option value="">{{ __('ទាំងអស់') }}</option>
-                        <option value="weekday" {{ request('shift') == 'weekday' ? 'selected' : '' }}>ចន្ទ-សុក្រ (Weekday)</option>
-                        <option value="weekend" {{ request('shift') == 'weekend' ? 'selected' : '' }}>សៅរ៍-អាទិត្យ (Weekend)</option>
-                    </select>
-                </div>
-
-                {{-- 5. Semester --}}
-                <div class="md:col-span-1">
-                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 block">{{ __('ឆមាស') }}</label>
-                    <select name="semester" class="block w-full rounded-lg border-gray-200 bg-gray-50 focus:bg-white sm:text-sm py-2.5">
-                        <option value="">{{ __('ទាំងអស់') }}</option>
-                        <option value="ឆមាសទី១" {{ request('semester') == 'ឆមាសទី១' ? 'selected' : '' }}>{{ __('ឆមាសទី១') }}</option>
-                        <option value="ឆមាសទី២" {{ request('semester') == 'ឆមាសទី២' ? 'selected' : '' }}>{{ __('ឆមាសទី២') }}</option>
-                    </select>
-                </div>
-
-                {{-- 6. Academic Year --}}
-                <div class="md:col-span-2">
-                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 block">{{ __('ឆ្នាំសិក្សា') }}</label>
-                    <select name="academic_year" class="block w-full rounded-lg border-gray-200 bg-gray-50 focus:bg-white sm:text-sm py-2.5">
-                        <option value="">{{ __('ទាំងអស់') }}</option>
-                        @foreach($academicYears as $year)
-                            <option value="{{ $year->name }}" {{ request('academic_year') == $year->name ? 'selected' : '' }}>{{ $year->name }} {{ $year->is_current ? '('.__('បច្ចុប្បន្ន').')' : '' }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                {{-- 7. Lecturer --}}
-                <div class="md:col-span-1">
-                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 block">{{ __('សាស្ត្រាចារ្យ') }}</label>
-                    <select name="lecturer_id" class="block w-full rounded-lg border-gray-200 bg-gray-50 focus:bg-white sm:text-sm py-2.5">
-                        <option value="">{{ __('ទាំងអស់') }}</option>
-                        @foreach($lecturers as $lecturer)
-                            <option value="{{ $lecturer->id }}" {{ request('lecturer_id') == $lecturer->id ? 'selected' : '' }}>{{ $lecturer->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-{{-- Status Filter --}}
-{{-- <div class="md:col-span-2">
-    <label class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 block">ស្ថានភាព (Status)</label>
-    <select name="status" class="block w-full rounded-lg border-gray-200 bg-gray-50 focus:bg-white sm:text-sm py-2.5 transition-all">
-        <option value="">{{ __('ទាំងអស់') }}</option>
-        <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>សកម្ម (Active)</option>
-        <option value="expired" {{ request('status') == 'expired' ? 'selected' : '' }}>ផុតកំណត់ (Expired)</option>
-    </select>
-</div> --}}
-                {{-- Buttons --}}
-                <div class="md:col-span-12 flex justify-end gap-2 mt-2">
-                     {{-- Reset Button --}}
-                     <a href="{{ route('admin.manage-course-offerings') }}" class="px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg transition-colors font-bold text-sm">
-                        <i class="fas fa-sync-alt mr-1"></i> Reset
-                    </a>
-                    {{-- Filter Button --}}
-                    <button type="submit" class="bg-slate-800 hover:bg-slate-700 text-white font-bold px-6 py-2.5 rounded-lg transition-colors shadow-md text-sm">
-                        <i class="fas fa-filter mr-1"></i> Filter Data
-                    </button>
-                </div>
-            </form>
-        </div>
-            
-<div x-data="{ viewMode: '{{ request('view', 'grid') }}' }" @view-changed.window="viewMode = $event.detail">
-    
-    {{-- GRID VIEW (Cards) --}}
-    <div x-show="viewMode === 'grid'" x-cloak>
-        @if($courseOfferings->isEmpty())
-            <div class="bg-white p-20 text-center rounded-3xl shadow-sm border border-dashed border-gray-300">
-                <i class="fas fa-search fa-3x text-gray-200 mb-4"></i>
-                <p class="text-gray-500 font-medium italic">មិនមានទិន្នន័យសម្រាប់ការ Filter នេះទេ!</p>
+                    {{-- Row 3: Actions --}}
+                    <div class="flex justify-end gap-3 pt-2 border-t border-gray-100">
+                        <a href="{{ route('admin.manage-course-offerings') }}" class="flex items-center gap-2 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl font-bold text-sm transition-colors">
+                            <i class="fas fa-undo"></i> <span>{{ __('កំណត់ឡើងវិញ') }}</span>
+                        </a>
+                        <button type="submit" class="flex items-center gap-2 bg-gradient-to-r from-slate-800 to-slate-700 hover:from-slate-700 hover:to-slate-600 text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-md transition-all">
+                            <i class="fas fa-filter"></i> <span>{{ __('ត្រងទិន្នន័យ') }}</span>
+                        </button>
+                    </div>
+                </form>
             </div>
-        @else
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                @foreach ($courseOfferings as $offering)
-                    <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative group">
-                        {{-- Your existing card content (unchanged) --}}
-                        <div class="flex justify-between items-start mb-4">
-                            @php
-                                $today = now()->startOfDay();
-                                $isActive = $today->between($offering->start_date, $offering->end_date);
-                            @endphp
 
-                            <div class="flex flex-col">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider border {{ $isActive ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : 'bg-rose-50 text-rose-600 border-rose-200' }}">
-                                    <span class="w-1.5 h-1.5 rounded-full mr-1.5 {{ $isActive ? 'bg-emerald-500' : 'bg-rose-500' }}"></span>
-                                    {{ $isActive ? 'Active' : 'Expired' }}
-                                </span>
-                                <span class="text-[10px] font-black text-emerald-600 uppercase tracking-widest bg-emerald-50 px-2 py-1 rounded-md mb-2 w-fit">
-                                    Sem {{ $offering->semester }} / {{ $offering->academic_year }}
-                                </span>
-                                <div class="flex flex-wrap gap-1">
-                                    @foreach($offering->targetPrograms as $p)
-                                        <span class="bg-blue-50 text-blue-600 px-2 py-0.5 rounded text-[9px] font-bold border border-blue-100">
-                                            {{ $p->name_km }} (G{{ $p->pivot->generation }})
-                                        </span>
-                                    @endforeach
-                                </div>
-                            </div>
+            {{-- Content --}}
+            <div x-data="{ viewMode: '{{ request('view', 'grid') }}' }" @view-changed.window="viewMode = $event.detail">
 
-                            <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <a href="{{ route('admin.edit-course-offering', $offering->id) }}" 
-                                   class="p-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-colors">
-                                    <i class="fas fa-edit text-xs"></i>
-                                </a>
-                                <button onclick="openDeleteModal({{ $offering->id }})" 
-                                        class="p-2 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white transition-colors">
-                                    <i class="fas fa-trash text-xs"></i>
-                                </button>
+                {{-- GRID VIEW --}}
+                <div x-show="viewMode === 'grid'" x-cloak>
+                    @if($courseOfferings->isEmpty())
+                        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-16 text-center">
+                            <div class="w-20 h-20 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-5">
+                                <i class="fas fa-book-open text-gray-300 text-3xl"></i>
                             </div>
+                            <h3 class="text-lg font-bold text-gray-600 mb-2">{{ __('មិនមានការផ្តល់ជូនមុខវិជ្ជា') }}</h3>
+                            <p class="text-gray-400 text-sm mb-6">{{ __('សូមព្យាយាមកំណត់ឡើងវិញ ឬបន្ថែមការផ្តល់ជូនថ្មី') }}</p>
+                            <a href="{{ route('admin.create-course-offering') }}" class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition-all">
+                                <i class="fas fa-plus"></i> <span>{{ __('បន្ថែមថ្មី') }}</span>
+                            </a>
                         </div>
+                    @else
+                        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                            @foreach ($courseOfferings as $offering)
+                                @php
+                                    $today = now()->startOfDay();
+                                    $isActive = $today->between($offering->start_date, $offering->end_date);
+                                    $enrollmentCount = $offering->studentCourseEnrollments->count();
+                                @endphp
+                                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-all duration-200 group">
+                                    {{-- Header --}}
+                                    <div class="flex items-start justify-between mb-4">
+                                        <div class="space-y-2">
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold {{ $isActive ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-red-50 text-red-700 border border-red-200' }}">
+                                                <span class="w-1.5 h-1.5 rounded-full {{ $isActive ? 'bg-emerald-500' : 'bg-red-500' }}"></span>
+                                                {{ $isActive ? 'សកម្ម' : 'ផុតកំណត់' }}
+                                            </span>
+                                            <div class="flex flex-wrap gap-1.5">
+                                                @foreach($offering->targetPrograms as $p)
+                                                    <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-100">
+                                                        {{ $p->name_km }} (G{{ $p->pivot->generation }})
+                                                    </span>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                        <div class="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <a href="{{ route('admin.edit-course-offering', $offering->id) }}" class="p-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-colors text-xs">
+                                                <i class="fas fa-pen"></i>
+                                            </a>
+                                            <button onclick="openDeleteModal({{ $offering->id }})" class="p-2 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white transition-colors text-xs">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
 
-                        <h4 class="font-bold text-gray-900 text-lg mb-2 leading-tight">
-                            {{ $offering->course->title_km ?? $offering->course->title_en }}
-                        </h4>
+                                    {{-- Course Title --}}
+                                    <h4 class="font-bold text-gray-900 text-lg mb-1 leading-tight">
+                                        {{ $offering->course->title_km ?? $offering->course->title_en }}
+                                    </h4>
+                                    <p class="text-xs text-gray-400 font-medium mb-3">
+                                        {{ $offering->semester }} / {{ $offering->academic_year }}
+                                    </p>
 
-                        <div class="flex items-center gap-2 mb-5">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 text-xs">
-                                <i class="fas fa-user-tie"></i>
-                            </div>
-                            <span class="text-sm font-semibold text-slate-600">
-                                {{ $offering->lecturer->name ?? 'Unassigned' }}
-                            </span>
-                        </div>
+                                    {{-- Lecturer --}}
+                                    <div class="flex items-center gap-2.5 mb-4 pb-4 border-b border-gray-100">
+                                        <div class="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500">
+                                            <i class="fas fa-user-tie text-xs"></i>
+                                        </div>
+                                        <span class="text-sm font-semibold text-slate-700">{{ $offering->lecturer->name ?? 'មិនទាន់កំណត់' }}</span>
+                                    </div>
 
-                        <div class="space-y-2 border-t pt-5">
-                            @foreach($offering->schedules as $s)
-                                <div class="flex justify-between items-center text-[11px] bg-slate-50 p-2 rounded-xl">
-                                    <span class="font-bold text-slate-800">{{ substr($s->day_of_week, 0, 3) }}</span>
-                                    <span class="text-slate-500 font-medium">
-                                        {{ \Carbon\Carbon::parse($s->start_time)->format('H:i') }} - 
-                                        {{ \Carbon\Carbon::parse($s->end_time)->format('H:i') }}
-                                    </span>
-                                    <span class="text-emerald-600 font-bold bg-white px-2 py-0.5 rounded-md border border-emerald-100">
-                                        Rm: {{ $s->room->room_number ?? '-' }}
-                                    </span>
+                                    {{-- Enrollment Count --}}
+                                    <div class="flex items-center gap-2.5 mb-4 pb-4 border-b border-gray-100">
+                                        <div class="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-500">
+                                            <i class="fas fa-users text-xs"></i>
+                                        </div>
+                                        <span class="text-sm font-semibold text-slate-700">{{ $enrollmentCount }} សិស្សចុះឈ្មោះ</span>
+                                    </div>
+
+                                    {{-- Schedules --}}
+                                    <div class="space-y-2">
+                                        @forelse($offering->schedules as $s)
+                                            <div class="flex items-center justify-between text-xs bg-gray-50 px-3 py-2 rounded-xl">
+                                                <span class="font-bold text-gray-700">{{ substr($s->day_of_week, 0, 3) }}</span>
+                                                <span class="text-gray-500 font-medium">
+                                                    {{ \Carbon\Carbon::parse($s->start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($s->end_time)->format('H:i') }}
+                                                </span>
+                                                <span class="font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md">
+                                                    {{ $s->room->room_number ?? '-' }}
+                                                </span>
+                                            </div>
+                                        @empty
+                                            <p class="text-xs text-gray-400 italic">{{ __('មិនទាន់មានកាលវិភាគ') }}</p>
+                                        @endforelse
+                                    </div>
                                 </div>
                             @endforeach
                         </div>
-                    </div>
-                @endforeach
-            </div>
-        @endif
-    </div>
+                    @endif
+                </div>
 
-    {{-- TABLE VIEW (NEW) --}}
-    <div x-show="viewMode === 'table'" x-cloak>
-        @if($courseOfferings->isEmpty())
-            <div class="bg-white p-20 text-center rounded-3xl shadow-sm border border-dashed border-gray-300">
-                <i class="fas fa-search fa-3x text-gray-200 mb-4"></i>
-                <p class="text-gray-500 font-medium italic">មិនមានទិន្នន័យសម្រាប់ការ Filter នេះទេ!</p>
-            </div>
-        @else
-            <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-slate-50">
-                        <tr>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">{{ __('មុខវិជ្ជា') }}</th>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">{{ __('សាស្ត្រាចារ្យ') }}</th>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">ឆមាស / ឆ្នាំ</th>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">{{ __('ជំនាញ') }}</th>
-                            <th class="px-6 py-4 text-center text-xs font-bold text-slate-600 uppercase tracking-wider">កាលវិភាគ</th>
-                            <th class="px-6 py-4 text-center text-xs font-bold text-slate-600 uppercase tracking-wider">{{ __('ស្ថានភាព') }}</th>
-                            <th class="px-6 py-4 text-center text-xs font-bold text-slate-600 uppercase tracking-wider">{{ __('សកម្មភាព') }}</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-100">
-                        @foreach ($courseOfferings as $offering)
-                            @php
-                                $today = now()->startOfDay();
-                                $isActive = $today->between($offering->start_date, $offering->end_date);
-                            @endphp
-                            <tr class="hover:bg-slate-50 transition-colors">
-                                <td class="px-6 py-4">
-                                    <div class="font-semibold text-gray-900">
-                                        {{ $offering->course->title_km ?? $offering->course->title_en }}
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center gap-2">
-                                        <i class="fas fa-user-tie text-slate-400"></i>
-                                        <span class="font-medium">{{ $offering->lecturer->name ?? 'Unassigned' }}</span>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <span class="text-sm">Sem {{ $offering->semester }} / {{ $offering->academic_year }}</span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="flex flex-wrap gap-1">
-                                        @foreach($offering->targetPrograms as $p)
-                                            <span class="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
-                                                {{ $p->name_km }} (G{{ $p->pivot->generation }})
-                                            </span>
+                {{-- TABLE VIEW --}}
+                <div x-show="viewMode === 'table'" x-cloak>
+                    @if($courseOfferings->isEmpty())
+                        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-16 text-center">
+                            <div class="w-20 h-20 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-5">
+                                <i class="fas fa-book-open text-gray-300 text-3xl"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-600 mb-2">{{ __('មិនមានការផ្តល់ជូនមុខវិជ្ជា') }}</h3>
+                            <p class="text-gray-400 text-sm mb-6">{{ __('សូមព្យាយាមកំណត់ឡើងវិញ ឬបន្ថែមការផ្តល់ជូនថ្មី') }}</p>
+                            <a href="{{ route('admin.create-course-offering') }}" class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition-all">
+                                <i class="fas fa-plus"></i> <span>{{ __('បន្ថែមថ្មី') }}</span>
+                            </a>
+                        </div>
+                    @else
+                        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-5 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('មុខវិជ្ជា') }}</th>
+                                            <th class="px-5 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('សាស្ត្រាចារ្យ') }}</th>
+                                            <th class="px-5 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('ឆមាស / ឆ្នាំ') }}</th>
+                                            <th class="px-5 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('ជំនាញ') }}</th>
+                                            <th class="px-5 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('សិស្ស') }}</th>
+                                            <th class="px-5 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('កាលវិភាគ') }}</th>
+                                            <th class="px-5 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('ស្ថានភាព') }}</th>
+                                            <th class="px-5 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('សកម្មភាព') }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-100">
+                                        @foreach ($courseOfferings as $offering)
+                                            @php
+                                                $today = now()->startOfDay();
+                                                $isActive = $today->between($offering->start_date, $offering->end_date);
+                                            @endphp
+                                            <tr class="hover:bg-gray-50 transition-colors">
+                                                <td class="px-5 py-4">
+                                                    <div class="font-semibold text-gray-900 text-sm">{{ $offering->course->title_km ?? $offering->course->title_en }}</div>
+                                                </td>
+                                                <td class="px-5 py-4">
+                                                    <span class="text-sm text-gray-700">{{ $offering->lecturer->name ?? 'មិនទាន់កំណត់' }}</span>
+                                                </td>
+                                                <td class="px-5 py-4">
+                                                    <span class="text-sm text-gray-600">{{ $offering->semester }} / {{ $offering->academic_year }}</span>
+                                                </td>
+                                                <td class="px-5 py-4">
+                                                    <div class="flex flex-wrap gap-1">
+                                                        @foreach($offering->targetPrograms as $p)
+                                                            <span class="text-[10px] bg-blue-50 text-blue-700 px-2 py-0.5 rounded-md font-bold border border-blue-100">
+                                                                {{ $p->name_km }} (G{{ $p->pivot->generation }})
+                                                            </span>
+                                                        @endforeach
+                                                    </div>
+                                                </td>
+                                                <td class="px-5 py-4 text-center">
+                                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-indigo-50 text-indigo-700">
+                                                        {{ $offering->studentCourseEnrollments->count() }}
+                                                    </span>
+                                                </td>
+                                                <td class="px-5 py-4 text-center">
+                                                    @foreach($offering->schedules as $s)
+                                                        <div class="mb-1 last:mb-0">
+                                                            <span class="text-xs font-bold text-gray-700">{{ substr($s->day_of_week, 0, 3) }}</span>
+                                                            <span class="text-xs text-gray-500 mx-1">{{ \Carbon\Carbon::parse($s->start_time)->format('H:i') }}-{{ \Carbon\Carbon::parse($s->end_time)->format('H:i') }}</span>
+                                                            <span class="text-xs text-emerald-600 font-bold">{{ $s->room->room_number ?? '-' }}</span>
+                                                        </div>
+                                                    @endforeach
+                                                </td>
+                                                <td class="px-5 py-4 text-center">
+                                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold {{ $isActive ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-red-50 text-red-700 border border-red-200' }}">
+                                                        <span class="w-1.5 h-1.5 rounded-full {{ $isActive ? 'bg-emerald-500' : 'bg-red-500' }}"></span>
+                                                        {{ $isActive ? 'សកម្ម' : 'ផុតកំណត់' }}
+                                                    </span>
+                                                </td>
+                                                <td class="px-5 py-4 text-center">
+                                                    <div class="flex justify-center gap-1.5">
+                                                        <a href="{{ route('admin.edit-course-offering', $offering->id) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-xl text-xs font-bold hover:bg-blue-600 hover:text-white transition-colors">
+                                                            <i class="fas fa-pen"></i> <span>{{ __('កែ') }}</span>
+                                                        </a>
+                                                        <button onclick="openDeleteModal({{ $offering->id }})" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-50 text-red-600 rounded-xl text-xs font-bold hover:bg-red-600 hover:text-white transition-colors">
+                                                            <i class="fas fa-trash"></i> <span>{{ __('លុប') }}</span>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
                                         @endforeach
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 text-sm">
-                                    @foreach($offering->schedules as $s)
-                                        <div class="mb-1 last:mb-0">
-                                            <span class="font-medium">{{ substr($s->day_of_week, 0, 3) }}</span>
-                                            <span class="text-slate-500 mx-2">
-                                                {{ \Carbon\Carbon::parse($s->start_time)->format('H:i') }}-{{ \Carbon\Carbon::parse($s->end_time)->format('H:i') }}
-                                            </span>
-                                            <span class="text-emerald-600 font-medium">Rm.{{ $s->room->room_number ?? '-' }}</span>
-                                        </div>
-                                    @endforeach
-                                </td>
-                                <td class="px-6 py-4 text-center">
-                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold {{ $isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700' }}">
-                                        {{ $isActive ? 'Active' : 'Expired' }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 text-center">
-                                    <div class="flex justify-center gap-2">
-                                        <a href="{{ route('admin.edit-course-offering', $offering->id) }}" 
-                                           class="p-2 text-blue-600 hover:bg-blue-50 rounded-xl transition-colors">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <button onclick="openDeleteModal({{ $offering->id }})" 
-                                                class="p-2 text-red-600 hover:bg-red-50 rounded-xl transition-colors">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        @endif
-    </div>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    @endif
+                </div>
 
-    {{-- Pagination --}}
-    <div class="mt-12 no-print">{{ $courseOfferings->links() }}</div>
-</div>
-            
+                {{-- Pagination --}}
+                <div class="mt-8 no-print">{{ $courseOfferings->links() }}</div>
+            </div>
         </div>
     </div>
 
-    {{-- 🔥🔥🔥 ផ្នែកសម្រាប់បោះពុម្ព (PRINTABLE AREA - UPDATED) 🔥🔥🔥 --}}
+    {{-- PRINTABLE AREA --}}
     <div id="printable-schedule-container">
         @php
             $allSchedules = collect();
@@ -466,7 +353,6 @@
             $weekdayRows = $weekdaySchedules->groupBy(fn($s) => \Carbon\Carbon::parse($s->start_time)->format('H:i') . '-' . \Carbon\Carbon::parse($s->end_time)->format('H:i'))->sortKeys();
             $weekendTimeSlots = $weekendSchedules->map(fn($s) => \Carbon\Carbon::parse($s->start_time)->format('H:i') . '-' . \Carbon\Carbon::parse($s->end_time)->format('H:i'))->unique()->sort();
 
-            // 🔥 DYNAMIC PROGRAM NAME LOGIC
             $currentProgramName = "ជំនាញ គ្រប់គ្រងបច្ចេកវិទ្យាព័ត៌មានវិទ្យា"; 
             if(request('program_id')){
                 $prog = $programs->firstWhere('id', request('program_id'));
@@ -481,7 +367,6 @@
             $genText = $generation ? "(G$generation)" : "";
         @endphp
 
-        {{-- 🔼 HEADER --}}
         <div>
             <div class="header-print-layout">
                 <div class="header-left uni-logo-text">
@@ -504,9 +389,7 @@
             </div>
         </div>
 
-        {{-- ⏹️ CONTENT TABLES --}}
         <div class="table-wrapper">
-            {{-- 📅 1. MONDAY - FRIDAY --}}
             @if($weekdayRows->isNotEmpty())
                 <div style="text-align: left; font-weight: bold; font-family: 'Battambang'; text-decoration: underline; font-size: 10pt; margin-bottom: 5px;">ជំនាញ {{ $currentProgramName }} {{ $genText }} (Mon-Fri)</div>
                 <table class="matrix-table">
@@ -536,7 +419,6 @@
                 </table>
             @endif
 
-            {{-- 📅 2. SATURDAY - SUNDAY --}}
             @if($weekendSchedules->isNotEmpty())
                 <div style="text-align: left; font-weight: bold; font-family: 'Battambang'; text-decoration: underline; font-size: 10pt; margin-bottom: 5px;">ជំនាញ {{ $currentProgramName }} {{ $genText }} (Sat-Sun)</div>
                 <table class="matrix-table">
@@ -572,37 +454,29 @@
             @endif
         </div>
 
-        {{-- 🔽 FOOTER SIGNATURES --}}
         <div class="f-sigs">
             <div class="sig-block" style="text-align: left; padding-left: 20px;">
                 <div class="sig-title-top font-moul">បានឃើញ និងឯកភាព</div>
                 <div class="sig-role font-moul">ជ. សាកលវិទ្យាធិការ</div>
                 <div class="sig-role font-moul">សាកលវិទ្យាធិការរង</div>
                 <div class="sig-spacer"></div>
-                {{-- <div class="sig-name font-moul">ផុន សុខិន</div> --}}
             </div>
             @php
-    // មុខងារបំប្លែងលេខអារ៉ាប់ ទៅជាលេខខ្មែរ
-    function toKhmerNumber($number) {
-        $khmerNumbers = ['០', '១', '២', '៣', '៤', '៥', '៦', '៧', '៨', '៩'];
-        return str_replace(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'], $khmerNumbers, $number);
-    }
-
-    $now = now(); // ទាញយកម៉ោងបច្ចុប្បន្ន
-    $khmerMonths = [
-        1 => 'មករា', 2 => 'កុម្ភៈ', 3 => 'មីនា', 4 => 'មេសា', 5 => 'ឧសភា', 6 => 'មិថុនា',
-        7 => 'កក្កដា', 8 => 'សីហា', 9 => 'កញ្ញា', 10 => 'តុលា', 11 => 'វិច្ឆិកា', 12 => 'ធ្នូ'
-    ];
-
-    // គណនាឆ្នាំពុទ្ធសករាជ (ព.ស)៖ ឆ្នាំគ្រិស្តសករាជ + ៥៤៣ (ក្រោយថ្ងៃចូលឆ្នាំខ្មែរ) ឬ ៥៤៤
-    $beYear = $now->year + 543; 
-    
-    $day = toKhmerNumber($now->format('d'));
-    $month = $khmerMonths[$now->month];
-    $year = toKhmerNumber($now->year);
-    $beYearKh = toKhmerNumber($beYear);
-@endphp
-            
+                function toKhmerNumber($number) {
+                    $khmerNumbers = ['០', '១', '២', '៣', '៤', '៥', '៦', '៧', '៨', '៩'];
+                    return str_replace(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'], $khmerNumbers, $number);
+                }
+                $now = now();
+                $khmerMonths = [
+                    1 => 'មករា', 2 => 'កុម្ភៈ', 3 => 'មីនា', 4 => 'មេសា', 5 => 'ឧសភា', 6 => 'មិថុនា',
+                    7 => 'កក្កដា', 8 => 'សីហា', 9 => 'កញ្ញា', 10 => 'តុលា', 11 => 'វិច្ឆិកា', 12 => 'ធ្នូ'
+                ];
+                $beYear = $now->year + 543; 
+                $day = toKhmerNumber($now->format('d'));
+                $month = $khmerMonths[$now->month];
+                $year = toKhmerNumber($now->year);
+                $beYearKh = toKhmerNumber($beYear);
+            @endphp
             <div class="sig-block" style="text-align: right; padding-right: 20px;">
                 <div class="sig-date">
                     ថ្ងៃទី{{ $day }} ខែ{{ $month }} ឆ្នាំ{{ $year }} ព.ស {{ $beYearKh }}
@@ -610,32 +484,69 @@
                 <div class="sig-date">បន្ទាយមានជ័យ ថ្ងៃទី............. ខែ............. ឆ្នាំ២០......</div>
                 <div class="sig-title-top font-moul" style="margin-top: 5px;">ប្រធានការិយាល័យសិក្សា</div>
                 <div class="sig-spacer"></div>
-                {{-- <div class="sig-name font-moul">សឿន ~ មុំ</div> --}}
             </div>
         </div>
     </div>
 
-    {{-- DELETE MODAL (ដូចដើម) --}}
+    {{-- DELETE MODAL --}}
     <div id="delete-modal" class="relative z-50 hidden no-print" role="dialog" aria-modal="true">
-        <div class="fixed inset-0 bg-slate-900/80 backdrop-blur-md"></div>
+        <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"></div>
         <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
             <div class="flex min-h-full items-center justify-center p-4">
-                <div class="relative transform overflow-hidden rounded-3xl bg-white text-left shadow-2xl sm:w-full sm:max-w-lg border border-gray-100">
-                    <div class="bg-white p-8">
-                        <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center text-red-500 mb-6 mx-auto"><i class="fas fa-trash-alt fa-2x"></i></div>
-                        <h3 class="text-xl font-black text-center text-slate-900">លុបការផ្តល់ជូនមុខវិជ្ជា?</h3>
-                        <p class="text-sm text-gray-500 mt-4 text-center leading-relaxed">តើអ្នកប្រាកដទេថាចង់លុបទិន្នន័យនេះ? ប្រតិបត្តិការនេះមិនអាចត្រឡប់ថយក្រោយវិញបានឡើយ。</p>
+                <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl sm:w-full sm:max-w-md border border-gray-200">
+                    <div class="p-8 text-center">
+                        <div class="w-16 h-16 rounded-2xl bg-red-50 flex items-center justify-center mx-auto mb-5">
+                            <i class="fas fa-trash-alt text-red-500 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">{{ __('លុបការផ្តល់ជូនមុខវិជ្ជា?') }}</h3>
+                        <p class="text-sm text-gray-500 leading-relaxed">{{ __('តើអ្នកប្រាកដទេថាចង់លុបទិន្នន័យនេះ? ប្រតិបត្តិការនេះមិនអាចត្រឡប់ថយក្រោយវិញបានឡើយ។') }}</p>
                     </div>
-                    <div class="bg-slate-50 px-8 py-5 flex justify-center gap-3">
-                        <button onclick="closeDeleteModal()" class="bg-white border border-slate-200 px-6 py-2.5 rounded-2xl text-sm font-bold text-slate-600 hover:bg-slate-100 transition-colors">{{ __('បោះបង់') }}</button>
+                    <div class="bg-gray-50 px-8 py-5 flex justify-center gap-3 rounded-b-2xl">
+                        <button onclick="closeDeleteModal()" class="px-6 py-2.5 bg-white border border-gray-200 text-gray-600 rounded-xl font-bold text-sm hover:bg-gray-100 transition-colors">{{ __('បោះបង់') }}</button>
                         <form id="delete-form" method="POST" action=""> @csrf @method('DELETE')
-                            <button type="submit" class="bg-red-600 text-white px-8 py-2.5 rounded-2xl text-sm font-black shadow-lg shadow-red-500/30 hover:bg-red-500 transition-all">{{ __('យល់ព្រមលុប') }}</button>
+                            <button type="submit" class="px-6 py-2.5 bg-gradient-to-r from-red-600 to-red-500 text-white rounded-xl font-bold text-sm shadow-lg shadow-red-500/25 hover:from-red-500 hover:to-red-400 transition-all">{{ __('យល់ព្រមលុប') }}</button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    {{-- TOAST --}}
+    @if(session('success'))
+    <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 4000)" x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-4"
+        class="fixed bottom-6 right-6 z-50 bg-white rounded-2xl shadow-2xl border border-gray-200 p-5 max-w-sm">
+        <div class="flex items-start gap-3">
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-check text-emerald-500"></i>
+            </div>
+            <div class="flex-1">
+                <p class="font-bold text-gray-900 text-sm">{{ __('ជោគជ័យ!') }}</p>
+                <p class="text-gray-500 text-xs mt-0.5">{{ session('success') }}</p>
+            </div>
+            <button @click="show = false" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times text-xs"></i></button>
+        </div>
+        <div class="absolute bottom-0 left-0 h-1 bg-emerald-500 rounded-b-2xl animate-shrink" style="animation: shrink 4s linear forwards;"></div>
+    </div>
+    <style>@keyframes shrink { from { width: 100%; } to { width: 0%; } }</style>
+    @endif
+
+    @if(session('error'))
+    <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-4"
+        class="fixed bottom-6 right-6 z-50 bg-white rounded-2xl shadow-2xl border border-gray-200 p-5 max-w-sm">
+        <div class="flex items-start gap-3">
+            <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-exclamation-circle text-red-500"></i>
+            </div>
+            <div class="flex-1">
+                <p class="font-bold text-gray-900 text-sm">{{ __('បញ្ហា!') }}</p>
+                <p class="text-gray-500 text-xs mt-0.5">{{ session('error') }}</p>
+            </div>
+            <button @click="show = false" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times text-xs"></i></button>
+        </div>
+        <div class="absolute bottom-0 left-0 h-1 bg-red-500 rounded-b-2xl animate-shrink" style="animation: shrink 5s linear forwards;"></div>
+    </div>
+    @endif
 
     <script>
         function openDeleteModal(id) {
@@ -658,7 +569,6 @@
             let content = document.getElementById('printable-schedule-container').cloneNode(true);
             content.style.display = 'block';
             
-            // Re-embed images for Word
             if(logo && logo.src) {
                 const logoClone = content.querySelector('.uni-logo-text img');
                 if(logoClone) logoClone.src = getBase64Image(logo);
@@ -686,4 +596,4 @@
             document.body.appendChild(link); link.click(); document.body.removeChild(link);
         }
     </script>
-</x-app-layout> 
+</x-app-layout>

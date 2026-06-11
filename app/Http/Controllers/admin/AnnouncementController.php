@@ -12,9 +12,21 @@ use Illuminate\Validation\Rule;
 
 class AnnouncementController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $announcements = Announcement::with('poster', 'courseOffering.course', 'courseOffering.program')->paginate(10);
+        $query = Announcement::with('poster', 'courseOffering.course', 'courseOffering.program');
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('title_km', 'like', "%{$search}%")
+                  ->orWhere('title_en', 'like', "%{$search}%")
+                  ->orWhere('content_km', 'like', "%{$search}%")
+                  ->orWhere('target_role', 'like', "%{$search}%");
+            });
+        }
+
+        $announcements = $query->latest()->paginate(10)->withQueryString();
 
         return view('admin.announcements.index', compact('announcements'));
     }
@@ -41,7 +53,7 @@ class AnnouncementController extends Controller
             'content_km.required' => 'ខ្លឹមសារជាភាសាខ្មែរត្រូវតែបញ្ចូល។',
             'course_offering_id.exists' => 'ការផ្តល់ជូនវគ្គសិក្សាមិនត្រឹមត្រូវទេ។',
         ]);
-        // code
+
         try {
             Announcement::create([
                 'poster_user_id' => Auth::id(),

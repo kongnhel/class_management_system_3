@@ -10,13 +10,28 @@ class FacultyTable extends Component
 {
     use WithPagination;
 
-    // ត្រូវតែមានបន្ទាត់នេះដាច់ខាត
+    public $search = '';
+
     protected $listeners = ['refreshComponent' => '$refresh'];
+
+    public function updatedSearch()
+    {
+        $this->resetPage();
+    }
 
     public function render()
     {
+        $query = Faculty::with(['dean', 'departments']);
+
+        if ($this->search) {
+            $query->where(function ($q) {
+                $q->where('name_km', 'like', "%{$this->search}%")
+                    ->orWhere('name_en', 'like', "%{$this->search}%");
+            });
+        }
+
         return view('livewire.faculty-table', [
-            'faculties' => Faculty::with('dean')->paginate(10),
+            'faculties' => $query->paginate(10),
         ]);
     }
 }

@@ -1,42 +1,85 @@
 <x-app-layout>
-    <div class="py-12 bg-gray-100 min-h-screen">
+    <div class="py-12 bg-gray-50 min-h-screen">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-2xl sm:rounded-3xl p-8 lg:p-12 border border-gray-200 transition-all duration-300 transform hover:shadow-3xl">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 lg:p-8">
 
-                <!-- Page Header -->
-                <div class="mb-8 pb-4 border-b border-gray-200">
-                    <h2 class="font-extrabold text-4xl text-gray-900 leading-tight">
-                        {{ __('កែប្រែដេប៉ាតឺម៉ង់') }}
-                    </h2>
-                    <p class="mt-2 text-lg text-gray-500">{{ __('កែប្រែព័ត៌មានលម្អិតសម្រាប់') }}: <span class="font-medium text-gray-700">{{ $department->name_km ?? $department->name_en }}</span></p>
+                {{-- Header --}}
+                <div class="flex items-center gap-4 mb-8 pb-6 border-b border-gray-100">
+                    <span class="p-3 bg-amber-100 text-amber-600 rounded-2xl shadow-sm">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                    </span>
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-900">{{ __('កែប្រែដេប៉ាតឺម៉ង់') }}</h2>
+                        <p class="mt-1 text-sm text-gray-500">{{ __('កែប្រែព័ត៌មានសម្រាប់') }} <span class="font-semibold text-gray-700">{{ $department->name_km }}</span></p>
+                    </div>
                 </div>
 
-                <!-- Error & Session Messages -->
-                @if (session('success'))
-                    <div class="bg-green-50 border border-green-200 text-green-700 px-6 py-4 rounded-2xl relative mb-8 flex items-center space-x-3 shadow-md" role="alert">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-500" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                        </svg>
-                        <span class="block sm:inline font-medium">{{ session('success') }}</span>
+                {{-- Floating Toast --}}
+                @if (session('success') || session('error'))
+                    <div
+                        x-data="{
+                            show: false,
+                            progress: 100,
+                            startTimer() {
+                                this.show = true;
+                                let interval = setInterval(() => {
+                                    this.progress -= 1;
+                                    if (this.progress <= 0) {
+                                        this.show = false;
+                                        clearInterval(interval);
+                                    }
+                                }, 50);
+                            }
+                        }"
+                        x-init="startTimer()"
+                        x-show="show"
+                        x-transition:enter="transition ease-out duration-500"
+                        x-transition:enter-start="translate-y-12 opacity-0"
+                        x-transition:enter-end="translate-y-0 opacity-100"
+                        x-transition:leave="transition ease-in duration-300"
+                        x-transition:leave-start="opacity-100"
+                        x-transition:leave-end="opacity-0"
+                        class="fixed top-6 right-6 z-[9999] w-full max-w-sm"
+                    >
+                        <div class="relative overflow-hidden bg-white rounded-2xl shadow-xl border border-gray-200 p-4">
+                            <div class="flex items-start gap-3">
+                                <div class="flex-shrink-0">
+                                    @if(session('success'))
+                                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-green-50 text-green-600">
+                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                                        </div>
+                                    @else
+                                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 text-red-600">
+                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                                        </div>
+                                    @endif
+                                </div>
+                                <div class="flex-1 pt-0.5">
+                                    <p class="text-sm font-bold text-gray-900">{{ session('success') ? __('ជោគជ័យ!') : __('បរាជ័យ!') }}</p>
+                                    <p class="mt-1 text-sm text-gray-600">{{ session('success') ?? session('error') }}</p>
+                                </div>
+                                <button @click="show = false" class="text-gray-400 hover:text-gray-600 transition-colors">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                                </button>
+                            </div>
+                            <div class="absolute bottom-0 left-0 h-1 bg-gray-100 w-full">
+                                <div class="h-full transition-all duration-75 ease-linear {{ session('success') ? 'bg-green-500' : 'bg-red-500' }}" :style="`width: ${progress}%`"></div>
+                            </div>
+                        </div>
                     </div>
                 @endif
-                @if (session('error'))
-                    <div class="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-2xl relative mb-8 flex items-center space-x-3 shadow-md" role="alert">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-500" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586l-1.293-1.293z" clip-rule="evenodd" />
-                        </svg>
-                        <span class="block sm:inline font-medium">{{ session('error') }}</span>
-                    </div>
-                @endif
+
+                {{-- Validation Errors --}}
                 @if ($errors->any())
-                    <div class="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-2xl relative mb-8 flex items-start space-x-3 shadow-md" role="alert">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-500 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                    <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3">
+                        <svg class="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
                         </svg>
                         <div>
-                            <strong class="font-bold block">{{ __('មានបញ្ហា!') }}</strong>
-                            <span class="block sm:inline mt-1">{{ __('សូមពិនិត្យមើលកំហុសឆ្គងខាងក្រោម។') }}</span>
-                            <ul class="mt-2 list-disc list-inside text-sm">
+                            <p class="text-sm font-bold text-red-800">{{ __('សូមពិនិត្យកំហុសខាងក្រោម៖') }}</p>
+                            <ul class="mt-1 text-sm text-red-700 list-disc list-inside">
                                 @foreach ($errors->all() as $error)
                                     <li>{{ $error }}</li>
                                 @endforeach
@@ -49,23 +92,27 @@
                     @csrf
                     @method('PUT')
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <!-- Name (Khmer) -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label for="name_km" class="block text-sm font-semibold text-gray-700 mb-1">{{ __('ឈ្មោះដេប៉ាតឺម៉ង់ (ខ្មែរ)') }}</label>
-                            <input id="name_km" class="form-input w-full rounded-xl border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out placeholder-gray-400" type="text" name="name_km" value="{{ old('name_km', $department->name_km) }}" required autofocus placeholder="{{ __('បញ្ចូលឈ្មោះដេប៉ាតឺម៉ង់ជាភាសាខ្មែរ') }}" />
+                            <label for="name_km" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ឈ្មោះដេប៉ាតឺម៉ង់ (ខ្មែរ)') }} <span class="text-red-500">*</span></label>
+                            <input id="name_km" type="text" name="name_km" value="{{ old('name_km', $department->name_km) }}" required autofocus
+                                placeholder="{{ __('បញ្ចូលឈ្មោះជាភាសាខ្មែរ') }}"
+                                class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" />
+                            @error('name_km') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                         </div>
 
-                        <!-- Name (English) -->
                         <div>
-                            <label for="name_en" class="block text-sm font-semibold text-gray-700 mb-1">{{ __('ឈ្មោះដេប៉ាតឺម៉ង់ (អង់គ្លេស)') }}</label>
-                            <input id="name_en" class="form-input w-full rounded-xl border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out placeholder-gray-400" type="text" name="name_en" value="{{ old('name_en', $department->name_en) }}" required placeholder="{{ __('បញ្ចូលឈ្មោះដេប៉ាតឺម៉ង់ជាភាសាអង់គ្លេស') }}" />
+                            <label for="name_en" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ឈ្មោះដេប៉ាតឺម៉ង់ (អង់គ្លេស)') }} <span class="text-red-500">*</span></label>
+                            <input id="name_en" type="text" name="name_en" value="{{ old('name_en', $department->name_en) }}" required
+                                placeholder="{{ __('បញ្ចូលឈ្មោះជាភាសាអង់គ្លេស') }}"
+                                class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" />
+                            @error('name_en') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                         </div>
 
-                        <!-- Faculty -->
                         <div>
-                            <label for="faculty_id" class="block text-sm font-semibold text-gray-700 mb-1">{{ __('មហាវិទ្យាល័យ') }}</label>
-                            <select id="faculty_id" name="faculty_id" class="form-select w-full rounded-xl border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out" required>
+                            <label for="faculty_id" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('មហាវិទ្យាល័យ') }} <span class="text-red-500">*</span></label>
+                            <select id="faculty_id" name="faculty_id" required
+                                class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
                                 <option value="">{{ __('ជ្រើសរើសមហាវិទ្យាល័យ') }}</option>
                                 @foreach ($faculties as $faculty)
                                     <option value="{{ $faculty->id }}" {{ old('faculty_id', $department->faculty_id) == $faculty->id ? 'selected' : '' }}>
@@ -73,33 +120,38 @@
                                     </option>
                                 @endforeach
                             </select>
+                            @error('faculty_id') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                         </div>
 
-                        <!-- Head of Department -->
                         <div>
-                            <label for="head_user_id" class="block text-sm font-semibold text-gray-700 mb-1">{{ __('ប្រធានដេប៉ាតឺម៉ង់ (សាស្ត្រាចារ្យ)') }}</label>
-                            <select id="head_user_id" name="head_user_id" class="form-select w-full rounded-xl border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out">
-                                <option value="">{{ __('ជ្រើសរើសប្រធានដេប៉ាតឺម៉ង់ (ស្រេចចិត្ត)') }}</option>
+                            <label for="head_user_id" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ប្រធានដេប៉ាតឺម៉ង់') }}</label>
+                            <select id="head_user_id" name="head_user_id"
+                                class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                <option value="">{{ __('ជ្រើសរើសប្រធាន (ស្រេចចិត្ត)') }}</option>
                                 @foreach ($professors as $professor)
                                     <option value="{{ $professor->id }}" {{ old('head_user_id', $department->head_user_id) == $professor->id ? 'selected' : '' }}>
                                         {{ $professor->name }}
                                     </option>
                                 @endforeach
                             </select>
+                            @error('head_user_id') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                         </div>
                     </div>
 
-                    <div class="mt-12 flex justify-between items-center">
-                        <a href="{{ route('admin.manage-departments') }}" class="px-6 py-3 text-gray-600 font-semibold rounded-full hover:bg-gray-200 transition duration-300 transform hover:scale-105">{{ __('បោះបង់') }}</a>
-                        
-                        <button type="submit" class="px-8 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-bold rounded-full shadow-lg hover:from-blue-600 hover:to-indigo-700 transition duration-300 transform hover:scale-105 flex items-center space-x-2">
-                            <span>{{ __('រក្សាទុកការកែប្រែ') }}</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                    {{-- Actions --}}
+                    <div class="flex items-center justify-between mt-8 pt-6 border-t border-gray-100">
+                        <a href="{{ route('admin.manage-departments') }}" class="px-5 py-2.5 text-sm font-bold text-gray-600 bg-gray-100 rounded-xl hover:bg-gray-200 transition">
+                            {{ __('បោះបង់') }}
+                        </a>
+                        <button type="submit" class="inline-flex items-center gap-2 px-6 py-2.5 bg-blue-600 text-white text-sm font-bold rounded-xl shadow hover:bg-blue-700 transition active:scale-95">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                             </svg>
+                            {{ __('រក្សាទុកការកែប្រែ') }}
                         </button>
                     </div>
                 </form>
+
             </div>
         </div>
     </div>

@@ -10,11 +10,39 @@ use Illuminate\Validation\Rule;
 
 class ProgramController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $programs = Program::with('department')->paginate(10);
+        $query = Program::with('department');
 
-        return view('admin.programs.index', compact('programs'));
+        if ($search = $request->input('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name_km', 'like', "%{$search}%")
+                  ->orWhere('name_en', 'like', "%{$search}%")
+                  ->orWhere('degree_level', 'like', "%{$search}%");
+            });
+        }
+
+        if ($departmentId = $request->input('department_id')) {
+            $query->where('department_id', $departmentId);
+        }
+
+        if ($degreeLevel = $request->input('degree_level')) {
+            $query->where('degree_level', $degreeLevel);
+        }
+
+        $sort = $request->input('sort', 'name_km');
+        $direction = $request->input('direction', 'asc');
+        $allowedSorts = ['name_km', 'name_en', 'duration_years', 'degree_level', 'created_at'];
+
+        if (in_array($sort, $allowedSorts)) {
+            $query->orderBy($sort, $direction === 'desc' ? 'desc' : 'asc');
+        }
+
+        $programs = $query->paginate(12)->withQueryString();
+        $departments = Department::all();
+        $degreeLevels = Program::distinct()->pluck('degree_level')->filter()->values();
+
+        return view('admin.programs.index', compact('programs', 'departments', 'degreeLevels'));
     }
 
     public function create()

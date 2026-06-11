@@ -15,9 +15,9 @@ class StudentProgressionService
 {
     /**
      * Base year offset for generation mapping.
-     * Generation 16 = joined 2024, so base = 2024 - 16 = 2008.
+     * Generation 16 = joined 2022, so base = 2022 - 16 = 2006.
      */
-    private const GENERATION_BASE_YEAR = 2008;
+    private const GENERATION_BASE_YEAR = 2006;
 
     /**
      * Convert a generation number to the join year.

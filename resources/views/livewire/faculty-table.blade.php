@@ -1,138 +1,197 @@
-<div class="p-6"> {{-- Root Element តែមួយគត់សម្រាប់ Livewire --}}
-    
-    <div class="mt-8">
-        @if ($faculties->isEmpty())
-            {{-- បង្ហាញនៅពេលមិនទាន់មានទិន្នន័យ --}}
-            <div class="bg-white p-12 rounded-3xl text-center text-gray-400 shadow-xl border border-gray-100">
-                <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-20 w-20 mb-4 text-gray-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+<div class="p-6" wire:poll.30s>
+
+    {{-- Search Bar --}}
+    <div class="mb-6">
+        <div class="relative max-w-md">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
-                <p class="font-semibold text-lg text-gray-600">{{ __('មិនទាន់មានមហាវិទ្យាល័យណាមួយនៅឡើយទេ។') }}</p>
-                <p class="mt-2 text-sm">{{ __('ចាប់ផ្តើមដោយបន្ថែមមហាវិទ្យាល័យដំបូងរបស់អ្នកដើម្បីគ្រប់គ្រងដេប៉ាតឺម៉ង់ និងកម្មវិធីសិក្សា។') }}</p>
             </div>
-        @else
-
-            {{-- CARD/GRID VIEW --}}
-            <div x-show="viewMode === 'grid'" x-transition:enter.duration.500ms>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    @foreach ($faculties as $faculty)
-                        <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 flex flex-col justify-between hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-                            <div class="flex flex-col items-start mb-6">
-                                <div class="flex-shrink-0 w-14 h-14 rounded-full bg-green-50 text-green-600 flex items-center justify-center mb-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h4 class="text-2xl font-bold text-gray-900 leading-tight">{{ $faculty->name_km }}</h4>
-                                    <p class="text-base text-gray-500 mt-1">{{ $faculty->name_en }}</p>
-                                </div>
-                            </div>
-                            <div class="space-y-2 mb-6">
-                                <p class="text-gray-700 font-medium">
-                                    <span class="font-bold text-gray-800">{{ __('ប្រធានមហាវិទ្យាល័យ') }}</span>: 
-                                    <span class="text-gray-600">{{ $faculty->dean->name ?? 'N/A' }}</span>
-                                </p>
-                            </div>
-                            <div class="flex justify-end space-x-3 mt-auto">
-                                <a href="{{ route('admin.edit-faculty', $faculty->id) }}" class="p-3 bg-gray-100 rounded-full text-green-600 hover:bg-green-200 transition duration-150" title="{{ __('កែប្រែ') }}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                        <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
-                                        <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" />
-                                    </svg>
-                                </a>
-                                <button type="button" onclick="openDeleteModal('{{ $faculty->id }}')" class="p-3 bg-gray-100 rounded-full text-red-600 hover:bg-red-200 transition duration-150" title="{{ __('លុប') }}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-
-            {{-- TABLE VIEW --}}
-            <div x-show="viewMode === 'table'" x-transition:enter.duration.500ms style="display: none;">
-                <div class="overflow-x-auto shadow-xl rounded-2xl border border-gray-100 bg-white">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('លេខរៀង') }}</th>
-                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('ឈ្មោះមហាវិទ្យាល័យ') }}</th>
-                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider hidden lg:table-cell">{{ __('ប្រធាន') }}</th>
-                                <th class="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('សកម្មភាព') }}</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-200">
-                            @foreach ($faculties as $faculty)
-                                <tr class="hover:bg-gray-50 transition duration-150">
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                                        {{ $loop->iteration + (($faculties->currentPage() - 1) * $faculties->perPage()) }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-base font-semibold text-gray-800">{{ $faculty->name_km }}</div>
-                                        <div class="text-xs text-gray-400 sm:hidden">{{ $faculty->name_en }}</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
-                                        {{ $faculty->dean->name ?? 'N/A' }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                        <div class="flex justify-end space-x-2">
-                                            <a href="{{ route('admin.edit-faculty', $faculty->id) }}" class="p-2 bg-gray-100 rounded-full text-green-600 hover:bg-green-200">
-                                                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" /></svg>
-                                            </a>
-                                            <button type="button" onclick="openDeleteModal('{{ $faculty->id }}')" class="p-2 bg-gray-100 rounded-full text-red-600 hover:bg-red-200">
-                                                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            
-            {{-- Pagination --}}
-            <div class="mt-8">
-                {{ $faculties->links('pagination::tailwind') }}
-            </div>
-        @endif
+            <input
+                type="text"
+                wire:model.live.debounce.300ms="search"
+                placeholder="{{ __('ស្វែងរកមហាវិទ្យាល័យ...') }}"
+                class="block w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
+            />
+            @if($search)
+                <button wire:click="$set('search', '')" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600">
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            @endif
+        </div>
     </div>
 
-    {{-- DELETE MODAL (ស្ថិតនៅក្នុង Root Element) --}}
+    @if ($faculties->isEmpty())
+        {{-- Empty State --}}
+        <div class="bg-white rounded-2xl border border-gray-200 p-12 text-center">
+            <div class="mx-auto w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center mb-4">
+                <svg class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z" />
+                </svg>
+            </div>
+            @if($search)
+                <p class="text-sm font-semibold text-gray-700">{{ __('មិនរកឃើញមហាវិទ្យាល័យ') }}</p>
+                <p class="mt-1 text-sm text-gray-500">{{ __('សូមព្យាយាមស្វែងរកជាមួយពាក្យគន្លឹសខុសគ្នា') }}</p>
+            @else
+                <p class="text-sm font-semibold text-gray-700">{{ __('មិនទាន់មានមហាវិទ្យាល័យទេ') }}</p>
+                <p class="mt-1 text-sm text-gray-500">{{ __('ចាប់ផ្តើមដោយបន្ថែមមហាវិទ្យាល័យដំបូងរបស់អ្នក។') }}</p>
+                <div class="mt-4">
+                    <a href="{{ route('admin.create-faculty') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition-colors">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                        </svg>
+                        {{ __('បន្ថែមមហាវិទ្យាល័យថ្មី') }}
+                    </a>
+                </div>
+            @endif
+        </div>
+    @else
+        {{-- CARD/GRID VIEW --}}
+        <div x-show="viewMode === 'grid'" x-transition:enter.duration.300ms>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                @foreach ($faculties as $faculty)
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col justify-between hover:shadow-md transition-all duration-200">
+                        <div>
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="flex-shrink-0 w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z" />
+                                    </svg>
+                                </div>
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-600">
+                                    <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6z" />
+                                    </svg>
+                                    {{ $faculty->departments->count() }} {{ __('ដេប៉ាតឺម៉ង់') }}
+                                </span>
+                            </div>
+                            <h4 class="text-lg font-bold text-gray-900 leading-snug">{{ $faculty->name_km }}</h4>
+                            <p class="text-sm text-gray-500 mt-0.5">{{ $faculty->name_en }}</p>
+                            <div class="mt-3 flex items-center gap-2 text-sm text-gray-600">
+                                <svg class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                                </svg>
+                                <span class="truncate">{{ $faculty->dean->name ?? '—' }}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 mt-5 pt-4 border-t border-gray-100">
+                            <a href="{{ route('admin.edit-faculty', $faculty->id) }}" class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 text-sm font-semibold text-blue-600 bg-blue-50 rounded-xl hover:bg-blue-100 transition-colors">
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                                </svg>
+                                {{ __('កែប្រែ') }}
+                            </a>
+                            <button type="button" onclick="openDeleteModal('{{ $faculty->id }}', '{{ addslashes($faculty->name_km) }}')" class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 text-sm font-semibold text-red-600 bg-red-50 rounded-xl hover:bg-red-100 transition-colors">
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                </svg>
+                                {{ __('លុប') }}
+                            </button>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
+        {{-- TABLE VIEW --}}
+        <div x-show="viewMode === 'table'" x-transition:enter.duration.300ms style="display: none;">
+            <div class="overflow-x-auto rounded-2xl border border-gray-200 bg-white">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">{{ __('លេខរៀង') }}</th>
+                            <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">{{ __('ឈ្មោះមហាវិទ្យាល័យ') }}</th>
+                            <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider hidden md:table-cell">{{ __('ប្រធាន') }}</th>
+                            <th class="px-5 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider hidden lg:table-cell">{{ __('ដេប៉ាតឺម៉ង់') }}</th>
+                            <th class="px-5 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">{{ __('សកម្មភាព') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        @foreach ($faculties as $faculty)
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-5 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ $loop->iteration + (($faculties->currentPage() - 1) * $faculties->perPage()) }}
+                                </td>
+                                <td class="px-5 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-semibold text-gray-900">{{ $faculty->name_km }}</div>
+                                    <div class="text-xs text-gray-400 md:hidden">{{ $faculty->name_en }}</div>
+                                </td>
+                                <td class="px-5 py-4 whitespace-nowrap text-sm text-gray-600 hidden md:table-cell">
+                                    {{ $faculty->dean->name ?? '—' }}
+                                </td>
+                                <td class="px-5 py-4 whitespace-nowrap text-center hidden lg:table-cell">
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-600">
+                                        {{ $faculty->departments->count() }}
+                                    </span>
+                                </td>
+                                <td class="px-5 py-4 whitespace-nowrap text-right">
+                                    <div class="flex items-center justify-end gap-2">
+                                        <a href="{{ route('admin.edit-faculty', $faculty->id) }}" class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
+                                            <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" />
+                                            </svg>
+                                            {{ __('កែប្រែ') }}
+                                        </a>
+                                        <button type="button" onclick="openDeleteModal('{{ $faculty->id }}', '{{ addslashes($faculty->name_km) }}')" class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">
+                                            <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                            </svg>
+                                            {{ __('លុប') }}
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {{-- Pagination --}}
+        <div class="mt-6">
+            {{ $faculties->links('pagination::tailwind') }}
+        </div>
+    @endif
+
+    {{-- DELETE MODAL --}}
     <div id="delete-modal" class="fixed inset-0 z-50 overflow-y-auto hidden" x-data x-cloak>
         <div class="flex items-center justify-center min-h-screen px-4">
-            <div class="fixed inset-0 bg-gray-500/75 transition-opacity" onclick="closeDeleteModal()"></div>
-            <div class="relative bg-white rounded-3xl overflow-hidden shadow-2xl transform transition-all sm:max-w-lg sm:w-full border border-red-100">
+            <div class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity" onclick="closeDeleteModal()"></div>
+            <div class="relative bg-white rounded-2xl overflow-hidden shadow-2xl transform transition-all sm:max-w-lg sm:w-full">
                 <div class="p-8 text-center">
-                    <div class="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full mb-4">
-                        <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    <div class="mx-auto flex items-center justify-center w-14 h-14 rounded-2xl bg-red-50 mb-5">
+                        <svg class="h-7 w-7 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-2">{{ __('បញ្ជាក់ការលុប') }}</h3>
-                    <p class="text-sm text-gray-500">{{ __('តើអ្នកពិតជាចង់លុបមហាវិទ្យាល័យនេះមែនទេ? សកម្មភាពនេះមិនអាចត្រឡប់ក្រោយវិញបានឡើយ។') }}</p>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">{{ __('បញ្ជាក់ការលុប') }}</h3>
+                    <p class="text-sm text-gray-500 leading-relaxed">{{ __('តើអ្នកពិតជាចង់លុបមហាវិទ្យាល័យ') }} <span class="font-semibold text-gray-900" id="delete-faculty-name"></span> {{ __('មែនទេ? សកម្មភាពនេះមិនអាចត្រឡប់ក្រោយបានឡើយ។') }}</p>
                 </div>
-                <div class="bg-gray-50 px-6 py-4 flex flex-row-reverse gap-3">
-                    <form id="delete-form" method="POST"> 
+                <div class="bg-gray-50 px-6 py-4 flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
+                    <button type="button" onclick="closeDeleteModal()" class="w-full sm:w-auto px-5 py-2.5 text-sm font-semibold text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
+                        {{ __('បោះបង់') }}
+                    </button>
+                    <form id="delete-form" method="POST">
                         @csrf @method('DELETE')
-                        <button type="submit" class="px-6 py-2.5 bg-red-600 text-white font-bold rounded-full hover:bg-red-700 transition duration-150 w-full sm:w-auto">{{ __('លុប') }}</button>
+                        <button type="submit" class="w-full sm:w-auto px-5 py-2.5 text-sm font-semibold text-white bg-red-600 rounded-xl hover:bg-red-700 transition-colors">
+                            {{ __('យល់ព្រមលុប') }}
+                        </button>
                     </form>
-                    <button type="button" onclick="closeDeleteModal()" class="px-6 py-2.5 bg-white border border-gray-300 text-gray-700 font-bold rounded-full hover:bg-gray-100 transition duration-150 w-full sm:w-auto">{{ __('បោះបង់') }}</button>
                 </div>
             </div>
         </div>
     </div>
 
-    {{-- SCRIPT សម្រាប់បញ្ជា Modal --}}
     <script>
-        function openDeleteModal(facultyId) {
+        function openDeleteModal(facultyId, facultyName) {
             const modal = document.getElementById('delete-modal');
             const form = document.getElementById('delete-form');
-            // កំណត់ URL សម្រាប់ Delete តាម ID
-            form.action = `/admin/faculties/${facultyId}`; 
+            const nameEl = document.getElementById('delete-faculty-name');
+            form.action = `/admin/faculties/${facultyId}`;
+            nameEl.textContent = facultyName;
             modal.classList.remove('hidden');
         }
 

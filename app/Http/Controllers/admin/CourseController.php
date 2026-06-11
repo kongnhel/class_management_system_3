@@ -13,13 +13,24 @@ use Illuminate\Http\Request;
 
 class CourseController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $search = $request->input('search', '');
         $room = Room::all();
 
-        $coursesData = Course::with(['department', 'programs'])
-            ->orderBy('department_id')
-            ->get();
+        $query = Course::with(['department', 'programs']);
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title_km', 'like', "%{$search}%")
+                  ->orWhere('title_en', 'like', "%{$search}%")
+                  ->orWhereHas('department', function ($dq) use ($search) {
+                      $dq->where('name_km', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        $coursesData = $query->orderBy('department_id')->get();
 
         $flattenedCourses = $coursesData->flatMap(function ($course) {
             if ($course->programs->isEmpty()) {
@@ -43,7 +54,7 @@ class CourseController extends Controller
             },
         ]);
 
-        return view('admin.courses.index', compact('coursesGrouped', 'room'));
+        return view('admin.courses.index', compact('coursesGrouped', 'room', 'search'));
     }
 
     /**

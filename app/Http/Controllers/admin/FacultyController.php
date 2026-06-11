@@ -17,7 +17,7 @@ class FacultyController extends Controller
 
     public function index()
     {
-        $faculties = Faculty::with('dean')->paginate(10);
+        $faculties = Faculty::with(['dean', 'departments'])->paginate(10);
 
         return view('admin.faculties.index', compact('faculties'));
     }
@@ -27,6 +27,14 @@ class FacultyController extends Controller
         $professors = User::where('role', 'professor')->get();
 
         return view('admin.faculties.create', compact('professors'));
+    }
+
+    public function edit(Faculty $faculty)
+    {
+        $faculty->load('departments');
+        $professors = User::where('role', 'professor')->get();
+
+        return view('admin.faculties.edit', compact('faculty', 'professors'));
     }
 
     public function store(Request $request)

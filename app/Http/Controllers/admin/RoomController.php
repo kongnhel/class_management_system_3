@@ -19,11 +19,17 @@ class RoomController extends Controller
         $this->imageKitService = $imageKitService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $rooms = Room::paginate(10);
+        $search = $request->input('search', '');
 
-        return view('admin.rooms.index', compact('rooms'));
+        $rooms = Room::when($search, function ($query, $search) {
+            $query->where('room_number', 'like', "%{$search}%")
+                  ->orWhere('location_of_room', 'like', "%{$search}%")
+                  ->orWhere('type_of_room', 'like', "%{$search}%");
+        })->paginate(12)->withQueryString();
+
+        return view('admin.rooms.index', compact('rooms', 'search'));
     }
 
     public function create()
