@@ -48,6 +48,7 @@ class StudentRegistrationController extends Controller
                 $user->forceFill([
                     'name' => $request->name,
                     'email' => $request->email,
+                    'program_id' => $request->program_id,
                     'generation' => $request->generation,
                     'password' => Hash::make($request->password),
                 ])->save();
@@ -60,10 +61,10 @@ class StudentRegistrationController extends Controller
                     'status' => 'active',
                 ]);
 
-                $courseOfferings = CourseOffering::where('generation', $request->generation)
-                    ->whereHas('course', function ($query) use ($request) {
-                        $query->where('program_id', $request->program_id);
-                    })->get();
+                $courseOfferings = CourseOffering::whereHas('targetPrograms', function ($query) use ($request) {
+                    $query->where('course_offering_program.program_id', $request->program_id)
+                          ->where('course_offering_program.generation', $request->generation);
+                })->get();
 
                 foreach ($courseOfferings as $offering) {
                     StudentCourseEnrollment::create([

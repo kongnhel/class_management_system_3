@@ -47,6 +47,15 @@ class DepartmentController extends Controller
         return redirect()->route('admin.manage-departments')->with('success', 'ដេប៉ាតឺម៉ង់ត្រូវបានបង្កើតដោយជោគជ័យ!');
     }
 
+    public function edit(Department $department)
+    {
+        $department->load('faculty', 'head');
+        $faculties = Faculty::all();
+        $professors = User::where('role', 'professor')->get();
+
+        return view('admin.departments.edit', compact('department', 'faculties', 'professors'));
+    }
+
     public function update(Request $request, Department $department)
     {
         $validated = $request->validate([

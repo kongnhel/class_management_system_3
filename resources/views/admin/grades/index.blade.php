@@ -16,7 +16,7 @@
             <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-8">
                 <form action="{{ route('admin.grades.index') }}" method="GET" class="space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
-                        <div class="md:col-span-4">
+                        <div class="md:col-span-3">
                             <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">ស្វែងរកមុខវិជ្ជា/សាស្ត្រាចារ្យ</label>
                             <div class="relative">
                                 <span class="absolute inset-y-0 left-0 flex items-center pl-3">
@@ -48,11 +48,11 @@
                             <input type="text" name="academic_year" value="{{ request('academic_year') }}" placeholder="ឧ. 2024-2025"
                                 class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm transition-all">
                         </div>
-                        <div class="md:col-span-1 flex justify-end gap-2">
-                            <a href="{{ route('admin.grades.index') }}" class="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl transition-colors font-bold text-sm">
-                                <i class="fas fa-sync-alt mr-1"></i> កំណត់ឡើងវិញ
+                        <div class="md:col-span-2 flex items-end gap-2">
+                            <a href="{{ route('admin.grades.index') }}" title="កំណត់ឡើងវិញ" class="px-3 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl transition-colors font-bold text-sm">
+                                <i class="fas fa-sync-alt"></i>
                             </a>
-                            <button type="submit" class="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold px-6 py-2.5 rounded-xl transition-all shadow-md text-sm">
+                            <button type="submit" class="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold px-4 py-2.5 rounded-xl transition-all shadow-md text-sm whitespace-nowrap">
                                 <i class="fas fa-filter mr-1"></i> តម្រង់ទិស
                             </button>
                         </div>

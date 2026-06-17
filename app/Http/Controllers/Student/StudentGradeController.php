@@ -421,6 +421,27 @@ class StudentGradeController extends Controller
         return view('student.available-programs', compact('user', 'availablePrograms'));
     }
 
+    public function availableCourses()
+    {
+        $user = Auth::user();
+
+        $enrolledCourseOfferingIds = StudentCourseEnrollment::where('student_user_id', $user->id)
+            ->pluck('course_offering_id');
+
+        $availableCourses = CourseOffering::with(['course', 'lecturer', 'targetPrograms'])
+            ->withCount('studentCourseEnrollments')
+            ->where('is_open_for_self_enrollment', true)
+            ->where('end_date', '>=', now())
+            ->whereHas('targetPrograms', function ($query) use ($user) {
+                $query->where('course_offering_program.program_id', $user->program_id)
+                      ->where('course_offering_program.generation', $user->generation);
+            })
+            ->whereNotIn('id', $enrolledCourseOfferingIds)
+            ->get();
+
+        return view('student.available-courses', compact('user', 'availableCourses'));
+    }
+
     public function enrollSelf(Request $request)
     {
         $request->validate([
@@ -428,15 +449,38 @@ class StudentGradeController extends Controller
         ]);
 
         $user = Auth::user();
-        $courseOfferingId = $request->input('course_offering_id');
+        $courseOffering = CourseOffering::with('targetPrograms')->findOrFail($request->input('course_offering_id'));
 
         $existingEnrollment = StudentCourseEnrollment::where('student_user_id', $user->id)
-            ->where('course_offering_id', $courseOfferingId)
+            ->where('course_offering_id', $courseOffering->id)
             ->first();
 
         if ($existingEnrollment) {
             Session::flash('info', 'អ្នកបានចុះឈ្មោះក្នុងវគ្គសិក្សានេះរួចហើយ។');
+            return redirect()->back();
+        }
 
+        if (!$courseOffering->is_open_for_self_enrollment) {
+            Session::flash('error', 'វគ្គសិក្សានេះមិនទាន់បើកសម្រាប់ការចុះឈ្មោះដោយខ្លួនឯងទេ។');
+            return redirect()->back();
+        }
+
+        if ($courseOffering->end_date && $courseOffering->end_date->isPast()) {
+            Session::flash('error', 'វគ្គសិក្សានេះបានបញ្ចប់ហើយ។');
+            return redirect()->back();
+        }
+
+        $enrolledCount = $courseOffering->studentCourseEnrollments()->count();
+        if ($courseOffering->capacity && $enrolledCount >= $courseOffering->capacity) {
+            Session::flash('error', 'វគ្គសិក្សានេះពេញហើយ។');
+            return redirect()->back();
+        }
+
+        $matchesProgram = $courseOffering->targetPrograms->contains(function ($prog) use ($user) {
+            return $prog->id == $user->program_id;
+        });
+        if (!$matchesProgram) {
+            Session::flash('error', 'អ្នកមិនមានសិទ្ធិចុះឈ្មោះក្នុងវគ្គសិក្សានេះទេ។');
             return redirect()->back();
         }
 
@@ -444,7 +488,7 @@ class StudentGradeController extends Controller
             StudentCourseEnrollment::create([
                 'student_user_id' => $user->id,
                 'student_id' => $user->id,
-                'course_offering_id' => $courseOfferingId,
+                'course_offering_id' => $courseOffering->id,
                 'enrollment_date' => now(),
                 'status' => 'enrolled',
             ]);
@@ -454,7 +498,7 @@ class StudentGradeController extends Controller
             Session::flash('error', 'មានបញ្ហាក្នុងការចុះឈ្មោះ៖ '.$e->getMessage());
         }
 
-        return redirect()->route('student.dashboard');
+        return redirect()->back();
     }
 
     /**
@@ -489,8 +533,9 @@ class StudentGradeController extends Controller
                 'status' => 'active',
             ]);
 
-            $programCourseOfferings = CourseOffering::whereHas('course', function ($query) use ($programId) {
-                $query->where('program_id', $programId);
+            $programCourseOfferings = CourseOffering::whereHas('targetPrograms', function ($query) use ($programId) {
+                $query->where('course_offering_program.program_id', $programId)
+                      ->where('course_offering_program.generation', $user->generation);
             })
                 ->where('end_date', '>=', now())
                 ->get();
@@ -500,6 +545,7 @@ class StudentGradeController extends Controller
                     'student_user_id' => $user->id,
                     'course_offering_id' => $courseOffering->id,
                 ], [
+                    'student_id' => $user->id,
                     'enrollment_date' => now(),
                     'status' => 'enrolled',
                 ]);

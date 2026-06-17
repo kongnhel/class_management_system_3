@@ -112,7 +112,7 @@
                                             <td class="px-6 py-4">
                                                 <div class="flex items-center gap-3">
                                                     <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center text-white font-bold text-sm shadow-lg">
-                                                        {{ substr($student->name, 0, 1) }}
+                                                        {{ mb_substr($student->name, 0, 1, 'UTF-8') }}
                                                     </div>
                                                     <div>
                                                         <p class="text-sm font-bold text-gray-800">{{ $student->name }}</p>
@@ -147,7 +147,7 @@
                                         <div class="flex items-center gap-3">
                                             <input type="checkbox" name="student_ids[]" value="{{ $student->id }}" class="student-cb rounded border-gray-300 text-green-600 focus:ring-green-500">
                                             <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center text-white font-bold text-sm shadow-lg">
-                                                {{ substr($student->name, 0, 1) }}
+                                                {{ mb_substr($student->name, 0, 1, 'UTF-8') }}
                                             </div>
                                             <div>
                                                 <p class="text-sm font-bold text-gray-800">{{ $student->name }}</p>
@@ -209,7 +209,7 @@
                                         <td class="px-6 py-4">
                                             <div class="flex items-center gap-3">
                                                 <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center text-white font-bold text-sm shadow-lg">
-                                                    {{ substr($student->name, 0, 1) }}
+                                                    {{ mb_substr($student->name, 0, 1, 'UTF-8') }}
                                                 </div>
                                                 <div>
                                                     <p class="text-sm font-bold text-gray-800">{{ $student->name }}</p>
@@ -237,7 +237,7 @@
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center gap-3">
                                         <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center text-white font-bold text-sm shadow-lg">
-                                            {{ substr($student->name, 0, 1) }}
+                                            {{ mb_substr($student->name, 0, 1, 'UTF-8') }}
                                         </div>
                                         <div>
                                             <p class="text-sm font-bold text-gray-800">{{ $student->name }}</p>

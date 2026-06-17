@@ -206,7 +206,7 @@
                                                                  alt="{{ $admin->name }}">
                                                         @else
                                                             <div class="h-12 w-12 rounded-full bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center text-white font-black text-xl shadow-md flex-shrink-0">
-                                                                {{ strtoupper(substr($admin->name, 0, 1)) }}
+                                                                {{ mb_strtoupper(mb_substr($admin->name, 0, 1, 'UTF-8'), 'UTF-8') }}
                                                             </div>
                                                         @endif
                                                     </td>
@@ -237,7 +237,7 @@
                                                              alt="{{ $admin->name }}">
                                                     @else
                                                         <div class="h-12 w-12 rounded-full bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center text-white font-black text-xl shadow-md flex-shrink-0">
-                                                            {{ strtoupper(substr($admin->name, 0, 1)) }}
+                                                            {{ mb_strtoupper(mb_substr($admin->name, 0, 1, 'UTF-8'), 'UTF-8') }}
                                                         </div>
                                                     @endif
                                                     <div class="min-w-0">
@@ -366,7 +366,7 @@
                                                                              alt="{{ $professor->name }}">
                                                                     @else
                                                                         <div class="h-12 w-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white font-black text-lg shadow-sm">
-                                                                            {{ strtoupper(substr($professor->name, 0, 1)) }}
+                                                                            {{ mb_strtoupper(mb_substr($professor->name, 0, 1, 'UTF-8'), 'UTF-8') }}
                                                                         </div>
                                                                     @endif
                                                                     <div class="min-w-0">
@@ -499,7 +499,7 @@
                                                                                          alt="{{ $student->name }}">
                                                                                 @else
                                                                                     <div class="h-10 w-10 rounded-full bg-green-600 flex items-center justify-center text-white font-bold text-lg shadow-sm">
-                                                                                        {{ strtoupper(substr($student->name, 0, 1)) }}
+                                                                                        {{ mb_strtoupper(mb_substr($student->name, 0, 1, 'UTF-8'), 'UTF-8') }}
                                                                                     </div>
                                                                                 @endif
                                                                             </td>
@@ -542,7 +542,7 @@
                                                                                      alt="{{ $student->name }}">
                                                                             @else
                                                                                 <div class="h-12 w-12 rounded-full bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center text-white font-black text-lg shadow-sm">
-                                                                                    {{ strtoupper(substr($student->name, 0, 1)) }}
+                                                                                    {{ mb_strtoupper(mb_substr($student->name, 0, 1, 'UTF-8'), 'UTF-8') }}
                                                                                 </div>
                                                                             @endif
                                                                             <div class="min-w-0">

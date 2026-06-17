@@ -397,6 +397,7 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')
     Route::get('/available-programs', [StudentGradeController::class, 'availablePrograms'])->name('available_programs');
     Route::get('/available-courses', [StudentGradeController::class, 'availableCourses'])->name('available_courses');
     Route::post('/enroll-self', [StudentGradeController::class, 'enrollSelf'])->name('enroll_self');
+    Route::post('/enroll-program', [StudentGradeController::class, 'enrollProgram'])->name('enroll-program');
     Route::get('profile', [StudentProfileController::class, 'show'])->name('profile.show');
     Route::get('profile/edit', [StudentProfileController::class, 'edit'])->name('profile.edit');
     Route::put('profile', [StudentProfileController::class, 'update'])->name('profile.update');
