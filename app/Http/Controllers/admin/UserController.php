@@ -76,7 +76,7 @@ class UserController extends Controller
         });
 
         $students = User::where('role', 'student')
-            ->with(['studentProfile', 'program'])
+            ->with(['studentProfile', 'program', 'studentProgramEnrollments'])
             ->when($search, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'LIKE', "%{$search}%")
@@ -99,6 +99,15 @@ class UserController extends Controller
             ->orderBy('generation', 'desc')
             ->orderBy('name', 'asc')
             ->get();
+
+        $progressionService = app(\App\Services\StudentProgressionService::class);
+        $students->each(function ($student) use ($progressionService) {
+            if ($student->program) {
+                $student->computed_year_level = $progressionService->getYearLevel($student, $student->program);
+            } else {
+                $student->computed_year_level = null;
+            }
+        });
 
         $studentsGrouped = $students->groupBy([
             'generation',
@@ -399,10 +408,8 @@ class UserController extends Controller
                     $user->studentProfile->delete();
                 }
 
-                $user->delete();
+                $user->forceDelete();
             });
-
-            $this->logDeleted((new User), $oldAttributes, "Deleted user: {$user->name}");
 
             return redirect()->route('admin.manage-users')
                 ->with('success', 'អ្នកប្រើប្រាស់ និងទិន្នន័យពាក់ព័ន្ធត្រូវបានលុបដោយជោគជ័យ។');

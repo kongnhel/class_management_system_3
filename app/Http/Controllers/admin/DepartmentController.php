@@ -42,7 +42,9 @@ class DepartmentController extends Controller
 
         $department = Department::create($validated);
 
-        $this->logCreated($department);
+        try {
+            $this->logCreated($department);
+        } catch (\Exception $e) {}
 
         return redirect()->route('admin.manage-departments')->with('success', 'ដេប៉ាតឺម៉ង់ត្រូវបានបង្កើតដោយជោគជ័យ!');
     }
@@ -68,7 +70,9 @@ class DepartmentController extends Controller
         $oldAttributes = $department->attributesToArray();
         $department->update($validated);
 
-        $this->logUpdated($department, $oldAttributes);
+        try {
+            $this->logUpdated($department, $oldAttributes);
+        } catch (\Exception $e) {}
 
         return redirect()->route('admin.manage-departments')->with('success', 'ដេប៉ាតឺម៉ង់ត្រូវបានធ្វើបច្ចុបន្បភាពដោយជោគជ័យ');
     }
@@ -92,7 +96,9 @@ class DepartmentController extends Controller
 
             DB::commit();
 
-            $this->logAction('delete', null, $oldAttributes, null, "Deleted department: {$deptName}");
+            try {
+                $this->logAction('delete', null, $oldAttributes, null, "Deleted department: {$deptName}");
+            } catch (\Exception $e) {}
 
             return redirect()->route('admin.manage-departments')->with('success', 'ដេប៉ាតឺម៉ង់ត្រូវបានលុបដោយជោគជ័យ។');
 

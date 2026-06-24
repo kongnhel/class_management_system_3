@@ -47,8 +47,10 @@ class FacultyController extends Controller
 
         $faculty = Faculty::create($validated);
 
-        $this->syncWithFirebase('faculties_sync', 'មហាវិទ្យាល័យថ្មីត្រូវបានបន្ថែម');
-        $this->logCreated($faculty);
+        try {
+            $this->syncWithFirebase('faculties_sync', 'មហាវិទ្យាល័យថ្មីត្រូវបានបន្ថែម');
+            $this->logCreated($faculty);
+        } catch (\Exception $e) {}
 
         return redirect()->route('admin.manage-faculties')->with('success', 'មហាវិទ្យាល័យត្រូវបានបង្កើតដោយជោគជ័យ។');
     }
@@ -64,8 +66,10 @@ class FacultyController extends Controller
         $oldAttributes = $faculty->attributesToArray();
         $faculty->update($validated);
 
-        $this->syncWithFirebase('faculties_sync', "មហាវិទ្យាល័យ '{$faculty->name_km}' ត្រូវបានកែប្រែ");
-        $this->logUpdated($faculty, $oldAttributes);
+        try {
+            $this->syncWithFirebase('faculties_sync', "មហាវិទ្យាល័យ '{$faculty->name_km}' ត្រូវបានកែប្រែ");
+            $this->logUpdated($faculty, $oldAttributes);
+        } catch (\Exception $e) {}
 
         return redirect()->route('admin.manage-faculties')->with('success', 'មហាវិទ្យាល័យត្រូវបានធ្វើបច្ចុប្បន្នដោយជោគជ័យ!');
     }
@@ -89,8 +93,13 @@ class FacultyController extends Controller
 
             DB::commit();
 
-            $this->syncWithFirebase('faculties_sync', 'មហាវិទ្យាល័យមួយត្រូវបានលុបចេញពីប្រព័ន្ធ');
-            $this->logAction('delete', null, $oldAttributes, null, "Deleted faculty: {$faculty->name_km}");
+            try {
+                $this->syncWithFirebase('faculties_sync', 'មហាវិទ្យាល័យមួយត្រូវបានលុបចេញពីប្រព័ន្ធ');
+            } catch (\Exception $e) {}
+
+            try {
+                $this->logAction('delete', null, $oldAttributes, null, "Deleted faculty: {$faculty->name_km}");
+            } catch (\Exception $e) {}
 
             return redirect()->route('admin.manage-faculties')
                 ->with('success', 'មហាវិទ្យាល័យនិងទិន្នន័យដែលពាក់ព័ន្ធទាំងអស់ត្រូវបានលុបដោយជោគជ័យ។');

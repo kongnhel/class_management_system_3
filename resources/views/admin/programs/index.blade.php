@@ -47,21 +47,21 @@
             @endif
 
             {{-- Search & Filters --}}
-            <form method="GET" action="{{ route('admin.manage-programs') }}" class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 mb-6">
+            <form method="GET" action="{{ route('admin.manage-programs') }}" id="filterForm" class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 mb-6">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     {{-- Search --}}
                     <div class="md:col-span-2">
                         <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('ស្វែងរក') }}</label>
                         <div class="relative">
                             <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
-                            <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('ស្វែងរកតាមឈ្មោះ ឬកម្រិតសញ្ញាបត្រ...') }}" class="w-full pl-10 pr-4 py-2.5 rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 focus:bg-white transition">
+                            <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('ស្វែងរកតាមឈ្មោះ ឬកម្រិតសញ្ញាបត្រ...') }}" class="w-full pl-10 pr-4 py-2.5 rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 focus:bg-white transition" onkeyup="clearTimeout(window.__searchTimer);window.__searchTimer=setTimeout(()=>document.getElementById('filterForm').submit(),500)" onchange="document.getElementById('filterForm').submit()">
                         </div>
                     </div>
 
                     {{-- Department Filter --}}
                     <div>
                         <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('ដេប៉ាតឺម៉ង់') }}</label>
-                        <select name="department_id" class="w-full px-3 py-2.5 rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-blue-500 bg-gray-50 focus:bg-white transition">
+                        <select name="department_id" onchange="document.getElementById('filterForm').submit()" class="w-full px-3 py-2.5 rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-blue-500 bg-gray-50 focus:bg-white transition">
                             <option value="">{{ __('ទាំងអស់') }}</option>
                             @foreach($departments as $dept)
                                 <option value="{{ $dept->id }}" {{ request('department_id') == $dept->id ? 'selected' : '' }}>{{ $dept->name_km }}</option>
@@ -72,7 +72,7 @@
                     {{-- Degree Level Filter --}}
                     <div>
                         <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('កម្រិតសញ្ញាបត្រ') }}</label>
-                        <select name="degree_level" class="w-full px-3 py-2.5 rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-blue-500 bg-gray-50 focus:bg-white transition">
+                        <select name="degree_level" onchange="document.getElementById('filterForm').submit()" class="w-full px-3 py-2.5 rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-blue-500 bg-gray-50 focus:bg-white transition">
                             <option value="">{{ __('ទាំងអស់') }}</option>
                             @foreach($degreeLevels as $level)
                                 <option value="{{ $level }}" {{ request('degree_level') == $level ? 'selected' : '' }}>{{ $level }}</option>

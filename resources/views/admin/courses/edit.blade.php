@@ -50,14 +50,14 @@
                             <div class="h-8 w-8 bg-blue-50 rounded-lg flex items-center justify-center">
                                 <svg class="h-4 w-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                             </div>
-                            {{ __('ព័ត៌មាន基础') }}
+                            {{ __('ព័ត៌មានមូលដ្ឋាន') }}
                         </h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {{-- Title KM --}}
                             <div class="md:col-span-2">
                                 <label for="title_km" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ចំណងជើង (ខ្មែរ)') }} <span class="text-red-500">*</span></label>
                                 <input type="text" name="title_km" id="title_km"
-                                       class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                                       class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:bg-white transition text-sm"
                                        value="{{ old('title_km', $course->title_km) }}" required>
                                 @error('title_km')
                                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -68,7 +68,7 @@
                             <div class="md:col-span-2">
                                 <label for="title_en" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ចំណងជើង (អង់គ្លេស)') }} <span class="text-red-500">*</span></label>
                                 <input type="text" name="title_en" id="title_en"
-                                       class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                                       class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:bg-white transition text-sm"
                                        value="{{ old('title_en', $course->title_en) }}" required>
                                 @error('title_en')
                                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -79,7 +79,7 @@
                             <div>
                                 <label for="credits" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ក្រេឌីត') }} <span class="text-red-500">*</span></label>
                                 <input type="number" name="credits" id="credits"
-                                       class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                                       class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:bg-white transition text-sm"
                                        value="{{ old('credits', $course->credits) }}" min="0.5" step="0.1" required>
                                 @error('credits')
                                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -90,7 +90,7 @@
                             <div>
                                 <label for="generation" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ជំនាន់') }} <span class="text-red-500">*</span></label>
                                 <select name="generation" id="generation"
-                                        class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" required>
+                                        class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:bg-white transition text-sm" required>
                                     <option value="">{{ __('ជ្រើសរើសជំនាន់') }}</option>
                                     @foreach ($generations as $generation)
                                         <option value="{{ $generation }}" {{ old('generation', $course->generation) == $generation ? 'selected' : '' }}>
@@ -118,7 +118,7 @@
                             <div>
                                 <label for="department_id" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('នាយកដ្ឋាន') }} <span class="text-red-500">*</span></label>
                                 <select name="department_id" id="department_id"
-                                        class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" required>
+                                        class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:bg-white transition text-sm" required>
                                     <option value="">{{ __('ជ្រើសរើសនាយកដ្ឋាន') }}</option>
                                     @foreach($departments as $department)
                                         <option value="{{ $department->id }}" {{ old('department_id', $course->department_id) == $department->id ? 'selected' : '' }}>
@@ -140,7 +140,7 @@
                                     <template x-for="(item, index) in selectedPrograms" :key="index">
                                         <div class="flex items-center gap-2">
                                             <select name="program_ids[]"
-                                                    class="flex-1 rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" required>
+                                                    class="flex-1 min-w-0 rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:bg-white transition text-sm" required>
                                                 <option value="">{{ __('ជ្រើសរើសកម្មវិធីសិក្សា') }}</option>
                                                 @foreach($programs as $program)
                                                     <option value="{{ $program->id }}" x-bind:selected="item == {{ $program->id }}">
@@ -180,7 +180,7 @@
                             <div>
                                 <label for="description_km" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ការពិពណ៌នា (ខ្មែរ)') }}</label>
                                 <textarea name="description_km" id="description_km" rows="4"
-                                          class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">{{ old('description_km', $course->description_km) }}</textarea>
+                                          class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:bg-white transition text-sm">{{ old('description_km', $course->description_km) }}</textarea>
                                 @error('description_km')
                                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                 @enderror
@@ -190,7 +190,7 @@
                             <div>
                                 <label for="description_en" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ការពិពណ៌នា (អង់គ្លេស)') }}</label>
                                 <textarea name="description_en" id="description_en" rows="4"
-                                          class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">{{ old('description_en', $course->description_en) }}</textarea>
+                                          class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:bg-white transition text-sm">{{ old('description_en', $course->description_en) }}</textarea>
                                 @error('description_en')
                                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                 @enderror

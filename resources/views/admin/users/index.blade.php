@@ -486,6 +486,7 @@
                                                                         <th class="px-6 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ __('អត្តសញ្ញាណ') }}</th>
                                                                         <th class="px-6 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ __('ឈ្មោះអ្នកប្រើ / ពេញ') }}</th>
                                                                         <th class="px-6 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ __('អ៊ីម៉ែល') }}</th>
+                                                                        <th class="px-6 py-3 text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ __('ឆ្នាំសិក្សា') }}</th>
                                                                         <th class="px-6 py-3 text-right text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ __('សកម្មភាព') }}</th>
                                                                     </tr>
                                                                 </thead>
@@ -511,6 +512,20 @@
                                                                                 <div class="text-[11px] text-gray-500 font-medium">{{ $student->studentProfile->full_name_km ?? 'N/A' }}</div>
                                                                             </td>
                                                                             <td class="px-6 py-3 text-sm text-gray-600 font-medium">{{ $student->email ?? 'មិនទាន់បង្កើតគណនី' }}</td>
+                                                                            <td class="px-6 py-3 text-center">
+                                                                                @if($student->computed_year_level)
+                                                                                    <span class="inline-flex items-center justify-center min-w-[2.5rem] px-2.5 py-1 rounded-lg text-xs font-bold
+                                                                                        @if($student->computed_year_level >= $student->program->duration_years)
+                                                                                            bg-purple-100 text-purple-700 border border-purple-200
+                                                                                        @else
+                                                                                            bg-blue-50 text-blue-700 border border-blue-100
+                                                                                        @endif">
+                                                                                        {{ __('ឆ្នាំទី') }} {{ $student->computed_year_level }}
+                                                                                    </span>
+                                                                                @else
+                                                                                    <span class="text-xs text-gray-400">—</span>
+                                                                                @endif
+                                                                            </td>
                                                                             <td class="px-6 py-3 text-right space-x-1">
                                                                                 <a href="{{ route('admin.show-user', $student->id) }}" class="inline-flex items-center justify-center p-2 text-green-600 hover:bg-green-50 rounded-lg transition-all" title="{{ __('មើល') }}">
                                                                                     <i class="fas fa-eye text-sm"></i>
@@ -548,7 +563,19 @@
                                                                             <div class="min-w-0">
                                                                                 <h5 class="text-sm font-black text-gray-900 uppercase truncate">{{ $student->name }}</h5>
                                                                                 <p class="text-[10px] text-gray-500 truncate font-medium">{{ $student->email }}</p>
-                                                                                <span class="inline-block font-mono text-[10px] font-bold text-green-700 bg-green-50 px-1.5 py-0.5 rounded border border-green-100 mt-1">{{ $student->student_id_code ?? 'N/A' }}</span>
+                                                                                <div class="flex items-center gap-1.5 mt-1 flex-wrap">
+                                                                                    <span class="inline-block font-mono text-[10px] font-bold text-green-700 bg-green-50 px-1.5 py-0.5 rounded border border-green-100">{{ $student->student_id_code ?? 'N/A' }}</span>
+                                                                                    @if($student->computed_year_level)
+                                                                                        <span class="inline-flex items-center justify-center px-1.5 py-0.5 rounded text-[10px] font-bold
+                                                                                            @if($student->program && $student->computed_year_level >= $student->program->duration_years)
+                                                                                                bg-purple-100 text-purple-700
+                                                                                            @else
+                                                                                                bg-blue-50 text-blue-700
+                                                                                            @endif">
+                                                                                            {{ __('ឆ្នាំទី') }} {{ $student->computed_year_level }}
+                                                                                        </span>
+                                                                                    @endif
+                                                                                </div>
                                                                             </div>
                                                                         </div>
                                                                     </div>

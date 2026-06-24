@@ -64,8 +64,15 @@
 
             {{-- Year Level Cards --}}
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                @php $colors = ['bg-blue-500', 'bg-indigo-500', 'bg-purple-500', 'bg-pink-500']; @endphp
+                @php
+                    $colors = ['bg-blue-500', 'bg-indigo-500', 'bg-purple-500', 'bg-pink-500'];
+                    $genBase = 2006;
+                    $currentYearStart = \App\Models\AcademicYear::getCurrent()
+                        ? (int) preg_replace('/\D/', '', substr(\App\Models\AcademicYear::getCurrent()->name, 0, 4))
+                        : (int) date('Y');
+                @endphp
                 @for($year = 1; $year <= $program->duration_years; $year++)
+                    @php $gen = $currentYearStart - $genBase - $year + 1; @endphp
                     <div class="bg-white/80 backdrop-blur-xl border border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.05)] rounded-2xl p-6 ring-1 ring-black/5 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
                         <div class="flex items-center justify-between mb-4">
                             <div class="p-3 rounded-xl {{ $colors[($year - 1) % 4] }}/10">
@@ -73,7 +80,7 @@
                             </div>
                             <span class="text-3xl font-bold text-gray-800">{{ $summary[$year]['count'] }}</span>
                         </div>
-                        <h4 class="text-sm font-bold text-gray-500 uppercase tracking-wider">ជំនាន់ទី{{ $year }}</h4>
+                        <h4 class="text-sm font-bold text-gray-500 uppercase tracking-wider">ជំនាន់ទី{{ $gen }}</h4>
                         <p class="text-xs text-gray-400 mt-1">{{ $summary[$year]['count'] }} និស្សិត</p>
                     </div>
                 @endfor
@@ -93,12 +100,13 @@
 
             {{-- Student Lists --}}
             @for($year = 1; $year <= $program->duration_years; $year++)
+                @php $gen = $currentYearStart - $genBase - $year + 1; @endphp
                 @if($summary[$year]['count'] > 0)
                     <div class="bg-white/80 backdrop-blur-xl border border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.05)] rounded-2xl overflow-hidden ring-1 ring-black/5">
                         <div class="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-{{ ['blue', 'indigo', 'purple', 'pink'][($year - 1) % 4] }}-50 to-transparent">
                             <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
                                 <i class="fas fa-graduation-cap text-{{ ['blue', 'indigo', 'purple', 'pink'][($year - 1) % 4] }}-500"></i>
-                                ជំនាន់ទី{{ $year }} — {{ $summary[$year]['count'] }} និស្សិត
+                                ជំនាន់ទី{{ $gen }} — {{ $summary[$year]['count'] }} និស្សិត
                             </h3>
                         </div>
 
@@ -135,7 +143,7 @@
                                             <td class="px-6 py-4">
                                                 <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-{{ ['blue', 'indigo', 'purple', 'pink'][($year - 1) % 4] }}-100 text-{{ ['blue', 'indigo', 'purple', 'pink'][($year - 1) % 4] }}-700">
                                                     <i class="fas fa-graduation-cap"></i>
-                                                    {{ $year }}
+                                                    {{ $student->generation }}
                                                 </span>
                                             </td>
                                             <td class="px-6 py-4">
@@ -161,7 +169,7 @@
                                             </div>
                                             <div>
                                                 <p class="text-sm font-bold text-gray-800">{{ $student->name }}</p>
-                                                <p class="text-xs text-gray-500">{{ $student->student_id_code ?? '-' }}</p>
+                                                <p class="text-xs text-gray-500">{{ $student->student_id_code ?? '-' }} · ជំនាន់ទី{{ $student->generation }}</p>
                                             </div>
                                         </div>
                                         <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">
