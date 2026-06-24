@@ -65,18 +65,26 @@
             {{-- Year Level Cards --}}
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 @php
-                    $colors = ['bg-blue-500', 'bg-indigo-500', 'bg-purple-500', 'bg-pink-500'];
+                    $cardColors = [
+                        1 => ['icon_bg' => 'bg-blue-500/10', 'icon_text' => 'text-blue-500'],
+                        2 => ['icon_bg' => 'bg-indigo-500/10', 'icon_text' => 'text-indigo-500'],
+                        3 => ['icon_bg' => 'bg-purple-500/10', 'icon_text' => 'text-purple-500'],
+                        4 => ['icon_bg' => 'bg-pink-500/10', 'icon_text' => 'text-pink-500'],
+                    ];
                     $genBase = 2006;
                     $currentYearStart = \App\Models\AcademicYear::getCurrent()
                         ? (int) preg_replace('/\D/', '', substr(\App\Models\AcademicYear::getCurrent()->name, 0, 4))
                         : (int) date('Y');
                 @endphp
                 @for($year = 1; $year <= $program->duration_years; $year++)
-                    @php $gen = $currentYearStart - $genBase - $year + 1; @endphp
+                    @php
+                        $gen = $currentYearStart - $genBase - $year + 1;
+                        $cc = $cardColors[$year] ?? $cardColors[4];
+                    @endphp
                     <div class="bg-white/80 backdrop-blur-xl border border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.05)] rounded-2xl p-6 ring-1 ring-black/5 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
                         <div class="flex items-center justify-between mb-4">
-                            <div class="p-3 rounded-xl {{ $colors[($year - 1) % 4] }}/10">
-                                <i class="fas fa-graduation-cap {{ $colors[($year - 1) % 4] }} text-xl"></i>
+                            <div class="p-3 rounded-xl {{ $cc['icon_bg'] }}">
+                                <i class="fas fa-graduation-cap {{ $cc['icon_text'] }} text-xl"></i>
                             </div>
                             <span class="text-3xl font-bold text-gray-800">{{ $summary[$year]['count'] }}</span>
                         </div>
@@ -99,13 +107,24 @@
             </div>
 
             {{-- Student Lists --}}
+            @php
+                $sectionColors = [
+                    1 => ['gradient' => 'from-blue-50', 'icon' => 'text-blue-500', 'badge' => 'bg-blue-100 text-blue-700'],
+                    2 => ['gradient' => 'from-indigo-50', 'icon' => 'text-indigo-500', 'badge' => 'bg-indigo-100 text-indigo-700'],
+                    3 => ['gradient' => 'from-purple-50', 'icon' => 'text-purple-500', 'badge' => 'bg-purple-100 text-purple-700'],
+                    4 => ['gradient' => 'from-pink-50', 'icon' => 'text-pink-500', 'badge' => 'bg-pink-100 text-pink-700'],
+                ];
+            @endphp
             @for($year = 1; $year <= $program->duration_years; $year++)
-                @php $gen = $currentYearStart - $genBase - $year + 1; @endphp
+                @php
+                    $gen = $currentYearStart - $genBase - $year + 1;
+                    $sc = $sectionColors[$year] ?? $sectionColors[4];
+                @endphp
                 @if($summary[$year]['count'] > 0)
                     <div class="bg-white/80 backdrop-blur-xl border border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.05)] rounded-2xl overflow-hidden ring-1 ring-black/5">
-                        <div class="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-{{ ['blue', 'indigo', 'purple', 'pink'][($year - 1) % 4] }}-50 to-transparent">
+                        <div class="px-6 py-4 border-b border-gray-100 bg-gradient-to-r {{ $sc['gradient'] }} to-transparent">
                             <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
-                                <i class="fas fa-graduation-cap text-{{ ['blue', 'indigo', 'purple', 'pink'][($year - 1) % 4] }}-500"></i>
+                                <i class="fas fa-graduation-cap {{ $sc['icon'] }}"></i>
                                 ជំនាន់ទី{{ $gen }} — {{ $summary[$year]['count'] }} និស្សិត
                             </h3>
                         </div>
@@ -141,7 +160,7 @@
                                                 {{ $student->student_id_code ?? '-' }}
                                             </td>
                                             <td class="px-6 py-4">
-                                                <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-{{ ['blue', 'indigo', 'purple', 'pink'][($year - 1) % 4] }}-100 text-{{ ['blue', 'indigo', 'purple', 'pink'][($year - 1) % 4] }}-700">
+                                                <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold {{ $sc['badge'] }}">
                                                     <i class="fas fa-graduation-cap"></i>
                                                     {{ $student->generation }}
                                                 </span>

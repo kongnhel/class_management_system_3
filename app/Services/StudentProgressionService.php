@@ -42,10 +42,19 @@ class StudentProgressionService
      */
     public function getYearLevel(User $student, Program $program): int
     {
-        $enrollment = StudentProgramEnrollment::where('student_user_id', $student->id)
-            ->where('program_id', $program->id)
-            ->where('status', 'active')
-            ->first();
+        // Use eager-loaded relationship if available to avoid N+1
+        $enrollment = null;
+        if ($student->relationLoaded('studentProgramEnrollments')) {
+            $enrollment = $student->studentProgramEnrollments
+                ->where('program_id', $program->id)
+                ->where('status', 'active')
+                ->first();
+        } else {
+            $enrollment = StudentProgramEnrollment::where('student_user_id', $student->id)
+                ->where('program_id', $program->id)
+                ->where('status', 'active')
+                ->first();
+        }
 
         $startingYear = $enrollment?->starting_year_level ?? 1;
         $currentAcademicYear = $this->getCurrentAcademicYearStart();
@@ -164,6 +173,47 @@ class StudentProgressionService
     }
 
     /**
+     * Get ALL eligible students across ALL year levels for the advance page.
+     * Returns students with computed_year_level attached.
+     */
+    public function getAllEligibleStudents(Program $program): Collection
+    {
+        return $this->getAllActiveStudents($program)
+            ->filter(fn ($student) => ! $this->hasFailedCourses($student, $program))
+            ->values();
+    }
+
+    /**
+     * Get ALL held-back students across ALL year levels for the advance page.
+     * Returns students with computed_year_level attached.
+     */
+    public function getAllHeldBackStudents(Program $program): Collection
+    {
+        return $this->getAllActiveStudents($program)
+            ->filter(fn ($student) => $this->hasFailedCourses($student, $program))
+            ->values();
+    }
+
+    /**
+     * Get all active students for a program with year level computed.
+     */
+    private function getAllActiveStudents(Program $program): Collection
+    {
+        $students = User::where('role', 'student')
+            ->whereHas('studentProgramEnrollments', function ($q) use ($program) {
+                $q->where('program_id', $program->id)->where('status', 'active');
+            })
+            ->with(['studentProfile', 'studentProgramEnrollments'])
+            ->get();
+
+        $students->each(function ($student) use ($program) {
+            $student->computed_year_level = $this->getYearLevel($student, $program);
+        });
+
+        return $students;
+    }
+
+    /**
      * Get students held back (have F grades).
      */
     public function getHeldBackStudents(Program $program): Collection
@@ -183,19 +233,32 @@ class StudentProgressionService
         $maxYear = $this->getMaxYearLevel($program);
         $summary = [];
 
+        // Load ALL active students for this program ONCE (with eager loading)
+        $allActiveStudents = User::where('role', 'student')
+            ->whereHas('studentProgramEnrollments', function ($q) use ($program) {
+                $q->where('program_id', $program->id)->where('status', 'active');
+            })
+            ->with(['studentProfile', 'studentProgramEnrollments'])
+            ->get();
+
+        // Group by year level
+        $groupedByYear = $allActiveStudents->groupBy(fn ($student) => $this->getYearLevel($student, $program));
+
         for ($year = 1; $year <= $maxYear; $year++) {
-            $students = $this->getStudentsByYearLevel($program, $year);
+            $students = $groupedByYear->get($year, collect())->values();
             $summary[$year] = [
                 'count' => $students->count(),
                 'students' => $students,
             ];
         }
 
-        // Graduated students
+        // Graduated students (eager load to avoid N+1 in view)
         $graduated = User::where('role', 'student')
             ->whereHas('studentProgramEnrollments', function ($q) use ($program) {
                 $q->where('program_id', $program->id)->where('status', 'graduated');
-            })->get();
+            })
+            ->with(['studentProfile', 'studentProgramEnrollments'])
+            ->get();
 
         $summary['graduated'] = [
             'count' => $graduated->count(),
@@ -228,6 +291,12 @@ class StudentProgressionService
 
                 // If next year is within program duration, enroll in next year's offerings
                 if ($nextYear <= $this->getMaxYearLevel($program)) {
+                    // Increment starting_year_level so getYearLevel() returns the new year
+                    StudentProgramEnrollment::where('student_user_id', $student->id)
+                        ->where('program_id', $program->id)
+                        ->where('status', 'active')
+                        ->increment('starting_year_level', 1);
+
                     $this->enrollInNextYear($student, $program, $nextYear);
                     $advanced++;
                 } else {
@@ -466,7 +535,7 @@ class StudentProgressionService
             ->whereHas('studentProgramEnrollments', function ($q) use ($program) {
                 $q->where('program_id', $program->id)->where('status', 'active');
             })
-            ->with('studentProfile')
+            ->with(['studentProfile', 'studentProgramEnrollments'])
             ->get()
             ->filter(fn ($student) => $this->getYearLevel($student, $program) === $yearLevel)
             ->values();
@@ -490,11 +559,12 @@ class StudentProgressionService
      */
     private function getYearLevelFromProgram(Program $program): int
     {
-        // Get all active students for this program
+        // Get all active students for this program (eager loaded to avoid N+1)
         $students = User::where('role', 'student')
             ->whereHas('studentProgramEnrollments', function ($q) use ($program) {
                 $q->where('program_id', $program->id)->where('status', 'active');
             })
+            ->with('studentProgramEnrollments')
             ->get();
 
         if ($students->isEmpty()) {

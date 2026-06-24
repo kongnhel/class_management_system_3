@@ -170,14 +170,7 @@
                             <x-input-label for="generation" class="font-semibold text-gray-700 mb-1.5">
                                 <i class="fas fa-layer-group mr-1.5 text-indigo-500"></i> {{ __('ជំនាន់') }}
                             </x-input-label>
-                            <select name="generation" id="generation" class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 py-2.5 px-4">
-                                <option value="">{{ __('ជ្រើសរើសជំនាន់') }}</option>
-                                @foreach ($generations as $generation)
-                                    <option value="{{ $generation }}" {{ old('generation', $user->generation) == $generation ? 'selected' : '' }}>
-                                        {{ $generation }}
-                                    </option>
-                                @endforeach
-                            </select>
+                            <x-text-input id="generation" name="generation" type="number" class="block w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:bg-white transition" placeholder="ឧ. 16" :value="old('generation', $user->generation)" />
                             <x-input-error :messages="$errors->get('generation')" class="mt-2" />
                         </div>
                     </div>

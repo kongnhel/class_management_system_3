@@ -43,20 +43,12 @@ class StudentProgressionController extends Controller
         $programId = $request->input('program_id');
         $program = Program::findOrFail($programId);
 
-        $eligibleStudents = $this->progressionService->getEligibleStudents($program);
-        $heldBackStudents = $this->progressionService->getHeldBackStudents($program);
-
-        $firstStudent = $eligibleStudents->first() ?? $heldBackStudents->first();
-        $currentYear = $firstStudent
-            ? $this->progressionService->getYearLevel($firstStudent, $program)
-            : 1;
-        $nextYear = $currentYear + 1;
+        $eligibleStudents = $this->progressionService->getAllEligibleStudents($program);
+        $heldBackStudents = $this->progressionService->getAllHeldBackStudents($program);
         $maxYear = $this->progressionService->getMaxYearLevel($program);
-        $willGraduate = $nextYear > $maxYear;
 
         return view('admin.progression.advance', compact(
-            'program', 'eligibleStudents', 'heldBackStudents',
-            'currentYear', 'nextYear', 'maxYear', 'willGraduate'
+            'program', 'eligibleStudents', 'heldBackStudents', 'maxYear'
         ));
     }
 

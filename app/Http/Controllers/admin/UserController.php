@@ -255,11 +255,20 @@ class UserController extends Controller
             'generation' => ($request->role === 'student') ? $request->generation : null,
         ]);
 
-        // Auto-generate student_id_code for students
+        // Auto-generate student_id_code and create program enrollment for students
         if ($request->role === 'student') {
             $studentId = $this->studentIdGenerator->generate($request->program_id, $request->generation);
             $user->student_id_code = $studentId;
             $user->save();
+
+            // Create student_program_enrollments record so progression page can find them
+            \App\Models\StudentProgramEnrollment::create([
+                'student_user_id' => $user->id,
+                'program_id' => $request->program_id,
+                'starting_year_level' => 1,
+                'enrollment_date' => now(),
+                'status' => 'active',
+            ]);
         }
 
         $profileData = $request->only(['full_name_km', 'full_name_en', 'gender', 'date_of_birth', 'phone_number', 'address']);

@@ -9,7 +9,7 @@
                     ជំរុញនិស្សិត — {{ $program->name_km }}
                 </h2>
                 <p class="mt-1 text-sm text-gray-500 ml-12">
-                    ជំនាន់ទី{{ $currentYear }} → {{ $willGraduate ? 'បញ្ចប់ការសិក្សា' : 'ជំនាន់ទី'.$nextYear }}
+                    {{ __('ជ្រើសរើសនិស្សិតដែលចង់ជំរុញ ឬបញ្ចប់ការសិក្សា') }}
                 </p>
             </div>
             <a href="{{ route('admin.progression.index', ['program_id' => $program->id]) }}" class="mt-4 md:mt-0 inline-flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-xl font-bold text-sm hover:bg-gray-200 transition">
@@ -55,14 +55,9 @@
                         <i class="fas fa-info-circle text-2xl"></i>
                     </div>
                     <div>
-                        <h3 class="text-lg font-bold">
-                            {{ $willGraduate ? 'ការបញ្ចប់ការសិក្សា' : 'ជំរុញទៅជំនាន់ទី'.$nextYear }}
-                        </h3>
+                        <h3 class="text-lg font-bold">ជំរុញ ឬបញ្ចប់ការសិក្សា</h3>
                         <p class="text-sm text-purple-100 mt-1">
-                            {{ $willGraduate
-                                ? 'និស្សិតខាងក្រោមបានបញ្ចប់ជំនាន់ចុងក្រោយ និងត្រូវបានបញ្ចប់ការសិក្សា។'
-                                : 'និស្សិតខាងក្រោមអាចជំរុញទៅជំនាន់ទី'.$nextYear.'។ និស្សិតដែលមានបរិយាកាស F មិនត្រូវបានជំរុញទេ។'
-                            }}
+                            និស្សិតឆ្នាំទី{{ $maxYear }}នឹងត្រូវបញ្ចប់ការសិក្សា។ និស្សិតឆ្នាំផ្សេងទៀតនឹងត្រូវជំរុញទៅឆ្នាំបន្ទាប់។
                         </p>
                     </div>
                 </div>
@@ -98,12 +93,21 @@
                                         <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">ល.រ</th>
                                         <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">ឈ្មោះ</th>
                                         <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">អត្តលេខ</th>
-                                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">ជំនាន់</th>
-                                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">ស្ថានភាព</th>
+                                        <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">ឆ្នាំបច្ចុប្បន្ន</th>
+                                        <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">សកម្មភាព</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-100">
+                                    @php
+                                        $nextYearColors = ['bg-blue-100 text-blue-700', 'bg-indigo-100 text-indigo-700', 'bg-purple-100 text-purple-700', 'bg-pink-100 text-pink-700'];
+                                    @endphp
                                     @foreach($eligibleStudents as $index => $student)
+                                        @php
+                                            $yr = $student->computed_year_level;
+                                            $isFinalYear = $yr >= $maxYear;
+                                            $nextYr = $isFinalYear ? null : $yr + 1;
+                                            $colorClass = $nextYearColors[($yr - 1) % 4] ?? $nextYearColors[3];
+                                        @endphp
                                         <tr class="hover:bg-green-50/50 transition">
                                             <td class="px-6 py-4 text-center">
                                                 <input type="checkbox" name="student_ids[]" value="{{ $student->id }}" class="student-cb rounded border-gray-300 text-green-600 focus:ring-green-500">
@@ -121,17 +125,24 @@
                                                 </div>
                                             </td>
                                             <td class="px-6 py-4 text-sm font-bold text-gray-800">{{ $student->student_id_code ?? '-' }}</td>
-                                            <td class="px-6 py-4">
-                                                <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700">
+                                            <td class="px-6 py-4 text-center">
+                                                <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold {{ $colorClass }}">
                                                     <i class="fas fa-graduation-cap"></i>
-                                                    {{ $currentYear }}
+                                                    {{ $yr }}
                                                 </span>
                                             </td>
-                                            <td class="px-6 py-4">
-                                                <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">
-                                                    <i class="fas fa-check-circle"></i>
-                                                    {{ $willGraduate ? 'បញ្ចប់' : 'អាចជំរុញ' }}
-                                                </span>
+                                            <td class="px-6 py-4 text-center">
+                                                @if($isFinalYear)
+                                                    <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700">
+                                                        <i class="fas fa-user-check"></i>
+                                                        បញ្ចប់ការសិក្សា
+                                                    </span>
+                                                @else
+                                                    <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">
+                                                        <i class="fas fa-arrow-right"></i>
+                                                        ជំរុញទៅឆ្នាំទី{{ $nextYr }}
+                                                    </span>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach
@@ -142,6 +153,12 @@
                         {{-- Mobile Cards --}}
                         <div class="md:hidden divide-y divide-gray-100">
                             @foreach($eligibleStudents as $student)
+                                @php
+                                    $yr = $student->computed_year_level;
+                                    $isFinalYear = $yr >= $maxYear;
+                                    $nextYr = $isFinalYear ? null : $yr + 1;
+                                    $colorClass = $nextYearColors[($yr - 1) % 4] ?? $nextYearColors[3];
+                                @endphp
                                 <div class="px-4 py-3 hover:bg-green-50/50 transition">
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center gap-3">
@@ -152,11 +169,20 @@
                                             <div>
                                                 <p class="text-sm font-bold text-gray-800">{{ $student->name }}</p>
                                                 <p class="text-xs text-gray-500">{{ $student->student_id_code ?? '-' }}</p>
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold {{ $colorClass }} mt-1">
+                                                    ឆ្នាំទី{{ $yr }}
+                                                </span>
                                             </div>
                                         </div>
-                                        <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">
-                                            <i class="fas fa-check-circle"></i>
-                                        </span>
+                                        @if($isFinalYear)
+                                            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700">
+                                                <i class="fas fa-user-check"></i>
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold bg-green-100 text-green-700">
+                                                <i class="fas fa-arrow-right"></i>
+                                            </span>
+                                        @endif
                                     </div>
                                 </div>
                             @endforeach
@@ -172,7 +198,7 @@
                                     class="inline-flex items-center gap-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white px-8 py-3 rounded-2xl font-bold shadow-lg shadow-green-500/25 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
                                     disabled>
                                     <i class="fas fa-arrow-right"></i>
-                                    {{ $willGraduate ? 'បញ្ចប់ការសិក្សា' : 'ជំរុញទៅជំនាន់ទី'.$nextYear }}
+                                    ជំរុញនិស្សិតដែលបានជ្រើសរើស
                                 </button>
                             </div>
                         </div>
@@ -199,11 +225,13 @@
                                     <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">ល.រ</th>
                                     <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">ឈ្មោះ</th>
                                     <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">អត្តលេខ</th>
+                                    <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">ឆ្នាំបច្ចុប្បន្ន</th>
                                     <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">ស្ថានភាព</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100">
                                 @foreach($heldBackStudents as $index => $student)
+                                    @php $yr = $student->computed_year_level; @endphp
                                     <tr class="hover:bg-red-50/50 transition">
                                         <td class="px-6 py-4 text-sm text-gray-500">{{ $index + 1 }}</td>
                                         <td class="px-6 py-4">
@@ -218,6 +246,11 @@
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 text-sm font-bold text-gray-800">{{ $student->student_id_code ?? '-' }}</td>
+                                        <td class="px-6 py-4 text-center">
+                                            <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700">
+                                                {{ $yr }}
+                                            </span>
+                                        </td>
                                         <td class="px-6 py-4">
                                             <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700">
                                                 <i class="fas fa-exclamation-circle"></i>
@@ -241,7 +274,7 @@
                                         </div>
                                         <div>
                                             <p class="text-sm font-bold text-gray-800">{{ $student->name }}</p>
-                                            <p class="text-xs text-gray-500">{{ $student->student_id_code ?? '-' }}</p>
+                                            <p class="text-xs text-gray-500">{{ $student->student_id_code ?? '-' }} · ឆ្នាំទី{{ $student->computed_year_level }}</p>
                                         </div>
                                     </div>
                                     <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700">
@@ -261,7 +294,7 @@
                         <i class="fas fa-users text-gray-400 text-4xl"></i>
                     </div>
                     <h3 class="text-lg font-bold text-gray-600">មិនមាននិស្សិត</h3>
-                    <p class="text-sm text-gray-400 mt-1">មិនមាននិស្សិតក្នុងជំនាន់នេះសម្រាប់កម្មវិធីនេះទេ។</p>
+                    <p class="text-sm text-gray-400 mt-1">មិនមាននិស្សិតសម្រាប់កម្មវិធីនេះទេ។</p>
                 </div>
             @endif
 

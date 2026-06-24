@@ -150,7 +150,7 @@
                         </div>
                         <div>
                             <x-input-label for="generation" class="font-semibold text-gray-700 mb-1.5">{{ __('ជំនាន់') }}</x-input-label>
-                            <x-text-input id="generation" name="generation" type="number" class="block w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:bg-white transition" placeholder="ឧ. ១៦" />
+                            <x-text-input id="generation" name="generation" type="number" class="block w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:bg-white transition" placeholder="ឧ. 16" />
                         </div>
                     </div>
                 </div>
