@@ -82,6 +82,7 @@
     @livewireScripts
 
     <body class="font-sans antialiased text-gray-900">
+    <x-toast />
 
     @auth
         @php
@@ -390,7 +391,7 @@
             }
         } catch (e) {
             console.error(e);
-            alert("មានបញ្ហាក្នុងការលុបប្រវត្តិ។");
+            showToast("មានបញ្ហាក្នុងការលុបប្រវត្តិ។", 'error');
             loadChatHistory();
         }
     }

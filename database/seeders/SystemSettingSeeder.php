@@ -24,6 +24,11 @@ class SystemSettingSeeder extends Seeder
         SystemSetting::set('self_enrollment_enabled', '1', 'boolean', 'enrollment');
         SystemSetting::set('max_enrollment_per_course', '50', 'number', 'enrollment');
 
+        // Registration Settings
+        SystemSetting::set('registration_open', '1', 'boolean', 'registration');
+        SystemSetting::set('registration_start', now()->format('Y-m-d'), 'text', 'registration');
+        SystemSetting::set('registration_end', now()->addMonth()->format('Y-m-d'), 'text', 'registration');
+
         // General Settings
         SystemSetting::set('school_name', 'សាកលវិទ្យាល័យជាតិមានជ័យ', 'text', 'general');
         SystemSetting::set('school_name_en', 'National University of Meanchey', 'text', 'general');

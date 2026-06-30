@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Models\User;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -19,74 +20,43 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email'],
-            'password' => ['required', 'string'],
+            'login_identifier' => ['required', 'string'],
+            'password' => ['nullable', 'string'],
         ];
     }
 
-    /**
-     * Attempt to authenticate the request's credentials.
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
-    //     public function authenticate(): void
-    //     {
-    //         $this->ensureIsNotRateLimited();
+    public function authenticate(): void
+    {
+        $this->ensureIsNotRateLimited();
 
-    //         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
-    //             RateLimiter::hit($this->throttleKey());
+        $identifier = $this->login_identifier;
 
-    //             throw ValidationException::withMessages([
-    //                 'email' => trans('auth.failed'),
-    //             ]);
-    //         }
+        // Phone login is handled by PhoneLoginController, not here
+        if (preg_match('/^\+?[0-9]{6,15}$/', $identifier)) {
+            throw ValidationException::withMessages([
+                'login_identifier' => 'សូមប្រើវិធីភ្ជាប់ Telegram OTP សម្រាប់លេខទូរស័ព្ទ។',
+            ]);
+        }
 
-    //         RateLimiter::clear($this->throttleKey());
-    //     }
+        // Email/Student ID login requires password
+        if (empty($this->password)) {
+            throw ValidationException::withMessages([
+                'password' => 'សូមបញ្ចូលពាក្យសម្ងាត់។',
+            ]);
+        }
 
-    //     /**
-    //      * Ensure the login request is not rate limited.
-    //      *
-    //      * @throws \Illuminate\Validation\ValidationException
-    //      */
-    //     // public function ensureIsNotRateLimited(): void
-    //     // {
-    //     //     if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
-    //     //         return;
-    //     //     }
+        $user = User::findForLogin($identifier);
 
-    //     //     event(new Lockout($this));
+        if (! $user || ! Auth::attempt(['email' => $user->email, 'password' => $this->password], $this->boolean('remember'))) {
+            RateLimiter::hit($this->throttleKey(), 900);
 
-    //     //     $seconds = RateLimiter::availableIn($this->throttleKey());
+            throw ValidationException::withMessages([
+                'login_identifier' => trans('auth.failed'),
+            ]);
+        }
 
-    //     //     throw ValidationException::withMessages([
-    //     //         'email' => trans('auth.throttle', [
-    //     //             'seconds' => $seconds,
-    //     //             'minutes' => ceil($seconds / 60),
-    //     //         ]),
-    //     //     ]);
-    //     // }
-    // public function ensureIsNotRateLimited(): void
-    // {
-    //     if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
-    //         return;
-    //     }
-
-    //     event(new Lockout($this));
-
-    //     // កំណត់ឱ្យវា Lock ១៥ នាទី (៩០០ វិនាទី) នៅត្រង់នេះ
-    //     $seconds = RateLimiter::availableIn($this->throttleKey());
-
-    //     // ប្រសិនបើចង់ឱ្យវា Lock ១៥ នាទីភ្លាមៗពេលគ្រប់ ៥ ដង
-    //     // អ្នកអាចប្រើ RateLimiter::hit($this->throttleKey(), 900); នៅត្រង់នេះក៏បាន
-
-    //     throw ValidationException::withMessages([
-    //         'email' => trans('auth.throttle', [
-    //             'seconds' => $seconds,
-    //             'minutes' => ceil($seconds / 60),
-    //         ]),
-    //     ]);
-    // }
+        RateLimiter::clear($this->throttleKey());
+    }
 
     public function ensureIsNotRateLimited(): void
     {
@@ -99,35 +69,15 @@ class LoginRequest extends FormRequest
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
         throw ValidationException::withMessages([
-            'email' => trans('auth.throttle', [
+            'login_identifier' => trans('auth.throttle', [
                 'seconds' => $seconds,
                 'minutes' => ceil($seconds / 60),
             ]),
         ]);
     }
 
-    // Lock 15 នាទីពេល hit 5 ដង
-    public function authenticate(): void
-    {
-        $this->ensureIsNotRateLimited();
-
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
-            // ← 900 វិនាទី = 15 នាទី
-            RateLimiter::hit($this->throttleKey(), 900);
-
-            throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
-            ]);
-        }
-
-        RateLimiter::clear($this->throttleKey());
-    }
-
-    /**
-     * Get the rate limiting throttle key for the request.
-     */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+        return Str::transliterate(Str::lower($this->string('login_identifier')).'|'.$this->ip());
     }
-} //
+}

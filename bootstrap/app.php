@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\CheckRegistrationOpen;
 use App\Http\Middleware\CheckUserRole;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -18,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'role' => CheckUserRole::class,
+            'registration.open' => CheckRegistrationOpen::class,
         ]);
 
         // Register global middleware for security headers

@@ -220,7 +220,7 @@
                                             const file = $event.target.files[0];
                                             if (file) {
                                                 if (file.size > 2 * 1024 * 1024) {
-                                                    alert('រូបភាពធំពេក! សូមជ្រើសរើសរូបភាពដែលមានទំហំតូចជាង ២MB');
+                                                    showToast('រូបភាពធំពេក! សូមជ្រើសរើសរូបភាពដែលមានទំហំតូចជាង ២MB', 'error');
                                                     $event.target.value = '';
                                                     profilePicturePreview = '{{ $userProfile->profile_picture_url ?? '' }}';
                                                 } else {

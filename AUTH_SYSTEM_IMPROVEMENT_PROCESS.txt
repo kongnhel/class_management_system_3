@@ -1,0 +1,652 @@
+================================================================================
+AUTH SYSTEM IMPROVEMENT PROCESS - COMPLETE DOCUMENTATION
+================================================================================
+Date: June 27, 2026
+Project: Class Management System (NMU)
+Framework: Laravel 11 + Tailwind CSS v4 + Alpine.js
+================================================================================
+
+TABLE OF CONTENTS
+-----------------
+1. Phase 6: Consistent Toast/Flash Messaging
+2. Phase 7: Security Hardening
+3. Phase 2: Registration Open/Close Toggle
+4. Phase 1: Flexible Login Identifier
+5. Phase 3: OTP Verification System
+6. Phase 4: Account Verification Lookup
+7. Phase 5: Resend Verification from Login Page
+8. Phase 8: Bilingual Toggle
+9. Phase 9: Profile Enhancement
+
+================================================================================
+PHASE 6: CONSISTENT TOAST/FLASH MESSAGING
+================================================================================
+
+PROBLEM:
+- Some pages used plain browser alert() calls
+- Some pages used SweetAlert2
+- Some pages had inline Alpine.js toasts
+- Some pages had no toast at all
+- Inconsistent visual style across auth pages
+
+SOLUTION:
+Created a reusable toast component and applied it globally.
+
+FILES CREATED:
+- resources/views/components/toast.blade.php
+
+  This component provides:
+  - A toast container div with id="toast-container"
+  - A showToast(message, type) JavaScript function
+  - Supports 4 types: success, error, warning, info
+  - Each type has its own icon, color scheme, and title (Khmer)
+  - Auto-dismiss progress bar (10 seconds)
+  - Slide-in/out animation
+  - Manual close button
+  - Reads Laravel session flash keys: success, error, warning, info, status
+  - Renders flash toasts automatically on DOMContentLoaded
+
+FILES MODIFIED:
+- resources/views/layouts/guest.blade.php
+  Added <x-toast /> after the body tag so all auth pages get toasts
+
+- resources/views/layouts/app.blade.php
+  Added <x-toast /> after the body tag so all admin/professor/student
+  dashboard pages get toasts
+
+- resources/views/auth/login.blade.php
+  Removed the inline session toast block (lines 13-38)
+  Removed the inline showToast() function and toast container (lines 164-215)
+  Google login error handler now calls showToast(data.message, 'error')
+
+- resources/views/auth/forgot-password.blade.php
+  Completely redesigned with green theme, NMU logo, styled card,
+  back-to-login link
+
+- resources/views/auth/reset-password.blade.php
+  Completely redesigned with green theme, styled card, back-to-login link
+
+- resources/views/auth/verify-email.blade.php
+  Redesigned with email icon, green confirmation banner, styled card
+
+- resources/views/auth/confirm-password.blade.php
+  Redesigned with lock icon, styled card
+
+- resources/views/auth/register.blade.php
+  Removed inline session toast block (redundant with guest layout)
+
+- app/Exceptions/Handler.php
+  Changed ->with('message', ...) to ->with('error', ...)
+  so the toast component picks up the flash message
+
+- resources/views/admin/users/edit.blade.php
+  Replaced alert('រូបភាពធំពេក!...') with showToast(..., 'error')
+
+- resources/views/admin/users/create.blade.php
+  Replaced alert('រូបភាពធំពេក!...') with showToast(..., 'error')
+
+- resources/views/layouts/app.blade.php
+  Replaced alert("មានបញ្ហាក្នុងការលុបប្រវត្តិ។") with
+  showToast("...", 'error')
+
+RESULT:
+All pages now use the same styled toast notification system.
+No more plain browser alert() calls in active blade files.
+Flash messages from controllers (->with('success', ...)) are
+automatically shown as styled toasts.
+
+================================================================================
+PHASE 7: SECURITY HARDENING
+================================================================================
+
+7A: GOOGLE LOGIN SECURITY FIX
+
+PROBLEM:
+The Google login flow trusted client-supplied uid and email.
+A malicious user could POST fake uid/email to impersonate any user.
+
+BEFORE (INSECURE):
+  Frontend: signInWithPopup -> sends { uid, email } to server
+  Server: trusts uid/email, looks up user, logs them in
+
+AFTER (SECURE):
+  Frontend: signInWithPopup -> gets ID token -> sends { id_token }
+  Server: verifies ID token via Firebase Admin SDK -> extracts
+          verified uid, email, photoURL from the token
+
+FILES MODIFIED:
+- app/Http//Auth/GoogleAuthController.php
+  Both handleCallback() and linkAccount() now:
+  1. Accept 'id_token' instead of 'uid'/'email'
+  2. Verify the token via $firebaseAuth->verifyIdToken()
+  3. Extract uid/email/picture from verified token claims
+  4. Return 401 if token verification fails
+  Uses Kreait\Firebase\Auth (kreait/laravel-firebase package)
+
+- resources/views/auth/login.blade.php
+  Frontend now calls result.user.getIdToken() and sends id_token
+
+- resources/views/student/dashboard.blade.php
+  Google linking now sends id_token instead of uid/photoURL
+
+- resources/views/professor/dashboard.blade.php
+  Google linking now sends id_token instead of uid/photoURL
+
+7B: DEAD CODE CLEANUP
+
+DELETED:
+- app/Http/Controllers/Auth/RegisteredUserController.php
+  Had broken syntax (Rules->Password::defaults())
+  create() and store() methods were unrouted dead code
+  Only checkStudent() was used (via /api/check-student/{code})
+
+MOVED:
+- checkStudent() method moved to StudentRegistrationController.php
+- Route updated in web.php to point to StudentRegistrationController
+
+CLEANED:
+- app/Http/Controllers/Auth/QrLoginController.php
+  Removed ~96 lines of commented-out duplicate class (lines 3-96)
+  Removed dead showQrForm() method (was overridden by auth.php's
+  AuthenticatedSessionController@create)
+  Kept only: handleScan(), finalizeLogin(), refreshQr()
+
+7C: DUPLICATE ROUTE FIX
+
+PROBLEM:
+GET /login was defined twice:
+1. web.php line 75: Route::get('/login', [QrLoginController::class, 'showQrForm'])
+2. auth.php line 15: Route::get('login', [AuthenticatedSessionController::class, 'create'])
+
+Since auth.php is required at the end of web.php, the auth.php version wins.
+Both generate QR codes and show the login view, so they're functionally identical.
+
+FIX:
+Removed the duplicate GET /login from web.php.
+The auth.php definition (AuthenticatedSessionController@create) is now
+the sole definition.
+
+7D: USER MODEL FILLABLE FIX
+
+PROBLEM:
+Several columns existed in migrations but weren't in $fillable:
+- telegram_chat_id (added by migration)
+- profile_picture_path (added by migration)
+- last_login_at (cast defined but not fillable)
+- face_descriptor (added by migration)
+
+FIX:
+Added all missing columns to User model's $fillable array:
+  'telegram_chat_id', 'profile_picture_path', 'last_login_at', 'face_descriptor'
+
+Also added 'phone' (needed for Phase 1).
+
+RESULT:
+All auth-related security issues fixed. Dead code removed.
+No duplicate routes. User model properly configured.
+
+================================================================================
+PHASE 2: REGISTRATION OPEN/CLOSE TOGGLE
+================================================================================
+
+PROBLEM:
+No way for admin to temporarily close registration.
+Registration was always open (controlled structurally by
+admin pre-creating student records).
+
+SOLUTION:
+Leveraged existing SystemSettings infrastructure (table, model,
+controller, seeder all existed but were disabled).
+
+FILES CREATED:
+- app/Http/Middleware/CheckRegistrationOpen.php
+  Reads registration_open, registration_start, registration_end
+  from SystemSettings. If closed or outside date range, redirects
+  to login with error message.
+
+FILES MODIFIED:
+- bootstrap/app.php
+  Added middleware alias: 'registration.open' => CheckRegistrationOpen::class
+  Added import for CheckRegistrationOpen
+
+- routes/auth.php
+  Wrapped register routes in ->middleware('registration.open')
+
+- routes/web.php
+  Uncommented admin/settings routes (GET and PUT)
+
+- database/seeders/SystemSettingSeeder.php
+  Added 3 new settings:
+    registration_open = '1' (boolean)
+    registration_start = now()->format('Y-m-d')
+    registration_end = now()->addMonth()->format('Y-m-d')
+
+- resources/views/admin/settings/index.blade.php
+  Added Registration Settings section with:
+    - Toggle checkbox (registration_open)
+    - Start date picker (registration_start)
+    - End date picker (registration_end)
+    - Helper text in Khmer
+  Also fixed positional indexing to use key-based lookup ($settingMap)
+  Changed submit button color from blue to emerald (green theme)
+  Added all previously hidden grading weights (group_assignment, final_exam)
+
+- app/Http/Controllers/admin/SystemSettingController.php
+  Changed from $existing->update() to SystemSetting::updateOrCreate()
+  so new settings can be created through the UI
+
+DATABASE:
+Ran migration for phone column:
+  php artisan migrate --path=database/migrations/2026_06_26_154303_add_phone_to_users_table.php
+
+Seeded registration settings:
+  php artisan db:seed --class=SystemSettingSeeder
+
+NEW ROUTES:
+  GET  /admin/settings  -> admin.settings.index
+  PUT  /admin/settings  -> admin.settings.update
+
+RESULT:
+Admin can now toggle registration on/off and set date ranges.
+When closed, /register redirects to login with error toast.
+Admin settings page accessible at /admin/settings.
+
+================================================================================
+PHASE 1: FLEXIBLE LOGIN IDENTIFIER
+================================================================================
+
+PROBLEM:
+Login only accepted email address.
+Users had to remember which email they registered with.
+Students might want to login with their student ID.
+Phone login was not possible.
+
+SOLUTION:
+Single login field accepts email, phone, OR student_id_code.
+
+FILES CREATED:
+- database/migrations/2026_06_26_154303_add_phone_to_users_table.php
+  Adds nullable 'phone' column after 'email'
+
+FILES MODIFIED:
+- app/Models/User.php
+  Added 'phone' to $fillable
+  Added static findForLogin(string $identifier) method:
+    1. If identifier matches email format -> lookup by email
+    2. If identifier matches phone format (6-15 digits) -> lookup by phone
+    3. Otherwise -> lookup by student_id_code
+    Returns first matching user or null
+
+- app/Http/Requests/Auth/LoginRequest.php
+  Completely rewritten:
+    - rules(): validates 'login_identifier' (required string) instead of 'email'
+    - authenticate(): uses User::findForLogin() to find user, then
+      Auth::attempt with the user's email + provided password
+    - throttleKey(): uses login_identifier instead of email
+    - Cleaned up all commented-out legacy code
+
+- resources/views/auth/login.blade.php
+  Changed input from type="email" name="email" to
+  type="text" name="login_identifier"
+  Changed placeholder to "អ៊ីមែល / លេខទូរស័ព្ទ / លេខសម្គាល់"
+  Changed label to "អ៊ីមែល / លេខទូរស័ព្ទ / លេខសម្គាល់"
+  Error messages now reference 'login_identifier' key
+
+DATABASE:
+Ran phone column migration
+
+RESULT:
+Users can now login with:
+  - Email address (e.g., user@gmail.com)
+  - Phone number (e.g., 012345678)
+  - Student ID code (e.g., ID-0000X)
+Single field, smart detection based on format.
+
+================================================================================
+PHASE 3: OTP VERIFICATION SYSTEM
+================================================================================
+
+PROBLEM:
+No second-factor verification after registration.
+Laravel's built-in email verification (signed URL) was not
+being used effectively. Students were auto-logged in without
+any verification step.
+
+SOLUTION:
+5-digit OTP code system with email and Telegram delivery.
+
+DATABASE:
+Created migration: 2026_06_26_154502_add_otp_and_verification_to_users_table.php
+Adds columns:
+  - otp_code (nullable string)
+  - otp_expires_at (nullable timestamp)
+  - otp_attempts (integer, default 0)
+  - otp_last_sent_at (nullable timestamp)
+  - is_verified (boolean, default false)
+  - verification_method (nullable string: 'email' or 'telegram')
+
+FILES CREATED:
+- app/Services/OtpService.php
+  Core OTP logic:
+    OTP_LENGTH = 5
+    OTP_EXPIRY_MINUTES = 10
+    OTP_MAX_ATTEMPTS = 5
+    OTP_RESEND_COOLDOWN_SECONDS = 60
+
+    Methods:
+    - generateOtp(): random 5-digit zero-padded string
+    - sendOtp(user, method): generates OTP, stores in DB, sends via
+      email or Telegram, enforces cooldown via Cache
+    - verifyOtp(user, otp): checks attempts, expiry, hash_equals,
+      increments attempts on failure, clears OTP on success
+    - getRemainingCooldown(user): seconds until resend allowed
+    - getRemainingAttempts(user): attempts left
+
+    Email delivery: Laravel Mail::raw()
+    Telegram delivery: HTTP POST to api.telegram.org/bot{token}/sendMessage
+
+- app/Http/Controllers/Auth/OtpController.php
+  Controller with methods:
+    - show(): displays OTP verification page (redirects if already verified)
+    - verify(request): validates 5-digit OTP, calls OtpService
+    - resend(): sends new OTP, supports AJAX (JSON) and web responses
+    - showLookup(): displays check-verification page
+    - lookup(): finds user by email/phone/student_id_code,
+      redirects to OTP if not verified, shows info if already verified
+    - getMaskedContact(user): returns masked email or phone
+    - maskPhone(phone): shows first 3 and last 2 digits
+    - maskEmail(email): shows first and last char of local part
+
+- resources/views/auth/verify-otp.blade.php
+  Styled OTP verification page with:
+    - 5 individual digit inputs with auto-advance
+    - Paste support (auto-distributes digits)
+    - Backspace navigation
+    - Hidden full OTP input for form submission
+    - Green filled state on completed digits
+    - Resend button with countdown timer
+    - Back to login link
+    - Toast notifications for success/error
+
+FILES MODIFIED:
+- routes/auth.php
+  Added OTP routes in auth middleware group:
+    GET  /verify-otp        -> OtpController@show        (otp.show)
+    POST /verify-otp        -> OtpController@verify      (otp.verify)
+    POST /verify-otp/resend -> OtpController@resend      (otp.resend)
+  Added check-verification routes in guest middleware group:
+    GET  /check-verification -> OtpController@showLookup  (check-verification)
+    POST /check-verification -> OtpController@lookup      (check-verification.lookup)
+
+- app/Models/User.php
+  Added OTP fields to $fillable:
+    'otp_code', 'otp_expires_at', 'otp_attempts',
+    'otp_last_sent_at', 'is_verified', 'verification_method'
+  Added OTP fields to casts:
+    'otp_expires_at' => 'datetime'
+    'otp_last_sent_at' => 'datetime'
+    'is_verified' => 'boolean'
+
+- app/Http/Controllers/StudentRegistrationController.php
+  After successful registration:
+    1. Sets is_verified = false on the user
+    2. Calls OtpService::sendOtp(user, 'email')
+    3. Redirects to OTP verification page instead of dashboard
+    4. Shows success message: "Check your email for verification code"
+
+- app/Http/Controllers/Auth/AuthenticatedSessionController.php
+  After successful login:
+    Checks if user->is_verified is false
+    If not verified, redirects to otp.show instead of dashboard
+
+- app/Http/Controllers/Auth/QrLoginController.php
+  In finalizeLogin():
+    After Auth::loginUsingId(), checks is_verified
+    If not verified, redirects to otp.show
+
+- app/Http/Controllers/Auth/GoogleAuthController.php
+  In handleCallback():
+    After Auth::login(), checks is_verified
+    If not verified, returns JSON with status='unverified' and redirect URL
+
+- resources/views/auth/login.blade.php
+  Google login handler now checks for data.status === 'unverified'
+  and redirects to data.redirect URL
+
+RESULT:
+After registration, users receive a 5-digit OTP via email.
+They must enter it on the verification page before accessing the system.
+5 max attempts, 10-minute expiry, 60-second resend cooldown.
+Unverified users are redirected to OTP page on every login attempt.
+
+================================================================================
+PHASE 4: ACCOUNT VERIFICATION LOOKUP
+================================================================================
+
+PROBLEM:
+Users who forgot whether they verified their account had
+no way to check without trying to login.
+
+SOLUTION:
+Created a lookup page where users can enter their email,
+phone, or student ID to check their verification status.
+
+FILES CREATED:
+- resources/views/auth/check-verification.blade.php
+  Styled lookup form with:
+    - Single input field (email/phone/student_id)
+    - Search icon header
+    - Emerald-themed submit button
+    - Back to login link
+
+FILES MODIFIED:
+- app/Http/Controllers/Auth/OtpController.php
+  Added showLookup() and lookup() methods:
+    - Finds user by email, phone, or student_id_code
+    - If not found: error toast
+    - If found + verified: info toast ("Already verified, you can login")
+    - If found + not verified: logs user in, redirects to OTP page
+
+- routes/auth.php
+  Added guest middleware routes:
+    GET  /check-verification -> OtpController@showLookup
+    POST /check-verification -> OtpController@lookup
+
+RESULT:
+Users can check their verification status at /check-verification.
+If not verified, they're automatically logged in and redirected
+to the OTP page to complete verification.
+
+================================================================================
+PHASE 5: RESEND VERIFICATION FROM LOGIN PAGE
+================================================================================
+
+PROBLEM:
+Users who didn't receive the verification email had no easy
+way to resend it from the login page.
+
+SOLUTION:
+Added a link below the register link on the login page.
+
+FILES MODIFIED:
+- resources/views/auth/login.blade.php
+  Added link below the register link:
+    "ពិនិត្យស្ថានភាពផ្ទៀងផ្ទាត់គណនី"
+  Links to /check-verification
+
+RESULT:
+Users who haven't verified can click the link, enter their
+email/phone/student ID, and either see they're already verified
+or be redirected to the OTP page to complete verification.
+
+================================================================================
+PHASE 8: BILINGUAL TOGGLE
+================================================================================
+
+PROBLEM:
+Auth pages were hardcoded in Khmer. No way to switch to English.
+
+SOLUTION:
+Added a locale toggle button and switch route.
+
+FILES MODIFIED:
+- routes/web.php
+  Added route:
+    GET /locale/{locale} -> sets session('locale'), redirects back
+    Validates locale is 'km' or 'en'
+
+- resources/views/layouts/guest.blade.php
+  Added fixed-position language toggle button in top-right corner:
+    - Globe icon + "EN" or "ខ្មែរ" text
+    - White/transparent background with backdrop blur
+    - Links to /locale/km or /locale/en
+    - Switches between Khmer and English
+
+EXISTING INFRASTRUCTURE:
+- SetLocaleMiddleware already reads session('locale')
+- lang/en.php and lang/km.php already have auth translation keys:
+    auth_login, auth_email, auth_password, auth_login_btn,
+    auth_login_google, auth_login_qr, auth_qr_waiting,
+    auth_qr_refresh, auth_no_account, auth_register_link
+
+RESULT:
+Users can toggle between Khmer and English on all auth pages.
+The toggle persists via session. Translation files already
+contained the necessary keys.
+
+================================================================================
+PHASE 9: PROFILE ENHANCEMENT
+================================================================================
+
+PROBLEM:
+- Profile edit form didn't have phone field
+- Student ID code was editable (should be readonly)
+- No update() method in ProfileController for profile info
+
+SOLUTION:
+Added phone field, readonly student_id_code display, and
+proper update method.
+
+FILES MODIFIED:
+- resources/views/profile/edit.blade.php
+  Added to the profile info form:
+    - Phone number input field (text, nullable)
+    - Student ID code display (readonly, disabled, gray background)
+  Layout: 2-column grid with phone and student_id_code
+
+- app/Http/Controllers/ProfileController.php
+  Added update() method:
+    - Validates name (required), email (required, unique ignoring self),
+      phone (nullable, unique ignoring self)
+    - Updates user with only name, email, phone
+    - Shows success toast
+  Added Rule import for unique validation
+
+RESULT:
+Profile page now shows:
+  - Profile picture (upload via imgBB)
+  - Name (editable)
+  - Email (editable)
+  - Phone (editable, new)
+  - Student ID code (readonly, new)
+  - Role (display only)
+  - Password change section
+
+================================================================================
+FILES CREATED (NEW) - SUMMARY
+================================================================================
+
+1. resources/views/components/toast.blade.php
+2. app/Http/Middleware/CheckRegistrationOpen.php
+3. app/Services/OtpService.php
+4. app/Http/Controllers/Auth/OtpController.php
+5. resources/views/auth/verify-otp.blade.php
+6. resources/views/auth/check-verification.blade.php
+7. database/migrations/2026_06_26_154303_add_phone_to_users_table.php
+8. database/migrations/2026_06_26_154502_add_otp_and_verification_to_users_table.php
+
+================================================================================
+FILES MODIFIED - SUMMARY
+================================================================================
+
+Layouts:
+- resources/views/layouts/guest.blade.php (toast + lang toggle)
+- resources/views/layouts/app.blade.php (toast + alert replacement)
+
+Auth Views:
+- resources/views/auth/login.blade.php (flexible login + toast + lang)
+- resources/views/auth/register.blade.php (cleanup + OTP redirect)
+- resources/views/auth/forgot-password.blade.php (redesigned)
+- resources/views/auth/reset-password.blade.php (redesigned)
+- resources/views/auth/verify-email.blade.php (redesigned)
+- resources/views/auth/confirm-password.blade.php (redesigned)
+
+Auth Controllers:
+- app/Http/Controllers/Auth/AuthenticatedSessionController.php (OTP check)
+- app/Http/Controllers/Auth/GoogleAuthController.php (ID token verify)
+- app/Http/Controllers/Auth/QrLoginController.php (cleanup + OTP check)
+- app/Http/Controllers/Auth/RegisteredUserController.php (DELETED)
+- app/Http/Controllers/Auth/OtpController.php (NEW)
+- app/Http/Controllers/StudentRegistrationController.php (OTP + checkStudent)
+
+Controllers:
+- app/Http/Controllers/ProfileController.php (update + phone)
+- app/Http/Controllers/admin/SystemSettingController.php (updateOrCreate)
+
+Models:
+- app/Models/User.php (fillable + findForLogin + OTP fields)
+
+Middleware:
+- bootstrap/app.php (registration.open alias)
+- app/Http/Middleware/CheckRegistrationOpen.php (NEW)
+
+Routes:
+- routes/web.php (settings routes + locale route + import cleanup)
+- routes/auth.php (OTP routes + check-verification + registration middleware)
+
+Database:
+- database/migrations/2026_06_26_154303_add_phone_to_users_table.php (NEW)
+- database/migrations/2026_06_26_154502_add_otp_and_verification_to_users_table.php (NEW)
+- database/seeders/SystemSettingSeeder.php (registration settings)
+
+Other:
+- app/Exceptions/Handler.php (error key fix)
+- resources/views/admin/settings/index.blade.php (registration section)
+- resources/views/admin/users/edit.blade.php (alert replacement)
+- resources/views/admin/users/create.blade.php (alert replacement)
+- resources/views/profile/edit.blade.php (phone + readonly ID)
+- resources/views/student/dashboard.blade.php (ID token)
+- resources/views/professor/dashboard.blade.php (ID token)
+
+================================================================================
+NEW ROUTES ADDED
+================================================================================
+
+GET|POST /check-verification          (guest)    - Verify lookup
+GET|POST /verify-otp                  (auth)     - OTP verification
+POST     /verify-otp/resend           (auth)     - Resend OTP
+GET      /locale/{locale}             (guest)    - Language switch
+GET      /admin/settings              (admin)    - Settings page
+PUT      /admin/settings              (admin)    - Update settings
+
+================================================================================
+DATABASE CHANGES
+================================================================================
+
+New columns on users table:
+- phone (string, nullable)
+- otp_code (string, nullable)
+- otp_expires_at (timestamp, nullable)
+- otp_attempts (integer, default 0)
+- otp_last_sent_at (timestamp, nullable)
+- is_verified (boolean, default false)
+- verification_method (string, nullable)
+
+New settings in system_settings:
+- registration_open (boolean, default '1')
+- registration_start (date string)
+- registration_end (date string)
+
+================================================================================
+END OF DOCUMENTATION
+================================================================================

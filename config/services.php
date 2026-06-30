@@ -48,4 +48,11 @@ return [
         'private_key' => env('IMAGEKIT_PRIVATE_KEY', ''),
     ],
 
+    'telegram' => [
+        'bot_token' => env('TELEGRAM_BOT_TOKEN'),
+        'api_id' => env('TELEGRAM_API_ID'),
+        'api_hash' => env('TELEGRAM_API_HASH'),
+        'app_name' => env('APP_NAME', 'NMU Class Management'),
+    ],
+
 ];

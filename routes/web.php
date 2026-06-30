@@ -19,7 +19,6 @@ use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\Auth\QrLoginController;
-use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\professor\ProfessorAttendanceController;
 use App\Http\Controllers\professor\ProfessorController;
 use App\Http\Controllers\professor\ProfessorCourseOfferingController;
@@ -27,6 +26,7 @@ use App\Http\Controllers\professor\ProfessorGradeController;
 use App\Http\Controllers\professor\ProfessorNotificationController;
 use App\Http\Controllers\professor\ProfessorProfileController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StudentRegistrationController;
 use App\Http\Controllers\SmartAssistantController;
 use App\Http\Controllers\Student\NotificationController;
 use App\Http\Controllers\Student\StudentAttendanceController;
@@ -46,6 +46,15 @@ Route::middleware(['auth', 'throttle:60,1'])->group(function () {
     Route::get('/ai/history', [SmartAssistantController::class, 'getHistory'])->name('ai.history');
     Route::post('/ai/clear-history', [SmartAssistantController::class, 'clearHistory'])->name('ai.clear-history');
 });
+
+Route::get('/locale/{locale}', function (string $locale) {
+    if (! in_array($locale, ['km', 'en'])) {
+        abort(400);
+    }
+    session(['locale' => $locale]);
+    app()->setLocale($locale);
+    return redirect()->back();
+})->name('locale.switch');
 
 /*
 |--------------------------------------------------------------------------
@@ -72,12 +81,8 @@ Route::get('/', function () {
 });
 
 // QR Login Routes
-Route::get('/login', [QrLoginController::class, 'showQrForm'])->name('login');
-
 Route::get('/qr-login/finalize/{token}', [QrLoginController::class, 'finalizeLogin'])
     ->name('qr.finalize');
-// // Desktop ទទួល QR Code — Public
-// Route::get('/qr-login', [QrLoginController::class, 'showQrForm'])->name('qr.login');
 
 // // Desktop ហៅ finalize — Public (web middleware ស្វ័យប្រវត្តិ), គ្មាន auth
 // Route::get('/qr-login/finalize/{token}', [QrLoginController::class, 'finalizeLogin'])
@@ -101,7 +106,7 @@ Route::get('/qr-login/finalize/{token}', [QrLoginController::class, 'finalizeLog
 //         Route::post('/login', [LoginController::class, 'login']);
 //     });
 
-Route::get('/api/check-student/{code}', [RegisteredUserController::class, 'checkStudent']);
+Route::get('/api/check-student/{code}', [StudentRegistrationController::class, 'checkStudent']);
 /*
 |--------------------------------------------------------------------------
 | Authenticated & Verified Routes (Shared for all authenticated users)
@@ -210,7 +215,7 @@ Route::middleware(['auth', 'role:admin', 'throttle:120,1'])->prefix('admin')->na
 
     Route::get('/users/search', [UserController::class, 'searchUsers'])->name('users.search');
     Route::get('/get-courses-by-program/{program}', [AdminController::class, 'getCoursesByProgram'])->name('get-courses-by-program');
-    Route::get('/course-offerings/{courseOffering}', [AdminController::class, 'showCourseOffering'])->name('show-course-offering');
+    Route::get('/course-offerings/{courseOffering}', [CourseOfferingController::class, 'show'])->name('show-course-offering');
 
     // Academic Year Management
     Route::get('/academic-years', [AcademicYearController::class, 'index'])->name('academic-years.index');
@@ -221,9 +226,9 @@ Route::middleware(['auth', 'role:admin', 'throttle:120,1'])->prefix('admin')->na
     Route::delete('/academic-years/{academicYear}', [AcademicYearController::class, 'destroy'])->name('academic-years.destroy');
     Route::post('/academic-years/{academicYear}/set-current', [AcademicYearController::class, 'setCurrent'])->name('academic-years.set-current');
 
-    // // System Settings (hidden)
-    // Route::get('/settings', [SystemSettingController::class, 'index'])->name('settings.index');
-    // Route::put('/settings', [SystemSettingController::class, 'update'])->name('settings.update');
+    // System Settings
+    Route::get('/settings', [SystemSettingController::class, 'index'])->name('settings.index');
+    Route::put('/settings', [SystemSettingController::class, 'update'])->name('settings.update');
 
     // Grade Management
     Route::get('/grades', [AdminGradeController::class, 'index'])->name('grades.index');

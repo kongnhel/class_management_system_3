@@ -20,16 +20,26 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'phone',
         'password',
         'role',
-        'student_id_code', // Added for students
-        'department_id',   // Added for professors
-        'program_id',      // Added for students
+        'student_id_code',
+        'department_id',
+        'program_id',
         'generation',
-        // Added for students
         'google_id',
         'avatar',
-
+        'telegram_chat_id',
+        'profile_picture_path',
+        'last_login_at',
+        'face_descriptor',
+        'otp_code',
+        'otp_expires_at',
+        'otp_attempts',
+        'otp_last_sent_at',
+        'is_verified',
+        'verification_method',
+        'phone_verified_at',
     ];
 
     /**
@@ -54,7 +64,26 @@ class User extends Authenticatable
             'password' => 'hashed',
             'last_login_at' => 'datetime',
             'deleted_at' => 'datetime',
+            'otp_expires_at' => 'datetime',
+            'otp_last_sent_at' => 'datetime',
+            'is_verified' => 'boolean',
         ];
+    }
+
+    public static function findForLogin(string $identifier): ?self
+    {
+        $trimmed = trim($identifier);
+
+        if (filter_var($trimmed, FILTER_VALIDATE_EMAIL)) {
+            return static::where('email', $trimmed)->first();
+        }
+
+        if (preg_match('/^\+?[0-9]{6,15}$/', $trimmed)) {
+            $phoneUser = static::where('phone', $trimmed)->first();
+            if ($phoneUser) return $phoneUser;
+        }
+
+        return static::where('student_id_code', $trimmed)->first();
     }
 
     // Added for role check in authorization

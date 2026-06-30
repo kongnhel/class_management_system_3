@@ -11,32 +11,7 @@
         select { appearance: none; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.2em 1.2em; }
     </style>
 
-    {{-- Toast --}}
-    @if (session('success') || session('error'))
-    <div x-data="{ show: true, progress: 100 }" x-init="setInterval(() => { progress -= 1; if (progress <= 0) show = false; }, 50)" x-show="show" x-transition class="fixed top-6 right-6 z-[9999] w-full max-w-sm">
-        <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-4">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl {{ session('success') ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600' }} flex items-center justify-center shrink-0">
-                    @if(session('success'))
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
-                    @else
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
-                    @endif
-                </div>
-                <div class="flex-1 min-w-0">
-                    <p class="text-sm font-bold text-gray-900">{{ session('success') ? 'ជោគជ័យ!' : 'បរាជ័យ!' }}</p>
-                    <p class="text-sm text-gray-500 truncate">{{ session('success') ?? session('error') }}</p>
-                </div>
-                <button @click="show = false" class="text-gray-400 hover:text-gray-600">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
-            </div>
-            <div class="mt-3 h-1 bg-gray-100 rounded-full overflow-hidden">
-                <div class="h-full {{ session('success') ? 'bg-green-500' : 'bg-red-500' }} transition-all duration-75" :style="`width: ${progress}%`"></div>
-            </div>
-        </div>
-    </div>
-    @endif
+    {{-- Flash toasts are handled by <x-toast /> in the guest layout --}}
 
     <div class="min-h-screen flex">
         {{-- Left: Branding --}}

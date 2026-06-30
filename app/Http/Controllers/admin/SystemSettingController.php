@@ -22,10 +22,10 @@ class SystemSettingController extends Controller
         ]);
 
         foreach ($validated['settings'] as $key => $value) {
-            $existing = SystemSetting::where('key', $key)->first();
-            if ($existing) {
-                $existing->update(['value' => $value]);
-            }
+            SystemSetting::updateOrCreate(
+                ['key' => $key],
+                ['value' => $value]
+            );
         }
 
         return redirect()->route('admin.settings.index')

@@ -10,32 +10,7 @@
         .min-h-screen { padding: 0 !important; justify-content: stretch !important; align-items: stretch !important; max-width: 100% !important; }
     </style>
 
-    {{-- Toast --}}
-    @if (session('success') || session('error'))
-    <div x-data="{ show: true, progress: 100 }" x-init="setInterval(() => { progress -= 1; if (progress <= 0) show = false; }, 50)" x-show="show" x-transition class="fixed top-6 right-6 z-[9999] w-full max-w-sm">
-        <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-4">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl {{ session('success') ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600' }} flex items-center justify-center shrink-0">
-                    @if(session('success'))
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
-                    @else
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
-                    @endif
-                </div>
-                <div class="flex-1 min-w-0">
-                    <p class="text-sm font-bold text-gray-900">{{ session('success') ? __('success') : __('error') }}</p>
-                    <p class="text-sm text-gray-500 truncate">{{ session('success') ?? session('error') }}</p>
-                </div>
-                <button @click="show = false" class="text-gray-400 hover:text-gray-600">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
-            </div>
-            <div class="mt-3 h-1 bg-gray-100 rounded-full overflow-hidden">
-                <div class="h-full {{ session('success') ? 'bg-green-500' : 'bg-red-500' }} transition-all duration-75" :style="`width: ${progress}%`"></div>
-            </div>
-        </div>
-    </div>
-    @endif
+    {{-- Flash toasts are handled by <x-toast /> in the guest layout --}}
 
     <div class="min-h-screen flex">
         {{-- Left: Branding --}}
@@ -45,7 +20,7 @@
             <div class="relative z-10 text-center px-12">
                 <img src="{{ asset('assets/image/nmu_Logo.png') }}" alt="Logo" class="w-28 h-28 mx-auto mb-8 drop-shadow-2xl">
                 <h1 class="text-4xl font-extrabold text-white leading-tight mb-4">Class Management<br>System</h1>
-                <p class="text-emerald-100 text-lg max-w-sm mx-auto leading-relaxed">ប្រព័ន្ធគ្រប់គ្រងសិក្សា សម្រាប់មហាវិទ្យាល័យ</p>
+                <p class="text-emerald-100 text-lg max-w-sm mx-auto leading-relaxed">ប្រព័ន្ធគ្រប់គ្រងថ្នាក់រៀន សម្រាប់សកលវិទ្យាល័យ</p>
                 <div class="mt-10 flex items-center justify-center gap-3">
                     <div class="w-3 h-3 rounded-full bg-emerald-300 animate-pulse"></div>
                     <span class="text-emerald-200 text-sm font-medium">សូមចូលប្រព័ន្ធដើម្បីបន្ត</span>
@@ -83,17 +58,17 @@
                     <form method="POST" action="{{ route('login') }}" class="space-y-5">
                         @csrf
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('auth_email') }}</label>
-                            <input id="email" type="email" name="email" required 
+                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">អ៊ីមែល / លេខទូរស័ព្ទ / លេខសម្គាល់</label>
+                            <input id="login_identifier" type="text" name="login_identifier" required 
                                    class="block w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none" 
-                                   placeholder="example@gmail.com" value="{{ old('email') }}" />
-                            <x-input-error :messages="$errors->get('email')" class="mt-1.5 text-xs text-red-500" />
+                                   placeholder="អ៊ីមែល / លេខទូរស័ព្ទ / លេខសម្គាល់" value="{{ old('login_identifier') }}" />
+                            <x-input-error :messages="$errors->get('login_identifier')" class="mt-1.5 text-xs text-red-500" />
                         </div>
 
-                        <div>
+                        <div id="passwordSection">
                             <label class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('auth_password') }}</label>
                             <div class="relative">
-                                <input id="password" type="password" name="password" required 
+                                <input id="password" type="password" name="password" 
                                        class="block w-full px-4 py-3 pr-12 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none" 
                                        placeholder="••••••••" />
                                 <button type="button" onclick="togglePassword()" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600">
@@ -104,7 +79,21 @@
                             <x-input-error :messages="$errors->get('password')" class="mt-1.5 text-xs text-red-500" />
                         </div>
 
-                        <button type="submit" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-emerald-200 hover:shadow-emerald-300 transition-all duration-200 text-sm">
+                        <div id="telegramHint" class="hidden p-3 rounded-xl bg-amber-50 border border-amber-200">
+                            <div class="flex items-center gap-2">
+                                <svg class="w-5 h-5 text-amber-600 shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M9.04 21.54c.96.29 1.93.46 2.96.46a10 10 0 0010-10A10 10 0 0012 2 10 10 0 002 12c0 1.03.17 2 .46 2.96L12 22l8.54-8.54-1.42-1.41L12 19.17 9.04 21.54z"/></svg>
+                                <p class="text-sm text-amber-700 font-medium">លេខទូរស័ព្ទនេះមិនទាន់ផ្ទៀងផ្ទាត់។ សូមចូលតាម Telegram OTP ដើម្បីផ្ទៀងផ្ទាត់។</p>
+                            </div>
+                        </div>
+
+                        <div id="phoneVerifiedHint" class="hidden p-3 rounded-xl bg-emerald-50 border border-emerald-200">
+                            <div class="flex items-center gap-2">
+                                <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                <p class="text-sm text-emerald-700 font-medium">លេខទូរស័ព្ទបានផ្ទៀងផ្ទាត់រួចហើយ។ សូមបញ្ចូលពាក្យសម្ងាត់ដើម្បីចូល។</p>
+                            </div>
+                        </div>
+
+                        <button type="submit" id="loginBtn" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-emerald-200 hover:shadow-emerald-300 transition-all duration-200 text-sm">
                             {{ __('auth_login_btn') }}
                         </button>
                     </form>
@@ -146,6 +135,12 @@
                         {{ __('auth_register_link') }}
                     </a>
                 </p>
+
+                <p class="text-center text-xs text-gray-400 mt-3">
+                    <a href="{{ route('check-verification') }}" class="text-emerald-500 hover:text-emerald-600 transition-colors">
+                        ពិនិត្យស្ថានភាពផ្ទៀងផ្ទាត់គណនី
+                    </a>
+                </p>
             </div>
         </div>
     </div>
@@ -184,6 +179,93 @@
                 emailBtn.className = 'flex-1 py-2.5 text-sm font-bold rounded-lg text-gray-500 hover:text-gray-700 transition-all';
             }
         }
+
+        // Phone detection: check verification status via AJAX
+        const loginIdentifier = document.getElementById('login_identifier');
+        const passwordInput = document.getElementById('password');
+        const passwordSection = document.getElementById('passwordSection');
+        const telegramHint = document.getElementById('telegramHint');
+        const phoneVerifiedHint = document.getElementById('phoneVerifiedHint');
+        const loginBtn = document.getElementById('loginBtn');
+        const phoneRegex = /^\+?[0-9]{6,15}$/;
+        let phoneCheckTimer = null;
+        let phoneVerified = false;
+
+        function resetToDefault() {
+            passwordSection.classList.remove('hidden');
+            telegramHint.classList.add('hidden');
+            phoneVerifiedHint.classList.add('hidden');
+            if (passwordInput) passwordInput.required = true;
+            loginBtn.textContent = '{{ __("auth_login_btn") }}';
+            loginBtn.type = 'submit';
+            loginBtn.formAction = '{{ route("login") }}';
+            loginBtn.onclick = null;
+        }
+
+        function showVerifiedPhoneUI() {
+            passwordSection.classList.remove('hidden');
+            telegramHint.classList.add('hidden');
+            phoneVerifiedHint.classList.remove('hidden');
+            if (passwordInput) passwordInput.required = true;
+            loginBtn.textContent = 'ចូលប្រព័ន្ធ';
+            loginBtn.type = 'submit';
+            loginBtn.formAction = '{{ route("login") }}';
+            loginBtn.onclick = null;
+        }
+
+        function showUnverifiedPhoneUI() {
+            passwordSection.classList.add('hidden');
+            telegramHint.classList.remove('hidden');
+            phoneVerifiedHint.classList.add('hidden');
+            if (passwordInput) passwordInput.required = false;
+            loginBtn.textContent = 'ចូលជាមួយ Telegram OTP';
+            loginBtn.type = 'button';
+            loginBtn.onclick = function() {
+                const form = document.querySelector('#emailSection form');
+                form.action = '{{ route("phone-otp.send") }}';
+                form.submit();
+            };
+        }
+
+        function checkPhoneStatus(phone) {
+            fetch('{{ route("phone-otp.check") }}?phone=' + encodeURIComponent(phone), {
+                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.exists && data.verified) {
+                    phoneVerified = true;
+                    showVerifiedPhoneUI();
+                } else {
+                    phoneVerified = false;
+                    showUnverifiedPhoneUI();
+                }
+            })
+            .catch(() => {
+                phoneVerified = false;
+                showUnverifiedPhoneUI();
+            });
+        }
+
+        function updateLoginUI() {
+            const val = loginIdentifier.value.trim();
+            const isPhone = phoneRegex.test(val);
+
+            if (isPhone) {
+                clearTimeout(phoneCheckTimer);
+                phoneCheckTimer = setTimeout(() => checkPhoneStatus(val), 300);
+            } else {
+                phoneVerified = false;
+                resetToDefault();
+            }
+        }
+
+        if (loginIdentifier) {
+            loginIdentifier.addEventListener('input', updateLoginUI);
+            if (phoneRegex.test(loginIdentifier.value.trim())) {
+                updateLoginUI();
+            }
+        }
     </script>
 
     {{-- Firebase Google Login --}}
@@ -202,7 +284,8 @@
         const provider = new GoogleAuthProvider();
 
         window.loginWithGoogle = () => {
-            signInWithPopup(auth, provider).then((result) => {
+            signInWithPopup(auth, provider).then(async (result) => {
+                const idToken = await result.user.getIdToken();
                 fetch('{{ route("auth.google.callback") }}', {
                     method: 'POST',
                     headers: { 
@@ -210,14 +293,15 @@
                         'X-CSRF-TOKEN': '{{ csrf_token() }}' 
                     },
                     body: JSON.stringify({ 
-                        uid: result.user.uid, 
-                        email: result.user.email 
+                        id_token: idToken
                     })
                 }).then(res => res.json()).then(data => {
                     if(data.status === 'success') {
                         window.location.href = "/dashboard";
+                    } else if(data.status === 'unverified') {
+                        window.location.href = data.redirect;
                     } else {
-                        alert(data.message);
+                        showToast(data.message, 'error');
                     }
                 });
             }).catch(error => console.error(error));

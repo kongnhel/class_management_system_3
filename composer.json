@@ -9,6 +9,7 @@
         "php": "^8.2",
         "barryvdh/laravel-dompdf": "^3.1",
         "cloudinary-labs/cloudinary-laravel": "^3.0",
+        "danog/madelineproto": "*",
         "doctrine/dbal": "^4.3",
         "intervention/image": "*",
         "kreait/laravel-firebase": "^6.2",
@@ -83,7 +84,8 @@
         "sort-packages": true,
         "allow-plugins": {
             "pestphp/pest-plugin": true,
-            "php-http/discovery": true
+            "php-http/discovery": true,
+            "symfony/thanks": true
         }
     },
     "minimum-stability": "dev",

@@ -95,6 +95,20 @@
                                     <x-input-error :messages="$errors->get('email')" class="mt-2" />
                                 </div>
                             </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-700 ml-1 mb-1.5">លេខទូរស័ព្ទ</label>
+                                    <input type="text" name="phone" value="{{ old('phone', $user->phone) }}" 
+                                           class="mt-1.5 block w-full rounded-2xl border-slate-200 bg-slate-50/50 focus:bg-white transition-all shadow-sm px-4 py-2.5"
+                                           placeholder="012 345 678" />
+                                    <x-input-error :messages="$errors->get('phone')" class="mt-2" />
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-700 ml-1 mb-1.5">លេខសម្គាល់</label>
+                                    <input type="text" value="{{ $user->student_id_code }}" readonly disabled
+                                           class="mt-1.5 block w-full rounded-2xl border-slate-200 bg-slate-100 text-slate-500 px-4 py-2.5 cursor-not-allowed" />
+                                </div>
+                            </div>
                             <div class="flex justify-end pt-4">
                                 <x-primary-button class="bg-slate-900 hover:bg-slate-800 text-white rounded-xl px-8 py-3 font-bold transition-all shadow-lg shadow-slate-200 dark:shadow-none">
                                     {{ __('profile_save') }}

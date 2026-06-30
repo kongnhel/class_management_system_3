@@ -117,7 +117,7 @@
                                         <p class="text-sm text-gray-500">{{ $offering->program->name_km ?? 'N/A' }} ({{ $offering->academic_year }})</p>
                                     </div>
                                 </div>
-                                <a href="#" class="text-emerald-600 hover:text-emerald-700 font-semibold text-sm">{{ __('មើលលម្អិត') }} &rarr;</a>
+                                <a href="{{ route('admin.show-course-offering', $offering->id) }}" class="text-emerald-600 hover:text-emerald-700 font-semibold text-sm">{{ __('មើលលម្អិត') }} &rarr;</a>
                             </div>
                         @empty
                             <div class="text-center py-8 bg-gray-50 rounded-xl border border-dashed border-gray-300">
@@ -148,7 +148,7 @@
                                         <p class="text-sm text-gray-500">{{ $enrollment->courseOffering->program->name_km ?? 'N/A' }} ({{ $enrollment->courseOffering->academic_year }})</p>
                                     </div>
                                 </div>
-                                <a href="#" class="text-blue-600 hover:text-blue-700 font-semibold text-sm">{{ __('មើលលម្អិត') }} &rarr;</a>
+                                <a href="{{ route('admin.show-course-offering', $enrollment->courseOffering->id) }}" class="text-blue-600 hover:text-blue-700 font-semibold text-sm">{{ __('មើលលម្អិត') }} &rarr;</a>
                             </div>
                         @empty
                             <div class="text-center py-8 bg-gray-50 rounded-xl border border-dashed border-gray-300">
@@ -210,7 +210,7 @@
                             </div>
                             <div class="flex-1">
                                 <h4 class="text-lg font-bold text-blue-800">{{ __('ផ្ទេរទៅបរិញ្ញាបត្រ') }}</h4>
-                                <p class="text-sm text-blue-600 mt-1">{{ __('សិស្សនេះបានបញ្ចប់ឆ្នាំចុងក្រោយនៃកម្មវិធីសិក្សាបរិញ្ញាបត្ររង។ តើអ្នកចង់ផ្ទេរគាត់ទៅកម្មវិធីសិក្សាបរិញ្ញាបត្រមែនទេ?) }}</p>
+                                <p class="text-sm text-blue-600 mt-1">{{ __('សិស្សនេះបានបញ្ចប់ឆ្នាំចុងក្រោយនៃកម្មវិធីសិក្សាបរិញ្ញាបត្ររង។ តើអ្នកចង់ផ្ទេរគាត់ទៅកម្មវិធីសិក្សាបរិញ្ញាបត្រមែនទេ?') }}</p>
                                 <a href="{{ route('admin.students.transition', $user->id) }}" class="mt-3 inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-all shadow-md hover:shadow-lg">
                                     <i class="fas fa-arrow-right"></i>
                                     <span>{{ __('ផ្ទេរឥឡូវនេះ') }}</span>

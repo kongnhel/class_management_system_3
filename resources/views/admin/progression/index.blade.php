@@ -88,7 +88,7 @@
                             </div>
                             <span class="text-3xl font-bold text-gray-800">{{ $summary[$year]['count'] }}</span>
                         </div>
-                        <h4 class="text-sm font-bold text-gray-500 uppercase tracking-wider">ជំនាន់ទី{{ $gen }}</h4>
+                        <h4 class="text-sm font-bold text-gray-500 uppercase tracking-wider">ឆ្នាំទី{{ $year }} · ជំនាន់ទី{{ $gen }}</h4>
                         <p class="text-xs text-gray-400 mt-1">{{ $summary[$year]['count'] }} និស្សិត</p>
                     </div>
                 @endfor
@@ -145,7 +145,7 @@
                                     @foreach($summary[$year]['students'] as $index => $student)
                                         <tr class="hover:bg-gray-50/50 transition">
                                             <td class="px-6 py-4 text-sm text-gray-500">{{ $index + 1 }}</td>
-                                            <td class="px-6 py-4">
+                                             <td class="px-6 py-4">
                                                 <div class="flex items-center gap-3">
                                                     <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-sm shadow-lg">
                                                         {{ mb_substr($student->name, 0, 1, 'UTF-8') }}
@@ -162,7 +162,10 @@
                                             <td class="px-6 py-4">
                                                 <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold {{ $sc['badge'] }}">
                                                     <i class="fas fa-graduation-cap"></i>
-                                                    {{ $student->generation }}
+                                                    ឆ្នាំទី{{ $year }}
+                                                </span>
+                                                <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold bg-gray-100 text-gray-600 ml-1">
+                                                    ជំនាន់{{ $student->generation }}
                                                 </span>
                                             </td>
                                             <td class="px-6 py-4">
@@ -188,7 +191,7 @@
                                             </div>
                                             <div>
                                                 <p class="text-sm font-bold text-gray-800">{{ $student->name }}</p>
-                                                <p class="text-xs text-gray-500">{{ $student->student_id_code ?? '-' }} · ជំនាន់ទី{{ $student->generation }}</p>
+                                                 <p class="text-xs text-gray-500">{{ $student->student_id_code ?? '-' }} · ឆ្នាំទី{{ $year }} · ជំនាន់{{ $student->generation }}</p>
                                             </div>
                                         </div>
                                         <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">

@@ -108,11 +108,22 @@ class StudentProgressionService
             $attendanceScore = $student->getAttendanceScoreByCourse($offeringId);
 
             $examResults = \App\Models\ExamResult::where('student_user_id', $student->id)
-                ->whereIn('assessment_id', function ($q) use ($offeringId) {
-                    $q->select('id')->from('assignments')->where('course_offering_id', $offeringId)
-                        ->union(DB::table('quizzes')->select('id')->where('course_offering_id', $offeringId))
-                        ->union(DB::table('exams')->select('id')->where('course_offering_id', $offeringId));
+                ->where(function ($q) use ($offeringId) {
+                    $q->where(function ($q2) use ($offeringId) {
+                        $q2->where('assessment_type', 'exam')
+                            ->whereIn('assessment_id', fn ($q3) => $q3->select('id')->from('exams')->where('course_offering_id', $offeringId));
+                    })->orWhere(function ($q2) use ($offeringId) {
+                        $q2->where('assessment_type', 'quiz')
+                            ->whereIn('assessment_id', fn ($q3) => $q3->select('id')->from('quizzes')->where('course_offering_id', $offeringId));
+                    })->orWhere(function ($q2) use ($offeringId) {
+                        $q2->where('assessment_type', 'assignment')
+                            ->whereIn('assessment_id', fn ($q3) => $q3->select('id')->from('assignments')->where('course_offering_id', $offeringId));
+                    });
                 })->get();
+
+            if ($examResults->isEmpty()) {
+                continue;
+            }
 
             $finalExamScore = 0;
             $midtermScore = 0;
