@@ -2,19 +2,12 @@
     <x-slot name="header">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between px-4 md:px-6 lg:px-8">
             <div>
-                <h2 class="text-3xl font-bold text-gray-800 leading-tight flex items-center gap-3">
-                    <div class="p-2 bg-purple-100 rounded-lg">
-                        <i class="fas fa-arrow-right text-purple-600 text-xl"></i>
-                    </div>
-                    ជំរុញនិស្សិត — {{ $program->name_km }}
-                </h2>
-                <p class="mt-1 text-sm text-gray-500 ml-12">
-                    {{ __('ជ្រើសរើសនិស្សិតដែលចង់ជំរុញ ឬបញ្ចប់ការសិក្សា') }}
-                </p>
+                <h2 class="text-2xl font-bold text-gray-900">ជំរុញនិស្សិត — {{ $program->name_km }}</h2>
+                <p class="mt-1 text-sm text-gray-400">ជ្រើសរើសនិស្សិតដែលចង់ជំរុញ ឬបញ្ចប់ការសិក្សា</p>
             </div>
-            <a href="{{ route('admin.progression.index', ['program_id' => $program->id]) }}" class="mt-4 md:mt-0 inline-flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-xl font-bold text-sm hover:bg-gray-200 transition">
-                <i class="fas fa-arrow-left"></i>
-                <span>ត្រឡប់ក្រោយ</span>
+            <a href="{{ route('admin.progression.index', ['program_id' => $program->id]) }}" class="mt-4 md:mt-0 inline-flex items-center gap-2 bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-xl text-sm font-medium hover:bg-gray-50 transition">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                ត្រឡប់ក្រោយ
             </a>
         </div>
     </x-slot>
@@ -25,55 +18,59 @@
             {{-- Toast --}}
             @if (session('success') || session('error'))
                 <div x-data="{ show: true, progress: 100 }" x-init="let i=setInterval(()=>{progress-=1;if(progress<=0){show=false;clearInterval(i)}},30)" x-show="show" x-transition class="fixed top-6 right-6 z-[9999] w-full max-w-sm">
-                    <div class="relative overflow-hidden bg-white/80 backdrop-blur-xl border border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.1)] rounded-2xl p-4 ring-1 ring-black/5">
-                        <div class="flex items-start gap-4">
-                            <div class="flex-shrink-0">
-                                @if(session('success'))
-                                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-green-500/10 text-green-600">
-                                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
-                                    </div>
-                                @else
-                                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-red-500/10 text-red-600">
-                                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                    </div>
-                                @endif
-                            </div>
-                            <div class="flex-1 pt-0.5">
-                                <p class="text-sm font-bold text-gray-900 leading-tight">{{ session('success') ? 'ជោគជ័យ' : 'កំហុស' }}</p>
-                                <p class="mt-1 text-sm text-gray-600 leading-relaxed">{{ session('success') ?? session('error') }}</p>
+                    <div class="relative overflow-hidden bg-white border border-gray-200 shadow-lg rounded-xl p-4">
+                        <div class="flex items-start gap-3">
+                            @if(session('success'))
+                                <div class="h-8 w-8 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <svg class="h-4 w-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                                </div>
+                            @else
+                                <div class="h-8 w-8 bg-red-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <svg class="h-4 w-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                </div>
+                            @endif
+                            <div class="flex-1">
+                                <p class="text-sm font-semibold text-gray-900">{{ session('success') ? 'ជោគជ័យ' : 'កំហុស' }}</p>
+                                <p class="mt-0.5 text-sm text-gray-500">{{ session('success') ?? session('error') }}</p>
                             </div>
                         </div>
-                        <div class="absolute bottom-0 left-0 h-1 bg-green-500 rounded-b-2xl transition-all duration-100" :style="{ width: progress + '%' }"></div>
+                        <div class="absolute bottom-0 left-0 h-1 bg-blue-500 rounded-b-xl transition-all duration-100" :style="{ width: progress + '%' }"></div>
                     </div>
                 </div>
             @endif
 
             {{-- Info Banner --}}
-            <div class="bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl p-6 text-white shadow-lg shadow-purple-500/25">
-                <div class="flex items-center gap-4">
-                    <div class="p-3 bg-white/20 rounded-xl">
-                        <i class="fas fa-info-circle text-2xl"></i>
+            <div class="bg-white border border-gray-200 rounded-2xl p-5">
+                <div class="flex items-start gap-3">
+                    <div class="h-9 w-9 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <svg class="h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
                     </div>
                     <div>
-                        <h3 class="text-lg font-bold">ជំរុញ ឬបញ្ចប់ការសិក្សា</h3>
-                        <p class="text-sm text-purple-100 mt-1">
-                            និស្សិតឆ្នាំទី{{ $maxYear }}នឹងត្រូវបញ្ចប់ការសិក្សា។ និស្សិតឆ្នាំផ្សេងទៀតនឹងត្រូវជំរុញទៅឆ្នាំបន្ទាប់។
-                        </p>
+                        <h3 class="text-sm font-semibold text-gray-900">ជំរុញ ឬបញ្ចប់ការសិក្សា</h3>
+                        <p class="text-sm text-gray-500 mt-1">និស្សិតឆ្នាំទី{{ $maxYear }}នឹងត្រូវបញ្ចប់ការសិក្សា។ និស្សិតឆ្នាំផ្សេងទៀតនឹងត្រូវជំរុញទៅឆ្នាំបន្ទាប់។</p>
                     </div>
                 </div>
             </div>
 
             {{-- Eligible Students --}}
+            @php
+                $yearColors = [
+                    1 => 'bg-blue-50 text-blue-600',
+                    2 => 'bg-amber-50 text-amber-600',
+                    3 => 'bg-violet-50 text-violet-600',
+                    4 => 'bg-emerald-50 text-emerald-600',
+                ];
+                $avatarColors = ['bg-blue-50 text-blue-600', 'bg-amber-50 text-amber-600', 'bg-violet-50 text-violet-600', 'bg-emerald-50 text-emerald-600'];
+            @endphp
             @if($eligibleStudents->isNotEmpty())
-                <div class="bg-white/80 backdrop-blur-xl border border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.05)] rounded-2xl overflow-hidden ring-1 ring-black/5">
-                    <div class="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-green-50 to-transparent">
+                <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-100">
                         <div class="flex items-center justify-between">
-                            <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
-                                <i class="fas fa-check-circle text-green-500"></i>
-                                និស្សិតមានសិទ្ធិជំរុញ — {{ $eligibleStudents->count() }} នាក់
-                            </h3>
-                            <button onclick="selectAll()" class="text-sm text-green-600 hover:text-green-700 font-bold">
-                                <i class="fas fa-check-double mr-1"></i> ជ្រើសរើសទាំងអស់
+                            <h3 class="text-sm font-semibold text-gray-900">និស្សិតមានសិទ្ធិជំរុញ <span class="text-gray-400 font-normal">· {{ $eligibleStudents->count() }} នាក់</span></h3>
+                            <button onclick="selectAll()" class="text-sm text-blue-500 hover:text-blue-600 font-medium">
+                                ជ្រើសរើសទាំងអស់
                             </button>
                         </div>
                     </div>
@@ -85,61 +82,56 @@
                         {{-- Desktop Table --}}
                         <div class="hidden md:block overflow-x-auto">
                             <table class="w-full">
-                                <thead class="bg-gray-50/80">
-                                    <tr>
+                                <thead>
+                                    <tr class="border-b border-gray-100">
                                         <th class="px-6 py-3 text-center w-12">
-                                            <input type="checkbox" id="checkAll" onchange="toggleAll(this)" class="rounded border-gray-300 text-green-600 focus:ring-green-500">
+                                            <input type="checkbox" id="checkAll" onchange="toggleAll(this)" class="rounded border-gray-300 text-blue-500 focus:ring-blue-500">
                                         </th>
-                                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">ល.រ</th>
-                                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">ឈ្មោះ</th>
-                                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">អត្តលេខ</th>
-                                        <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">ឆ្នាំបច្ចុប្បន្ន</th>
-                                        <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">សកម្មភាព</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400">ល.រ</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400">ឈ្មោះ</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400">អត្តលេខ</th>
+                                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-400">ឆ្នាំបច្ចុប្បន្ន</th>
+                                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-400">សកម្មភាព</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-gray-100">
-                                    @php
-                                        $nextYearColors = ['bg-blue-100 text-blue-700', 'bg-indigo-100 text-indigo-700', 'bg-purple-100 text-purple-700', 'bg-pink-100 text-pink-700'];
-                                    @endphp
+                                <tbody class="divide-y divide-gray-50">
                                     @foreach($eligibleStudents as $index => $student)
                                         @php
                                             $yr = $student->computed_year_level;
                                             $isFinalYear = $yr >= $maxYear;
                                             $nextYr = $isFinalYear ? null : $yr + 1;
-                                            $colorClass = $nextYearColors[($yr - 1) % 4] ?? $nextYearColors[3];
+                                            $yc = $yearColors[$yr] ?? $yearColors[4];
+                                            $avatarColor = $avatarColors[$yr % 4];
                                         @endphp
-                                        <tr class="hover:bg-green-50/50 transition">
-                                            <td class="px-6 py-4 text-center">
-                                                <input type="checkbox" name="student_ids[]" value="{{ $student->id }}" class="student-cb rounded border-gray-300 text-green-600 focus:ring-green-500">
+                                        <tr class="hover:bg-gray-50 transition">
+                                            <td class="px-6 py-3.5 text-center">
+                                                <input type="checkbox" name="student_ids[]" value="{{ $student->id }}" class="student-cb rounded border-gray-300 text-blue-500 focus:ring-blue-500">
                                             </td>
-                                            <td class="px-6 py-4 text-sm text-gray-500">{{ $index + 1 }}</td>
-                                            <td class="px-6 py-4">
+                                            <td class="px-6 py-3.5 text-sm text-gray-400">{{ $index + 1 }}</td>
+                                            <td class="px-6 py-3.5">
                                                 <div class="flex items-center gap-3">
-                                                    <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center text-white font-bold text-sm shadow-lg">
+                                                    <div class="h-8 w-8 rounded-lg {{ $avatarColor }} flex items-center justify-center font-semibold text-xs">
                                                         {{ mb_substr($student->name, 0, 1, 'UTF-8') }}
                                                     </div>
                                                     <div>
-                                                        <p class="text-sm font-bold text-gray-800">{{ $student->name }}</p>
-                                                        <p class="text-xs text-gray-500">{{ $student->email ?? '-' }}</p>
+                                                        <p class="text-sm font-medium text-gray-900">{{ $student->name }}</p>
+                                                        <p class="text-xs text-gray-400">{{ $student->email ?? '-' }}</p>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td class="px-6 py-4 text-sm font-bold text-gray-800">{{ $student->student_id_code ?? '-' }}</td>
-                                            <td class="px-6 py-4 text-center">
-                                                <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold {{ $colorClass }}">
-                                                    <i class="fas fa-graduation-cap"></i>
+                                            <td class="px-6 py-3.5 text-sm text-gray-700 font-medium">{{ $student->student_id_code ?? '-' }}</td>
+                                            <td class="px-6 py-3.5 text-center">
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium {{ $yc }}">
                                                     {{ $yr }}
                                                 </span>
                                             </td>
-                                            <td class="px-6 py-4 text-center">
+                                            <td class="px-6 py-3.5 text-center">
                                                 @if($isFinalYear)
-                                                    <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700">
-                                                        <i class="fas fa-user-check"></i>
+                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-amber-50 text-amber-600">
                                                         បញ្ចប់ការសិក្សា
                                                     </span>
                                                 @else
-                                                    <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">
-                                                        <i class="fas fa-arrow-right"></i>
+                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-600">
                                                         ជំរុញទៅឆ្នាំទី{{ $nextYr }}
                                                     </span>
                                                 @endif
@@ -151,36 +143,37 @@
                         </div>
 
                         {{-- Mobile Cards --}}
-                        <div class="md:hidden divide-y divide-gray-100">
+                        <div class="md:hidden divide-y divide-gray-50">
                             @foreach($eligibleStudents as $student)
                                 @php
                                     $yr = $student->computed_year_level;
                                     $isFinalYear = $yr >= $maxYear;
                                     $nextYr = $isFinalYear ? null : $yr + 1;
-                                    $colorClass = $nextYearColors[($yr - 1) % 4] ?? $nextYearColors[3];
+                                    $yc = $yearColors[$yr] ?? $yearColors[4];
+                                    $avatarColor = $avatarColors[$yr % 4];
                                 @endphp
-                                <div class="px-4 py-3 hover:bg-green-50/50 transition">
+                                <div class="px-4 py-3 hover:bg-gray-50 transition">
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center gap-3">
-                                            <input type="checkbox" name="student_ids[]" value="{{ $student->id }}" class="student-cb rounded border-gray-300 text-green-600 focus:ring-green-500">
-                                            <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center text-white font-bold text-sm shadow-lg">
+                                            <input type="checkbox" name="student_ids[]" value="{{ $student->id }}" class="student-cb rounded border-gray-300 text-blue-500 focus:ring-blue-500">
+                                            <div class="h-8 w-8 rounded-lg {{ $avatarColor }} flex items-center justify-center font-semibold text-xs">
                                                 {{ mb_substr($student->name, 0, 1, 'UTF-8') }}
                                             </div>
                                             <div>
-                                                <p class="text-sm font-bold text-gray-800">{{ $student->name }}</p>
-                                                <p class="text-xs text-gray-500">{{ $student->student_id_code ?? '-' }}</p>
-                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold {{ $colorClass }} mt-1">
+                                                <p class="text-sm font-medium text-gray-900">{{ $student->name }}</p>
+                                                <p class="text-xs text-gray-400">{{ $student->student_id_code ?? '-' }}</p>
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium {{ $yc }} mt-1">
                                                     ឆ្នាំទី{{ $yr }}
                                                 </span>
                                             </div>
                                         </div>
                                         @if($isFinalYear)
-                                            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700">
-                                                <i class="fas fa-user-check"></i>
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium bg-amber-50 text-amber-600">
+                                                បញ្ចប់
                                             </span>
                                         @else
-                                            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold bg-green-100 text-green-700">
-                                                <i class="fas fa-arrow-right"></i>
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium bg-blue-50 text-blue-600">
+                                                ជំរុញ
                                             </span>
                                         @endif
                                     </div>
@@ -189,15 +182,15 @@
                         </div>
 
                         {{-- Submit Button --}}
-                        <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50">
+                        <div class="px-6 py-4 border-t border-gray-100">
                             <div class="flex items-center justify-between">
                                 <p class="text-sm text-gray-500">
                                     <span id="selectedCount">0</span> និស្សិតត្រូវបានជ្រើសរើស
                                 </p>
                                 <button type="submit" id="submitBtn"
-                                    class="inline-flex items-center gap-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white px-8 py-3 rounded-2xl font-bold shadow-lg shadow-green-500/25 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+                                    class="inline-flex items-center gap-2 bg-blue-500 text-white px-6 py-2.5 rounded-xl font-medium text-sm shadow-sm shadow-blue-200 hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
                                     disabled>
-                                    <i class="fas fa-arrow-right"></i>
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                                     ជំរុញនិស្សិតដែលបានជ្រើសរើស
                                 </button>
                             </div>
@@ -208,52 +201,52 @@
 
             {{-- Held Back Students --}}
             @if($heldBackStudents->isNotEmpty())
-                <div class="bg-white/80 backdrop-blur-xl border border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.05)] rounded-2xl overflow-hidden ring-1 ring-black/5">
-                    <div class="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-red-50 to-transparent">
-                        <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
-                            <i class="fas fa-exclamation-triangle text-red-500"></i>
-                            និស្សិតមិនអាចជំរុញ — {{ $heldBackStudents->count() }} នាក់
-                        </h3>
-                        <p class="text-sm text-gray-500 mt-1">និស្សិតទាំងនេះមានបរិយាកាស F ក្នុងវិញ្ញាសារខ្លះ ហើយមិនត្រូវបានជំរុញទេ។</p>
+                <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-100">
+                        <h3 class="text-sm font-semibold text-gray-900">និស្សិតមិនអាចជំរុញ <span class="text-gray-400 font-normal">· {{ $heldBackStudents->count() }} នាក់</span></h3>
+                        <p class="text-xs text-gray-400 mt-0.5">និស្សិតទាំងនេះមានបរិយាកាស F ក្នុងវិញ្ញាសារខ្លះ</p>
                     </div>
 
                     {{-- Desktop Table --}}
                     <div class="hidden md:block overflow-x-auto">
                         <table class="w-full">
-                            <thead class="bg-gray-50/80">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">ល.រ</th>
-                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">ឈ្មោះ</th>
-                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">អត្តលេខ</th>
-                                    <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">ឆ្នាំបច្ចុប្បន្ន</th>
-                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">ស្ថានភាព</th>
+                            <thead>
+                                <tr class="border-b border-gray-100">
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-400">ល.រ</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-400">ឈ្មោះ</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-400">អត្តលេខ</th>
+                                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-400">ឆ្នាំបច្ចុប្បន្ន</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-400">ស្ថានភាព</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-100">
+                            <tbody class="divide-y divide-gray-50">
                                 @foreach($heldBackStudents as $index => $student)
-                                    @php $yr = $student->computed_year_level; @endphp
-                                    <tr class="hover:bg-red-50/50 transition">
-                                        <td class="px-6 py-4 text-sm text-gray-500">{{ $index + 1 }}</td>
-                                        <td class="px-6 py-4">
+                                    @php
+                                        $yr = $student->computed_year_level;
+                                        $avatarColor = $avatarColors[$yr % 4];
+                                    @endphp
+                                    <tr class="hover:bg-gray-50 transition">
+                                        <td class="px-6 py-3.5 text-sm text-gray-400">{{ $index + 1 }}</td>
+                                        <td class="px-6 py-3.5">
                                             <div class="flex items-center gap-3">
-                                                <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center text-white font-bold text-sm shadow-lg">
+                                                <div class="h-8 w-8 rounded-lg {{ $avatarColor }} flex items-center justify-center font-semibold text-xs">
                                                     {{ mb_substr($student->name, 0, 1, 'UTF-8') }}
                                                 </div>
                                                 <div>
-                                                    <p class="text-sm font-bold text-gray-800">{{ $student->name }}</p>
-                                                    <p class="text-xs text-gray-500">{{ $student->email ?? '-' }}</p>
+                                                    <p class="text-sm font-medium text-gray-900">{{ $student->name }}</p>
+                                                    <p class="text-xs text-gray-400">{{ $student->email ?? '-' }}</p>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="px-6 py-4 text-sm font-bold text-gray-800">{{ $student->student_id_code ?? '-' }}</td>
-                                        <td class="px-6 py-4 text-center">
-                                            <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700">
+                                        <td class="px-6 py-3.5 text-sm text-gray-700 font-medium">{{ $student->student_id_code ?? '-' }}</td>
+                                        <td class="px-6 py-3.5 text-center">
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-50 text-red-600">
                                                 {{ $yr }}
                                             </span>
                                         </td>
-                                        <td class="px-6 py-4">
-                                            <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700">
-                                                <i class="fas fa-exclamation-circle"></i>
+                                        <td class="px-6 py-3.5">
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-red-50 text-red-600">
+                                                <span class="h-1.5 w-1.5 rounded-full bg-red-500"></span>
                                                 មានបរិយាកាស F
                                             </span>
                                         </td>
@@ -264,21 +257,22 @@
                     </div>
 
                     {{-- Mobile Cards --}}
-                    <div class="md:hidden divide-y divide-gray-100">
+                    <div class="md:hidden divide-y divide-gray-50">
                         @foreach($heldBackStudents as $student)
-                            <div class="px-4 py-3 hover:bg-red-50/50 transition">
+                            @php $avatarColor = $avatarColors[$student->computed_year_level % 4]; @endphp
+                            <div class="px-4 py-3 hover:bg-gray-50 transition">
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center gap-3">
-                                        <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center text-white font-bold text-sm shadow-lg">
+                                        <div class="h-8 w-8 rounded-lg {{ $avatarColor }} flex items-center justify-center font-semibold text-xs">
                                             {{ mb_substr($student->name, 0, 1, 'UTF-8') }}
                                         </div>
                                         <div>
-                                            <p class="text-sm font-bold text-gray-800">{{ $student->name }}</p>
-                                            <p class="text-xs text-gray-500">{{ $student->student_id_code ?? '-' }} · ឆ្នាំទី{{ $student->computed_year_level }}</p>
+                                            <p class="text-sm font-medium text-gray-900">{{ $student->name }}</p>
+                                            <p class="text-xs text-gray-400">{{ $student->student_id_code ?? '-' }} · ឆ្នាំទី{{ $student->computed_year_level }}</p>
                                         </div>
                                     </div>
-                                    <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700">
-                                        <i class="fas fa-exclamation-circle"></i>
+                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-red-50 text-red-600">
+                                        F
                                     </span>
                                 </div>
                             </div>
@@ -289,11 +283,13 @@
 
             {{-- No students --}}
             @if($eligibleStudents->isEmpty() && $heldBackStudents->isEmpty())
-                <div class="bg-white/80 backdrop-blur-xl border border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.05)] rounded-2xl p-12 ring-1 ring-black/5 text-center">
-                    <div class="p-4 bg-gray-100 rounded-2xl inline-block mb-4">
-                        <i class="fas fa-users text-gray-400 text-4xl"></i>
+                <div class="bg-white border border-gray-200 rounded-2xl p-12 text-center">
+                    <div class="h-12 w-12 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <svg class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/>
+                        </svg>
                     </div>
-                    <h3 class="text-lg font-bold text-gray-600">មិនមាននិស្សិត</h3>
+                    <h3 class="text-sm font-semibold text-gray-900">មិនមាននិស្សិត</h3>
                     <p class="text-sm text-gray-400 mt-1">មិនមាននិស្សិតសម្រាប់កម្មវិធីនេះទេ។</p>
                 </div>
             @endif

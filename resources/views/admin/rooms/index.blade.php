@@ -119,7 +119,7 @@
                         <p class="text-2xl font-bold text-gray-900 mt-1">{{ $rooms->total() }}</p>
                     </div>
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4">
-                        <p class="text-sm text-gray-500">សមត្ថភាពសរុប</p>
+                        <p class="text-sm text-gray-500">សមត្ថភាពផ្ទុកសរុប</p>
                         <p class="text-2xl font-bold text-gray-900 mt-1">{{ number_format($rooms->sum('capacity')) }}</p>
                     </div>
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4">
@@ -140,7 +140,7 @@
                                 <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">បន្ទប់</th>
                                 <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">ទីតាំង</th>
                                 <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">ប្រភេទ</th>
-                                <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">សមត្ថភាព</th>
+                                <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">សមត្ថភាពផ្ទុក</th>
                                 <th class="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">សកម្មភាព</th>
                             </tr>
                         </thead>

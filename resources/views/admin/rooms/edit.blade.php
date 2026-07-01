@@ -60,9 +60,9 @@
                                 @enderror
                             </div>
 
-                            {{-- សមត្ថភាព --}}
+                            {{-- សមត្ថភាពផ្ទុក --}}
                             <div>
-                                <label for="capacity" class="block text-sm font-bold text-gray-700 mb-1.5">សមត្ថភាព <span class="text-red-500">*</span></label>
+                                <label for="capacity" class="block text-sm font-bold text-gray-700 mb-1.5">សមត្ថភាពផ្ទុក <span class="text-red-500">*</span></label>
                                 <input type="number" name="capacity" id="capacity" value="{{ old('capacity', $room->capacity) }}" required min="1"
                                        class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition">
                                 @error('capacity')
@@ -107,7 +107,7 @@
                                     </template>
                                     <template x-if="!imagePreview">
                                         @if($room->wifi_qr_code)
-                                            <img src="{{ asset('storage/' . $room->wifi_qr_code) }}" class="w-full h-full object-contain rounded-xl border border-gray-200 bg-white shadow-sm">
+                                            <img src="{{ str_starts_with($room->wifi_qr_code, 'http') ? $room->wifi_qr_code : asset('storage/' . $room->wifi_qr_code) }}" class="w-full h-full object-contain rounded-xl border border-gray-200 bg-white shadow-sm">
                                         @else
                                             <div class="w-full h-full flex flex-col items-center justify-center bg-gray-100 rounded-xl text-gray-400">
                                                 <svg class="w-10 h-10 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
