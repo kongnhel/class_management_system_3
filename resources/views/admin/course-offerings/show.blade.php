@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <div class="min-h-screen bg-gray-50">
         {{-- Header --}}
         @php
@@ -14,8 +14,8 @@
                             <i class="fas fa-arrow-left text-white"></i>
                         </a>
                         <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 rounded-2xl bg-blue-500/20 flex items-center justify-center">
-                                <i class="fas fa-book-open text-blue-300 text-xl"></i>
+                            <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 flex items-center justify-center">
+                                <i class="fas fa-book-open text-emerald-300 text-xl"></i>
                             </div>
                             <div>
                                 <div class="flex items-center gap-2 mb-1">
@@ -30,7 +30,7 @@
                         </div>
                     </div>
                     <div class="flex gap-3">
-                        <a href="{{ route('admin.edit-course-offering', $courseOffering->id) }}" class="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg transition-all">
+                        <a href="{{ route('admin.edit-course-offering', $courseOffering->id) }}" class="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg transition-all">
                             <i class="fas fa-edit"></i> <span>{{ __('កែប្រែ') }}</span>
                         </a>
                         <a href="{{ route('admin.manage-course-offerings') }}" class="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-5 py-2.5 rounded-xl font-bold text-sm transition-all">
@@ -46,8 +46,8 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-5">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
-                            <i class="fas fa-users text-blue-500"></i>
+                        <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
+                            <i class="fas fa-users text-emerald-500"></i>
                         </div>
                         <div>
                             <p class="text-2xl font-bold text-gray-900">{{ $enrollmentCount }}</p>
@@ -97,8 +97,8 @@
                     {{-- Course Info --}}
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                         <h3 class="text-lg font-bold text-gray-900 mb-5 flex items-center gap-2">
-                            <div class="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center">
-                                <i class="fas fa-book text-blue-500 text-sm"></i>
+                            <div class="w-8 h-8 rounded-xl bg-emerald-50 flex items-center justify-center">
+                                <i class="fas fa-book text-emerald-500 text-sm"></i>
                             </div>
                             {{ __('ព័ត៌មានមុខវិជ្ជា') }}
                         </h3>
@@ -134,12 +134,12 @@
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                         <div class="flex items-center justify-between mb-5">
                             <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
-                                <div class="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center">
-                                    <i class="fas fa-list text-indigo-500 text-sm"></i>
+                                <div class="w-8 h-8 rounded-xl bg-emerald-50 flex items-center justify-center">
+                                    <i class="fas fa-list text-emerald-500 text-sm"></i>
                                 </div>
                                 {{ __('បញ្ជីសិស្ស') }}
                             </h3>
-                            <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-indigo-50 text-indigo-700">{{ $enrollmentCount }} នាក់</span>
+                            <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-emerald-50 text-emerald-700">{{ $enrollmentCount }} នាក់</span>
                         </div>
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200">
@@ -224,9 +224,9 @@
                         </h3>
                         <div class="space-y-2">
                             @forelse($courseOffering->targetPrograms as $program)
-                            <div class="flex items-center justify-between bg-indigo-50 p-3 rounded-xl border border-indigo-100">
-                                <span class="font-semibold text-indigo-800 text-sm">{{ $program->name_km }}</span>
-                                <span class="text-xs bg-indigo-200 text-indigo-800 px-2.5 py-0.5 rounded-lg font-bold">G{{ $program->pivot->generation }}</span>
+                            <div class="flex items-center justify-between bg-emerald-50 p-3 rounded-xl border border-emerald-100">
+                                <span class="font-semibold text-emerald-800 text-sm">{{ $program->name_km }}</span>
+                                <span class="text-xs bg-emerald-200 text-emerald-800 px-2.5 py-0.5 rounded-lg font-bold">G{{ $program->pivot->generation }}</span>
                             </div>
                             @empty
                             <p class="text-gray-400 text-sm italic text-center py-4">{{ __('មិនទាន់មានជំនាញ') }}</p>

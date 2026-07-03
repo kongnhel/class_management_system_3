@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <div class="py-10 bg-gray-50 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
@@ -6,14 +6,14 @@
             <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
                 <div>
                     <h1 class="text-3xl font-bold text-gray-900 flex items-center gap-3">
-                        <div class="p-2 bg-blue-100 rounded-xl">
-                            <i class="fas fa-graduation-cap text-blue-600 text-xl"></i>
+                        <div class="p-2 bg-emerald-100 rounded-xl">
+                            <i class="fas fa-graduation-cap text-emerald-600 text-xl"></i>
                         </div>
                         {{ __('គ្រប់គ្រងកម្មវិធីសិក្សា') }}
                     </h1>
                     <p class="mt-1 text-sm text-gray-500 ml-11">{{ __('រកឃើញកម្មវិធីសិក្សាចំនួន') }} {{ $programs->total() }} {{ __('កម្មវិធី') }}</p>
                 </div>
-                <a href="{{ route('admin.create-program') }}" class="mt-4 md:mt-0 inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg shadow-blue-500/25 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200">
+                <a href="{{ route('admin.create-program') }}" class="mt-4 md:mt-0 inline-flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-emerald-600 text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg shadow-emerald-500/25 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200">
                     <i class="fas fa-plus"></i>
                     {{ __('បន្ថែមកម្មវិធីសិក្សាថ្មី') }}
                 </a>
@@ -54,14 +54,14 @@
                         <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('ស្វែងរក') }}</label>
                         <div class="relative">
                             <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
-                            <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('ស្វែងរកតាមឈ្មោះ ឬកម្រិតសញ្ញាបត្រ...') }}" class="w-full pl-10 pr-4 py-2.5 rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 focus:bg-white transition" onkeyup="clearTimeout(window.__searchTimer);window.__searchTimer=setTimeout(()=>document.getElementById('filterForm').submit(),500)" onchange="document.getElementById('filterForm').submit()">
+                            <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('ស្វែងរកតាមឈ្មោះ ឬកម្រិតសញ្ញាបត្រ...') }}" class="w-full pl-10 pr-4 py-2.5 rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-gray-50 focus:bg-white transition" onkeyup="clearTimeout(window.__searchTimer);window.__searchTimer=setTimeout(()=>document.getElementById('filterForm').submit(),500)" onchange="document.getElementById('filterForm').submit()">
                         </div>
                     </div>
 
                     {{-- Department Filter --}}
                     <div>
                         <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('ដេប៉ាតឺម៉ង់') }}</label>
-                        <select name="department_id" onchange="document.getElementById('filterForm').submit()" class="w-full px-3 py-2.5 rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-blue-500 bg-gray-50 focus:bg-white transition">
+                        <select name="department_id" onchange="document.getElementById('filterForm').submit()" class="w-full px-3 py-2.5 rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 bg-gray-50 focus:bg-white transition">
                             <option value="">{{ __('ទាំងអស់') }}</option>
                             @foreach($departments as $dept)
                                 <option value="{{ $dept->id }}" {{ request('department_id') == $dept->id ? 'selected' : '' }}>{{ $dept->name_km }}</option>
@@ -72,7 +72,7 @@
                     {{-- Degree Level Filter --}}
                     <div>
                         <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('កម្រិតសញ្ញាបត្រ') }}</label>
-                        <select name="degree_level" onchange="document.getElementById('filterForm').submit()" class="w-full px-3 py-2.5 rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-blue-500 bg-gray-50 focus:bg-white transition">
+                        <select name="degree_level" onchange="document.getElementById('filterForm').submit()" class="w-full px-3 py-2.5 rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 bg-gray-50 focus:bg-white transition">
                             <option value="">{{ __('ទាំងអស់') }}</option>
                             @foreach($degreeLevels as $level)
                                 <option value="{{ $level }}" {{ request('degree_level') == $level ? 'selected' : '' }}>{{ $level }}</option>
@@ -83,7 +83,7 @@
 
                 <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
                     <div class="flex items-center gap-2">
-                        <button type="submit" class="inline-flex items-center gap-2 bg-blue-600 text-white px-5 py-2 rounded-xl text-sm font-bold hover:bg-blue-700 transition">
+                        <button type="submit" class="inline-flex items-center gap-2 bg-emerald-600 text-white px-5 py-2 rounded-xl text-sm font-bold hover:bg-emerald-700 transition">
                             <i class="fas fa-filter"></i> {{ __('ច្រោះ') }}
                         </button>
                         @if(request()->hasAny(['search', 'department_id', 'degree_level']))
@@ -95,7 +95,7 @@
 
                     <div class="flex items-center gap-2">
                         <label class="text-xs font-bold text-gray-500">{{ __('រៀបចំតាម') }}:</label>
-                        <select onchange="window.location.href=this.value" class="px-3 py-1.5 rounded-lg border-gray-200 text-xs font-bold focus:ring-2 focus:ring-blue-500">
+                        <select onchange="window.location.href=this.value" class="px-3 py-1.5 rounded-lg border-gray-200 text-xs font-bold focus:ring-2 focus:ring-emerald-500">
                             @php
                                 $currentSort = request('sort', 'name_km');
                                 $currentDir = request('direction', 'asc');
@@ -123,7 +123,7 @@
                             {{-- Card Header --}}
                             <div class="p-6 pb-4">
                                 <div class="flex items-start justify-between mb-4">
-                                    <div class="p-3 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/20">
+                                    <div class="p-3 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-500/20">
                                         <i class="fas fa-graduation-cap text-lg"></i>
                                     </div>
                                     @if($program->pathwayProgram)
@@ -132,7 +132,7 @@
                                         </span>
                                     @endif
                                 </div>
-                                <h3 class="text-lg font-bold text-gray-900 leading-tight group-hover:text-blue-600 transition-colors">{{ $program->name_km }}</h3>
+                                <h3 class="text-lg font-bold text-gray-900 leading-tight group-hover:text-emerald-600 transition-colors">{{ $program->name_km }}</h3>
                                 <p class="text-sm text-gray-500 mt-1">{{ $program->name_en }}</p>
                             </div>
 
@@ -161,7 +161,7 @@
                             {{-- Card Footer --}}
                             <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
                                 <div class="flex items-center gap-1.5">
-                                    <a href="{{ route('admin.edit-program', $program->id) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-bold text-blue-600 hover:bg-blue-50 hover:border-blue-200 transition">
+                                    <a href="{{ route('admin.edit-program', $program->id) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-bold text-emerald-600 hover:bg-emerald-50 hover:border-emerald-200 transition">
                                         <i class="fas fa-pen text-[10px]"></i> {{ __('កែប្រែ') }}
                                     </a>
                                     <button onclick="openDeleteModal('{{ route('admin.delete-program', $program->id) }}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-bold text-red-600 hover:bg-red-50 hover:border-red-200 transition">
@@ -188,7 +188,7 @@
                     </div>
                     <h3 class="text-lg font-bold text-gray-700">{{ __('មិនមានកម្មវិធីសិក្សា') }}</h3>
                     <p class="text-sm text-gray-500 mt-1 mb-6">{{ __('សូមបង្កើតកម្មវិធីសិក្សាថ្មីដើម្បីចាប់ផ្តើម។') }}</p>
-                    <a href="{{ route('admin.create-program') }}" class="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-blue-700 transition">
+                    <a href="{{ route('admin.create-program') }}" class="inline-flex items-center gap-2 bg-emerald-600 text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-emerald-700 transition">
                         <i class="fas fa-plus"></i> {{ __('បន្ថែមកម្មវិធីសិក្សាថ្មី') }}
                     </a>
                 </div>

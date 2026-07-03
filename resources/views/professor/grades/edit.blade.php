@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -7,7 +7,7 @@
                         {{ __('បញ្ចូលពិន្ទុ') }}
                     </h2>
                     <div class="flex items-center mt-1 text-slate-500 space-x-2">
-                        <div class="w-2 h-2 rounded-full bg-indigo-500"></div>
+                        <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
                         <p class="text-xs font-bold uppercase tracking-wider text-slate-400">{{ $assessment->courseOffering->course->title_km }}</p>
                     </div>
                 </div>
@@ -73,8 +73,8 @@
                     <p class="text-xl font-black text-amber-600 mt-1" id="statPending">0</p>
                 </div>
                 <div class="bg-white rounded-2xl border border-slate-200 p-4 text-center shadow-sm">
-                    <p class="text-[9px] font-black text-indigo-400 uppercase tracking-widest">{{ __('មធ្យម') }}</p>
-                    <p class="text-xl font-black text-indigo-600 mt-1" id="statAvg">0.0</p>
+                    <p class="text-[9px] font-black text-emerald-400 uppercase tracking-widest">{{ __('មធ្យម') }}</p>
+                    <p class="text-xl font-black text-emerald-600 mt-1" id="statAvg">0.0</p>
                 </div>
             </div>
 
@@ -82,10 +82,10 @@
             <div class="bg-white rounded-2xl border border-slate-200 p-4 mb-6 shadow-sm">
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ __('ដំណើរការបញ្ចូលពិន្ទុ') }}</span>
-                    <span class="text-[10px] font-black text-indigo-500" id="progressText">0/0</span>
+                    <span class="text-[10px] font-black text-emerald-500" id="progressText">0/0</span>
                 </div>
                 <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
-                    <div id="progressBar" class="h-full bg-indigo-500 rounded-full transition-all duration-500" style="width: 0%"></div>
+                    <div id="progressBar" class="h-full bg-emerald-500 rounded-full transition-all duration-500" style="width: 0%"></div>
                 </div>
             </div>
 
@@ -101,13 +101,13 @@
                     </div>
                     <input type="text" name="search" value="{{ $search }}"
                            placeholder="{{ __('ស្វែងរកឈ្មោះ ឬ អត្តលេខ...') }}"
-                           class="block w-full pl-11 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm">
+                           class="block w-full pl-11 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all shadow-sm">
                 </form>
 
                 {{-- Filter Tabs --}}
                 <div class="flex bg-white rounded-xl border border-slate-200 p-1 shadow-sm">
                     <button type="button" onclick="setFilter('all')" data-filter="all"
-                            class="filter-btn flex-1 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all bg-indigo-50 text-indigo-600">
+                            class="filter-btn flex-1 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all bg-emerald-50 text-emerald-600">
                         {{ __('ទាំងអស់') }}
                     </button>
                     <button type="button" onclick="setFilter('ungraded')" data-filter="ungraded"
@@ -180,7 +180,7 @@
                                                 min="0" max="{{ $assessment->max_score }}" step="0.01"
                                                 data-max="{{ $assessment->max_score }}"
                                                 oninput="validateScore(this); updateStats();"
-                                                class="score-input block w-full text-center py-2 bg-slate-50 border-2 border-transparent rounded-xl text-sm font-black text-indigo-700 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
+                                                class="score-input block w-full text-center py-2 bg-slate-50 border-2 border-transparent rounded-xl text-sm font-black text-emerald-700 focus:bg-white focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all outline-none"
                                                 placeholder="0.00">
                                             <div class="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-300 pointer-events-none">
                                                 /{{ $assessment->max_score }}
@@ -194,7 +194,7 @@
                                             <input type="text"
                                                 name="grades[{{ $student->id }}][notes]"
                                                 value="{{ old('grades.'.$student->id.'.notes', $scores[$student->id]['notes'] ?? '') }}"
-                                                class="notes-input block w-full px-4 py-2 bg-slate-50 border-transparent rounded-xl text-xs font-medium text-slate-600 focus:bg-white focus:ring-2 focus:ring-indigo-500/10 transition-all outline-none"
+                                                class="notes-input block w-full px-4 py-2 bg-slate-50 border-transparent rounded-xl text-xs font-medium text-slate-600 focus:bg-white focus:ring-2 focus:ring-emerald-500/10 transition-all outline-none"
                                                 placeholder="...">
                                             <div class="absolute right-2 top-1/2 -translate-y-1/2 flex gap-1 opacity-0 hover:opacity-100 focus-within:opacity-100 transition-opacity">
                                                 <button type="button" onclick="setQuickNote(this, 'ល្អ')" class="quick-note text-[8px] px-1.5 py-0.5 bg-emerald-50 text-emerald-600 rounded-md border border-emerald-100 font-bold hover:bg-emerald-100" title="ល្អ">ល្អ</button>
@@ -227,7 +227,7 @@
     <div class="fixed bottom-0 inset-x-0 bg-white/90 backdrop-blur-xl border-t border-slate-200 py-4 z-40 shadow-[0_-10px_25px_rgba(0,0,0,0.05)]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
             <a href="{{ route('professor.manage-grades', ['offering_id' => $assessment->course_offering_id]) }}"
-               class="p-3 md:px-6 md:py-3 text-slate-500 hover:text-indigo-600 transition-colors">
+               class="p-3 md:px-6 md:py-3 text-slate-500 hover:text-emerald-600 transition-colors">
                 <svg class="w-6 h-6 md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
                 <span class="hidden md:inline-flex items-center text-xs font-bold uppercase tracking-wider">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
@@ -243,7 +243,7 @@
                 <span class="hidden md:inline text-[11px] font-black text-slate-400 uppercase tracking-widest">
                     {{ count($students) }} {{ __('និស្សិតសរុប') }}
                 </span>
-                <button type="submit" form="grade-form" class="w-full md:w-auto inline-flex items-center justify-center px-8 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-black text-sm shadow-xl shadow-indigo-200 transition-all active:scale-95">
+                <button type="submit" form="grade-form" class="w-full md:w-auto inline-flex items-center justify-center px-8 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-black text-sm shadow-xl shadow-emerald-200 transition-all active:scale-95">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>
                     {{ __('រក្សាទុកទាំងអស់') }}
                     <span class="hidden md:inline ml-2 text-[10px] opacity-60">(Ctrl+S)</span>
@@ -262,19 +262,19 @@
                 <div>
                     <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ __('ពិន្ទុ') }}</label>
                     <input type="number" id="batchScore" min="0" max="{{ $assessment->max_score }}" step="0.01"
-                           class="w-full mt-1 px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-lg font-black text-slate-800 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all"
+                           class="w-full mt-1 px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-lg font-black text-slate-800 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all"
                            placeholder="0">
                 </div>
                 <div>
                     <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ __('កំណត់ចំណាំ (ជាជម្រើស)') }}</label>
                     <input type="text" id="batchNote"
-                           class="w-full mt-1 px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-sm font-bold text-slate-700 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all"
+                           class="w-full mt-1 px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-sm font-bold text-slate-700 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all"
                            placeholder="ឧ. ល្អ, ត្រូវកែ...">
                 </div>
             </div>
             <div class="flex gap-3 mt-6">
                 <button type="button" onclick="closeBatchFillModal()" class="flex-1 px-4 py-3 border border-slate-200 rounded-xl text-sm font-bold text-slate-500 hover:bg-slate-50 transition-all">{{ __('បោះបង់') }}</button>
-                <button type="button" onclick="applyBatchFill()" class="flex-1 px-4 py-3 bg-indigo-600 hover:bg-indigo-700 rounded-xl text-sm font-black text-white transition-all">{{ __('អនុវត្ត') }}</button>
+                <button type="button" onclick="applyBatchFill()" class="flex-1 px-4 py-3 bg-emerald-600 hover:bg-emerald-700 rounded-xl text-sm font-black text-white transition-all">{{ __('អនុវត្ត') }}</button>
             </div>
         </div>
     </div>
@@ -328,11 +328,11 @@
             document.getElementById('progressBar').style.width = `${pct}%`;
 
             if (pct === 100) {
-                document.getElementById('progressBar').classList.remove('bg-indigo-500');
+                document.getElementById('progressBar').classList.remove('bg-emerald-500');
                 document.getElementById('progressBar').classList.add('bg-emerald-500');
             } else {
                 document.getElementById('progressBar').classList.remove('bg-emerald-500');
-                document.getElementById('progressBar').classList.add('bg-indigo-500');
+                document.getElementById('progressBar').classList.add('bg-emerald-500');
             }
 
             hasUnsavedChanges = true;
@@ -343,11 +343,11 @@
         function setFilter(filter) {
             currentFilter = filter;
             document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('bg-indigo-50', 'text-indigo-600');
+                btn.classList.remove('bg-emerald-50', 'text-emerald-600');
                 btn.classList.add('text-slate-400');
             });
             const activeBtn = document.querySelector(`[data-filter="${filter}"]`);
-            activeBtn.classList.add('bg-indigo-50', 'text-indigo-600');
+            activeBtn.classList.add('bg-emerald-50', 'text-emerald-600');
             activeBtn.classList.remove('text-slate-400');
 
             document.querySelectorAll('.student-row').forEach(row => {

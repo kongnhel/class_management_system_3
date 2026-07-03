@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <style>
         /* CSS សម្រាប់កែសម្រួល UI */
         #reader { border: none !important; }
@@ -43,7 +43,7 @@
                             <div class="w-12 h-12 border-t-4 border-r-4 border-white/80 rounded-tr-3xl"></div>
                         </div>
                         {{-- Laser Animation --}}
-                        <div class="absolute top-0 left-0 w-full h-1 bg-blue-500/80 shadow-[0_0_20px_rgba(59,130,246,1)] animate-scan"></div>
+                        <div class="absolute top-0 left-0 w-full h-1 bg-emerald-500/80 shadow-[0_0_20px_rgba(59,130,246,1)] animate-scan"></div>
                         <div class="flex justify-between">
                             <div class="w-12 h-12 border-b-4 border-l-4 border-white/80 rounded-bl-3xl"></div>
                             <div class="w-12 h-12 border-b-4 border-r-4 border-white/80 rounded-br-3xl"></div>
@@ -58,7 +58,7 @@
                         <h3 class="text-lg font-bold mb-2">{{ __('qr_enable_camera') }}</h3>
                         <p class="text-sm text-gray-400 mb-6">{{ __('qr_enable_desc') }}</p>
                         
-                        <button onclick="startCamera()" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-blue-500/30 transition-all active:scale-95 flex items-center gap-2">
+                        <button onclick="startCamera()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-emerald-500/30 transition-all active:scale-95 flex items-center gap-2">
                             <span>📷 {{ __('qr_enable_btn') }}</span>
                         </button>
                     </div>
@@ -68,7 +68,7 @@
                 <div class="text-center">
                     <p class="text-xs text-gray-400 mb-2">{{ __('or') }}</p>
                     <input type="file" id="qr-input-file" accept="image/*" class="hidden" onchange="handleFileUpload(this)">
-                    <button onclick="document.getElementById('qr-input-file').click()" class="text-sm font-bold text-blue-600 bg-blue-50 px-4 py-2 rounded-lg hover:bg-blue-100 transition-colors w-full">
+                    <button onclick="document.getElementById('qr-input-file').click()" class="text-sm font-bold text-emerald-600 bg-emerald-50 px-4 py-2 rounded-lg hover:bg-emerald-100 transition-colors w-full">
                         📂 {{ __('qr_upload_gallery') }}
                     </button>
                 </div>
@@ -82,7 +82,7 @@
             <div id="status-icon-container" class="mx-auto w-24 h-24 rounded-full flex items-center justify-center mb-6"></div>
             <h3 id="modal-title" class="text-2xl font-black text-gray-900 mb-2"></h3>
             <p id="modal-message" class="text-gray-500 mb-8"></p>
-            <button onclick="window.location.reload()" class="w-full py-4 rounded-2xl font-bold text-white bg-blue-600 shadow-lg" id="modal-btn">OK</button>
+            <button onclick="window.location.reload()" class="w-full py-4 rounded-2xl font-bold text-white bg-emerald-600 shadow-lg" id="modal-btn">OK</button>
         </div>
     </div>
 
@@ -192,7 +192,7 @@
             overlay.classList.add('flex');
 
             if (type === 'processing') {
-                iconContainer.className = "mx-auto w-24 h-24 rounded-full flex items-center justify-center mb-6 bg-blue-50 text-blue-600 animate-spin";
+                iconContainer.className = "mx-auto w-24 h-24 rounded-full flex items-center justify-center mb-6 bg-emerald-50 text-emerald-600 animate-spin";
                 iconContainer.innerHTML = `<svg class="w-10 h-10" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>`;
                 title.innerText = "{{ __('qr_verifying') }}";
                 msg.innerText = "{{ __('qr_verifying_please') }}";

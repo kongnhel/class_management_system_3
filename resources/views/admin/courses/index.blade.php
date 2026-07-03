@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <div class="py-10 bg-gray-50 min-h-screen font-inter antialiased">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
@@ -9,7 +9,7 @@
                 {{-- Header Section --}}
                 <div class="p-6 lg:p-8 border-b border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div class="flex items-center gap-4">
-                        <div class="h-12 w-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-md shadow-blue-200">
+                        <div class="h-12 w-12 bg-emerald-600 rounded-2xl flex items-center justify-center text-white shadow-md shadow-emerald-200">
                             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.462 9.492 5 8 5c-5.072 0-8 3.844-8 7s2.928 7 8 7c1.492 0 2.832-.462 4-1.253m0-13C13.168 5.462 14.508 5 16 5c5.072 0 8 3.844 8 7s-2.928 7-8 7c-1.492 0-2.832-.462-4-1.253"/>
                             </svg>
@@ -23,25 +23,25 @@
                     <div class="flex flex-wrap items-center gap-3">
                         {{-- Search Input --}}
                         <form method="GET" action="{{ route('admin.manage-courses') }}" id="courseSearchForm" class="relative group">
-                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 group-focus-within:text-blue-500 transition-colors">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 group-focus-within:text-emerald-500 transition-colors">
                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                             </span>
                             <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('ស្វែងរកមុខវិជ្ជា...') }}"
                                    onkeyup="clearTimeout(window.__cs);window.__cs=setTimeout(()=>document.getElementById('courseSearchForm').submit(),500)"
                                    onchange="document.getElementById('courseSearchForm').submit()"
-                                   class="pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full md:w-72 transition-all">
+                                   class="pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full md:w-72 transition-all">
                         </form>
 
                         {{-- VIEW TOGGLE --}}
                         <div class="inline-flex bg-gray-100 p-1 rounded-xl">
                             <button @click="viewMode = 'table'"
-                                    :class="viewMode === 'table' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-700'"
+                                    :class="viewMode === 'table' ? 'bg-white shadow-sm text-emerald-600' : 'text-gray-500 hover:text-gray-700'"
                                     class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 flex items-center gap-2">
                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>
                                 {{ __('បញ្ជី') }}
                             </button>
                             <button @click="viewMode = 'grid'"
-                                    :class="viewMode === 'grid' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-700'"
+                                    :class="viewMode === 'grid' ? 'bg-white shadow-sm text-emerald-600' : 'text-gray-500 hover:text-gray-700'"
                                     class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 flex items-center gap-2">
                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
                                 {{ __('ប័ណ្ណ') }}
@@ -49,7 +49,7 @@
                         </div>
 
                         <a href="{{ route('admin.create-course') }}"
-                           class="inline-flex items-center justify-center px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-xl transition-all shadow-md shadow-blue-200 gap-2 active:scale-95">
+                           class="inline-flex items-center justify-center px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-xl transition-all shadow-md shadow-emerald-200 gap-2 active:scale-95">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
                             </svg>
@@ -84,12 +84,12 @@
                      x-transition:leave-start="opacity-100"
                      x-transition:leave-end="opacity-0"
                      class="fixed top-6 right-6 z-[9999] w-full max-w-sm">
-                    <div class="bg-white border-l-4 {{ session('success') ? 'border-blue-500' : 'border-red-500' }} shadow-2xl rounded-2xl overflow-hidden">
+                    <div class="bg-white border-l-4 {{ session('success') ? 'border-emerald-500' : 'border-red-500' }} shadow-2xl rounded-2xl overflow-hidden">
                         <div class="p-4">
                             <div class="flex items-center gap-3">
                                 <div class="flex-shrink-0">
                                     @if(session('success'))
-                                        <div class="h-10 w-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center">
+                                        <div class="h-10 w-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center">
                                             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                                         </div>
                                     @else
@@ -109,7 +109,7 @@
                         </div>
                         {{-- Progress Bar --}}
                         <div class="h-1 bg-gray-100">
-                            <div class="h-full {{ session('success') ? 'bg-blue-500' : 'bg-red-500' }} transition-all duration-100"
+                            <div class="h-full {{ session('success') ? 'bg-emerald-500' : 'bg-red-500' }} transition-all duration-100"
                                  :style="`width: ${progress}%`"></div>
                         </div>
                     </div>
@@ -130,7 +130,7 @@
                                 <div class="flex items-center gap-4 mb-8">
                                     <div class="flex flex-col">
                                         <h3 class="text-xl font-bold text-gray-800 tracking-tight">{{ $programName }}</h3>
-                                        <div class="h-1 w-12 bg-blue-600 rounded-full mt-1"></div>
+                                        <div class="h-1 w-12 bg-emerald-600 rounded-full mt-1"></div>
                                     </div>
                                 </div>
 
@@ -150,7 +150,7 @@
 
                                     <div class="mb-12 last:mb-0">
                                         <div class="flex items-center gap-3 mb-6">
-                                            <span class="text-[11px] font-bold text-blue-700 bg-blue-50 px-4 py-1.5 rounded-full uppercase tracking-widest border border-blue-100">
+                                            <span class="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-4 py-1.5 rounded-full uppercase tracking-widest border border-emerald-100">
                                                 {{ $generationName }}
                                             </span>
                                             <span class="text-xs text-gray-400 font-bold">{{ $filteredCourses->count() }} {{ __('មុខវិជ្ជា') }}</span>
@@ -160,14 +160,14 @@
                                         {{-- GRID VIEW --}}
                                         <div x-show="viewMode === 'grid'" x-transition class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                             @foreach ($filteredCourses as $course)
-                                                <div class="group bg-white border border-gray-200 rounded-2xl p-6 hover:border-blue-400 hover:shadow-lg transition-all relative overflow-hidden">
+                                                <div class="group bg-white border border-gray-200 rounded-2xl p-6 hover:border-emerald-400 hover:shadow-lg transition-all relative overflow-hidden">
                                                     <div class="flex justify-between items-start mb-5">
-                                                        <div class="h-12 w-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-500 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                                                        <div class="h-12 w-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-500 group-hover:bg-emerald-600 group-hover:text-white transition-all">
                                                             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.462 9.492 5 8 5c-5.072 0-8 3.844-8 7s2.928 7 8 7c1.492 0 2.832-.462 4-1.253m0-13C13.168 5.462 14.508 5 16 5c5.072 0 8 3.844 8 7s-2.928 7-8 7c-1.492 0-2.832-.462-4-1.253"/></svg>
                                                         </div>
                                                         <div class="flex gap-1">
                                                             <a href="{{ route('admin.edit-course', $course->id) }}"
-                                                               class="px-3 py-1.5 text-xs font-bold text-blue-600 hover:bg-blue-50 rounded-xl transition-all border border-blue-200">
+                                                               class="px-3 py-1.5 text-xs font-bold text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all border border-emerald-200">
                                                                 {{ __('កែប្រែ') }}
                                                             </a>
                                                             <button @click="openDeleteModal('{{ route('admin.delete-course', $course->id) }}')"
@@ -190,7 +190,7 @@
                                                             <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                                                             <span class="text-xs font-bold text-gray-600">{{ $course->credits }} {{ __('ក្រេឌីត') }}</span>
                                                         </div>
-                                                        <span class="text-[10px] bg-blue-50 text-blue-700 px-2.5 py-1 rounded-lg font-bold border border-blue-100">
+                                                        <span class="text-[10px] bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-lg font-bold border border-emerald-100">
                                                             {{ $course->department->name_km ?? 'N/A' }}
                                                         </span>
                                                     </div>
@@ -211,7 +211,7 @@
                                                 </thead>
                                                 <tbody class="bg-white divide-y divide-gray-100">
                                                     @foreach ($filteredCourses as $course)
-                                                        <tr class="hover:bg-blue-50/30 transition-colors group">
+                                                        <tr class="hover:bg-emerald-50/30 transition-colors group">
                                                             <td class="px-6 py-4">
                                                                 <div class="text-sm font-bold text-gray-800">{{ $course->title_km }}</div>
                                                                 <div class="text-[10px] text-gray-400 font-bold uppercase">{{ $course->title_en }}</div>
@@ -224,14 +224,14 @@
                                                                 </div>
                                                             </td>
                                                             <td class="px-6 py-4 text-center">
-                                                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-blue-50 border border-blue-100 text-blue-700">
+                                                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 border border-emerald-100 text-emerald-700">
                                                                     {{ $course->credits }} {{ __('ក្រេឌីត') }}
                                                                 </span>
                                                             </td>
                                                             <td class="px-6 py-4 text-right whitespace-nowrap">
                                                                 <div class="flex justify-end gap-2">
                                                                     <a href="{{ route('admin.edit-course', $course->id) }}"
-                                                                       class="px-3 py-1.5 text-xs font-bold text-blue-600 hover:bg-blue-50 rounded-xl transition-all border border-blue-200">
+                                                                       class="px-3 py-1.5 text-xs font-bold text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all border border-emerald-200">
                                                                         {{ __('កែប្រែ') }}
                                                                     </a>
                                                                     <button @click="openDeleteModal('{{ route('admin.delete-course', $course->id) }}')"
@@ -259,7 +259,7 @@
                                 <h3 class="text-lg font-bold text-gray-900 mb-2">{{ __('មិនទាន់មានមុខវិជ្ជា') }}</h3>
                                 <p class="text-sm text-gray-500 mb-6">{{ __('ចុចប៊ូតុងខាងក្រោមដើម្បីបន្ថែមមុខវិជ្ជាថ្មី') }}</p>
                                 <a href="{{ route('admin.create-course') }}"
-                                   class="inline-flex items-center px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-xl transition-all shadow-md shadow-blue-200 gap-2">
+                                   class="inline-flex items-center px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-xl transition-all shadow-md shadow-emerald-200 gap-2">
                                     <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14m-7-7h14"/></svg>
                                     {{ __('បន្ថែមមុខវិជ្ជា') }}
                                 </a>

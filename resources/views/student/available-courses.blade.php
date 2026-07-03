@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <div class="py-12 bg-gray-50 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
@@ -37,7 +37,7 @@
                                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
                                     </div>
                                 @elseif(session('info'))
-                                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+                                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
                                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                     </div>
                                 @else
@@ -55,7 +55,7 @@
                             </button>
                         </div>
                         <div class="absolute bottom-0 left-0 h-1 bg-gray-100 w-full">
-                            <div class="h-full transition-all duration-75 ease-linear {{ session('success') ? 'bg-green-500' : (session('info') ? 'bg-blue-500' : 'bg-red-500') }}" :style="`width: ${progress}%`"></div>
+                            <div class="h-full transition-all duration-75 ease-linear {{ session('success') ? 'bg-green-500' : (session('info') ? 'bg-emerald-500' : 'bg-red-500') }}" :style="`width: ${progress}%`"></div>
                         </div>
                     </div>
                 </div>
@@ -64,7 +64,7 @@
             {{-- Header --}}
             <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 lg:p-8 mb-6">
                 <div class="flex items-center gap-4">
-                    <span class="p-3 bg-indigo-100 text-indigo-600 rounded-2xl shadow-sm">
+                    <span class="p-3 bg-emerald-100 text-emerald-600 rounded-2xl shadow-sm">
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                         </svg>
@@ -93,7 +93,7 @@
                         <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col justify-between hover:shadow-md transition-all">
                             <div class="mb-4">
                                 <div class="flex items-center gap-2 mb-3">
-                                    <span class="bg-indigo-50 text-indigo-600 text-[10px] font-bold px-2.5 py-1 rounded-lg">
+                                    <span class="bg-emerald-50 text-emerald-600 text-[10px] font-bold px-2.5 py-1 rounded-lg">
                                         {{ $courseOffering->semester }}
                                     </span>
                                     <span class="bg-gray-100 text-gray-500 text-[10px] font-bold px-2.5 py-1 rounded-lg">
@@ -124,7 +124,7 @@
                             <form action="{{ route('student.enroll_self') }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="course_offering_id" value="{{ $courseOffering->id }}">
-                                <button class="w-full bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 group">
+                                <button class="w-full bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 group">
                                     <svg class="w-4 h-4 transition-transform group-hover:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>
                                     {{ __('ចុះឈ្មោះចូលរៀន') }}
                                 </button>

@@ -1,18 +1,18 @@
-<x-app-layout>
+﻿<x-app-layout>
     <div class="bg-gray-50 min-h-screen font-sans">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             {{-- Header --}}
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                 <div>
                     <h2 class="text-3xl font-bold text-gray-900 flex items-center gap-3">
-                        <span class="p-3 bg-indigo-100 text-indigo-600 rounded-2xl shadow-sm">
+                        <span class="p-3 bg-emerald-100 text-emerald-600 rounded-2xl shadow-sm">
                             <i class="fas fa-calendar-alt text-xl"></i>
                         </span>
                         ការគ្រប់គ្រងឆ្នាំសិក្សា
                     </h2>
                     <p class="text-gray-500 mt-2 ml-14">គ្រប់គ្រងឆ្នាំសិក្សា និងកំណត់ឆ្នាំសិក្សាបច្ចុប្បន្ន</p>
                 </div>
-                <a href="{{ route('admin.academic-years.create') }}" class="inline-flex items-center gap-2 bg-gradient-to-br from-blue-500 to-indigo-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-blue-100 hover:shadow-blue-200 transition-all active:scale-95">
+                <a href="{{ route('admin.academic-years.create') }}" class="inline-flex items-center gap-2 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-emerald-100 hover:shadow-emerald-200 transition-all active:scale-95">
                     <i class="fas fa-plus"></i>
                     <span>បន្ថែមថ្មី</span>
                 </a>
@@ -21,28 +21,28 @@
             {{-- Current Year Highlight --}}
             @php $currentYear = $academicYears->firstWhere('is_current', true) ?? \App\Models\AcademicYear::getCurrent(); @endphp
             @if($currentYear)
-            <div class="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl shadow-xl p-6 mb-8 text-white">
+            <div class="bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-2xl shadow-xl p-6 mb-8 text-white">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div class="flex items-center gap-4">
                         <div class="p-3 bg-white/20 rounded-2xl backdrop-blur-sm">
                             <i class="fas fa-star text-2xl"></i>
                         </div>
                         <div>
-                            <p class="text-blue-100 text-sm font-medium uppercase tracking-wider">ឆ្នាំសិក្សាបច្ចុប្បន្ន</p>
+                            <p class="text-emerald-100 text-sm font-medium uppercase tracking-wider">ឆ្នាំសិក្សាបច្ចុប្បន្ន</p>
                             <h3 class="text-2xl font-bold">{{ $currentYear->name }}</h3>
                         </div>
                     </div>
                     <div class="flex items-center gap-6 text-sm">
                         <div class="flex items-center gap-2">
-                            <i class="fas fa-play-circle text-blue-200"></i>
+                            <i class="fas fa-play-circle text-emerald-200"></i>
                             <span>{{ \Carbon\Carbon::parse($currentYear->start_date)->format('d/m/Y') }}</span>
                         </div>
                         <div class="flex items-center gap-2">
-                            <i class="fas fa-stop-circle text-blue-200"></i>
+                            <i class="fas fa-stop-circle text-emerald-200"></i>
                             <span>{{ \Carbon\Carbon::parse($currentYear->end_date)->format('d/m/Y') }}</span>
                         </div>
                         <div class="flex items-center gap-2">
-                            <i class="fas fa-clock text-blue-200"></i>
+                            <i class="fas fa-clock text-emerald-200"></i>
                             <span>{{ \Carbon\Carbon::parse($currentYear->start_date)->diffInDays(\Carbon\Carbon::parse($currentYear->end_date)) }} ថ្ងៃ</span>
                         </div>
                     </div>
@@ -105,11 +105,11 @@
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-100">
                             @forelse($academicYears as $year)
-                            <tr class="hover:bg-gray-50 transition-colors {{ $year->is_current ? 'bg-indigo-50/50' : '' }}">
+                            <tr class="hover:bg-gray-50 transition-colors {{ $year->is_current ? 'bg-emerald-50/50' : '' }}">
                                 <td class="px-6 py-4 text-sm text-gray-400">{{ $year->id }}</td>
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 rounded-xl {{ $year->is_current ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-500' }} flex items-center justify-center font-bold text-sm">
+                                        <div class="w-10 h-10 rounded-xl {{ $year->is_current ? 'bg-emerald-100 text-emerald-600' : 'bg-gray-100 text-gray-500' }} flex items-center justify-center font-bold text-sm">
                                             <i class="fas fa-graduation-cap"></i>
                                         </div>
                                         <div>
@@ -134,7 +134,7 @@
                                 </td>
                                 <td class="px-6 py-4 text-center">
                                     @if($year->is_current)
-                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-full bg-indigo-100 text-indigo-700">
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-full bg-emerald-100 text-emerald-700">
                                         <i class="fas fa-circle text-[6px]"></i>
                                         បច្ចុប្បន្ន
                                     </span>
@@ -153,7 +153,7 @@
                                             កំណត់ជាបច្ចុប្បន្ន
                                         </button>
                                         @endif
-                                        <a href="{{ route('admin.academic-years.edit', $year->id) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors">
+                                        <a href="{{ route('admin.academic-years.edit', $year->id) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-xl transition-colors">
                                             <i class="fas fa-edit"></i>
                                             កែប្រែ
                                         </a>
@@ -177,7 +177,7 @@
                     </div>
                     <h3 class="text-lg font-bold text-gray-900 mb-2">មិនមានឆ្នាំសិក្សា</h3>
                     <p class="text-gray-500 mb-6 max-w-sm mx-auto">ចុចប៊ូតុងខាងក្រោមដើម្បីបង្កើតឆ្នាំសិក្សាថ្មី</p>
-                    <a href="{{ route('admin.academic-years.create') }}" class="inline-flex items-center gap-2 bg-gradient-to-br from-blue-500 to-indigo-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition-all active:scale-95">
+                    <a href="{{ route('admin.academic-years.create') }}" class="inline-flex items-center gap-2 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition-all active:scale-95">
                         <i class="fas fa-plus"></i>
                         បង្កើតឆ្នាំសិក្សាថ្មី
                     </a>

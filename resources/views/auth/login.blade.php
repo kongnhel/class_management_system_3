@@ -10,8 +10,6 @@
         .min-h-screen { padding: 0 !important; justify-content: stretch !important; align-items: stretch !important; max-width: 100% !important; }
     </style>
 
-    {{-- Flash toasts are handled by <x-toast /> in the guest layout --}}
-
     <div class="min-h-screen flex">
         {{-- Left: Branding --}}
         <div class="hidden lg:flex lg:w-1/2 relative overflow-hidden items-center justify-center">
@@ -43,18 +41,8 @@
                     <p class="text-gray-500 mt-2 text-sm">សូមបញ្ចូលព័ត៌មានគណនីរបស់អ្នកដើម្បីចូល</p>
                 </div>
 
-                {{-- Tab Switcher --}}
-                <div class="flex bg-gray-100 rounded-xl p-1 mb-8">
-                    <button id="emailTabBtn" onclick="switchTab('email')" class="flex-1 py-2.5 text-sm font-bold rounded-lg bg-white text-gray-900 shadow-sm transition-all">
-                        អ៊ីមែល
-                    </button>
-                    <button id="qrTabBtn" onclick="switchTab('qr')" class="flex-1 py-2.5 text-sm font-bold rounded-lg text-gray-500 hover:text-gray-700 transition-all">
-                        QR Code
-                    </button>
-                </div>
-
-                {{-- Email Login --}}
-                <div id="emailSection">
+                {{-- Login Form --}}
+                <div>
                     <form method="POST" action="{{ route('login') }}" class="space-y-5">
                         @csrf
                         <div>
@@ -111,23 +99,6 @@
                     </button>
                 </div>
 
-                {{-- QR Code Login --}}
-                <div id="qrSection" class="hidden text-center">
-                    <h3 class="text-lg font-bold text-gray-900 mb-2">{{ __('auth_login_qr') }}</h3>
-                    <p class="text-sm text-gray-500 mb-6">ស្កេន QR Code ដោយប្រើទូរស័ព្ទដៃរបស់អ្នក</p>
-                    
-                    <div class="inline-block p-4 bg-white rounded-2xl border-2 border-gray-100 shadow-sm" id="qrContainer">
-                        {!! $qrCode ?? '<div class="w-56 h-56 flex items-center justify-center text-gray-400 text-sm">QR Loading...</div>' !!}
-                    </div>
-                    
-                    <p class="text-emerald-600 text-sm font-bold mt-4" id="qr-status">{{ __('auth_qr_waiting') }}</p>
-                    
-                    <button onclick="refreshQR()" class="mt-4 inline-flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-emerald-600 transition-colors">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-                        {{ __('auth_qr_refresh') }}
-                    </button>
-                </div>
-
                 {{-- Register Link --}}
                 <p class="text-center text-sm text-gray-500 mt-8">
                     {{ __('auth_no_account') }}
@@ -161,26 +132,6 @@
             }
         }
 
-        function switchTab(tab) {
-            const emailSection = document.getElementById('emailSection');
-            const qrSection = document.getElementById('qrSection');
-            const emailBtn = document.getElementById('emailTabBtn');
-            const qrBtn = document.getElementById('qrTabBtn');
-
-            if (tab === 'email') {
-                emailSection.classList.remove('hidden');
-                qrSection.classList.add('hidden');
-                emailBtn.className = 'flex-1 py-2.5 text-sm font-bold rounded-lg bg-white text-gray-900 shadow-sm transition-all';
-                qrBtn.className = 'flex-1 py-2.5 text-sm font-bold rounded-lg text-gray-500 hover:text-gray-700 transition-all';
-            } else {
-                qrSection.classList.remove('hidden');
-                emailSection.classList.add('hidden');
-                qrBtn.className = 'flex-1 py-2.5 text-sm font-bold rounded-lg bg-white text-gray-900 shadow-sm transition-all';
-                emailBtn.className = 'flex-1 py-2.5 text-sm font-bold rounded-lg text-gray-500 hover:text-gray-700 transition-all';
-            }
-        }
-
-        // Phone detection: check verification status via AJAX
         const loginIdentifier = document.getElementById('login_identifier');
         const passwordInput = document.getElementById('password');
         const passwordSection = document.getElementById('passwordSection');
@@ -221,7 +172,7 @@
             loginBtn.textContent = 'ចូលជាមួយ Telegram OTP';
             loginBtn.type = 'button';
             loginBtn.onclick = function() {
-                const form = document.querySelector('#emailSection form');
+                const form = document.querySelector('form');
                 form.action = '{{ route("phone-otp.send") }}';
                 form.submit();
             };
@@ -307,65 +258,4 @@
             }).catch(error => console.error(error));
         };
     </script>
-
-    {{-- Pusher + QR Refresh --}}
-    @if(isset($token))
-    <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
-    <script>
-        let currentToken = "{{ $token }}";
-        let pusher;
-
-        function initPusher() {
-            pusher = new Pusher('{{ config("broadcasting.connections.pusher.key") }}', { 
-                cluster: '{{ config("broadcasting.connections.pusher.options.cluster") }}',
-                forceTLS: true
-            });
-            subscribeChannel();
-        }
-
-        function subscribeChannel() {
-            const channel = pusher.subscribe('login-channel-' + currentToken);
-            channel.bind('login-success', function() {
-                const statusEl = document.getElementById('qr-status');
-                if (statusEl) {
-                    statusEl.innerHTML = `<span class="text-emerald-600 animate-pulse">{{ __('auth_logging_in') }}</span>`;
-                }
-                setTimeout(() => {
-                    window.location.href = "/qr-login/finalize/" + currentToken;
-                }, 1000);
-            });
-        }
-
-        window.refreshQR = function() {
-            fetch('/qr-refresh', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('qrContainer').innerHTML = data.qrCode;
-                currentToken = data.token;
-                if (pusher) {
-                    pusher.unsubscribe('login-channel-' + currentToken);
-                    subscribeChannel();
-                }
-                document.getElementById('qr-status').textContent = "{{ __('auth_qr_waiting') }}";
-            })
-            .catch(error => {
-                console.error('QR Refresh Error:', error);
-            });
-        };
-
-        setInterval(() => {
-            if (!document.getElementById('qrSection').classList.contains('hidden')) {
-                refreshQR();
-            }
-        }, 180000);
-
-        window.onload = initPusher;
-    </script>
-    @endif
 </x-guest-layout>

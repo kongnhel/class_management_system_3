@@ -1,4 +1,4 @@
-<div class="p-6" wire:poll.30s>
+﻿<div class="p-6" wire:poll.30s>
 
     {{-- Search Bar --}}
     <div class="mb-6">
@@ -12,7 +12,7 @@
                 type="text"
                 wire:model.live.debounce.300ms="search"
                 placeholder="{{ __('ស្វែងរកមហាវិទ្យាល័យ...') }}"
-                class="block w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
+                class="block w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
             />
             @if($search)
                 <button wire:click="$set('search', '')" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600">
@@ -39,7 +39,7 @@
                 <p class="text-sm font-semibold text-gray-700">{{ __('មិនទាន់មានមហាវិទ្យាល័យទេ') }}</p>
                 <p class="mt-1 text-sm text-gray-500">{{ __('ចាប់ផ្តើមដោយបន្ថែមមហាវិទ្យាល័យដំបូងរបស់អ្នក។') }}</p>
                 <div class="mt-4">
-                    <a href="{{ route('admin.create-faculty') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition-colors">
+                    <a href="{{ route('admin.create-faculty') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white text-sm font-semibold rounded-xl hover:bg-emerald-700 transition-colors">
                         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                         </svg>
@@ -56,7 +56,7 @@
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col justify-between hover:shadow-md transition-all duration-200">
                         <div>
                             <div class="flex items-start justify-between mb-4">
-                                <div class="flex-shrink-0 w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                                <div class="flex-shrink-0 w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
                                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z" />
                                     </svg>
@@ -78,7 +78,7 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-2 mt-5 pt-4 border-t border-gray-100">
-                            <a href="{{ route('admin.edit-faculty', $faculty->id) }}" class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 text-sm font-semibold text-blue-600 bg-blue-50 rounded-xl hover:bg-blue-100 transition-colors">
+                            <a href="{{ route('admin.edit-faculty', $faculty->id) }}" class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 text-sm font-semibold text-emerald-600 bg-emerald-50 rounded-xl hover:bg-emerald-100 transition-colors">
                                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
                                 </svg>
@@ -129,7 +129,7 @@
                                 </td>
                                 <td class="px-5 py-4 whitespace-nowrap text-right">
                                     <div class="flex items-center justify-end gap-2">
-                                        <a href="{{ route('admin.edit-faculty', $faculty->id) }}" class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
+                                        <a href="{{ route('admin.edit-faculty', $faculty->id) }}" class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-emerald-600 bg-emerald-50 rounded-lg hover:bg-emerald-100 transition-colors">
                                             <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" />
                                             </svg>

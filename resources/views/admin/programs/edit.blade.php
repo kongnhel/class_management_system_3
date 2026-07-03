@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <div class="bg-gray-50 min-h-screen py-8">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
@@ -107,7 +107,7 @@
                             <label for="name_km" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ឈ្មោះកម្មវិធីសិក្សា (ខ្មែរ)') }} <span class="text-red-500">*</span></label>
                             <input id="name_km" type="text" name="name_km" value="{{ old('name_km', $program->name_km) }}" required autofocus
                                 placeholder="{{ __('បញ្ចូលឈ្មោះកម្មវិធីសិក្សាជាភាសាខ្មែរ') }}"
-                                class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" />
+                                class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition" />
                             @error('name_km') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                         </div>
 
@@ -116,7 +116,7 @@
                             <label for="name_en" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ឈ្មោះកម្មវិធីសិក្សា (អង់គ្លេស)') }} <span class="text-red-500">*</span></label>
                             <input id="name_en" type="text" name="name_en" value="{{ old('name_en', $program->name_en) }}" required
                                 placeholder="{{ __('បញ្ចូលឈ្មោះកម្មវិធីសិក្សាជាភាសាអង់គ្លេស') }}"
-                                class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" />
+                                class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition" />
                             @error('name_en') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                         </div>
 
@@ -124,7 +124,7 @@
                         <div>
                             <label for="department_id" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ដេប៉ាតឺម៉ង់') }} <span class="text-red-500">*</span></label>
                             <select id="department_id" name="department_id" required
-                                class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
                                 <option value="">{{ __('ជ្រើសរើសដេប៉ាតឺម៉ង់') }}</option>
                                 @foreach ($departments as $department)
                                     <option value="{{ $department->id }}" {{ old('department_id', $program->department_id) == $department->id ? 'selected' : '' }}>
@@ -140,7 +140,7 @@
                             <label for="duration_years" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('រយៈពេល (ឆ្នាំ)') }} <span class="text-red-500">*</span></label>
                             <input id="duration_years" type="number" name="duration_years" value="{{ old('duration_years', $program->duration_years) }}" min="1" required
                                 placeholder="{{ __('បញ្ចូលរយៈពេលជាឆ្នាំ') }}"
-                                class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" />
+                                class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition" />
                             @error('duration_years') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                         </div>
 
@@ -148,7 +148,7 @@
                         <div>
                             <label for="degree_level" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('កម្រិតសញ្ញាបត្រ') }} <span class="text-red-500">*</span></label>
                             <select id="degree_level" name="degree_level" required
-                                class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
                                 <option value="">{{ __('ជ្រើសរើសកម្រិតសញ្ញាបត្រ') }}</option>
                                 <option value="បរិញ្ញាបត្រ" {{ old('degree_level', $program->degree_level) == 'បរិញ្ញាបត្រ' ? 'selected' : '' }}>{{ __('បរិញ្ញាបត្រ') }}</option>
                                 <option value="បរិញ្ញាបត្ររង" {{ old('degree_level', $program->degree_level) == 'បរិញ្ញាបត្ររង' ? 'selected' : '' }}>{{ __('បរិញ្ញាបត្ររង') }}</option>
@@ -164,7 +164,7 @@
                         <div>
                             <label for="pathway_program_id" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('កម្មវិធីសិក្សាផ្លូវបន្ត') }}</label>
                             <select id="pathway_program_id" name="pathway_program_id"
-                                class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
                                 <option value="">{{ __('មិនមានផ្លូវបន្ត') }}</option>
                                 @foreach ($programs as $p)
                                     <option value="{{ $p->id }}" {{ old('pathway_program_id', $program->pathway_program_id) == $p->id ? 'selected' : '' }}>
@@ -182,7 +182,7 @@
                         <a href="{{ route('admin.manage-programs') }}" class="px-5 py-2.5 text-sm font-bold text-gray-600 bg-gray-100 rounded-xl hover:bg-gray-200 transition">
                             {{ __('បោះបង់') }}
                         </a>
-                        <button type="submit" class="inline-flex items-center gap-2 px-6 py-2.5 bg-blue-600 text-white text-sm font-bold rounded-xl shadow hover:bg-blue-700 transition active:scale-95">
+                        <button type="submit" class="inline-flex items-center gap-2 px-6 py-2.5 bg-emerald-600 text-white text-sm font-bold rounded-xl shadow hover:bg-emerald-700 transition active:scale-95">
                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                             </svg>

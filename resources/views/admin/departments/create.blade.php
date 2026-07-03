@@ -1,11 +1,11 @@
-<x-app-layout>
+﻿<x-app-layout>
     <div class="py-12 bg-gray-50 min-h-screen">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 lg:p-8">
 
                 {{-- Header --}}
                 <div class="flex items-center gap-4 mb-8 pb-6 border-b border-gray-100">
-                    <span class="p-3 bg-blue-100 text-blue-600 rounded-2xl shadow-sm">
+                    <span class="p-3 bg-emerald-100 text-emerald-600 rounded-2xl shadow-sm">
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                         </svg>
@@ -96,7 +96,7 @@
                             <label for="name_km" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ឈ្មោះដេប៉ាតឺម៉ង់ (ខ្មែរ)') }} <span class="text-red-500">*</span></label>
                             <input id="name_km" type="text" name="name_km" value="{{ old('name_km') }}" required autofocus
                                 placeholder="{{ __('បញ្ចូលឈ្មោះជាភាសាខ្មែរ') }}"
-                                class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" />
+                                class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition" />
                             @error('name_km') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                         </div>
 
@@ -104,14 +104,14 @@
                             <label for="name_en" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ឈ្មោះដេប៉ាតឺម៉ង់ (អង់គ្លេស)') }} <span class="text-red-500">*</span></label>
                             <input id="name_en" type="text" name="name_en" value="{{ old('name_en') }}" required
                                 placeholder="{{ __('បញ្ចូលឈ្មោះជាភាសាអង់គ្លេស') }}"
-                                class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" />
+                                class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition" />
                             @error('name_en') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                         </div>
 
                         <div>
                             <label for="faculty_id" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('មហាវិទ្យាល័យ') }} <span class="text-red-500">*</span></label>
                             <select id="faculty_id" name="faculty_id" required
-                                class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
                                 <option value="">{{ __('ជ្រើសរើសមហាវិទ្យាល័យ') }}</option>
                                 @foreach ($faculties as $faculty)
                                     <option value="{{ $faculty->id }}" {{ old('faculty_id') == $faculty->id ? 'selected' : '' }}>
@@ -125,7 +125,7 @@
                         <div>
                             <label for="head_user_id" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ប្រធានដេប៉ាតឺម៉ង់') }}</label>
                             <select id="head_user_id" name="head_user_id"
-                                class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
                                 <option value="">{{ __('ជ្រើសរើសប្រធាន (ស្រេចចិត្ត)') }}</option>
                                 @foreach ($professors as $professor)
                                     <option value="{{ $professor->id }}" {{ old('head_user_id') == $professor->id ? 'selected' : '' }}>
@@ -142,7 +142,7 @@
                         <a href="{{ route('admin.manage-departments') }}" class="px-5 py-2.5 text-sm font-bold text-gray-600 bg-gray-100 rounded-xl hover:bg-gray-200 transition">
                             {{ __('បោះបង់') }}
                         </a>
-                        <button type="submit" class="inline-flex items-center gap-2 px-6 py-2.5 bg-blue-600 text-white text-sm font-bold rounded-xl shadow hover:bg-blue-700 transition active:scale-95">
+                        <button type="submit" class="inline-flex items-center gap-2 px-6 py-2.5 bg-emerald-600 text-white text-sm font-bold rounded-xl shadow hover:bg-emerald-700 transition active:scale-95">
                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                             </svg>

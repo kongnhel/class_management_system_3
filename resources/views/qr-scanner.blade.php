@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <style>
         @keyframes scan {
             0% { top: 0; }
@@ -40,8 +40,8 @@
                 <div id="status" class="mt-6 text-sm font-medium min-h-[70px]"></div>
 
                 <!-- Instruction -->
-                <div class="mt-4 p-4 bg-blue-50 border border-blue-100 rounded-2xl text-left text-xs leading-relaxed">
-                    <strong class="text-blue-700">{{ __('qr_instructions') }}</strong><br>
+                <div class="mt-4 p-4 bg-emerald-50 border border-emerald-100 rounded-2xl text-left text-xs leading-relaxed">
+                    <strong class="text-emerald-700">{{ __('qr_instructions') }}</strong><br>
                     1. ចុច <strong>"Request Camera Permissions"</strong><br>
                     2. ជ្រើសរើស <strong>Allow</strong> នៅពេល Browser សួរ<br>
                     3. {{ __('qr_step3') }}

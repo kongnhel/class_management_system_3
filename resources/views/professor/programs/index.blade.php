@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <h2 class="font-extrabold text-3xl text-gray-900 leading-tight tracking-wide flex items-center">
             <i class="fas fa-graduation-cap mr-3 text-purple-600"></i>
@@ -19,7 +19,7 @@
                         <p class="mt-2 text-lg text-gray-500">{{ __('បញ្ជីឈ្មោះកម្មវិធីសិក្សាទាំងអស់នៅក្នុងប្រព័ន្ធ') }}</p>
                     </div>
                     {{-- <div class="mt-4 md:mt-0">
-                        <a href="{{ route('admin.create-program') }}" class="px-8 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-bold rounded-full shadow-lg hover:from-blue-600 hover:to-indigo-700 transition duration-300 transform hover:scale-105 flex items-center space-x-2">
+                        <a href="{{ route('admin.create-program') }}" class="px-8 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-bold rounded-full shadow-lg hover:from-emerald-600 hover:to-emerald-700 transition duration-300 transform hover:scale-105 flex items-center space-x-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
                             </svg>
@@ -42,7 +42,7 @@
                             @foreach ($programs as $program)
                                 <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 flex flex-col justify-between hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
                                     <div class="flex flex-col items-start mb-6">
-                                        <div class="flex-shrink-0 w-14 h-14 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mb-4">
+                                        <div class="flex-shrink-0 w-14 h-14 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4">
                                             {{-- Icon for program card, you can change this SVG if needed --}}
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                                 <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20v2.5a2.5 2.5 0 0 1-2.5 2.5H4zM20 17V5.5A2.5 2.5 0 0 0 17.5 3H6.5A2.5 2.5 0 0 0 4 5.5v11.5"></path>
@@ -59,7 +59,7 @@
                                         <p class="text-gray-700 font-medium"><span class="font-bold text-gray-800">{{ __('កម្រិតសញ្ញាបត្រ') }}:</span> <span class="text-gray-600">{{ $program->degree_level ?? 'N/A' }}</span></p>
                                     </div>
                                     {{-- <div class="flex justify-end mt-auto">
-                                        <a href="#" class="inline-block w-full text-center bg-blue-600 text-white font-semibold py-3 px-6 rounded-full shadow-lg hover:bg-blue-700 transition-colors duration-200 transform hover:scale-105">
+                                        <a href="#" class="inline-block w-full text-center bg-emerald-600 text-white font-semibold py-3 px-6 rounded-full shadow-lg hover:bg-emerald-700 transition-colors duration-200 transform hover:scale-105">
                                             {{ __('មើលលម្អិត') }}
                                         </a>
                                     </div> --}}

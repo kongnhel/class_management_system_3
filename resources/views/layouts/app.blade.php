@@ -132,7 +132,7 @@
 
 
             {{-- រូបភាព Profile --}}
-            <div class="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center text-sm font-bold bg-white-600 text-white shadow-md shadow-blue-200 border border-white">
+            <div class="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center text-sm font-bold bg-white-600 text-white shadow-md shadow-emerald-200 border border-white">
                 @if($profileUrl) 
                     <img src="{{ $profileUrl }}" class="h-full w-full object-cover" alt="{{ $user->name }}">
                 @else 
@@ -317,8 +317,8 @@
                         តើថ្ងៃនេះមានអ្វីឱ្យខ្ញុំជួយដែរទេ?
                         <div id="quick-actions" class="flex flex-wrap gap-2 mt-4">
                             @if(Auth::user()->role == 'admin')
-                                <button onclick="sendQuickQuery('របៀបបន្ថែមសាស្ត្រាចារ្យថ្មី')" class="text-[11px] bg-blue-50 border border-blue-100 text-blue-700 px-3 py-2 rounded-full hover:bg-blue-100 transition-all">👤 បន្ថែម Professor</button>
-                                <button onclick="sendQuickQuery('ពិនិត្យមើលរបាយការណ៍មហាវិទ្យាល័យ')" class="text-[11px] bg-blue-50 border border-blue-100 text-blue-700 px-3 py-2 rounded-full hover:bg-blue-100 transition-all">🏢 គ្រប់គ្រង Faculty</button>
+                                <button onclick="sendQuickQuery('របៀបបន្ថែមសាស្ត្រាចារ្យថ្មី')" class="text-[11px] bg-emerald-50 border border-emerald-100 text-emerald-700 px-3 py-2 rounded-full hover:bg-emerald-100 transition-all">👤 បន្ថែម Professor</button>
+                                <button onclick="sendQuickQuery('ពិនិត្យមើលរបាយការណ៍មហាវិទ្យាល័យ')" class="text-[11px] bg-emerald-50 border border-emerald-100 text-emerald-700 px-3 py-2 rounded-full hover:bg-emerald-100 transition-all">🏢 គ្រប់គ្រង Faculty</button>
                             @elseif(Auth::user()->role == 'professor')
                                 <button onclick="sendQuickQuery('តើខ្ញុំត្រូវស្រង់វត្តមានយ៉ាងដូចម្តេច?')" class="text-[11px] bg-green-50 border border-green-100 text-green-700 px-3 py-2 rounded-full hover:bg-green-100 transition-all">📝 របៀបស្រង់វត្តមាន</button>
                                 <button onclick="sendQuickQuery('ឆែកមើលតារាងបង្រៀនរបស់ខ្ញុំ')" class="text-[11px] bg-green-50 border border-green-100 text-green-700 px-3 py-2 rounded-full hover:bg-green-100 transition-all">📅 តារាងបង្រៀន</button>

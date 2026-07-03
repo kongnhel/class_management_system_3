@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <h2 class="font-bold text-3xl text-gray-800 leading-tight">
             {{ __('គ្រប់គ្រងដេប៉ាតឺម៉ង់') }}
@@ -18,7 +18,7 @@
                         <p class="mt-2 text-lg text-gray-500">{{ __('បញ្ជីឈ្មោះដេប៉ាតឺម៉ង់ទាំងអស់នៅក្នុងប្រព័ន្ធ') }}</p>
                     </div>
                     {{-- <div class="mt-4 md:mt-0">
-                        <a href="{{ route('admin.create-department') }}" class="px-8 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-bold rounded-full shadow-lg hover:from-blue-600 hover:to-indigo-700 transition duration-300 transform hover:scale-105 flex items-center space-x-2">
+                        <a href="{{ route('admin.create-department') }}" class="px-8 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-bold rounded-full shadow-lg hover:from-emerald-600 hover:to-emerald-700 transition duration-300 transform hover:scale-105 flex items-center space-x-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
                             </svg>
@@ -65,7 +65,7 @@
                             @foreach ($departments as $department)
                                 <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 flex flex-col justify-between hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
                                     <div class="flex flex-col items-start mb-6">
-                                        <div class="flex-shrink-0 w-14 h-14 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mb-4">
+                                        <div class="flex-shrink-0 w-14 h-14 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                                 <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
                                             </svg>
@@ -81,7 +81,7 @@
                                         {{-- <p class="text-gray-700 font-medium"><span class="font-bold text-gray-800">{{ __('កម្មវិធីសិក្សាសរុប') }}</span>: <span class="text-gray-600">{{ $department->programs_count ?? 'N/A' }}</span></p> --}}
                                     </div>
                                     <div class="flex justify-end space-x-3 mt-auto">
-                                        {{-- <a href="{{ route('professor.view-departments', $department->id) }}" class="p-3 bg-gray-100 rounded-full text-blue-600 hover:bg-gray-200 transition duration-150 ease-in-out" title="{{ __('មើល') }}">
+                                        {{-- <a href="{{ route('professor.view-departments', $department->id) }}" class="p-3 bg-gray-100 rounded-full text-emerald-600 hover:bg-gray-200 transition duration-150 ease-in-out" title="{{ __('មើល') }}">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                                 <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
                                                 <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />

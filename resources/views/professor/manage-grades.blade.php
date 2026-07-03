@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('គ្រប់គ្រងពិន្ទុសម្រាប់មុខវិជ្ជា') }} {{ $courseOffering->course->course_name_km ?? 'N/A' }}
@@ -42,8 +42,8 @@
                     <i class="fas fa-star mr-3 text-red-600"></i>{{ __('គ្រប់គ្រងពិន្ទុសម្រាប់') }} {{ $courseOffering->course->course_name_km ?? $courseOffering->course->course_name_en ?? 'N/A' }} ({{ $courseOffering->academic_year }} - {{ $courseOffering->semester }})
                 </h3>
 
-                <div class="mb-6 bg-blue-50 p-4 rounded-lg shadow-sm border border-blue-200">
-                    <p class="text-lg font-medium text-blue-800">{{ __('ព័ត៌មានវគ្គសិក្សា:') }}</p>
+                <div class="mb-6 bg-emerald-50 p-4 rounded-lg shadow-sm border border-emerald-200">
+                    <p class="text-lg font-medium text-emerald-800">{{ __('ព័ត៌មានវគ្គសិក្សា:') }}</p>
                     <ul class="list-disc list-inside text-gray-700 mt-2">
                         <li>{{ __('លេខកូដមុខវិជ្ជា:') }} <span class="font-semibold">{{ $courseOffering->course->course_code ?? 'N/A' }}</span></li>
                         <li>{{ __('គ្រូបង្រៀន:') }} <span class="font-semibold">{{ $courseOffering->lecturer->full_name_km ?? $courseOffering->lecturer->name ?? 'N/A' }}</span></li>
@@ -55,11 +55,11 @@
                 <form method="POST" action="{{ route('grades.storeOrUpdate', $courseOffering->id) }}">
                     @csrf
                     <h4 class="text-2xl font-semibold text-gray-700 mb-4 flex items-center">
-                        <i class="fas fa-edit mr-2 text-indigo-600"></i>{{ __('បញ្ចូល/កែសម្រួលពិន្ទុតាមកិច្ចការ') }}
+                        <i class="fas fa-edit mr-2 text-emerald-600"></i>{{ __('បញ្ចូល/កែសម្រួលពិន្ទុតាមកិច្ចការ') }}
                     </h4>
                     
                     <div class="flex justify-end mb-4">
-                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-lg shadow-md transition-colors duration-200">
+                        <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-6 rounded-lg shadow-md transition-colors duration-200">
                             {{ __('រក្សាទុកពិន្ទុទាំងអស់') }}
                         </button>
                     </div>
@@ -74,7 +74,7 @@
                                     {{-- Dynamically generate columns for each assignment --}}
                                     @foreach ($assignments as $assignment)
                                         <th class="py-3 px-4 text-center border-l border-gray-300 min-w-[120px]">
-                                            <div class="font-bold text-sm text-indigo-600">{{ $assignment->assignment_name }}</div>
+                                            <div class="font-bold text-sm text-emerald-600">{{ $assignment->assignment_name }}</div>
                                             <div class="text-gray-500 font-normal">({{ $assignment->max_points }} pts)</div>
                                             <div class="text-red-500 font-normal">({{ $assignment->component->weight_percentage }}%)</div>
                                         </th>
@@ -119,7 +119,7 @@
                                                 <input
                                                     type="number"
                                                     name="grades[{{ $student->id }}][{{ $assignment->id }}]"
-                                                    class="w-full p-1 border border-gray-300 rounded-md shadow-sm text-center text-sm focus:ring-indigo-500 focus:border-indigo-500 
+                                                    class="w-full p-1 border border-gray-300 rounded-md shadow-sm text-center text-sm focus:ring-emerald-500 focus:border-emerald-500 
                                                         @error($errorKey) border-red-500 bg-red-50 @enderror" {{-- Highlight input on error --}}
                                                     placeholder="0.00"
                                                     value="{{ old($errorKey, $scoreReceived) }}" {{-- Use old() to retain input data on validation failure --}}
@@ -137,7 +137,7 @@
                                         @endforeach
                                         
                                         {{-- FINAL GRADE COLUMN --}}
-                                        <td class="py-3 px-4 text-center bg-gray-100 text-lg font-extrabold text-blue-600">
+                                        <td class="py-3 px-4 text-center bg-gray-100 text-lg font-extrabold text-emerald-600">
                                             {{ number_format($totalWeightedScore, 2) }}
                                         </td>
                                     </tr>
@@ -152,7 +152,7 @@
                         </table>
                     </div>
                     <div class="flex justify-end mt-4">
-                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-lg shadow-md transition-colors duration-200">
+                        <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-6 rounded-lg shadow-md transition-colors duration-200">
                             {{ __('រក្សាទុកពិន្ទុទាំងអស់') }}
                         </button>
                     </div>

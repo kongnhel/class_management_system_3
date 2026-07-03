@@ -1,11 +1,11 @@
-<x-app-layout>
+﻿<x-app-layout>
     <div class="bg-slate-50 min-h-screen font-['Battambang'] antialiased">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8 space-y-6">
 
             {{-- =========================================================== --}}
             {{-- HERO BANNER --}}
             {{-- =========================================================== --}}
-            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-purple-700 text-white shadow-xl shadow-indigo-200/50">
+            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-600 via-emerald-700 to-purple-700 text-white shadow-xl shadow-emerald-200/50">
                 <div class="absolute -top-16 -right-16 w-64 h-64 bg-white/5 rounded-full blur-2xl"></div>
                 <div class="absolute -bottom-20 -left-10 w-72 h-72 bg-purple-400/10 rounded-full blur-3xl"></div>
 
@@ -24,20 +24,15 @@
                             @endif
                         </div>
                         <div>
-                            <p class="text-indigo-200 text-xs sm:text-sm font-semibold">{{ now()->translatedFormat('l, d F Y') }}</p>
+                            <p class="text-emerald-200 text-xs sm:text-sm font-semibold">{{ now()->translatedFormat('l, d F Y') }}</p>
                             <h2 class="text-2xl sm:text-3xl font-black leading-tight mt-0.5">
                                 {{ __('សួស្តី') }}, {{ $user->name }}! 👋
                             </h2>
-                            <p class="text-indigo-200 text-sm mt-1">{{ __('ផ្ទាំងគ្រប់គ្រងការបង្រៀនរបស់លោកគ្រូ') }}</p>
+                            <p class="text-emerald-200 text-sm mt-1">{{ __('ផ្ទាំងគ្រប់គ្រងការបង្រៀនរបស់លោកគ្រូ') }}</p>
                         </div>
                     </div>
 
                     <div class="flex flex-wrap items-center gap-2.5 w-full lg:w-auto">
-                        <a href="{{ route('qr.scanner') }}" class="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-lg transition-all">
-                            <i class="fa-solid fa-qrcode text-sm"></i>
-                            <span>{{ __('ស្កែន QR') }}</span>
-                        </a>
-
                         @if(!auth()->user()->telegram_chat_id)
                             <button type="button" onclick="document.getElementById('telegramEntryModal').classList.remove('hidden')"
                                 class="inline-flex items-center gap-2 bg-[#0088cc] hover:bg-[#0077b5] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-lg transition-all">
@@ -73,8 +68,8 @@
                 $todayClassCount = $todaySchedules->pluck('course_offering_id')->unique()->count();
             @endphp
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 lg:gap-4">
-                <div class="bg-white p-4 rounded-2xl border border-blue-100 shadow-sm flex items-center gap-3">
-                    <div class="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg flex-shrink-0"><i class="fas fa-chalkboard-teacher"></i></div>
+                <div class="bg-white p-4 rounded-2xl border border-emerald-100 shadow-sm flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg flex-shrink-0"><i class="fas fa-chalkboard-teacher"></i></div>
                     <div class="min-w-0">
                         <p class="text-[10px] text-gray-400 font-bold uppercase truncate">{{ __('ថ្នាក់ថ្ងៃនេះ') }}</p>
                         <h4 class="text-xl font-black text-gray-800">{{ $todayClassCount }}</h4>
@@ -151,12 +146,12 @@
                     <section class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
                         <div class="flex items-center justify-between px-5 py-4 border-b border-slate-50">
                             <div class="flex items-center gap-2.5">
-                                <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm"><i class="fas fa-calendar-day"></i></div>
+                                <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm"><i class="fas fa-calendar-day"></i></div>
                                 <h4 class="text-sm font-bold text-gray-800">{{ __('កាលវិភាគបង្រៀនថ្ងៃនេះ') }}</h4>
                             </div>
                             <div class="flex items-center gap-2">
                                 <span class="text-xs font-bold text-gray-400">{{ now()->translatedFormat('l') }}</span>
-                                <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-600">{{ $todayClassCount }} {{ __('មុខវិជ្ជា') }}</span>
+                                <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-600">{{ $todayClassCount }} {{ __('មុខវិជ្ជា') }}</span>
                             </div>
                         </div>
 
@@ -199,7 +194,7 @@
                                                 <div class="min-w-0">
                                                     <h3 class="font-bold text-gray-800 text-sm leading-tight">{{ $courseOffering->course->title_km ?? ($courseOffering->course->title_en ?? $courseOffering->course->name) }}</h3>
                                                     <div class="flex flex-wrap gap-2 mt-1.5 text-[11px] text-gray-500 font-semibold">
-                                                        <span class="inline-flex items-center gap-1 bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-md">{{ $programName }}</span>
+                                                        <span class="inline-flex items-center gap-1 bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-md">{{ $programName }}</span>
                                                         <span class="inline-flex items-center gap-1"><i class="fas fa-user-graduate text-gray-300"></i> {{ $enrolledCount }} {{ __('នាក់') }}</span>
                                                     </div>
                                                 </div>
@@ -210,8 +205,8 @@
                                                     <i class="fas fa-check-double"></i> {{ __('បានស្កែន') }}
                                                 </span>
                                             @else
-                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold bg-indigo-100 text-indigo-700 border border-indigo-200 flex-shrink-0">
-                                                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span> {{ __('រង់ចាំ') }}
+                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold bg-emerald-100 text-emerald-700 border border-emerald-200 flex-shrink-0">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> {{ __('រង់ចាំ') }}
                                                 </span>
                                             @endif
                                         </div>
@@ -240,7 +235,7 @@
                                                 class="w-full py-2.5 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-2
                                                 {{ $isCompletedToday
                                                     ? 'bg-white border-2 border-emerald-500 text-emerald-600 hover:bg-emerald-50'
-                                                    : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm shadow-indigo-100'
+                                                    : 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm shadow-emerald-100'
                                                 }}">
                                                 @if($isCompletedToday)
                                                     <i class="fas fa-clipboard-list"></i> {{ __('ពិនិត្យវត្តមានឡើងវិញ') }}
@@ -257,8 +252,8 @@
 
                     {{-- Quick Actions --}}
                     <section class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <a href="{{ route('professor.my-course-offerings') }}" class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:border-blue-200 hover:shadow-md transition-all group">
-                            <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                        <a href="{{ route('professor.my-course-offerings') }}" class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:border-emerald-200 hover:shadow-md transition-all group">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                                 <i class="fas fa-book"></i>
                             </div>
                             <p class="text-sm font-bold text-gray-800">{{ __('មុខវិជ្ជារបស់ខ្ញុំ') }}</p>
@@ -378,7 +373,7 @@
         <div class="bg-white rounded-3xl p-8 w-full max-w-md border border-slate-100 shadow-2xl">
             <div class="flex items-center justify-between mb-6">
                 <h3 class="text-lg font-black text-slate-800 flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-[#0088cc] flex items-center justify-center"><i class="fab fa-telegram-plane text-xl"></i></div>
+                    <div class="w-10 h-10 rounded-xl bg-emerald-50 text-[#0088cc] flex items-center justify-center"><i class="fab fa-telegram-plane text-xl"></i></div>
                     {{ __('ភ្ជាប់ Telegram') }}
                 </h3>
                 <button onclick="document.getElementById('telegramEntryModal').classList.add('hidden')" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-50 text-slate-400 transition-all">
@@ -388,11 +383,11 @@
             <form action="{{ route('professor.update_telegram') }}" method="POST">
                 @csrf
                 <div class="mb-5 text-xs text-slate-500 leading-relaxed bg-slate-50 p-4 rounded-2xl space-y-2">
-                    <p class="flex gap-2"><span class="font-black text-slate-400">១.</span> ផ្ញើសារទៅ <a href="https://t.me/userinfobot" target="_blank" class="text-blue-600 font-bold">@userinfobot</a> រួចចម្លងលេខ ID។</p>
+                    <p class="flex gap-2"><span class="font-black text-slate-400">១.</span> ផ្ញើសារទៅ <a href="https://t.me/userinfobot" target="_blank" class="text-emerald-600 font-bold">@userinfobot</a> រួចចម្លងលេខ ID។</p>
                     <p class="flex gap-2"><span class="font-black text-slate-400">២.</span> ចុច <a href="https://t.me/Nmu1_schedule_bot" target="_blank" class="text-amber-600 font-bold">@Nmu1_schedule_bot</a> រួចចុច <span class="text-amber-600 italic font-bold">START</span>។</p>
                 </div>
                 <input type="number" name="telegram_chat_id" required placeholder="ឧ. 584930211"
-                    class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl mb-4 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none text-center text-lg font-mono tracking-widest">
+                    class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl mb-4 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none text-center text-lg font-mono tracking-widest">
                 <div class="flex gap-3">
                     <button type="button" onclick="document.getElementById('telegramEntryModal').classList.add('hidden')" class="flex-1 py-4 bg-slate-100 rounded-2xl font-bold text-slate-500 text-sm">{{ __('បោះបង់') }}</button>
                     <button type="submit" class="flex-[2] py-4 bg-[#0088cc] text-white rounded-2xl font-bold text-sm hover:bg-[#0077b5] transition-all">{{ __('រក្សាទុក') }}</button>

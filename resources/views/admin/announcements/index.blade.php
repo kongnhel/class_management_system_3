@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <div class="bg-gray-50 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-10">
 
@@ -16,7 +16,7 @@
                             <p class="text-gray-500 mt-1">{{ __('គ្រប់គ្រង និងកែសម្រួលសេចក្តីប្រកាសរបស់សាលា') }}</p>
                         </div>
                     </div>
-                    <a href="{{ route('admin.announcements.create') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold rounded-xl shadow-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 hover:shadow-xl">
+                    <a href="{{ route('admin.announcements.create') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white font-bold rounded-xl shadow-lg hover:from-emerald-700 hover:to-emerald-800 transition-all duration-200 hover:shadow-xl">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                         </svg>
@@ -95,7 +95,7 @@
                                 name="search"
                                 value="{{ request('search') }}"
                                 placeholder="{{ __('ស្វែងរកសេចក្តីប្រកាស...') }}"
-                                class="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                                class="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
                             />
                         </div>
                         @if(request('search'))
@@ -103,7 +103,7 @@
                                 {{ __('សម្អាត') }}
                             </a>
                         @endif
-                        <button type="submit" class="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold text-sm rounded-xl shadow hover:from-blue-700 hover:to-blue-800 transition-all duration-200">
+                        <button type="submit" class="px-6 py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white font-bold text-sm rounded-xl shadow hover:from-emerald-700 hover:to-emerald-800 transition-all duration-200">
                             {{ __('ស្វែងរក') }}
                         </button>
                     </div>
@@ -137,7 +137,7 @@
                                 <span class="text-gray-700">{{ $announcement->poster->name }}</span>
                             </td>
                             <td class="px-6 py-4">
-                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800">
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
                                     {{ __($announcement->target_role) }}
                                 </span>
                                 @if ($announcement->course_offering_id)
@@ -149,7 +149,7 @@
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex justify-end items-center gap-2">
-                                    <a href="{{ route('admin.announcements.edit', $announcement->id) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors duration-150">
+                                    <a href="{{ route('admin.announcements.edit', $announcement->id) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors duration-150">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                         </svg>
@@ -174,7 +174,7 @@
                                         </svg>
                                     </div>
                                     <p class="text-gray-500 font-medium">{{ __('មិនទាន់មានសេចក្តីប្រកាសណាមួយនៅឡើយ') }}</p>
-                                    <a href="{{ route('admin.announcements.create') }}" class="mt-4 inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white font-bold text-sm rounded-xl hover:bg-blue-700 transition-colors duration-200">
+                                    <a href="{{ route('admin.announcements.create') }}" class="mt-4 inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white font-bold text-sm rounded-xl hover:bg-emerald-700 transition-colors duration-200">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                                         </svg>
@@ -197,7 +197,7 @@
                             <h3 class="font-bold text-gray-900 truncate">{{ $announcement->title_km }}</h3>
                             <p class="text-xs text-gray-500 mt-0.5 truncate">{{ $announcement->title_en }}</p>
                         </div>
-                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800 ml-2 flex-shrink-0">
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 ml-2 flex-shrink-0">
                             {{ __($announcement->target_role) }}
                         </span>
                     </div>
@@ -216,7 +216,7 @@
                     @endif
 
                     <div class="flex items-center gap-2">
-                        <a href="{{ route('admin.announcements.edit', $announcement->id) }}" class="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 text-sm font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors duration-150">
+                        <a href="{{ route('admin.announcements.edit', $announcement->id) }}" class="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 text-sm font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-xl transition-colors duration-150">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                             </svg>
@@ -238,7 +238,7 @@
                         </svg>
                     </div>
                     <p class="text-gray-500 font-medium">{{ __('មិនទាន់មានសេចក្តីប្រកាសណាមួយនៅឡើយ') }}</p>
-                    <a href="{{ route('admin.announcements.create') }}" class="mt-4 inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white font-bold text-sm rounded-xl hover:bg-blue-700 transition-colors duration-200">
+                    <a href="{{ route('admin.announcements.create') }}" class="mt-4 inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white font-bold text-sm rounded-xl hover:bg-emerald-700 transition-colors duration-200">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                         </svg>

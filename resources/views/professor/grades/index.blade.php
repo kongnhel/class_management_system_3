@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 print:hidden">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
@@ -15,12 +15,12 @@
                 <div class="flex flex-wrap items-center justify-center lg:justify-end gap-3">
                     <div class="hidden lg:block text-right pr-4 border-r border-slate-200">
                         <p class="text-[10px] text-slate-400 uppercase font-black tracking-widest leading-none">{{ __('មុខវិជ្ជា') }}</p>
-                        <p class="text-sm font-bold text-indigo-600 mt-1 leading-none">{{ $courseOffering->course->title_km }}</p>
+                        <p class="text-sm font-bold text-emerald-600 mt-1 leading-none">{{ $courseOffering->course->title_km }}</p>
                     </div>
 
                     <div class="grid grid-cols-3 md:flex items-center gap-3 w-full md:w-auto">
                         <a href="{{ route('professor.assessments.create', ['offering_id' => $courseOffering->id]) }}"
-                            class="group inline-flex items-center justify-center px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-bold text-xs transition-all duration-200 shadow-sm hover:shadow-indigo-200">
+                            class="group inline-flex items-center justify-center px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-bold text-xs transition-all duration-200 shadow-sm hover:shadow-emerald-200">
                             <svg class="w-4 h-4 mr-2 group-hover:rotate-90 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                             </svg>
@@ -118,9 +118,9 @@
                     <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ __('និស្សិតសរុប') }}</p>
                     <p class="text-2xl font-black text-slate-700 mt-1">{{ $totalStudents }}</p>
                 </div>
-                <div class="bg-white rounded-2xl border border-indigo-200 p-4 text-center shadow-sm">
-                    <p class="text-[9px] font-black text-indigo-400 uppercase tracking-widest">{{ __('មធ្យមពិន្ទុ') }}</p>
-                    <p class="text-2xl font-black text-indigo-600 mt-1">{{ number_format($classAvg, 1) }}</p>
+                <div class="bg-white rounded-2xl border border-emerald-200 p-4 text-center shadow-sm">
+                    <p class="text-[9px] font-black text-emerald-400 uppercase tracking-widest">{{ __('មធ្យមពិន្ទុ') }}</p>
+                    <p class="text-2xl font-black text-emerald-600 mt-1">{{ number_format($classAvg, 1) }}</p>
                 </div>
                 <div class="bg-white rounded-2xl border border-emerald-200 p-4 text-center shadow-sm">
                     <p class="text-[9px] font-black text-emerald-500 uppercase tracking-widest">{{ __('អត្រាប្រឡងជាប់') }}</p>
@@ -140,8 +140,8 @@
                         $maxDist = max(array_values($gradeDistribution));
                         if ($maxDist < 1) $maxDist = 1;
                         $distColors = [
-                            'A' => 'bg-emerald-500', 'B+' => 'bg-emerald-400', 'B' => 'bg-blue-500',
-                            'C+' => 'bg-blue-400', 'C' => 'bg-amber-500', 'D+' => 'bg-amber-400',
+                            'A' => 'bg-emerald-500', 'B+' => 'bg-emerald-400', 'B' => 'bg-emerald-500',
+                            'C+' => 'bg-emerald-400', 'C' => 'bg-amber-500', 'D+' => 'bg-amber-400',
                             'D' => 'bg-orange-500', 'F' => 'bg-rose-500'
                         ];
                     @endphp
@@ -160,15 +160,15 @@
             <div class="mb-6 print:hidden">
                 <input type="text" id="studentSearch" oninput="filterStudents()"
                        placeholder="ស្វែងរកឈ្មោះ ឬ អត្តលេខ..."
-                       class="block w-full md:w-96 px-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm">
+                       class="block w-full md:w-96 px-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all shadow-sm">
             </div>
 
             {{-- Mobile Card View --}}
             <div class="block lg:hidden space-y-6 print:hidden">
-                <div x-data="{ open: false }" class="bg-white rounded-3xl border border-indigo-100 shadow-sm overflow-hidden">
-                    <button @click="open = !open" class="w-full flex items-center justify-between p-5 bg-indigo-50/50">
-                        <span class="text-sm font-black text-indigo-700 uppercase tracking-tight">{{ __('គ្រប់គ្រងការវាយតម្លៃ') }}</span>
-                        <svg class="w-5 h-5 text-indigo-500 transition-transform" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                <div x-data="{ open: false }" class="bg-white rounded-3xl border border-emerald-100 shadow-sm overflow-hidden">
+                    <button @click="open = !open" class="w-full flex items-center justify-between p-5 bg-emerald-50/50">
+                        <span class="text-sm font-black text-emerald-700 uppercase tracking-tight">{{ __('គ្រប់គ្រងការវាយតម្លៃ') }}</span>
+                        <svg class="w-5 h-5 text-emerald-500 transition-transform" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
                     </button>
                     <div x-show="open" x-collapse class="p-4 space-y-3 bg-white">
                         @foreach($assessments as $assessment)
@@ -180,14 +180,14 @@
                                 </div>
                                 <div class="flex gap-2">
                                     <a href="{{ route('professor.assessments.edit', ['id' => $assessment->id, 'type' => $type]) }}"
-                                       class="p-2 bg-white text-indigo-600 border border-slate-200 rounded-xl shadow-sm">
+                                       class="p-2 bg-white text-emerald-600 border border-slate-200 rounded-xl shadow-sm">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                                     </a>
                                     <form action="{{ route('professor.send_all_telegram', $courseOffering->id) }}" method="POST" class="inline">
                                         @csrf
                                         <input type="hidden" name="assessment_id" value="{{ $assessment->id }}">
                                         <input type="hidden" name="assessment_type" value="{{ $type }}">
-                                        <button type="submit" title="ផ្ញើដំណឹងពិន្ទុ" class="p-2 bg-indigo-50 text-indigo-600 border border-indigo-100 rounded-xl shadow-sm print:hidden">
+                                        <button type="submit" title="ផ្ញើដំណឹងពិន្ទុ" class="p-2 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-xl shadow-sm print:hidden">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
                                         </button>
                                     </form>
@@ -219,7 +219,7 @@
                             <div class="flex items-center justify-between mb-5">
                                 <div class="flex items-center gap-3">
                                     <div class="relative">
-                                        <div class="h-12 w-12 rounded-2xl bg-indigo-600 text-white flex flex-col items-center justify-center shadow-lg shadow-indigo-100">
+                                        <div class="h-12 w-12 rounded-2xl bg-emerald-600 text-white flex flex-col items-center justify-center shadow-lg shadow-emerald-100">
                                             <span class="text-[9px] font-black uppercase leading-none mb-0.5 opacity-70">{{ __('ចំណាត់ថ្នាក់') }}</span>
                                             <span class="text-sm font-black leading-none">{{ $loop->iteration }}</span>
                                         </div>
@@ -251,10 +251,10 @@
                                         $score = $gradebook[$student->id][$type . '_' . $assessment->id] ?? 0;
                                     @endphp
                                     <a href="{{ route('professor.grades.edit', ['assessment_id' => $assessment->id, 'type' => $type]) }}"
-                                       class="flex justify-between items-center p-4 bg-white hover:bg-indigo-50 border border-slate-100 rounded-2xl transition-all active:scale-95 group">
+                                       class="flex justify-between items-center p-4 bg-white hover:bg-emerald-50 border border-slate-100 rounded-2xl transition-all active:scale-95 group">
                                         <div class="flex items-center gap-2">
-                                            <div class="w-2 h-2 rounded-full {{ $type === 'exam' ? 'bg-rose-400' : 'bg-indigo-400' }}"></div>
-                                            <span class="text-xs font-bold text-slate-600 group-hover:text-indigo-600">{{ $assessment->title_km }}</span>
+                                            <div class="w-2 h-2 rounded-full {{ $type === 'exam' ? 'bg-rose-400' : 'bg-emerald-400' }}"></div>
+                                            <span class="text-xs font-bold text-slate-600 group-hover:text-emerald-600">{{ $assessment->title_km }}</span>
                                         </div>
                                         <div class="flex items-center gap-2">
                                             <span class="text-xs font-black {{ $score < ($assessment->max_score/2) ? 'text-rose-500' : 'text-slate-800' }}">
@@ -265,7 +265,7 @@
                                     </a>
                                 @endforeach
 
-                                <div class="flex justify-between items-center p-4 bg-indigo-600 rounded-2xl mt-4 shadow-lg shadow-indigo-100">
+                                <div class="flex justify-between items-center p-4 bg-emerald-600 rounded-2xl mt-4 shadow-lg shadow-emerald-100">
                                     <span class="text-xs font-black text-white uppercase">{{ __('សរុបរួម') }}</span>
                                     <span class="text-sm font-black text-white">{{ number_format($rowTotal, 1) }}</span>
                                 </div>
@@ -362,7 +362,7 @@
                                 <th class="w-20 px-4 py-6 text-center text-[11px] font-black text-slate-400 uppercase">{{ __('Rank') }}</th>
 
                                 <th class="sticky left-0 bg-white z-30 px-6 py-6 border-r border-slate-100 shadow-[4px_0_10px_-5px_rgba(0,0,0,0.05)] w-72">
-                                    <button onclick="sortTable('name')" class="flex items-center gap-1 text-[11px] font-black text-slate-500 uppercase tracking-widest hover:text-indigo-600 transition-colors">
+                                    <button onclick="sortTable('name')" class="flex items-center gap-1 text-[11px] font-black text-slate-500 uppercase tracking-widest hover:text-emerald-600 transition-colors">
                                         {{ __('ឈ្មោះនិស្សិត') }}
                                         <svg class="w-3 h-3 sort-icon" data-col="name" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/></svg>
                                     </button>
@@ -370,9 +370,9 @@
 
                                 <th class="px-4 py-6 text-center w-32 border-r border-slate-50 bg-slate-50/30">
                                     <a href="{{ route('grades.edit-attendance', ['student_id' => $students->first()?->id, 'course_id' => $courseOffering->id]) }}"
-                                       class="hover:text-indigo-600 transition-colors">
+                                       class="hover:text-emerald-600 transition-colors">
                                         <span class="text-[11px] font-black text-slate-500 uppercase">{{ __('វត្តមាន') }}</span><br>
-                                        <span class="text-[10px] text-indigo-500 font-bold bg-indigo-50 px-2 py-0.5 rounded-full">15%</span>
+                                        <span class="text-[10px] text-emerald-500 font-bold bg-emerald-50 px-2 py-0.5 rounded-full">15%</span>
                                     </a>
                                 </th>
 
@@ -380,7 +380,7 @@
                                     @php
                                         $type = ($assessment instanceof \App\Models\Assignment) ? 'assignment' : (($assessment instanceof \App\Models\Quiz) ? 'quiz' : 'exam');
                                         $colors = [
-                                            'assignment' => 'text-blue-600 bg-blue-50 border-blue-100',
+                                            'assignment' => 'text-emerald-600 bg-emerald-50 border-emerald-100',
                                             'quiz' => 'text-amber-600 bg-amber-50 border-amber-100',
                                             'exam' => 'text-rose-600 bg-rose-50 border-rose-100'
                                         ];
@@ -391,7 +391,7 @@
                                                 {{ $type === 'assignment' ? __('កិច្ចការ') : ($type === 'quiz' ? 'Quiz' : __('ប្រឡង')) }}
                                             </span>
                                             <a href="{{ route('professor.grades.edit', ['assessment_id' => $assessment->id, 'type' => $type]) }}"
-                                               class="text-[13px] font-extrabold text-slate-700 hover:text-indigo-600 hover:scale-105 transform transition-all line-clamp-1">
+                                               class="text-[13px] font-extrabold text-slate-700 hover:text-emerald-600 hover:scale-105 transform transition-all line-clamp-1">
                                                 {{ $assessment->title_km }}
                                             </a>
                                             <span class="text-[9px] text-slate-400 font-bold uppercase tracking-tighter">
@@ -403,7 +403,7 @@
                                                 <input type="hidden" name="assessment_id" value="{{ $assessment->id }}">
                                                 <input type="hidden" name="assessment_type" value="{{ $type }}">
                                                 <button type="submit" title="{{ __('ផ្ញើដំណឹងពិន្ទុ') }}"
-                                                        class="p-1.5 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-600 hover:text-white transition-all shadow-sm flex items-center gap-1 text-[9px] font-bold print:hidden">
+                                                        class="p-1.5 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-600 hover:text-white transition-all shadow-sm flex items-center gap-1 text-[9px] font-bold print:hidden">
                                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
                                                     {{ __('ផ្ញើដំណឹង') }}
                                                 </button>
@@ -412,7 +412,7 @@
 
                                         <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-200 flex gap-1">
                                             <a href="{{ route('professor.assessments.edit', ['id' => $assessment->id, 'type' => $type]) }}"
-                                               class="p-1.5 bg-white text-slate-400 hover:text-indigo-600 border border-slate-100 rounded-lg shadow-sm" title="{{ __('កែសម្រួល') }}">
+                                               class="p-1.5 bg-white text-slate-400 hover:text-emerald-600 border border-slate-100 rounded-lg shadow-sm" title="{{ __('កែសម្រួល') }}">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                                             </a>
                                             <button type="button"
@@ -425,13 +425,13 @@
                                 @endforeach
 
                                 <th class="sticky right-24 bg-slate-50 z-20 px-6 py-6 text-center border-l border-slate-200 w-32 shadow-[-4px_0_10px_-5px_rgba(0,0,0,0.05)]">
-                                    <button onclick="sortTable('total')" class="flex items-center justify-center gap-1 text-[11px] font-black text-indigo-700 uppercase tracking-widest hover:text-indigo-900 transition-colors mx-auto">
+                                    <button onclick="sortTable('total')" class="flex items-center justify-center gap-1 text-[11px] font-black text-emerald-700 uppercase tracking-widest hover:text-emerald-900 transition-colors mx-auto">
                                         {{ __('សរុប') }}
                                         <svg class="w-3 h-3 sort-icon" data-col="total" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/></svg>
                                     </button>
                                 </th>
                                 <th class="sticky right-0 bg-slate-100 z-20 px-4 py-6 text-center border-l border-slate-200 w-24">
-                                    <button onclick="sortTable('grade')" class="flex items-center justify-center gap-1 text-[11px] font-black text-slate-500 uppercase tracking-widest hover:text-indigo-600 transition-colors mx-auto">
+                                    <button onclick="sortTable('grade')" class="flex items-center justify-center gap-1 text-[11px] font-black text-slate-500 uppercase tracking-widest hover:text-emerald-600 transition-colors mx-auto">
                                         {{ __('និទ្ទេស') }}
                                         <svg class="w-3 h-3 sort-icon" data-col="grade" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/></svg>
                                     </button>
@@ -456,11 +456,11 @@
 
                                     <td class="sticky left-0 bg-white group-hover:bg-slate-50 z-10 px-6 py-5 border-r border-slate-50 shadow-[4px_0_10px_-5px_rgba(0,0,0,0.05)]">
                                         <div class="flex items-center">
-                                            <div class="h-9 w-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 font-black text-xs group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">
+                                            <div class="h-9 w-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 font-black text-xs group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300">
                                                 {{ mb_substr($student->profile->full_name_km ?? $student->name, 0, 1) }}
                                             </div>
                                             <div class="ml-3">
-                                                <div class="text-[13px] font-bold text-slate-800 leading-none group-hover:text-indigo-700 transition-colors">
+                                                <div class="text-[13px] font-bold text-slate-800 leading-none group-hover:text-emerald-700 transition-colors">
                                                     {{ $student->profile->full_name_km ?? $student->name }}
                                                 </div>
                                                 <div class="text-[9px] text-slate-400 font-bold tracking-wider mt-1.5">{{ $student->student_id_code }}</div>
@@ -470,7 +470,7 @@
 
                                     <td class="px-4 py-5 text-center font-black text-slate-500 text-xs border-r border-slate-50 bg-slate-50/10">
                                         <a href="{{ route('grades.edit-attendance', ['student_id' => $student->id, 'course_id' => $courseOffering->id]) }}"
-                                           class="inline-flex items-center gap-1 hover:text-indigo-600 hover:bg-indigo-50 px-2 py-1 rounded-lg transition-all">
+                                           class="inline-flex items-center gap-1 hover:text-emerald-600 hover:bg-emerald-50 px-2 py-1 rounded-lg transition-all">
                                             {{ number_format($attendanceScore, 1) }}
                                             <svg class="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
                                         </a>
@@ -489,8 +489,8 @@
                                         </td>
                                     @endforeach
 
-                                    <td class="sticky right-24 bg-indigo-50/30 group-hover:bg-indigo-50/60 z-10 px-6 py-5 text-center border-l border-indigo-100/50">
-                                        <span class="text-sm font-black text-indigo-700 total-score">
+                                    <td class="sticky right-24 bg-emerald-50/30 group-hover:bg-emerald-50/60 z-10 px-6 py-5 text-center border-l border-emerald-100/50">
+                                        <span class="text-sm font-black text-emerald-700 total-score">
                                             {{ number_format($rowTotal, 1) }}
                                         </span>
                                     </td>
@@ -631,7 +631,7 @@
             .shadow-sm, .shadow-md, .shadow-lg, .shadow-xl, .shadow-2xl,
             .shadow-\[4px_0_10px_-5px_rgba\(0\,0\,0\,0\.05\)\],
             .shadow-\[-4px_0_10px_-5px_rgba\(0\,0\,0\,0\.05\)\],
-            .shadow-lg.shadow-indigo-100 { box-shadow: none !important; }
+            .shadow-lg.shadow-emerald-100 { box-shadow: none !important; }
 
             table { min-width: 100% !important; border-collapse: collapse !important; }
             th, td { padding: 4px 6px !important; border: 1px solid black !important; font-size: 9px !important; }

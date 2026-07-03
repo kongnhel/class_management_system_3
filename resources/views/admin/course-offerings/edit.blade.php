@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <div class="min-h-screen bg-gray-50">
         {{-- Header --}}
         <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white pb-16 pt-10">
@@ -62,8 +62,8 @@
                 {{-- Section 1: Basic Info --}}
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                     <div class="flex items-center gap-3 mb-6">
-                        <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
-                            <span class="text-blue-600 font-bold text-sm">1</span>
+                        <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
+                            <span class="text-emerald-600 font-bold text-sm">1</span>
                         </div>
                         <div>
                             <h3 class="text-lg font-bold text-gray-900">{{ __('ព័ត៌មានមូលដ្ឋាន') }}</h3>
@@ -81,15 +81,15 @@
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                     <div class="flex items-center justify-between mb-6">
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center">
-                                <span class="text-indigo-600 font-bold text-sm">2</span>
+                            <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
+                                <span class="text-emerald-600 font-bold text-sm">2</span>
                             </div>
                             <div>
                                 <h3 class="text-lg font-bold text-gray-900">{{ __('កម្មវិធីសិក្សា និងជំនាន់') }}</h3>
                                 <p class="text-xs text-gray-500">{{ __('កំណត់ជំនាញ និងជំនាន់ដែលគោលដៅ') }}</p>
                             </div>
                         </div>
-                        <button type="button" id="add-program" class="flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-600 rounded-xl text-sm font-bold hover:bg-indigo-100 transition-colors">
+                        <button type="button" id="add-program" class="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-600 rounded-xl text-sm font-bold hover:bg-emerald-100 transition-colors">
                             <i class="fas fa-plus text-xs"></i> <span>{{ __('បន្ថែម') }}</span>
                         </button>
                     </div>
@@ -113,7 +113,7 @@
                         <div class="space-y-4">
                             <div>
                                 <label for="lecturer_user_id" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('សាស្ត្រាចារ្យ') }} <span class="text-red-500">*</span></label>
-                                <select id="lecturer_user_id" name="lecturer_user_id" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" required>
+                                <select id="lecturer_user_id" name="lecturer_user_id" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm" required>
                                     @foreach($lecturers as $lecturer)
                                         <option value="{{ $lecturer->id }}" {{ $courseOffering->lecturer_user_id == $lecturer->id ? 'selected' : '' }}>{{ $lecturer->name }}</option>
                                     @endforeach
@@ -122,7 +122,7 @@
                             <div class="grid grid-cols-2 gap-3">
                                 <div>
                                     <label for="academic_year" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ឆ្នាំសិក្សា') }} <span class="text-red-500">*</span></label>
-                                    <select id="academic_year" name="academic_year" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 text-sm" required>
+                                    <select id="academic_year" name="academic_year" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>
                                         <option value="">{{ __('ជ្រើសរើស') }}</option>
                                         @foreach ($academicYears as $year)
                                             <option value="{{ $year->name }}" data-start="{{ \Carbon\Carbon::parse($year->start_date)->format('Y-m-d') }}" data-end="{{ \Carbon\Carbon::parse($year->end_date)->format('Y-m-d') }}" {{ $courseOffering->academic_year == $year->name ? 'selected' : '' }}>
@@ -133,7 +133,7 @@
                                 </div>
                                 <div>
                                     <label for="semester" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ឆមាស') }} <span class="text-red-500">*</span></label>
-                                    <select id="semester" name="semester" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 text-sm" required>
+                                    <select id="semester" name="semester" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>
                                         <option value="ឆមាសទី១" {{ $courseOffering->semester == 'ឆមាសទី១' ? 'selected' : '' }}>{{ __('ឆមាសទី១') }}</option>
                                         <option value="ឆមាសទី២" {{ $courseOffering->semester == 'ឆមាសទី២' ? 'selected' : '' }}>{{ __('ឆមាសទី២') }}</option>
                                     </select>
@@ -141,20 +141,20 @@
                             </div>
                             <div>
                                 <label for="capacity" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ចំនួននិស្សិតអតិបរមា') }} <span class="text-red-500">*</span></label>
-                                <input type="number" id="capacity" name="capacity" value="{{ $courseOffering->capacity }}" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 text-sm" required>
+                                <input type="number" id="capacity" name="capacity" value="{{ $courseOffering->capacity }}" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>
                             </div>
                             <div class="grid grid-cols-2 gap-3">
                                 <div>
                                     <label for="start_date" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('កាលបរិច្ឆេទចាប់ផ្តើម') }} <span class="text-red-500">*</span></label>
-                                    <input type="date" id="start_date" name="start_date" value="{{ \Carbon\Carbon::parse($courseOffering->start_date)->format('Y-m-d') }}" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 text-sm" required>
+                                    <input type="date" id="start_date" name="start_date" value="{{ \Carbon\Carbon::parse($courseOffering->start_date)->format('Y-m-d') }}" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>
                                 </div>
                                 <div>
                                     <label for="end_date" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('កាលបរិច្ឆេទបញ្ចប់') }} <span class="text-red-500">*</span></label>
-                                    <input type="date" id="end_date" name="end_date" value="{{ \Carbon\Carbon::parse($courseOffering->end_date)->format('Y-m-d') }}" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 text-sm" required>
+                                    <input type="date" id="end_date" name="end_date" value="{{ \Carbon\Carbon::parse($courseOffering->end_date)->format('Y-m-d') }}" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>
                                 </div>
                             </div>
                             <label class="flex items-center gap-3 cursor-pointer">
-                                <input type="checkbox" name="is_open_for_self_enrollment" value="1" class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" {{ $courseOffering->is_open_for_self_enrollment ? 'checked' : '' }}>
+                                <input type="checkbox" name="is_open_for_self_enrollment" value="1" class="w-4 h-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500" {{ $courseOffering->is_open_for_self_enrollment ? 'checked' : '' }}>
                                 <span class="text-sm font-medium text-gray-700">{{ __('អនុញ្ញាតឱ្យសិស្សចុះឈ្មោះដោយខ្លួនឯង') }}</span>
                             </label>
                         </div>
@@ -172,7 +172,7 @@
                                     <p class="text-xs text-gray-500">{{ __('កំណត់ថ្ងៃ ម៉ោង និងបន្ទប់សិក្សា') }}</p>
                                 </div>
                             </div>
-                            <button type="button" id="add-schedule-btn" class="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-xl text-sm font-bold hover:bg-blue-100 transition-colors">
+                            <button type="button" id="add-schedule-btn" class="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-600 rounded-xl text-sm font-bold hover:bg-emerald-100 transition-colors">
                                 <i class="fas fa-plus text-xs"></i> <span>{{ __('បន្ថែម') }}</span>
                             </button>
                         </div>
@@ -180,7 +180,7 @@
                             @foreach ($courseOffering->schedules as $index => $schedule)
                                 <div class="schedule-item group bg-gray-50 p-4 rounded-xl border border-gray-200">
                                     <div class="flex items-center justify-between mb-3">
-                                        <div class="flex items-center gap-2 text-sm font-bold text-blue-600 session-label">
+                                        <div class="flex items-center gap-2 text-sm font-bold text-emerald-600 session-label">
                                             <i class="fas fa-clock text-xs"></i>
                                             <span>Session {{ $index + 1 }}</span>
                                         </div>
@@ -191,7 +191,7 @@
                                     <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                                         <div class="col-span-2 md:col-span-1">
                                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('ថ្ងៃ') }}</label>
-                                            <select name="schedules[{{ $index }}][day_of_week]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 text-sm" required>
+                                            <select name="schedules[{{ $index }}][day_of_week]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>
                                                 @php $khmerDays = ['Monday' => 'ច័ន្ទ', 'Tuesday' => 'អង្គារ', 'Wednesday' => 'ពុធ', 'Thursday' => 'ព្រហស្បតិ៍', 'Friday' => 'សុក្រ', 'Saturday' => 'សៅរ៍', 'Sunday' => 'អាទិត្យ']; @endphp
                                                 @foreach ($khmerDays as $en => $kh)
                                                     <option value="{{ $en }}" {{ $schedule->day_of_week == $en ? 'selected' : '' }}>{{ $kh }}</option>
@@ -200,7 +200,7 @@
                                         </div>
                                         <div class="col-span-2 md:col-span-1">
                                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('បន្ទប់') }}</label>
-                                            <select name="schedules[{{ $index }}][room_id]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 text-sm" required>
+                                            <select name="schedules[{{ $index }}][room_id]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>
                                                 @foreach($rooms as $room)
                                                     <option value="{{ $room->id }}" {{ $schedule->room_id == $room->id ? 'selected' : '' }}>{{ $room->room_number }}</option>
                                                 @endforeach
@@ -208,11 +208,11 @@
                                         </div>
                                         <div>
                                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('ចាប់ផ្តើម') }}</label>
-                                            <input type="time" name="schedules[{{ $index }}][start_time]" value="{{ \Carbon\Carbon::parse($schedule->start_time)->format('H:i') }}" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 text-sm" required>
+                                            <input type="time" name="schedules[{{ $index }}][start_time]" value="{{ \Carbon\Carbon::parse($schedule->start_time)->format('H:i') }}" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>
                                         </div>
                                         <div>
                                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('បញ្ចប់') }}</label>
-                                            <input type="time" name="schedules[{{ $index }}][end_time]" value="{{ \Carbon\Carbon::parse($schedule->end_time)->format('H:i') }}" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 text-sm">
+                                            <input type="time" name="schedules[{{ $index }}][end_time]" value="{{ \Carbon\Carbon::parse($schedule->end_time)->format('H:i') }}" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm">
                                         </div>
                                     </div>
                                 </div>
@@ -227,7 +227,7 @@
                         <a href="{{ route('admin.manage-course-offerings') }}" class="flex items-center gap-2 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl font-bold text-sm transition-colors">
                             <i class="fas fa-times"></i> <span>{{ __('បោះបង់') }}</span>
                         </a>
-                        <button type="submit" class="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white px-8 py-3 rounded-xl font-bold text-sm shadow-lg shadow-blue-500/25 transition-all">
+                        <button type="submit" class="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white px-8 py-3 rounded-xl font-bold text-sm shadow-lg shadow-emerald-500/25 transition-all">
                             <i class="fas fa-save"></i> <span>{{ __('រក្សាទុកការកែប្រែ') }}</span>
                         </button>
                     </div>
@@ -279,11 +279,11 @@
                     <div class="flex-grow grid grid-cols-2 gap-3">
                         <div>
                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('ជំនាញ') }}</label>
-                            <select name="target_programs[${programIndex}][program_id]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 text-sm" required>${optionsHtml}</select>
+                            <select name="target_programs[${programIndex}][program_id]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>${optionsHtml}</select>
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('ជំនាន់') }}</label>
-                            <input type="text" name="target_programs[${programIndex}][generation]" value="${genValue}" placeholder="{{ __('ឧ. 16') }}" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 text-sm" required>
+                            <input type="text" name="target_programs[${programIndex}][generation]" value="${genValue}" placeholder="{{ __('ឧ. 16') }}" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>
                         </div>
                     </div>
                     <button type="button" onclick="document.getElementById('${rowId}').remove()" class="text-gray-400 hover:text-red-500 transition-colors mt-5">
@@ -321,7 +321,7 @@
 
                 row.innerHTML = `
                     <div class="flex items-center justify-between mb-3">
-                        <div class="flex items-center gap-2 text-sm font-bold text-blue-600 session-label">
+                        <div class="flex items-center gap-2 text-sm font-bold text-emerald-600 session-label">
                             <i class="fas fa-clock text-xs"></i>
                             <span>Session ${sessionCount}</span>
                         </div>
@@ -332,19 +332,19 @@
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                         <div class="col-span-2 md:col-span-1">
                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('ថ្ងៃ') }}</label>
-                            <select name="schedules[${index}][day_of_week]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 text-sm" required>${dayOptions}</select>
+                            <select name="schedules[${index}][day_of_week]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>${dayOptions}</select>
                         </div>
                         <div class="col-span-2 md:col-span-1">
                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('បន្ទប់') }}</label>
-                            <select name="schedules[${index}][room_id]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 text-sm" required>${roomOptions}</select>
+                            <select name="schedules[${index}][room_id]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>${roomOptions}</select>
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('ចាប់ផ្តើម') }}</label>
-                            <input type="time" name="schedules[${index}][start_time]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 text-sm" required>
+                            <input type="time" name="schedules[${index}][start_time]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('បញ្ចប់') }}</label>
-                            <input type="time" name="schedules[${index}][end_time]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 text-sm">
+                            <input type="time" name="schedules[${index}][end_time]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm">
                         </div>
                     </div>
                 `;

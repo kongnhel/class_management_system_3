@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
             <div class="flex items-center gap-3">
@@ -6,7 +6,7 @@
                     <i class="fas fa-arrow-left"></i>
                 </a>
                 <h2 class="text-3xl font-bold text-gray-900 leading-tight flex items-center gap-3">
-                    <span class="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-indigo-100 text-indigo-600">
+                    <span class="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-emerald-100 text-emerald-600">
                         <i class="fas fa-user-circle"></i>
                     </span>
                     {{ __('ព័ត៌មានលម្អិតអ្នកប្រើប្រាស់') }}
@@ -26,9 +26,9 @@
                 <div class="flex flex-col md:flex-row items-center gap-8">
                     <div class="flex-shrink-0">
                         @if ($profile && $profile->profile_picture_url)
-                            <img src="{{ $profile->profile_picture_url }}" alt="{{ $user->name }}" class="w-32 h-32 rounded-2xl object-cover border-4 border-indigo-100 shadow-lg">
+                            <img src="{{ $profile->profile_picture_url }}" alt="{{ $user->name }}" class="w-32 h-32 rounded-2xl object-cover border-4 border-emerald-100 shadow-lg">
                         @else
-                            <div class="w-32 h-32 rounded-2xl bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-5xl font-bold shadow-lg">
+                            <div class="w-32 h-32 rounded-2xl bg-gradient-to-br from-emerald-400 to-purple-500 flex items-center justify-center text-white text-5xl font-bold shadow-lg">
                                 {{ Str::upper(Str::substr($user->name, 0, 1)) }}
                             </div>
                         @endif
@@ -38,7 +38,7 @@
                         <p class="text-gray-500 text-base mt-1">{{ $user->email ?? $user->student_id_code }}</p>
                         <div class="mt-3 flex flex-wrap gap-2 justify-center md:justify-start">
                             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold
-                                {{ $user->role === 'admin' ? 'bg-red-100 text-red-700' : ($user->role === 'professor' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700') }}">
+                                {{ $user->role === 'admin' ? 'bg-red-100 text-red-700' : ($user->role === 'professor' ? 'bg-green-100 text-green-700' : 'bg-emerald-100 text-emerald-700') }}">
                                 <i class="fas {{ $user->role === 'admin' ? 'fa-shield-alt' : ($user->role === 'professor' ? 'fa-chalkboard-teacher' : 'fa-graduation-cap') }}"></i>
                                 {{ ucfirst($user->role) }}
                             </span>
@@ -131,16 +131,16 @@
             @elseif ($user->role === 'student')
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                     <div class="flex items-center gap-3 mb-6">
-                        <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-blue-100 text-blue-600">
+                        <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600">
                             <i class="fas fa-book-open"></i>
                         </span>
                         <h3 class="text-xl font-bold text-gray-900">{{ __('មុខវិជ្ជាដែលបានចុះឈ្មោះ') }}</h3>
                     </div>
                     <div class="space-y-3">
                         @forelse ($user->studentCourseEnrollments as $enrollment)
-                            <div class="flex items-center justify-between p-4 rounded-xl bg-gray-50 border border-gray-100 hover:border-blue-200 transition">
+                            <div class="flex items-center justify-between p-4 rounded-xl bg-gray-50 border border-gray-100 hover:border-emerald-200 transition">
                                 <div class="flex items-center gap-4">
-                                    <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-blue-100 text-blue-600">
+                                    <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600">
                                         <i class="fas fa-book"></i>
                                     </span>
                                     <div>
@@ -148,7 +148,7 @@
                                         <p class="text-sm text-gray-500">{{ $enrollment->courseOffering->program->name_km ?? 'N/A' }} ({{ $enrollment->courseOffering->academic_year }})</p>
                                     </div>
                                 </div>
-                                <a href="{{ route('admin.show-course-offering', $enrollment->courseOffering->id) }}" class="text-blue-600 hover:text-blue-700 font-semibold text-sm">{{ __('មើលលម្អិត') }} &rarr;</a>
+                                <a href="{{ route('admin.show-course-offering', $enrollment->courseOffering->id) }}" class="text-emerald-600 hover:text-emerald-700 font-semibold text-sm">{{ __('មើលលម្អិត') }} &rarr;</a>
                             </div>
                         @empty
                             <div class="text-center py-8 bg-gray-50 rounded-xl border border-dashed border-gray-300">
@@ -188,7 +188,7 @@
                                         </p>
                                     </div>
                                     <div class="text-right">
-                                        <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold {{ $enrollment->status === 'active' ? 'bg-green-100 text-green-700' : ($enrollment->status === 'graduated' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700') }}">
+                                        <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold {{ $enrollment->status === 'active' ? 'bg-green-100 text-green-700' : ($enrollment->status === 'graduated' ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-700') }}">
                                             {{ $enrollment->status === 'active' ? 'កំពុងសិក្សា' : ($enrollment->status === 'graduated' ? 'បានបញ្ចប់' : 'បានផ្អាក') }}
                                         </span>
                                         @if($enrollment->graduation_date)
@@ -203,15 +203,15 @@
 
                 {{-- Transition Button --}}
                 @if($isEligibleForTransition && $transitionPrograms->count() > 0)
-                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-6">
+                    <div class="bg-gradient-to-r from-emerald-50 to-emerald-50 border border-emerald-200 rounded-2xl p-6">
                         <div class="flex items-start gap-4">
-                            <div class="w-12 h-12 rounded-xl bg-blue-500 text-white flex items-center justify-center shrink-0">
+                            <div class="w-12 h-12 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0">
                                 <i class="fas fa-exchange-alt"></i>
                             </div>
                             <div class="flex-1">
-                                <h4 class="text-lg font-bold text-blue-800">{{ __('ផ្ទេរទៅបរិញ្ញាបត្រ') }}</h4>
-                                <p class="text-sm text-blue-600 mt-1">{{ __('សិស្សនេះបានបញ្ចប់ឆ្នាំចុងក្រោយនៃកម្មវិធីសិក្សាបរិញ្ញាបត្ររង។ តើអ្នកចង់ផ្ទេរគាត់ទៅកម្មវិធីសិក្សាបរិញ្ញាបត្រមែនទេ?') }}</p>
-                                <a href="{{ route('admin.students.transition', $user->id) }}" class="mt-3 inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-all shadow-md hover:shadow-lg">
+                                <h4 class="text-lg font-bold text-emerald-800">{{ __('ផ្ទេរទៅបរិញ្ញាបត្រ') }}</h4>
+                                <p class="text-sm text-emerald-600 mt-1">{{ __('សិស្សនេះបានបញ្ចប់ឆ្នាំចុងក្រោយនៃកម្មវិធីសិក្សាបរិញ្ញាបត្ររង។ តើអ្នកចង់ផ្ទេរគាត់ទៅកម្មវិធីសិក្សាបរិញ្ញាបត្រមែនទេ?') }}</p>
+                                <a href="{{ route('admin.students.transition', $user->id) }}" class="mt-3 inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white font-semibold rounded-xl hover:bg-emerald-700 transition-all shadow-md hover:shadow-lg">
                                     <i class="fas fa-arrow-right"></i>
                                     <span>{{ __('ផ្ទេរឥឡូវនេះ') }}</span>
                                 </a>

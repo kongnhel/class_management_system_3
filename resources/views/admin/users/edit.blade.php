@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
             <div class="flex items-center gap-3">
@@ -29,7 +29,7 @@
                 {{-- Section 1: Basic Info --}}
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                     <div class="flex items-center gap-3 mb-6">
-                        <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-blue-100 text-blue-600">
+                        <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600">
                             <i class="fas fa-user"></i>
                         </span>
                         <h3 class="text-xl font-bold text-gray-900">{{ __('ព័ត៌មានមូលដ្ឋាន') }}</h3>
@@ -39,7 +39,7 @@
                             <x-input-label for="name" class="font-semibold text-gray-700 mb-1.5">
                                 {{ __('ឈ្មោះអ្នកប្រើប្រាស់') }}
                             </x-input-label>
-                            <x-text-input id="name" class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 shadow-sm py-2.5 px-4" type="text" name="name" :value="old('name', $user->name)" required autofocus />
+                            <x-text-input id="name" class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 shadow-sm py-2.5 px-4" type="text" name="name" :value="old('name', $user->name)" required autofocus />
                             <x-input-error :messages="$errors->get('name')" class="mt-2" />
                         </div>
 
@@ -47,7 +47,7 @@
                             <x-input-label for="role" class="font-semibold text-gray-700 mb-1.5">
                                 {{ __('តួនាទី') }}
                             </x-input-label>
-                            <select id="role" name="role" x-model="userRole" class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 shadow-sm py-2.5 px-4" required>
+                            <select id="role" name="role" x-model="userRole" class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 shadow-sm py-2.5 px-4" required>
                                 <option value="admin">{{ __('Admin') }}</option>
                                 <option value="professor">{{ __('Professor') }}</option>
                                 <option value="student">{{ __('Student') }}</option>
@@ -72,7 +72,7 @@
                                 <i class="fas fa-envelope mr-1.5 text-purple-500"></i> {{ __('អ៊ីម៉ែល') }}
                             </x-input-label>
                             <x-text-input id="email" 
-                                class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 py-2.5 px-4" 
+                                class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 py-2.5 px-4" 
                                 type="email" 
                                 name="email" 
                                 :value="old('email', $user->email)" 
@@ -93,7 +93,7 @@
                                         name="password"
                                         autocomplete="new-password"
                                         placeholder="ទុកឱ្យនៅទទេប្រសិនបើមិនប្តូរ"
-                                        class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 py-2.5 px-4 pr-12"
+                                        class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 py-2.5 px-4 pr-12"
                                     />
                                     <button
                                         type="button"
@@ -119,7 +119,7 @@
                                         name="password_confirmation"
                                         autocomplete="new-password"
                                         placeholder="វាយពាក្យសម្ងាត់ម្តងទៀត"
-                                        class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 py-2.5 px-4 pr-12"
+                                        class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 py-2.5 px-4 pr-12"
                                     />
                                     <button
                                         type="button"
@@ -137,7 +137,7 @@
                 {{-- Section 3: Student Info --}}
                 <div x-show="userRole === 'student'" x-cloak class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                     <div class="flex items-center gap-3 mb-6">
-                        <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600">
+                        <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600">
                             <i class="fas fa-graduation-cap"></i>
                         </span>
                         <h3 class="text-xl font-bold text-gray-900">{{ __('ព័ត៌មាននិស្សិត') }}</h3>
@@ -145,7 +145,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
                             <x-input-label for="student_id_code" class="font-semibold text-gray-700 mb-1.5">
-                                <i class="fas fa-id-card mr-1.5 text-indigo-500"></i> {{ __('លេខកូដអត្តសញ្ញាណសិស្ស') }}
+                                <i class="fas fa-id-card mr-1.5 text-emerald-500"></i> {{ __('លេខកូដអត្តសញ្ញាណសិស្ស') }}
                             </x-input-label>
                             <div class="block w-full rounded-xl py-2.5 px-4 bg-gray-50 border border-gray-200 text-gray-600 font-mono font-bold">
                                 {{ $user->student_id_code ?? __('មិនទាន់បង្កើត') }}
@@ -154,9 +154,9 @@
                         </div>
                         <div>
                             <x-input-label for="program_id" class="font-semibold text-gray-700 mb-1.5">
-                                <i class="fas fa-graduation-cap mr-1.5 text-indigo-500"></i> {{ __('កម្មវិធីសិក្សា') }}
+                                <i class="fas fa-graduation-cap mr-1.5 text-emerald-500"></i> {{ __('កម្មវិធីសិក្សា') }}
                             </x-input-label>
-                            <select id="program_id" name="program_id" class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 py-2.5 px-4">
+                            <select id="program_id" name="program_id" class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
                                 <option value="">{{ __('ជ្រើសរើសកម្មវិធីសិក្សា') }}</option>
                                 @foreach($programs as $program)
                                     <option value="{{ $program->id }}" {{ old('program_id', $user->program_id) == $program->id ? 'selected' : '' }}>
@@ -168,9 +168,9 @@
                         </div>
                         <div>
                             <x-input-label for="generation" class="font-semibold text-gray-700 mb-1.5">
-                                <i class="fas fa-layer-group mr-1.5 text-indigo-500"></i> {{ __('ជំនាន់') }}
+                                <i class="fas fa-layer-group mr-1.5 text-emerald-500"></i> {{ __('ជំនាន់') }}
                             </x-input-label>
-                            <x-text-input id="generation" name="generation" type="number" class="block w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:bg-white transition" placeholder="ឧ. 16" :value="old('generation', $user->generation)" />
+                            <x-text-input id="generation" name="generation" type="number" class="block w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition" placeholder="ឧ. 16" :value="old('generation', $user->generation)" />
                             <x-input-error :messages="$errors->get('generation')" class="mt-2" />
                         </div>
                     </div>
@@ -189,7 +189,7 @@
                             <x-input-label for="faculty_id" class="font-semibold text-gray-700 mb-1.5">
                                 <i class="fas fa-university mr-1.5 text-emerald-500"></i> {{ __('មហាវិទ្យាល័យ') }}
                             </x-input-label>
-                            <select id="faculty_id" name="faculty_id" class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 py-2.5 px-4">
+                            <select id="faculty_id" name="faculty_id" class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
                                 <option value="">{{ __('ជ្រើសរើសមហាវិទ្យាល័យ') }}</option>
                                 @foreach($faculties as $faculty)
                                     <option value="{{ $faculty->id }}" {{ (old('faculty_id', $user->department?->faculty_id ?? '')) == $faculty->id ? 'selected' : '' }}>
@@ -202,7 +202,7 @@
                             <x-input-label for="department_id" class="font-semibold text-gray-700 mb-1.5">
                                 <i class="fas fa-building mr-1.5 text-emerald-500"></i> {{ __('ដេប៉ាតឺម៉ង់') }}
                             </x-input-label>
-                            <select id="department_id" name="department_id" class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 py-2.5 px-4">
+                            <select id="department_id" name="department_id" class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
                                 <option value="">{{ __('សូមជ្រើសរើសដេប៉ាតឺម៉ង់') }}</option>
                             </select>
                             <x-input-error :messages="$errors->get('department_id')" class="mt-2" />
@@ -222,7 +222,7 @@
                     <div class="flex flex-col md:flex-row gap-8">
                         <div class="flex flex-col items-center space-y-3">
                             <div class="relative group">
-                                <div class="h-32 w-32 rounded-2xl bg-gray-50 border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden relative group-hover:border-blue-400 transition">
+                                <div class="h-32 w-32 rounded-2xl bg-gray-50 border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden relative group-hover:border-emerald-400 transition">
                                     <template x-if="profilePicturePreview">
                                         <img :src="profilePicturePreview.includes('ik.imagekit.io') ? profilePicturePreview + '?tr=w-300,h-300,fo-face' : profilePicturePreview" 
                                              class="h-full w-full object-cover">
@@ -231,7 +231,7 @@
                                         <i class="fas fa-camera text-3xl text-gray-300"></i>
                                     </template>
                                 </div>
-                                <label class="absolute -bottom-2 -right-2 bg-blue-600 text-white p-2 rounded-xl cursor-pointer hover:bg-blue-700 shadow-lg transition-all hover:scale-110 active:scale-95">
+                                <label class="absolute -bottom-2 -right-2 bg-emerald-600 text-white p-2 rounded-xl cursor-pointer hover:bg-emerald-700 shadow-lg transition-all hover:scale-110 active:scale-95">
                                     <i class="fas fa-pen text-xs"></i>
                                     <input type="file" name="profile_picture" class="hidden" 
                                         @change="
@@ -263,21 +263,21 @@
                                 <x-input-label for="full_name_km" class="font-semibold text-gray-700 mb-1.5">
                                     <i class="fas fa-file-alt mr-1.5 text-orange-500"></i> {{ __('ឈ្មោះពេញ (ខ្មែរ)') }}
                                 </x-input-label>
-                                <x-text-input id="full_name_km" class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 py-2.5 px-4" type="text" name="full_name_km" :value="old('full_name_km', $user->profile?->full_name_km ?? $user->studentProfile?->full_name_km ?? '')" />
+                                <x-text-input id="full_name_km" class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 py-2.5 px-4" type="text" name="full_name_km" :value="old('full_name_km', $user->profile?->full_name_km ?? $user->studentProfile?->full_name_km ?? '')" />
                                 <x-input-error :messages="$errors->get('full_name_km')" class="mt-2" />
                             </div>
                             <div>
                                 <x-input-label for="full_name_en" class="font-semibold text-gray-700 mb-1.5">
                                     <i class="fas fa-file-alt mr-1.5 text-orange-500"></i> {{ __('ឈ្មោះពេញ (អង់គ្លេស)') }}
                                 </x-input-label>
-                                <x-text-input id="full_name_en" class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 py-2.5 px-4" type="text" name="full_name_en" :value="old('full_name_en', $user->profile?->full_name_en ?? $user->studentProfile?->full_name_en ?? '')" />
+                                <x-text-input id="full_name_en" class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 py-2.5 px-4" type="text" name="full_name_en" :value="old('full_name_en', $user->profile?->full_name_en ?? $user->studentProfile?->full_name_en ?? '')" />
                                 <x-input-error :messages="$errors->get('full_name_en')" class="mt-2" />
                             </div>
                             <div>
                                 <x-input-label for="gender" class="font-semibold text-gray-700 mb-1.5">
                                     <i class="fas fa-venus-mars mr-1.5 text-orange-500"></i> {{ __('ភេទ') }}
                                 </x-input-label>
-                                <select id="gender" name="gender" class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 py-2.5 px-4">
+                                <select id="gender" name="gender" class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
                                     <option value="">{{ __('ជ្រើសរើសភេទ') }}</option>
                                     <option value="male" {{ old('gender', $user->profile?->gender ?? $user->studentProfile?->gender ?? '') == 'male' ? 'selected' : '' }}>{{ __('ប្រុស') }}</option>
                                     <option value="female" {{ old('gender', $user->profile?->gender ?? $user->studentProfile?->gender ?? '') == 'female' ? 'selected' : '' }}>{{ __('ស្រី') }}</option>
@@ -289,21 +289,21 @@
                                 <x-input-label for="date_of_birth" class="font-semibold text-gray-700 mb-1.5">
                                     <i class="fas fa-calendar-alt mr-1.5 text-orange-500"></i> {{ __('ថ្ងៃខែឆ្នាំកំណើត') }}
                                 </x-input-label>
-                                <x-text-input id="date_of_birth" class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 py-2.5 px-4" type="date" name="date_of_birth" :value="old('date_of_birth', $user->profile?->date_of_birth ?? $user->studentProfile?->date_of_birth ?? '')" />
+                                <x-text-input id="date_of_birth" class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 py-2.5 px-4" type="date" name="date_of_birth" :value="old('date_of_birth', $user->profile?->date_of_birth ?? $user->studentProfile?->date_of_birth ?? '')" />
                                 <x-input-error :messages="$errors->get('date_of_birth')" class="mt-2" />
                             </div>
                             <div>
                                 <x-input-label for="phone_number" class="font-semibold text-gray-700 mb-1.5">
                                     <i class="fas fa-phone mr-1.5 text-orange-500"></i> {{ __('លេខទូរស័ព្ទ') }}
                                 </x-input-label>
-                                <x-text-input id="phone_number" class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 py-2.5 px-4" type="text" name="phone_number" :value="old('phone_number', $user->profile?->phone_number ?? $user->studentProfile?->phone_number ?? '')" />
+                                <x-text-input id="phone_number" class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 py-2.5 px-4" type="text" name="phone_number" :value="old('phone_number', $user->profile?->phone_number ?? $user->studentProfile?->phone_number ?? '')" />
                                 <x-input-error :messages="$errors->get('phone_number')" class="mt-2" />
                             </div>
                             <div>
                                 <x-input-label for="address" class="font-semibold text-gray-700 mb-1.5">
                                     <i class="fas fa-map-marker-alt mr-1.5 text-orange-500"></i> {{ __('អាសយដ្ឋាន') }}
                                 </x-input-label>
-                                <x-text-input id="address" class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 py-2.5 px-4" type="text" name="address" :value="old('address', $user->profile?->address ?? $user->studentProfile?->address ?? '')" />
+                                <x-text-input id="address" class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 py-2.5 px-4" type="text" name="address" :value="old('address', $user->profile?->address ?? $user->studentProfile?->address ?? '')" />
                                 <x-input-error :messages="$errors->get('address')" class="mt-2" />
                             </div>
                         </div>

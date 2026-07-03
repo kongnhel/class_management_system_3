@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <h2 class="font-bold text-3xl text-gray-800 leading-tight">
             {{ __('គ្រប់គ្រងប្រភេទពិន្ទុ') }}
@@ -16,18 +16,18 @@
                         @csrf
                         <div>
                             <label for="name_km" class="block text-sm font-medium text-gray-700">{{ __('ឈ្មោះ (ខ្មែរ)') }} <span class="text-red-500">*</span></label>
-                            <input type="text" id="name_km" name="name_km" value="{{ old('name_km') }}" required class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            <input type="text" id="name_km" name="name_km" value="{{ old('name_km') }}" required class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-emerald-500 focus:border-emerald-500">
                         </div>
                         <div>
                             <label for="name_en" class="block text-sm font-medium text-gray-700">{{ __('ឈ្មោះ (អង់គ្លេស)') }}</label>
-                            <input type="text" id="name_en" name="name_en" value="{{ old('name_en') }}" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            <input type="text" id="name_en" name="name_en" value="{{ old('name_en') }}" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-emerald-500 focus:border-emerald-500">
                         </div>
                         <div>
                             <label for="weight_percentage" class="block text-sm font-medium text-gray-700">{{ __('ភាគរយទម្ងន់ (%)') }} <span class="text-red-500">*</span></label>
-                            <input type="number" id="weight_percentage" name="weight_percentage" value="{{ old('weight_percentage') }}" required min="1" max="100" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            <input type="number" id="weight_percentage" name="weight_percentage" value="{{ old('weight_percentage') }}" required min="1" max="100" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-emerald-500 focus:border-emerald-500">
                         </div>
                         <div class="pt-2">
-                             <button type="submit" class="w-full px-8 py-4 text-white font-extrabold rounded-xl shadow-lg transition-all duration-300 bg-gradient-to-r from-indigo-600 to-purple-700 hover:from-indigo-700 hover:to-purple-800">
+                             <button type="submit" class="w-full px-8 py-4 text-white font-extrabold rounded-xl shadow-lg transition-all duration-300 bg-gradient-to-r from-emerald-600 to-purple-700 hover:from-emerald-700 hover:to-purple-800">
                                 {{ __('បន្ថែម') }}
                             </button>
                         </div>
@@ -43,11 +43,11 @@
                     @endphp
                     <div class="mb-4">
                         <div class="flex justify-between mb-1">
-                            <span class="text-base font-medium text-blue-700">{{ __('ភាគរយសរុប') }}</span>
-                            <span class="text-sm font-medium text-blue-700">{{ $totalWeight }}% / 100%</span>
+                            <span class="text-base font-medium text-emerald-700">{{ __('ភាគរយសរុប') }}</span>
+                            <span class="text-sm font-medium text-emerald-700">{{ $totalWeight }}% / 100%</span>
                         </div>
                         <div class="w-full bg-gray-200 rounded-full h-2.5">
-                            <div class="bg-blue-600 h-2.5 rounded-full" style="width: {{ $totalWeight }}%"></div>
+                            <div class="bg-emerald-600 h-2.5 rounded-full" style="width: {{ $totalWeight }}%"></div>
                         </div>
                          @if($totalWeight < 100)
                              <p class="text-sm text-yellow-600 mt-2">{{ __('នៅសល់') }} {{ 100 - $totalWeight }}% {{ __('ទៀតដែលត្រូវបំពេញ។') }}</p>
@@ -65,7 +65,7 @@
                                     <p class="text-sm text-gray-500">{{ $category->name_en }}</p>
                                 </div>
                                 <div class="flex items-center space-x-4">
-                                    <span class="font-bold text-indigo-600 text-lg">{{ $category->weight_percentage }}%</span>
+                                    <span class="font-bold text-emerald-600 text-lg">{{ $category->weight_percentage }}%</span>
                                     <form action="{{ route('professor.grading-categories.destroy', $category->id) }}" method="POST" onsubmit="return confirm('{{ __('តើអ្នកប្រាកដទេថាចង់លុប?') }}');">
                                         @csrf
                                         @method('DELETE')

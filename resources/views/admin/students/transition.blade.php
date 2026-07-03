@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <div class="py-12 bg-gray-100 min-h-screen">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-2xl sm:rounded-3xl p-8 lg:p-12 border border-gray-200">
@@ -76,10 +76,10 @@
                             @enderror
                         </div>
 
-                        <div class="bg-blue-50 border border-blue-200 rounded-2xl p-4 mb-8">
+                        <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 mb-8">
                             <div class="flex items-start space-x-3">
-                                <svg class="w-5 h-5 text-blue-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                <div class="text-sm text-blue-700">
+                                <svg class="w-5 h-5 text-emerald-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                <div class="text-sm text-emerald-700">
                                     <p class="font-semibold">{{ __('ព័ត៌មានសំខាន់៖') }}</p>
                                     <ul class="mt-1 list-disc list-inside space-y-1">
                                         <li>{{ __('សិស្សនឹងចាប់ផ្តើមពីឆ្នាំទី ៣ ក្នុងកម្មវិធីសិក្សាបរិញ្ញាបត្រ។') }}</li>
@@ -95,7 +95,7 @@
                                 {{ __('ត្រឡប់ក្រោយ') }}
                             </a>
 
-                            <button type="submit" onclick="return confirm('{{ __('តើអ្នកប្រាកដជាចង់ផ្ទេរសិស្សនេះមែនទេ?') }}')" class="px-8 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold rounded-full shadow-lg hover:from-blue-600 hover:to-blue-700 transition duration-300 transform hover:scale-105 flex items-center space-x-2">
+                            <button type="submit" onclick="return confirm('{{ __('តើអ្នកប្រាកដជាចង់ផ្ទេរសិស្សនេះមែនទេ?') }}')" class="px-8 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-bold rounded-full shadow-lg hover:from-emerald-600 hover:to-emerald-700 transition duration-300 transform hover:scale-105 flex items-center space-x-2">
                                 <span>{{ __('ផ្ទេរសិស្ស') }}</span>
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />

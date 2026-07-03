@@ -1,4 +1,4 @@
-<div>
+﻿<div>
     {{-- ប៊ូតុងដើមសម្រាប់ចុចបើក (ដាក់ក្នុង index.blade.php ឬកន្លែងណាដែលបងចង់ឱ្យគ្រូចុច) --}}
     {{-- <button onclick="handleStartScan({{ $sessionId }})" class="...">ចាប់ផ្តើមស្កេន</button> --}}
 
@@ -43,7 +43,7 @@
 
                 {{-- === LEFT PANEL: QR Presenter === --}}
                 <div class="w-full lg:w-5/12 bg-slate-900 relative overflow-hidden flex flex-col items-center justify-center p-4 lg:p-10 shrink-0">
-                    <div class="absolute inset-0 bg-gradient-to-br from-indigo-900 via-slate-900 to-slate-950"></div>
+                    <div class="absolute inset-0 bg-gradient-to-br from-emerald-900 via-slate-900 to-slate-950"></div>
                     <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10"></div>
 
                     <div class="relative z-10 flex flex-col items-center w-full max-w-md mx-auto">
@@ -56,12 +56,12 @@
                                 <span class="text-[10px] font-bold tracking-widest uppercase text-emerald-400">{{ __('Live Attendance') }}</span>
                             </div>
                             <h2 class="text-xl lg:text-4xl font-black text-white tracking-tight mb-1">{{ __('ស្កែនវត្តមាន') }}</h2>
-                            <p class="text-indigo-300 text-xs lg:text-sm font-bold uppercase truncate max-w-[250px] lg:max-w-none">{{ $courseName }}</p>
+                            <p class="text-emerald-300 text-xs lg:text-sm font-bold uppercase truncate max-w-[250px] lg:max-w-none">{{ $courseName }}</p>
                         </div>
 
                         {{-- QR Code Box --}}
                         <div class="relative group mx-auto">
-                            <div class="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl blur opacity-30"></div>
+                            <div class="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-purple-500 rounded-2xl blur opacity-30"></div>
                             <div class="relative bg-white p-2 lg:p-4 rounded-xl lg:rounded-2xl shadow-2xl">
                                 <div class="relative overflow-hidden rounded-lg w-[140px] h-[140px] lg:w-[240px] lg:h-[240px] bg-white flex items-center justify-center">
                                     {!! $qrCodeImage !!}
@@ -77,7 +77,7 @@
                                 <span class="font-mono text-white font-bold"><span x-text="timeLeft">10</span>s</span>
                             </div>
                             <div class="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
-                                <div class="h-full bg-gradient-to-r from-blue-400 to-indigo-500 transition-all duration-1000 ease-linear"
+                                <div class="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 transition-all duration-1000 ease-linear"
                                      :style="'width: ' + (timeLeft / 10 * 100) + '%'"></div>
                             </div>
                         </div>
@@ -104,11 +104,11 @@
                                     <span class="text-[8px] font-bold text-slate-400 uppercase">{{ __('សិស្ស') }}</span>
                                 </div>
                             @endif
-                            <div class="bg-indigo-50 px-4 py-1.5 rounded-xl border border-indigo-100 flex flex-col items-center">
-                                <span class="text-xl lg:text-2xl font-black text-indigo-600 leading-none">
+                            <div class="bg-emerald-50 px-4 py-1.5 rounded-xl border border-emerald-100 flex flex-col items-center">
+                                <span class="text-xl lg:text-2xl font-black text-emerald-600 leading-none">
                                     {{ isset($attendances) ? str_pad(count($attendances), 2, '0', STR_PAD_LEFT) : '00' }}
                                 </span>
-                                <span class="text-[9px] font-bold text-indigo-400 uppercase">{{ __('Scanned') }}</span>
+                                <span class="text-[9px] font-bold text-emerald-400 uppercase">{{ __('Scanned') }}</span>
                             </div>
                         </div>
                     </div>
@@ -133,9 +133,9 @@
                                 </div>
                                 @endif
                                 @if($permissionCount > 0)
-                                <div class="flex items-center gap-1.5 bg-blue-50 border border-blue-200 px-3 py-1.5 rounded-lg">
-                                    <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
-                                    <span class="text-[11px] font-bold text-blue-700">{{ $permissionCount }} {{ __('ច្បាប់') }}</span>
+                                <div class="flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-lg">
+                                    <div class="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                                    <span class="text-[11px] font-bold text-emerald-700">{{ $permissionCount }} {{ __('ច្បាប់') }}</span>
                                 </div>
                                 @endif
                             </div>
@@ -147,7 +147,7 @@
                                     $statusColors = [
                                         'present' => ['bg' => 'bg-green-50', 'border' => 'border-green-200', 'text' => 'text-green-700', 'dot' => 'bg-green-500', 'label' => 'មក'],
                                         'late' => ['bg' => 'bg-yellow-50', 'border' => 'border-yellow-200', 'text' => 'text-yellow-700', 'dot' => 'bg-yellow-500', 'label' => 'យឺត'],
-                                        'permission' => ['bg' => 'bg-blue-50', 'border' => 'border-blue-200', 'text' => 'text-blue-700', 'dot' => 'bg-blue-500', 'label' => 'ច្បាប់'],
+                                        'permission' => ['bg' => 'bg-emerald-50', 'border' => 'border-emerald-200', 'text' => 'text-emerald-700', 'dot' => 'bg-emerald-500', 'label' => 'ច្បាប់'],
                                         'absent' => ['bg' => 'bg-red-50', 'border' => 'border-red-200', 'text' => 'text-red-700', 'dot' => 'bg-red-500', 'label' => 'អវត្តមាន'],
                                     ];
                                     $color = $statusColors[$record->status] ?? $statusColors['absent'];
@@ -165,11 +165,11 @@
                                         @if($profilePic)
                                             <img src="{{ $profilePic }}" alt="{{ $studentName }}" onerror="this.style.display='none';this.nextElementSibling.classList.remove('hidden');"
                                                  class="w-11 h-11 rounded-full object-cover border-2 border-white shadow-md ring-1 ring-slate-100">
-                                            <div class="hidden w-11 h-11 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm shadow-md">
+                                            <div class="hidden w-11 h-11 rounded-full bg-gradient-to-br from-emerald-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm shadow-md">
                                                 {{ mb_substr($studentName, 0, 1) }}
                                             </div>
                                         @else
-                                            <div class="w-11 h-11 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm shadow-md">
+                                            <div class="w-11 h-11 rounded-full bg-gradient-to-br from-emerald-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm shadow-md">
                                                 {{ mb_substr($studentName, 0, 1) }}
                                             </div>
                                         @endif
@@ -221,7 +221,7 @@
                         </button>
 
                         <button wire:click="$set('showConfirmation', true)"
-                                class="flex-[2] relative px-4 py-3 rounded-xl font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all active:scale-95 text-sm">
+                                class="flex-[2] relative px-4 py-3 rounded-xl font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-200 transition-all active:scale-95 text-sm">
                             {{ __('បញ្ចប់ និងរក្សាទុក') }}
                         </button>
                     </div>

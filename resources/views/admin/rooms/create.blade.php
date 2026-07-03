@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <div class="bg-gray-50 min-h-screen py-10">
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
 
@@ -53,7 +53,7 @@
                             <div>
                                 <label for="room_number" class="block text-sm font-bold text-gray-700 mb-1.5">លេខបន្ទប់ <span class="text-red-500">*</span></label>
                                 <input type="text" name="room_number" id="room_number" value="{{ old('room_number') }}" required
-                                       class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition"
+                                       class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm transition"
                                        placeholder="ឧទាហរណ៍: B-101">
                             </div>
 
@@ -61,7 +61,7 @@
                             <div>
                                 <label for="capacity" class="block text-sm font-bold text-gray-700 mb-1.5">សមត្ថភាពផ្ទុក <span class="text-red-500">*</span></label>
                                 <input type="number" name="capacity" id="capacity" value="{{ old('capacity') }}" required min="1"
-                                       class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition"
+                                       class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm transition"
                                        placeholder="ឧទាហរណ៍: 50">
                             </div>
 
@@ -69,7 +69,7 @@
                             <div class="sm:col-span-2">
                                 <label for="location_of_room" class="block text-sm font-bold text-gray-700 mb-1.5">ទីតាំងបន្ទប់</label>
                                 <input type="text" name="location_of_room" id="location_of_room" value="{{ old('location_of_room') }}"
-                                       class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition"
+                                       class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm transition"
                                        placeholder="ឧទាហរណ៍: អគារ B ជាន់ទី១">
                             </div>
 
@@ -77,7 +77,7 @@
                             <div class="sm:col-span-2">
                                 <label for="type_of_room" class="block text-sm font-bold text-gray-700 mb-1.5">ប្រភេទបន្ទប់</label>
                                 <select name="type_of_room" id="type_of_room"
-                                        class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition bg-white">
+                                        class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm transition bg-white">
                                     <option value="">ជ្រើសរើសប្រភេទបន្ទប់</option>
                                     <option value="បន្ទប់រៀនធម្មតា" {{ old('type_of_room') == 'បន្ទប់រៀនធម្មតា' ? 'selected' : '' }}>បន្ទប់រៀនធម្មតា</option>
                                     <option value="បន្ទប់ពិសោធន៍" {{ old('type_of_room') == 'បន្ទប់ពិសោធន៍' ? 'selected' : '' }}>បន្ទប់ពិសោធន៍</option>
@@ -92,7 +92,7 @@
                         {{-- WiFi QR Code Upload --}}
                         <div x-data="{ imagePreview: null }">
                             <label class="block text-sm font-bold text-gray-700 mb-1.5">រូបភាព WiFi QR Code</label>
-                            <div class="relative flex justify-center px-6 pt-5 pb-6 border-2 border-dashed border-gray-200 rounded-xl hover:border-blue-400 transition-colors bg-gray-50 cursor-pointer"
+                            <div class="relative flex justify-center px-6 pt-5 pb-6 border-2 border-dashed border-gray-200 rounded-xl hover:border-emerald-400 transition-colors bg-gray-50 cursor-pointer"
                                  @click="$refs.fileInput.click()">
                                 <div class="space-y-2 text-center">
                                     <template x-if="imagePreview">
@@ -108,7 +108,7 @@
                                                 </svg>
                                             </div>
                                             <p class="text-sm text-gray-600">
-                                                <span class="font-medium text-blue-600 hover:text-blue-500">បញ្ចូលរូបភាព</span>
+                                                <span class="font-medium text-emerald-600 hover:text-emerald-500">បញ្ចូលរូបភាព</span>
                                                 ឬអូសទម្លាក់ទីនេះ
                                             </p>
                                             <p class="text-xs text-gray-400 mt-1">PNG, JPG រហូតដល់ 2MB</p>

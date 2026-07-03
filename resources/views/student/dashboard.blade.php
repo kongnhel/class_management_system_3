@@ -1,11 +1,11 @@
-<x-app-layout>
+﻿<x-app-layout>
     <div class="bg-slate-50 min-h-screen font-['Battambang'] antialiased">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8 space-y-8">
 
             {{-- =========================================================== --}}
             {{-- HERO BANNER --}}
             {{-- =========================================================== --}}
-            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-purple-700 text-white shadow-xl shadow-indigo-200/50">
+            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-600 via-emerald-700 to-purple-700 text-white shadow-xl shadow-emerald-200/50">
                 {{-- decorative blobs --}}
                 <div class="absolute -top-16 -right-16 w-64 h-64 bg-white/5 rounded-full blur-2xl"></div>
                 <div class="absolute -bottom-20 -left-10 w-72 h-72 bg-purple-400/10 rounded-full blur-3xl"></div>
@@ -26,11 +26,11 @@
                             @endif
                         </div>
                         <div>
-                            <p class="text-indigo-200 text-xs sm:text-sm font-semibold">{{ now()->translatedFormat('l, d F Y') }}</p>
+                            <p class="text-emerald-200 text-xs sm:text-sm font-semibold">{{ now()->translatedFormat('l, d F Y') }}</p>
                             <h2 class="text-2xl sm:text-3xl font-black leading-tight mt-0.5">
                                 {{ __('stu_dashboard_greeting') }}, {{ auth()->user()->name }}! 👋
                             </h2>
-                            <p class="text-indigo-200 text-sm mt-1">{{ __('stu_dashboard_subtitle') }}</p>
+                            <p class="text-emerald-200 text-sm mt-1">{{ __('stu_dashboard_subtitle') }}</p>
                         </div>
                     </div>
 
@@ -38,16 +38,11 @@
                     <div class="flex flex-wrap items-center gap-2.5 w-full lg:w-auto">
                         @if($studentProgram)
                             <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2.5 rounded-xl text-xs font-bold">
-                                <i class="fas fa-graduation-cap text-indigo-200"></i>
+                                <i class="fas fa-graduation-cap text-emerald-200"></i>
                                 <span class="max-w-[140px] truncate">{{ $studentProgram->name_km }}</span>
                                 <span class="bg-white/15 px-2 py-0.5 rounded-md text-[10px]">G{{ $user->generation }}</span>
                             </div>
                         @endif
-
-                        <a href="{{ route('qr.scanner') }}" class="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-lg transition-all">
-                            <i class="fa-solid fa-qrcode text-sm"></i>
-                            <span>{{ __('stu_scan_qr') }}</span>
-                        </a>
 
                         @if(!auth()->user()->telegram_chat_id)
                             <button type="button" onclick="document.getElementById('telegramEntryModal').classList.remove('hidden')"
@@ -124,8 +119,8 @@
                 </div>
 
                 {{-- Permission --}}
-                <div class="bg-white p-4 rounded-2xl border border-blue-100 shadow-sm flex items-center gap-3">
-                    <div class="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg flex-shrink-0"><i class="fas fa-file-contract"></i></div>
+                <div class="bg-white p-4 rounded-2xl border border-emerald-100 shadow-sm flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg flex-shrink-0"><i class="fas fa-file-contract"></i></div>
                     <div class="min-w-0">
                         <p class="text-[10px] text-gray-400 font-bold uppercase truncate">{{ __('stu_permission') }}</p>
                         <h4 class="text-xl font-black text-gray-800">{{ $totalPermission ?? 0 }}</h4>
@@ -259,12 +254,12 @@
                     <section>
                         <div class="flex items-center justify-between mb-4">
                             <div class="flex items-center gap-2.5">
-                                <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-sm">
+                                <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm">
                                     <i class="fas fa-book-open"></i>
                                 </div>
                                 <h4 class="text-base font-bold text-gray-800">{{ __('stu_enrolled_courses') }}</h4>
                             </div>
-                            <a href="{{ route('student.my-enrolled-courses') }}" class="text-xs font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1">
+                            <a href="{{ route('student.my-enrolled-courses') }}" class="text-xs font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1">
                                 {{ __('មើលទាំងអស់') }} <i class="fas fa-arrow-right text-[10px]"></i>
                             </a>
                         </div>
@@ -284,7 +279,7 @@
                                     $myEnrollment = $course->studentCourseEnrollments->first();
                                     $isLeader = $myEnrollment ? $myEnrollment->is_class_leader : false;
                                 @endphp
-                                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:border-blue-200 hover:shadow-md transition-all relative group">
+                                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:border-emerald-200 hover:shadow-md transition-all relative group">
                                     {{-- status badge --}}
                                     <div class="absolute top-4 right-4 z-10">
                                         @if($course->today_status == 'present')
@@ -301,12 +296,12 @@
                                     </div>
 
                                     <div class="flex items-start gap-3 mb-4 pr-20">
-                                        <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
+                                        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
                                             <i class="fas fa-book"></i>
                                         </div>
                                         <div class="min-w-0">
                                             <h3 class="font-bold text-gray-800 text-sm leading-tight">{{ $course->course->title_km ?? ($course->course->title_en ?? '') }}</h3>
-                                            <p class="text-[10px] text-blue-500 font-bold uppercase tracking-wider mt-0.5">{{ $course->academic_year }} • ឆមាស {{ $course->semester }}</p>
+                                            <p class="text-[10px] text-emerald-500 font-bold uppercase tracking-wider mt-0.5">{{ $course->academic_year }} • ឆមាស {{ $course->semester }}</p>
                                         </div>
                                     </div>
 
@@ -328,7 +323,7 @@
                                                 <i class="fas fa-check"></i> {{ __('បានស្កែនរួចរាល់') }}
                                             </button>
                                         @else
-                                            <a href="{{ route('student.scan') }}" class="flex-1 py-2.5 rounded-xl font-bold text-xs bg-blue-600 text-white hover:bg-blue-700 shadow-sm shadow-blue-100 transition-all flex items-center justify-center gap-1.5">
+                                            <a href="{{ route('student.scan') }}" class="flex-1 py-2.5 rounded-xl font-bold text-xs bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm shadow-emerald-100 transition-all flex items-center justify-center gap-1.5">
                                                 <i class="fas fa-qrcode"></i> {{ __('ស្កែនវត្តមាន') }}
                                             </a>
                                         @endif
@@ -351,18 +346,18 @@
                     <section>
                         <div class="flex items-center justify-between mb-4">
                             <div class="flex items-center gap-2.5">
-                                <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm">
+                                <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm">
                                     <i class="fas fa-plus-circle"></i>
                                 </div>
                                 <h4 class="text-base font-bold text-gray-800">{{ __('មុខវិជ្ជាដែលអាចចុះឈ្មោះ') }}</h4>
                             </div>
-                            <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-600">{{ $availableCoursesInProgram->count() }}</span>
+                            <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-600">{{ $availableCoursesInProgram->count() }}</span>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             @foreach($availableCoursesInProgram as $courseOffering)
-                                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:border-indigo-200 hover:shadow-md transition-all flex flex-col">
+                                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:border-emerald-200 hover:shadow-md transition-all flex flex-col">
                                     <div class="flex items-start gap-3 mb-3">
-                                        <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center flex-shrink-0">
+                                        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
                                             <i class="fas fa-book"></i>
                                         </div>
                                         <div class="min-w-0 flex-1">
@@ -380,7 +375,7 @@
                                     <form action="{{ route('student.enroll_self') }}" method="POST" class="mt-auto">
                                         @csrf
                                         <input type="hidden" name="course_offering_id" value="{{ $courseOffering->id }}">
-                                        <button class="w-full bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white py-2.5 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-2 group">
+                                        <button class="w-full bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white py-2.5 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-2 group">
                                             <i class="fas fa-plus transition-transform group-hover:rotate-90"></i> {{ __('ចុះឈ្មោះចូលរៀន') }}
                                         </button>
                                     </form>
@@ -438,8 +433,8 @@
                                 <span class="flex items-center gap-2 text-xs font-semibold text-gray-600"><i class="fas fa-user-times text-rose-500"></i> {{ __('stu_absent') }}</span>
                                 <span class="font-black text-gray-800 text-sm">{{ $totalAbsent ?? 0 }}</span>
                             </div>
-                            <div class="flex items-center justify-between py-2 px-3 bg-blue-50/50 rounded-lg">
-                                <span class="flex items-center gap-2 text-xs font-semibold text-gray-600"><i class="fas fa-file-contract text-blue-500"></i> {{ __('stu_permission') }}</span>
+                            <div class="flex items-center justify-between py-2 px-3 bg-emerald-50/50 rounded-lg">
+                                <span class="flex items-center gap-2 text-xs font-semibold text-gray-600"><i class="fas fa-file-contract text-emerald-500"></i> {{ __('stu_permission') }}</span>
                                 <span class="font-black text-gray-800 text-sm">{{ $totalPermission ?? 0 }}</span>
                             </div>
                             <div class="flex items-center justify-between py-2 px-3 bg-amber-50/50 rounded-lg">
@@ -453,27 +448,27 @@
                     <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
                         <div class="flex items-center justify-between px-5 py-4 border-b border-slate-50">
                             <div class="flex items-center gap-2.5">
-                                <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-sm">
+                                <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm">
                                     <i class="fas fa-bell"></i>
                                 </div>
                                 <h4 class="text-sm font-bold text-gray-800">{{ __('ព័ត៌មានថ្មីៗ') }}</h4>
                             </div>
-                            <span class="inline-flex items-center gap-1 bg-blue-50 text-blue-600 text-[10px] font-black px-2 py-1 rounded-md uppercase tracking-wider">
-                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span> Live
+                            <span class="inline-flex items-center gap-1 bg-emerald-50 text-emerald-600 text-[10px] font-black px-2 py-1 rounded-md uppercase tracking-wider">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Live
                             </span>
                         </div>
                         <div class="p-4 space-y-3 max-h-[500px] overflow-y-auto custom-scrollbar">
                             @forelse($combinedFeed as $item)
                                 <div id="{{ $item->type }}-{{ $item->id }}"
-                                     class="rounded-xl border transition-all {{ $item->is_read ? 'bg-slate-50/50 border-slate-100' : 'bg-white border-blue-100 shadow-sm' }}">
+                                     class="rounded-xl border transition-all {{ $item->is_read ? 'bg-slate-50/50 border-slate-100' : 'bg-white border-emerald-100 shadow-sm' }}">
                                     <div class="p-4">
                                         <div class="flex gap-3">
-                                            <div class="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center {{ $item->type === 'announcement' ? 'bg-emerald-50 text-emerald-600' : 'bg-indigo-50 text-indigo-600' }}">
+                                            <div class="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center {{ $item->type === 'announcement' ? 'bg-emerald-50 text-emerald-600' : 'bg-emerald-50 text-emerald-600' }}">
                                                 <i class="fas {{ $item->type === 'announcement' ? 'fa-bullhorn' : 'fa-bell' }} text-xs"></i>
                                             </div>
                                             <div class="flex-1 min-w-0">
                                                 <div class="flex items-center gap-2 mb-1">
-                                                    <span class="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded {{ $item->type === 'announcement' ? 'bg-emerald-50 text-emerald-700' : 'bg-indigo-50 text-indigo-700' }}">
+                                                    <span class="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded {{ $item->type === 'announcement' ? 'bg-emerald-50 text-emerald-700' : 'bg-emerald-50 text-emerald-700' }}">
                                                         {{ $item->type === 'announcement' ? __('សេចក្តីជូនដំណឹង') : __('ការជូនដំណឹង') }}
                                                     </span>
                                                     <span class="text-[10px] text-gray-400 font-bold whitespace-nowrap">{{ $item->created_at->diffForHumans() }}</span>
@@ -484,7 +479,7 @@
                                                     <span class="text-[10px] font-bold text-slate-500">{{ $item->sender_name }}</span>
                                                     @if(!$item->is_read)
                                                         <button onclick="markAsRead('{{ $item->type }}', '{{ $item->id }}')"
-                                                                class="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-600 text-[10px] font-bold hover:bg-blue-600 hover:text-white transition-all">
+                                                                class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-600 text-[10px] font-bold hover:bg-emerald-600 hover:text-white transition-all">
                                                             {{ __('អានរួច') }}
                                                         </button>
                                                     @endif
@@ -513,18 +508,18 @@
     <div id="telegramEntryModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z-[9999] p-4">
         <div class="bg-white rounded-3xl p-8 w-full max-w-md border border-slate-100 shadow-2xl">
             <h3 class="text-xl font-black text-slate-800 mb-6 flex items-center gap-3">
-                <i class="fab fa-telegram-plane text-blue-500"></i> ភ្ជាប់ Telegram
+                <i class="fab fa-telegram-plane text-emerald-500"></i> ភ្ជាប់ Telegram
             </h3>
             <form action="{{ route('student.update_telegram') }}" method="POST">
                 @csrf
                 <div class="mb-6 text-xs text-slate-500 leading-relaxed bg-slate-50 p-4 rounded-2xl">
-                    <p>១. ផ្ញើសារទៅ <a href="https://t.me/userinfobot" target="_blank" class="text-blue-600 font-bold">@userinfobot</a></p>
-                    <p class="mt-1">២. ចុច START លើ <a href="https://t.me/kong_grade_bot" target="_blank" class="text-blue-600 font-bold">@kong_grade_bot</a></p>
+                    <p>១. ផ្ញើសារទៅ <a href="https://t.me/userinfobot" target="_blank" class="text-emerald-600 font-bold">@userinfobot</a></p>
+                    <p class="mt-1">២. ចុច START លើ <a href="https://t.me/kong_grade_bot" target="_blank" class="text-emerald-600 font-bold">@kong_grade_bot</a></p>
                 </div>
-                <input type="number" name="telegram_chat_id" required placeholder="បញ្ចូលលេខ Chat ID" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl mb-4 focus:ring-4 focus:ring-blue-500/10 outline-none">
+                <input type="number" name="telegram_chat_id" required placeholder="បញ្ចូលលេខ Chat ID" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl mb-4 focus:ring-4 focus:ring-emerald-500/10 outline-none">
                 <div class="flex gap-3">
                     <button type="button" onclick="document.getElementById('telegramEntryModal').classList.add('hidden')" class="flex-1 py-4 bg-slate-100 rounded-2xl font-bold text-slate-500">{{ __('បោះបង់') }}</button>
-                    <button type="submit" class="flex-[2] py-4 bg-blue-600 text-white rounded-2xl font-bold">{{ __('រក្សាទុក') }}</button>
+                    <button type="submit" class="flex-[2] py-4 bg-emerald-600 text-white rounded-2xl font-bold">{{ __('រក្សាទុក') }}</button>
                 </div>
             </form>
         </div>

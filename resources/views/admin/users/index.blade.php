@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <div class="px-4 md:px-6 lg:px-8">
             <h2 class="text-4xl font-extrabold text-gray-900 leading-tight flex items-center">
@@ -215,7 +215,7 @@
                                                     <td class="px-6 py-3 text-gray-600">{{ $admin->profile->full_name_km ?? 'N/A' }}</td>
                                                     <td class="px-6 py-3 text-right font-bold space-x-3">
                                                         <a href="{{ route('admin.show-user', $admin->id) }}" class="text-green-600 hover:underline">{{ __('មើល') }}</a>
-                                                        <a href="{{ route('admin.edit-user', $admin->id) }}" class="text-blue-600 hover:underline">{{ __('កែប្រែ') }}</a>
+                                                        <a href="{{ route('admin.edit-user', $admin->id) }}" class="text-emerald-600 hover:underline">{{ __('កែប្រែ') }}</a>
                                                         <button type="button" @click.stop="confirmDelete('delete-admin-{{ $admin->id }}', '{{ __('អ្នកគ្រប់គ្រង') }}')" class="text-red-500 hover:underline">{{ __('លុប') }}</button>
                                                         <form id="delete-admin-{{ $admin->id }}" action="{{ route('admin.delete-user', $admin->id) }}" method="POST" class="hidden">@csrf @method('DELETE')</form>
                                                     </td>
@@ -258,7 +258,7 @@
                                                     <a href="{{ route('admin.show-user', $admin->id) }}" class="text-green-600 flex items-center">
                                                         <i class="fas fa-eye mr-1 text-[10px]"></i> {{ __('មើល') }}
                                                     </a>
-                                                    <a href="{{ route('admin.edit-user', $admin->id) }}" class="text-blue-600 flex items-center">
+                                                    <a href="{{ route('admin.edit-user', $admin->id) }}" class="text-emerald-600 flex items-center">
                                                         <i class="fas fa-edit mr-1 text-[10px]"></i> {{ __('កែ') }}
                                                     </a>
                                                     <button @click.stop="confirmDelete('del-adm-mob-{{ $admin->id }}', 'Admin')" class="text-red-500 flex items-center">
@@ -288,9 +288,9 @@
                                     <div x-data="{ openDept: {{ $loop->first ? 'true' : 'false' }} }" class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden transition-all duration-300">
                                         
                                         <button @click="openDept = !openDept" 
-                                                class="w-full flex items-center justify-between px-6 py-4 bg-blue-50/30 hover:bg-blue-50 transition-colors border-b border-gray-100">
+                                                class="w-full flex items-center justify-between px-6 py-4 bg-emerald-50/30 hover:bg-emerald-50 transition-colors border-b border-gray-100">
                                             <div class="flex items-center">
-                                                <div class="h-11 w-11 bg-gradient-to-br from-blue-500 to-blue-700 text-white rounded-xl flex items-center justify-center shadow-lg shadow-blue-100 mr-4 font-bold">
+                                                <div class="h-11 w-11 bg-gradient-to-br from-emerald-500 to-emerald-700 text-white rounded-xl flex items-center justify-center shadow-lg shadow-emerald-100 mr-4 font-bold">
                                                     <i class="fas fa-university text-sm"></i>
                                                 </div>
                                                 <div class="text-left">
@@ -326,7 +326,7 @@
                                                                                  class="h-10 w-10 rounded-full object-cover border border-gray-100 shadow-sm"
                                                                                  alt="{{ $professor->name }}">
                                                                         @else
-                                                                            <div class="h-10 w-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-sm">
+                                                                            <div class="h-10 w-10 rounded-full bg-emerald-600 flex items-center justify-center text-white font-bold text-sm">
                                                                                 {{ mb_substr($professor->name, 0, 1, 'UTF-8') }}
                                                                             </div>
                                                                         @endif
@@ -340,7 +340,7 @@
                                                                         <a href="{{ route('admin.show-user', $professor->id) }}" class="inline-flex items-center justify-center p-2 text-green-600 hover:bg-green-50 rounded-lg transition-all">
                                                                             <i class="fas fa-eye text-sm"></i>
                                                                         </a>
-                                                                        <a href="{{ route('admin.edit-user', $professor->id) }}" class="inline-flex items-center justify-center p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all">
+                                                                        <a href="{{ route('admin.edit-user', $professor->id) }}" class="inline-flex items-center justify-center p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all">
                                                                             <i class="fas fa-edit text-sm"></i>
                                                                         </a>
                                                                         <button type="button" @click.stop="confirmDelete('del-prof-{{ $professor->id }}', '{{ __('លោកគ្រូអ្នកគ្រូ') }}')" class="inline-flex items-center justify-center p-2 text-red-500 hover:bg-red-50 rounded-lg transition-all">
@@ -357,7 +357,7 @@
                                                 {{-- 2. MOBILE VERSION --}}
                                                 <div class="md:hidden space-y-3">
                                                     @foreach ($professorList as $professor)
-                                                        <div class="bg-gray-50/50 border border-gray-100 rounded-xl p-4 shadow-sm hover:border-blue-200 transition-colors">
+                                                        <div class="bg-gray-50/50 border border-gray-100 rounded-xl p-4 shadow-sm hover:border-emerald-200 transition-colors">
                                                             <div class="flex items-center justify-between mb-3">
                                                                 <div class="flex items-center space-x-3">
                                                                     @if ($professor->profile && $professor->profile->profile_picture_url)
@@ -365,7 +365,7 @@
                                                                              class="h-12 w-12 rounded-full object-cover border-2 border-white shadow-sm"
                                                                              alt="{{ $professor->name }}">
                                                                     @else
-                                                                        <div class="h-12 w-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white font-black text-lg shadow-sm">
+                                                                        <div class="h-12 w-12 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center text-white font-black text-lg shadow-sm">
                                                                             {{ mb_strtoupper(mb_substr($professor->name, 0, 1, 'UTF-8'), 'UTF-8') }}
                                                                         </div>
                                                                     @endif
@@ -379,7 +379,7 @@
                                                                 <span class="text-[10px] font-bold text-gray-400 italic">{{ $professor->profile->full_name_km ?? 'N/A' }}</span>
                                                                 <div class="flex space-x-4">
                                                                     <a href="{{ route('admin.show-user', $professor->id) }}" class="text-green-600 text-xs font-bold uppercase tracking-widest">{{ __('មើល') }}</a>
-                                                                    <a href="{{ route('admin.edit-user', $professor->id) }}" class="text-blue-600 text-xs font-bold uppercase tracking-widest">{{ __('កែ') }}</a>
+                                                                    <a href="{{ route('admin.edit-user', $professor->id) }}" class="text-emerald-600 text-xs font-bold uppercase tracking-widest">{{ __('កែ') }}</a>
                                                                     <button @click.stop="confirmDelete('del-mob-prof-{{ $professor->id }}', 'Professor')" class="text-red-500 text-xs font-bold uppercase tracking-widest">{{ __('លុប') }}</button>
                                                                 </div>
                                                             </div>
@@ -518,7 +518,7 @@
                                                                                         @if($student->computed_year_level >= $student->program->duration_years)
                                                                                             bg-purple-100 text-purple-700 border border-purple-200
                                                                                         @else
-                                                                                            bg-blue-50 text-blue-700 border border-blue-100
+                                                                                            bg-emerald-50 text-emerald-700 border border-emerald-100
                                                                                         @endif">
                                                                                         {{ __('ឆ្នាំទី') }} {{ $student->computed_year_level }}
                                                                                     </span>
@@ -530,7 +530,7 @@
                                                                                 <a href="{{ route('admin.show-user', $student->id) }}" class="inline-flex items-center justify-center p-2 text-green-600 hover:bg-green-50 rounded-lg transition-all" title="{{ __('មើល') }}">
                                                                                     <i class="fas fa-eye text-sm"></i>
                                                                                 </a>
-                                                                                <a href="{{ route('admin.edit-user', $student->id) }}" class="inline-flex items-center justify-center p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all" title="{{ __('កែប្រែ') }}">
+                                                                                <a href="{{ route('admin.edit-user', $student->id) }}" class="inline-flex items-center justify-center p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all" title="{{ __('កែប្រែ') }}">
                                                                                     <i class="fas fa-edit text-sm"></i>
                                                                                 </a>
                                                                                 <button type="button" @click.stop="confirmDelete('del-std-{{ $student->id }}', '{{ __('និស្សិត') }}')" class="inline-flex items-center justify-center p-2 text-red-500 hover:bg-red-50 rounded-lg transition-all" title="{{ __('លុប') }}">
@@ -570,7 +570,7 @@
                                                                                             @if($student->program && $student->computed_year_level >= $student->program->duration_years)
                                                                                                 bg-purple-100 text-purple-700
                                                                                             @else
-                                                                                                bg-blue-50 text-blue-700
+                                                                                                bg-emerald-50 text-emerald-700
                                                                                             @endif">
                                                                                             {{ __('ឆ្នាំទី') }} {{ $student->computed_year_level }}
                                                                                         </span>
@@ -583,7 +583,7 @@
                                                                         <span class="text-[10px] font-bold text-gray-400 italic">{{ $student->studentProfile->full_name_km ?? 'N/A' }}</span>
                                                                         <div class="flex space-x-4">
                                                                             <a href="{{ route('admin.show-user', $student->id) }}" class="text-green-600 text-xs font-bold uppercase tracking-widest">{{ __('មើល') }}</a>
-                                                                            <a href="{{ route('admin.edit-user', $student->id) }}" class="text-blue-600 text-xs font-bold uppercase tracking-widest">{{ __('កែ') }}</a>
+                                                                            <a href="{{ route('admin.edit-user', $student->id) }}" class="text-emerald-600 text-xs font-bold uppercase tracking-widest">{{ __('កែ') }}</a>
                                                                             <button @click="confirmDelete('del-mob-{{ $student->id }}', 'Student')" class="text-red-500 text-xs font-bold uppercase tracking-widest">{{ __('លុប') }}</button>
                                                                         </div>
                                                                     </div>

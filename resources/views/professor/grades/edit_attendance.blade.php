@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
@@ -45,9 +45,9 @@
                                 <span class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{{ __('ពិន្ទុស្វ័យប្រវត្តិ') }}</span>
                                 <span class="text-2xl font-black text-slate-700">{{ number_format($autoScore, 1) }}</span>
                             </div>
-                            <div class="p-5 bg-indigo-50 rounded-[2rem] border border-indigo-100 text-center">
-                                <span class="block text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-2">{{ __('ពិន្ទុអតិបរមា') }}</span>
-                                <span class="text-2xl font-black text-indigo-700">15.0</span>
+                            <div class="p-5 bg-emerald-50 rounded-[2rem] border border-emerald-100 text-center">
+                                <span class="block text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-2">{{ __('ពិន្ទុអតិបរមា') }}</span>
+                                <span class="text-2xl font-black text-emerald-700">15.0</span>
                             </div>
                         </div>
 
@@ -73,17 +73,17 @@
                                        min="0"
                                        value="{{ old('score', $enrollment->attendance_score_manual) }}"
                                        placeholder="ឧទាហរណ៍៖ 14.5"
-                                       class="w-full bg-slate-50 border-2 border-slate-100 rounded-[2rem] p-6 text-2xl font-black text-slate-800 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none">
-                                <div class="absolute right-6 top-1/2 -translate-y-1/2 text-slate-300 font-bold group-focus-within:text-indigo-500">
+                                       class="w-full bg-slate-50 border-2 border-slate-100 rounded-[2rem] p-6 text-2xl font-black text-slate-800 focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all outline-none">
+                                <div class="absolute right-6 top-1/2 -translate-y-1/2 text-slate-300 font-bold group-focus-within:text-emerald-500">
                                     / 15
                                 </div>
                             </div>
 
-                            <div class="flex gap-3 p-4 bg-blue-50/50 rounded-2xl border border-blue-100">
-                                <svg class="w-5 h-5 text-blue-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="flex gap-3 p-4 bg-emerald-50/50 rounded-2xl border border-emerald-100">
+                                <svg class="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
-                                <p class="text-[11px] font-bold text-blue-600 leading-relaxed">
+                                <p class="text-[11px] font-bold text-emerald-600 leading-relaxed">
                                     {{ __('ប្រសិនបើលោកគ្រូបញ្ចូលពិន្ទុនៅទីនេះ ប្រព័ន្ធនឹងឈប់គណនាពិន្ទុតាមវត្តមាន (Auto) ហើយយកលេខនេះជាពិន្ទុចុងក្រោយភ្លាមៗ។ ទុកឱ្យនៅទំនេរវិញ ប្រសិនបើចង់ឱ្យប្រព័ន្ធគណនាដោយស្វ័យប្រវត្តិ។') }}
                                 </p>
                             </div>
@@ -92,7 +92,7 @@
 
                     {{-- Bottom Action --}}
                     <div class="px-8 py-6 bg-slate-50 border-t border-slate-100 flex flex-col sm:flex-row gap-3">
-                        <button type="submit" class="flex-1 inline-flex items-center justify-center px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-[1.5rem] font-black text-sm transition-all shadow-lg shadow-indigo-200 active:scale-95">
+                        <button type="submit" class="flex-1 inline-flex items-center justify-center px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-[1.5rem] font-black text-sm transition-all shadow-lg shadow-emerald-200 active:scale-95">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
                             </svg>

@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <div class="py-12 bg-gray-50 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div x-data="{ viewMode: 'grid' }" class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 lg:p-8">
@@ -6,7 +6,7 @@
                 {{-- Header --}}
                 <div class="flex flex-col md:flex-row items-center justify-between mb-8 pb-6 border-b border-gray-100">
                     <div class="flex items-center gap-4">
-                        <span class="p-3 bg-blue-100 text-blue-600 rounded-2xl shadow-sm">
+                        <span class="p-3 bg-emerald-100 text-emerald-600 rounded-2xl shadow-sm">
                             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                             </svg>
@@ -21,14 +21,14 @@
                         {{-- View Toggle --}}
                         <div class="inline-flex rounded-xl bg-gray-100 p-1">
                             <button @click="viewMode = 'grid'"
-                                :class="viewMode === 'grid' ? 'bg-white shadow text-blue-600' : 'text-gray-400 hover:text-gray-600'"
+                                :class="viewMode === 'grid' ? 'bg-white shadow text-emerald-600' : 'text-gray-400 hover:text-gray-600'"
                                 class="p-2 rounded-lg transition" title="{{ __('ទម្រង់ប័ណ្ណ') }}">
                                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                                 </svg>
                             </button>
                             <button @click="viewMode = 'table'"
-                                :class="viewMode === 'table' ? 'bg-white shadow text-blue-600' : 'text-gray-400 hover:text-gray-600'"
+                                :class="viewMode === 'table' ? 'bg-white shadow text-emerald-600' : 'text-gray-400 hover:text-gray-600'"
                                 class="p-2 rounded-lg transition" title="{{ __('ទម្រង់តារាង') }}">
                                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
@@ -37,7 +37,7 @@
                         </div>
 
                         {{-- Add Button --}}
-                        <a href="{{ route('admin.create-department') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white font-bold text-sm rounded-xl shadow hover:bg-blue-700 transition">
+                        <a href="{{ route('admin.create-department') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white font-bold text-sm rounded-xl shadow hover:bg-emerald-700 transition">
                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                             </svg>

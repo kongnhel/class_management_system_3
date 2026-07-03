@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Moul&display=swap" rel="stylesheet">
@@ -47,8 +47,8 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-2xl bg-blue-500/20 flex items-center justify-center">
-                            <i class="fas fa-book-open text-blue-300 text-xl"></i>
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 flex items-center justify-center">
+                            <i class="fas fa-book-open text-emerald-300 text-xl"></i>
                         </div>
                         <div>
                             <h2 class="text-3xl font-bold tracking-tight">{{ __('ការផ្តល់ជូនមុខវិជ្ជា') }}</h2>
@@ -62,7 +62,7 @@
                         <button onclick="window.print()" class="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2.5 rounded-xl font-bold transition-all text-sm backdrop-blur-sm">
                             <i class="fas fa-print"></i> <span>{{ __('បោះពុម្ព') }}</span>
                         </button>
-                        <a href="{{ route('admin.create-course-offering') }}" class="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white px-5 py-2.5 rounded-xl font-bold shadow-lg transition-all text-sm">
+                        <a href="{{ route('admin.create-course-offering') }}" class="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white px-5 py-2.5 rounded-xl font-bold shadow-lg transition-all text-sm">
                             <i class="fas fa-plus"></i> <span>{{ __('បន្ថែមថ្មី') }}</span>
                         </a>
                     </div>
@@ -79,7 +79,7 @@
                         <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('ស្វែងរកមុខវិជ្ជា / សាស្ត្រាចារ្យ') }}</label>
                         <div class="relative">
                             <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                            <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('វាយឈ្មោះមុខវិជ្ជា ឬសាស្ត្រាចារ្យ...') }}" class="w-full pl-10 pr-4 rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+                            <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('វាយឈ្មោះមុខវិជ្ជា ឬសាស្ត្រាចារ្យ...') }}" class="w-full pl-10 pr-4 rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm">
                         </div>
                     </div>
 
@@ -87,7 +87,7 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
                         <div>
                             <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('កម្មវិធីសិក្សា') }}</label>
-                            <select name="program_id" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 text-sm">
+                            <select name="program_id" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm">
                                 <option value="">{{ __('ទាំងអស់') }}</option>
                                 @foreach($programs as $program)
                                     <option value="{{ $program->id }}" {{ request('program_id') == $program->id ? 'selected' : '' }}>{{ $program->name_km }}</option>
@@ -96,11 +96,11 @@
                         </div>
                         <div>
                             <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('ជំនាន់') }}</label>
-                            <input type="text" name="generation" value="{{ request('generation') }}" placeholder="Ex: 17" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 text-sm">
+                            <input type="text" name="generation" value="{{ request('generation') }}" placeholder="Ex: 17" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm">
                         </div>
                         <div>
                             <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('វេនសិក្សា') }}</label>
-                            <select name="shift" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 text-sm">
+                            <select name="shift" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm">
                                 <option value="">{{ __('ទាំងអស់') }}</option>
                                 <option value="weekday" {{ request('shift') == 'weekday' ? 'selected' : '' }}>{{ __('ចន្ទ-សុក្រ') }}</option>
                                 <option value="weekend" {{ request('shift') == 'weekend' ? 'selected' : '' }}>{{ __('សៅរ៍-អាទិត្យ') }}</option>
@@ -108,7 +108,7 @@
                         </div>
                         <div>
                             <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('ឆមាស') }}</label>
-                            <select name="semester" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 text-sm">
+                            <select name="semester" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm">
                                 <option value="">{{ __('ទាំងអស់') }}</option>
                                 <option value="ឆមាសទី១" {{ request('semester') == 'ឆមាសទី១' ? 'selected' : '' }}>{{ __('ឆមាសទី១') }}</option>
                                 <option value="ឆមាសទី២" {{ request('semester') == 'ឆមាសទី២' ? 'selected' : '' }}>{{ __('ឆមាសទី២') }}</option>
@@ -116,7 +116,7 @@
                         </div>
                         <div>
                             <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('ឆ្នាំសិក្សា') }}</label>
-                            <select name="academic_year" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 text-sm">
+                            <select name="academic_year" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm">
                                 <option value="">{{ __('ទាំងអស់') }}</option>
                                 @foreach($academicYears as $year)
                                     <option value="{{ $year->name }}" {{ request('academic_year') == $year->name ? 'selected' : '' }}>{{ $year->name }} {{ $year->is_current ? '('.__('បច្ចុប្បន្ន').')' : '' }}</option>
@@ -125,7 +125,7 @@
                         </div>
                         <div>
                             <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('សាស្ត្រាចារ្យ') }}</label>
-                            <select name="lecturer_id" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 text-sm">
+                            <select name="lecturer_id" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm">
                                 <option value="">{{ __('ទាំងអស់') }}</option>
                                 @foreach($lecturers as $lecturer)
                                     <option value="{{ $lecturer->id }}" {{ request('lecturer_id') == $lecturer->id ? 'selected' : '' }}>{{ $lecturer->name }}</option>
@@ -158,7 +158,7 @@
                             </div>
                             <h3 class="text-lg font-bold text-gray-600 mb-2">{{ __('មិនមានការផ្តល់ជូនមុខវិជ្ជា') }}</h3>
                             <p class="text-gray-400 text-sm mb-6">{{ __('សូមព្យាយាមកំណត់ឡើងវិញ ឬបន្ថែមការផ្តល់ជូនថ្មី') }}</p>
-                            <a href="{{ route('admin.create-course-offering') }}" class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition-all">
+                            <a href="{{ route('admin.create-course-offering') }}" class="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition-all">
                                 <i class="fas fa-plus"></i> <span>{{ __('បន្ថែមថ្មី') }}</span>
                             </a>
                         </div>
@@ -180,14 +180,14 @@
                                             </span>
                                             <div class="flex flex-wrap gap-1.5">
                                                 @foreach($offering->targetPrograms as $p)
-                                                    <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-100">
+                                                    <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">
                                                         {{ $p->name_km }} (G{{ $p->pivot->generation }})
                                                     </span>
                                                 @endforeach
                                             </div>
                                         </div>
                                         <div class="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <a href="{{ route('admin.edit-course-offering', $offering->id) }}" class="p-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-colors text-xs">
+                                            <a href="{{ route('admin.edit-course-offering', $offering->id) }}" class="p-2 bg-emerald-50 text-emerald-600 rounded-xl hover:bg-emerald-600 hover:text-white transition-colors text-xs">
                                                 <i class="fas fa-pen"></i>
                                             </a>
                                             <button onclick="openDeleteModal({{ $offering->id }})" class="p-2 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white transition-colors text-xs">
@@ -214,7 +214,7 @@
 
                                     {{-- Enrollment Count --}}
                                     <div class="flex items-center gap-2.5 mb-4 pb-4 border-b border-gray-100">
-                                        <div class="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-500">
+                                        <div class="w-8 h-8 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-500">
                                             <i class="fas fa-users text-xs"></i>
                                         </div>
                                         <span class="text-sm font-semibold text-slate-700">{{ $enrollmentCount }} សិស្សចុះឈ្មោះ</span>
@@ -251,7 +251,7 @@
                             </div>
                             <h3 class="text-lg font-bold text-gray-600 mb-2">{{ __('មិនមានការផ្តល់ជូនមុខវិជ្ជា') }}</h3>
                             <p class="text-gray-400 text-sm mb-6">{{ __('សូមព្យាយាមកំណត់ឡើងវិញ ឬបន្ថែមការផ្តល់ជូនថ្មី') }}</p>
-                            <a href="{{ route('admin.create-course-offering') }}" class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition-all">
+                            <a href="{{ route('admin.create-course-offering') }}" class="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition-all">
                                 <i class="fas fa-plus"></i> <span>{{ __('បន្ថែមថ្មី') }}</span>
                             </a>
                         </div>
@@ -290,14 +290,14 @@
                                                 <td class="px-5 py-4">
                                                     <div class="flex flex-wrap gap-1">
                                                         @foreach($offering->targetPrograms as $p)
-                                                            <span class="text-[10px] bg-blue-50 text-blue-700 px-2 py-0.5 rounded-md font-bold border border-blue-100">
+                                                            <span class="text-[10px] bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-md font-bold border border-emerald-100">
                                                                 {{ $p->name_km }} (G{{ $p->pivot->generation }})
                                                             </span>
                                                         @endforeach
                                                     </div>
                                                 </td>
                                                 <td class="px-5 py-4 text-center">
-                                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-indigo-50 text-indigo-700">
+                                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-50 text-emerald-700">
                                                         {{ $offering->studentCourseEnrollments->count() }}
                                                     </span>
                                                 </td>
@@ -318,7 +318,7 @@
                                                 </td>
                                                 <td class="px-5 py-4 text-center">
                                                     <div class="flex justify-center gap-1.5">
-                                                        <a href="{{ route('admin.edit-course-offering', $offering->id) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-xl text-xs font-bold hover:bg-blue-600 hover:text-white transition-colors">
+                                                        <a href="{{ route('admin.edit-course-offering', $offering->id) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-600 rounded-xl text-xs font-bold hover:bg-emerald-600 hover:text-white transition-colors">
                                                             <i class="fas fa-pen"></i> <span>{{ __('កែ') }}</span>
                                                         </a>
                                                         <button onclick="openDeleteModal({{ $offering->id }})" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-50 text-red-600 rounded-xl text-xs font-bold hover:bg-red-600 hover:text-white transition-colors">

@@ -1,10 +1,10 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <h2 class="font-semibold text-2xl text-gray-900 leading-tight">
                 {{ __('កិច្ចការរបស់ខ្ញុំ') }}
             </h2>
-            <a href="#" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition duration-300">
+            <a href="#" class="px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition duration-300">
                 {{ __('កិច្ចការដែលត្រូវធ្វើ') }}
             </a>
         </div>
@@ -32,7 +32,7 @@
 
                 <div class="overflow-x-auto rounded-xl shadow-lg">
                     <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gradient-to-r from-indigo-500 to-indigo-600">
+                        <thead class="bg-gradient-to-r from-emerald-500 to-emerald-600">
                             <tr>
                                 <th class="px-6 py-4 text-left text-sm font-bold text-white uppercase tracking-wider rounded-tl-xl">{{ __('ចំណងជើង') }}</th>
                                 <th class="px-6 py-4 text-left text-sm font-bold text-white uppercase tracking-wider">{{ __('មុខវិជ្ជា') }}</th>

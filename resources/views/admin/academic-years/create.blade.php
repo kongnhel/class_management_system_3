@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <div class="bg-gray-50 min-h-screen font-sans">
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             {{-- Header --}}
@@ -8,7 +8,7 @@
                     ត្រលប់ក្រោយ
                 </a>
                 <h2 class="text-3xl font-bold text-gray-900 flex items-center gap-3">
-                    <span class="p-3 bg-indigo-100 text-indigo-600 rounded-2xl shadow-sm">
+                    <span class="p-3 bg-emerald-100 text-emerald-600 rounded-2xl shadow-sm">
                         <i class="fas fa-plus-circle text-xl"></i>
                     </span>
                     បង្កើតឆ្នាំសិក្សាថ្មី
@@ -60,7 +60,7 @@
                                     <i class="fas fa-tag text-gray-300"></i>
                                 </div>
                                 <input type="text" name="name" value="{{ old('name') }}" required
-                                    class="block w-full pl-10 pr-4 py-3 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 text-sm transition-all"
+                                    class="block w-full pl-10 pr-4 py-3 rounded-xl border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 text-sm transition-all"
                                     placeholder="ឧ. 2025-2026">
                             </div>
                         </div>
@@ -76,7 +76,7 @@
                                         <i class="fas fa-calendar-day text-gray-300"></i>
                                     </div>
                                     <input type="date" name="start_date" value="{{ old('start_date') }}" required
-                                        class="block w-full pl-10 pr-4 py-3 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 text-sm transition-all">
+                                        class="block w-full pl-10 pr-4 py-3 rounded-xl border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 text-sm transition-all">
                                 </div>
                             </div>
                             <div>
@@ -88,7 +88,7 @@
                                         <i class="fas fa-calendar-check text-gray-300"></i>
                                     </div>
                                     <input type="date" name="end_date" value="{{ old('end_date') }}" required
-                                        class="block w-full pl-10 pr-4 py-3 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 text-sm transition-all">
+                                        class="block w-full pl-10 pr-4 py-3 rounded-xl border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 text-sm transition-all">
                                 </div>
                             </div>
                         </div>
@@ -103,7 +103,7 @@
                                     <i class="fas fa-align-left text-gray-300"></i>
                                 </div>
                                 <textarea name="description" rows="3"
-                                    class="block w-full pl-10 pr-4 py-3 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 text-sm transition-all resize-none"
+                                    class="block w-full pl-10 pr-4 py-3 rounded-xl border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 text-sm transition-all resize-none"
                                     placeholder="ការពិពណ៌នាអំពីឆ្នាំសិក្សា...">{{ old('description') }}</textarea>
                             </div>
                         </div>
@@ -112,7 +112,7 @@
                         <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
                             <label class="flex items-center gap-3 cursor-pointer">
                                 <input type="checkbox" name="is_current" value="1" {{ old('is_current') ? 'checked' : '' }}
-                                    class="h-5 w-5 text-blue-600 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all">
+                                    class="h-5 w-5 text-emerald-600 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 transition-all">
                                 <div>
                                     <span class="block text-sm font-bold text-gray-700">កំណត់ជាឆ្នាំសិក្សាបច្ចុប្បន្ន</span>
                                     <span class="block text-xs text-gray-400 mt-0.5">ឆ្នាំសិក្សាមួយអាចកំណត់ជាបច្ចុប្បន្នបាន</span>
@@ -127,7 +127,7 @@
                             <i class="fas fa-times"></i>
                             បោះបង់
                         </a>
-                        <button type="submit" class="inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-br from-blue-500 to-indigo-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-blue-100 hover:shadow-blue-200 transition-all active:scale-95">
+                        <button type="submit" class="inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-emerald-100 hover:shadow-emerald-200 transition-all active:scale-95">
                             <i class="fas fa-save"></i>
                             រក្សាទុក
                         </button>

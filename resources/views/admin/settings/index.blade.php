@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <div class="min-h-screen bg-gray-100 font-sans text-gray-900">
         <div class="bg-slate-900 text-white pb-32 pt-12 shadow-md">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -29,38 +29,38 @@
                 {{-- Grading Settings --}}
                 <div class="bg-white rounded-xl shadow-xl border border-gray-100 p-6">
                     <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                        <i class="fas fa-calculator text-blue-500"></i> ការកំណត់ការដាក់ពិន្ទុ
+                        <i class="fas fa-calculator text-emerald-500"></i> ការកំណត់ការដាក់ពិន្ទុ
                     </h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">អវត្តមាន (ច្រើនជាង X ដង = -១ ពិន្ទុ)</label>
                             <input type="number" name="settings[absence_threshold]" value="{{ $settingMap['absence_threshold'] ?? 2 }}" min="1" max="10"
-                                class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm">
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">សិទ្ធិអនុគ្រោះ (ច្រើនជាង X ដង = -១ ពិន្ទុ)</label>
                             <input type="number" name="settings[permission_threshold]" value="{{ $settingMap['permission_threshold'] ?? 4 }}" min="1" max="10"
-                                class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm">
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">ទម្ងន់អវត្តមាន (%)</label>
                             <input type="number" name="settings[attendance_weight]" value="{{ $settingMap['attendance_weight'] ?? 15 }}" min="0" max="100"
-                                class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm">
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">ទម្ងន់ប្រលងពាក់កណ្តាលឆមាស (%)</label>
                             <input type="number" name="settings[midterm_weight]" value="{{ $settingMap['midterm_weight'] ?? 15 }}" min="0" max="100"
-                                class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm">
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">ទម្ងន់កិច្ចការក្រុម (%)</label>
                             <input type="number" name="settings[group_assignment_weight]" value="{{ $settingMap['group_assignment_weight'] ?? 20 }}" min="0" max="100"
-                                class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm">
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">ទម្ងន់ប្រលងផ្ទាល់ (%)</label>
                             <input type="number" name="settings[final_exam_weight]" value="{{ $settingMap['final_exam_weight'] ?? 50 }}" min="0" max="100"
-                                class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm">
                         </div>
                     </div>
                 </div>
@@ -75,13 +75,13 @@
                             <input type="hidden" name="settings[self_enrollment_enabled]" value="0">
                             <input type="checkbox" name="settings[self_enrollment_enabled]" value="1" 
                                 {{ ($settingMap['self_enrollment_enabled'] ?? '1') == '1' ? 'checked' : '' }}
-                                class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                class="h-4 w-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500">
                             <label class="ml-2 block text-sm text-gray-700">អនុញ្ញាតឱ្យសិស្សចុះឈ្មោះដោយខ្លួនឯង</label>
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">សមត្ថភាពអតិបរមាក្នុងមុខវិជ្ជា</label>
                             <input type="number" name="settings[max_enrollment_per_course]" value="{{ $settingMap['max_enrollment_per_course'] ?? 50 }}" min="1" max="200"
-                                class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm">
                         </div>
                     </div>
                 </div>

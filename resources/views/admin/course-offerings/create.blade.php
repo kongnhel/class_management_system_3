@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <div class="min-h-screen bg-gray-50">
         {{-- Header --}}
         <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white pb-16 pt-10">
@@ -8,8 +8,8 @@
                         <i class="fas fa-arrow-left text-white"></i>
                     </a>
                     <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 rounded-2xl bg-blue-500/20 flex items-center justify-center">
-                            <i class="fas fa-plus-circle text-blue-300 text-xl"></i>
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 flex items-center justify-center">
+                            <i class="fas fa-plus-circle text-emerald-300 text-xl"></i>
                         </div>
                         <div>
                             <h2 class="text-3xl font-bold tracking-tight">{{ __('បង្កើតការផ្តល់ជូនមុខវិជ្ជាថ្មី') }}</h2>
@@ -62,8 +62,8 @@
                 {{-- Section 1: Basic Info --}}
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                     <div class="flex items-center gap-3 mb-6">
-                        <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
-                            <span class="text-blue-600 font-bold text-sm">1</span>
+                        <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
+                            <span class="text-emerald-600 font-bold text-sm">1</span>
                         </div>
                         <div>
                             <h3 class="text-lg font-bold text-gray-900">{{ __('ព័ត៌មានមូលដ្ឋាន') }}</h3>
@@ -72,7 +72,7 @@
                     </div>
                     <div>
                         <label for="course_id" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('មុខវិជ្ជា') }} <span class="text-red-500">*</span></label>
-                        <select id="course_id" name="course_id" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" required>
+                        <select id="course_id" name="course_id" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm" required>
                             <option value="">{{ __('ជ្រើសរើសមុខវិជ្ជា') }}</option>
                             @foreach ($courses as $course)
                                 <option value="{{ $course->id }}" data-programs='@json($course->programs)' data-generation="{{ $course->generation }}" {{ old('course_id') == $course->id ? 'selected' : '' }}>
@@ -86,8 +86,8 @@
                 {{-- Section 2: Target Programs --}}
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                     <div class="flex items-center gap-3 mb-6">
-                        <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center">
-                            <span class="text-indigo-600 font-bold text-sm">2</span>
+                        <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
+                            <span class="text-emerald-600 font-bold text-sm">2</span>
                         </div>
                         <div>
                             <h3 class="text-lg font-bold text-gray-900">{{ __('កម្មវិធីសិក្សា និងជំនាន់') }}</h3>
@@ -118,7 +118,7 @@
                         <div class="space-y-4">
                             <div>
                                 <label for="lecturer_user_id" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('សាស្ត្រាចារ្យ') }} <span class="text-red-500">*</span></label>
-                                <select id="lecturer_user_id" name="lecturer_user_id" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" required>
+                                <select id="lecturer_user_id" name="lecturer_user_id" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm" required>
                                     <option value="">{{ __('ជ្រើសរើសសាស្ត្រាចារ្យ') }}</option>
                                     @foreach ($professors as $professor)
                                         <option value="{{ $professor->id }}" {{ old('lecturer_user_id') == $professor->id ? 'selected' : '' }}>{{ $professor->name }}</option>
@@ -128,7 +128,7 @@
                             <div class="grid grid-cols-2 gap-3">
                                 <div>
                                     <label for="academic_year" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ឆ្នាំសិក្សា') }} <span class="text-red-500">*</span></label>
-                                    <select name="academic_year" id="academic_year" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 text-sm" required>
+                                    <select name="academic_year" id="academic_year" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>
                                         <option value="">{{ __('ជ្រើសរើស') }}</option>
                                         @foreach ($academicYears as $year)
                                             <option value="{{ $year->name }}" data-start="{{ \Carbon\Carbon::parse($year->start_date)->format('Y-m-d') }}" data-end="{{ \Carbon\Carbon::parse($year->end_date)->format('Y-m-d') }}" {{ old('academic_year') == $year->name ? 'selected' : '' }}>
@@ -139,7 +139,7 @@
                                 </div>
                                 <div>
                                     <label for="semester" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ឆមាស') }} <span class="text-red-500">*</span></label>
-                                    <select name="semester" id="semester" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 text-sm" required>
+                                    <select name="semester" id="semester" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>
                                         <option value="" disabled {{ old('semester') ? '' : 'selected' }}>{{ __('ជ្រើសរើស') }}</option>
                                         <option value="ឆមាសទី១" {{ old('semester') == 'ឆមាសទី១' ? 'selected' : '' }}>{{ __('ឆមាសទី១') }}</option>
                                         <option value="ឆមាសទី២" {{ old('semester') == 'ឆមាសទី២' ? 'selected' : '' }}>{{ __('ឆមាសទី២') }}</option>
@@ -148,20 +148,20 @@
                             </div>
                             <div>
                                 <label for="capacity" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ចំនួននិស្សិតអតិបរមា') }} <span class="text-red-500">*</span></label>
-                                <input type="number" name="capacity" id="capacity" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 text-sm" value="{{ old('capacity') }}" placeholder="ឧទាហរណ៍: ៣០" required>
+                                <input type="number" name="capacity" id="capacity" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" value="{{ old('capacity') }}" placeholder="ឧទាហរណ៍: ៣០" required>
                             </div>
                             <div class="grid grid-cols-2 gap-3">
                                 <div>
                                     <label for="start_date" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('កាលបរិច្ឆេទចាប់ផ្តើម') }} <span class="text-red-500">*</span></label>
-                                    <input type="date" name="start_date" id="start_date" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 text-sm" value="{{ old('start_date') }}" required>
+                                    <input type="date" name="start_date" id="start_date" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" value="{{ old('start_date') }}" required>
                                 </div>
                                 <div>
                                     <label for="end_date" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('កាលបរិច្ឆេទបញ្ចប់') }} <span class="text-red-500">*</span></label>
-                                    <input type="date" name="end_date" id="end_date" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 text-sm" value="{{ old('end_date') }}" required>
+                                    <input type="date" name="end_date" id="end_date" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" value="{{ old('end_date') }}" required>
                                 </div>
                             </div>
                             <label class="flex items-center gap-3 cursor-pointer">
-                                <input type="checkbox" name="is_open_for_self_enrollment" value="1" class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" {{ old('is_open_for_self_enrollment') ? 'checked' : '' }}>
+                                <input type="checkbox" name="is_open_for_self_enrollment" value="1" class="w-4 h-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500" {{ old('is_open_for_self_enrollment') ? 'checked' : '' }}>
                                 <span class="text-sm font-medium text-gray-700">{{ __('អនុញ្ញាតឱ្យសិស្សចុះឈ្មោះដោយខ្លួនឯង') }}</span>
                             </label>
                         </div>
@@ -180,8 +180,8 @@
                         </div>
                         <div id="schedules-container" class="space-y-3 flex-grow min-h-[120px]"></div>
                         <div class="mt-4 pt-4 border-t border-gray-100">
-                            <button type="button" id="add-schedule" class="flex items-center gap-2 text-blue-600 font-bold text-sm hover:text-blue-700 transition-colors">
-                                <div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center">
+                            <button type="button" id="add-schedule" class="flex items-center gap-2 text-emerald-600 font-bold text-sm hover:text-emerald-700 transition-colors">
+                                <div class="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center">
                                     <i class="fas fa-plus text-xs"></i>
                                 </div>
                                 <span>{{ __('បន្ថែមម៉ោងសិក្សាថ្មី') }}</span>
@@ -196,7 +196,7 @@
                         <a href="{{ route('admin.manage-course-offerings') }}" class="flex items-center gap-2 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl font-bold text-sm transition-colors">
                             <i class="fas fa-times"></i> <span>{{ __('បោះបង់') }}</span>
                         </a>
-                        <button type="submit" class="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white px-8 py-3 rounded-xl font-bold text-sm shadow-lg shadow-blue-500/25 transition-all">
+                        <button type="submit" class="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white px-8 py-3 rounded-xl font-bold text-sm shadow-lg shadow-emerald-500/25 transition-all">
                             <i class="fas fa-check"></i> <span>{{ __('បង្កើតការផ្តល់ជូនមុខវិជ្ជា') }}</span>
                         </button>
                     </div>
@@ -250,7 +250,7 @@
                                 </div>
                                 <div>
                                     <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('ជំនាន់') }}</label>
-                                    <div class="w-full py-2 px-3 bg-blue-50 rounded-xl text-sm font-bold text-blue-700 border border-blue-100">${courseGen ? 'ជំនាន់ទី ' + courseGen : '{{ __("មិនទាន់កំណត់") }}'}</div>
+                                    <div class="w-full py-2 px-3 bg-emerald-50 rounded-xl text-sm font-bold text-emerald-700 border border-emerald-100">${courseGen ? 'ជំនាន់ទី ' + courseGen : '{{ __("មិនទាន់កំណត់") }}'}</div>
                                     <input type="hidden" name="target_programs[${index}][generation]" value="${courseGen}">
                                 </div>
                             </div>
@@ -275,7 +275,7 @@
                 const roomOptions = rooms.map(room => `<option value="${room.id}" ${initialData.room_id == room.id ? 'selected' : ''}>${room.room_number}</option>`).join('');
                 scheduleDiv.innerHTML = `
                     <div class="flex items-center justify-between mb-3">
-                        <div class="flex items-center gap-2 text-sm font-bold text-blue-600">
+                        <div class="flex items-center gap-2 text-sm font-bold text-emerald-600">
                             <i class="fas fa-clock text-xs"></i>
                             <span>Session ${currentSessions}</span>
                         </div>
@@ -286,7 +286,7 @@
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                         <div class="col-span-2 md:col-span-1">
                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('ថ្ងៃ') }}</label>
-                            <select name="schedules[${scheduleIndex}][day_of_week]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 text-sm" required>
+                            <select name="schedules[${scheduleIndex}][day_of_week]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>
                                 <option value="">{{ __('រើសថ្ងៃ') }}</option>
                                 <option value="Monday" ${initialData.day_of_week === 'Monday' ? 'selected' : ''}>{{ __('ច័ន្ទ') }}</option>
                                 <option value="Tuesday" ${initialData.day_of_week === 'Tuesday' ? 'selected' : ''}>{{ __('អង្គារ') }}</option>
@@ -299,18 +299,18 @@
                         </div>
                         <div class="col-span-2 md:col-span-1">
                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('បន្ទប់') }}</label>
-                            <select name="schedules[${scheduleIndex}][room_id]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 text-sm" required>
+                            <select name="schedules[${scheduleIndex}][room_id]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>
                                 <option value="">{{ __('រើសបន្ទប់') }}</option>
                                 ${roomOptions}
                             </select>
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('ចាប់ផ្តើម') }}</label>
-                            <input type="time" name="schedules[${scheduleIndex}][start_time]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 text-sm" value="${initialData.start_time || ''}" required>
+                            <input type="time" name="schedules[${scheduleIndex}][start_time]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" value="${initialData.start_time || ''}" required>
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('បញ្ចប់') }}</label>
-                            <input type="time" name="schedules[${scheduleIndex}][end_time]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 text-sm" value="${initialData.end_time || ''}" required>
+                            <input type="time" name="schedules[${scheduleIndex}][end_time]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" value="${initialData.end_time || ''}" required>
                         </div>
                     </div>
                 `;

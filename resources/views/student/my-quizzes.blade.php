@@ -1,10 +1,10 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <h2 class="font-semibold text-2xl text-gray-900 leading-tight">
                 {{ __('Quiz របស់ខ្ញុំ') }}
             </h2>
-            <a href="#" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition duration-300">
+            <a href="#" class="px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition duration-300">
                 {{ __('Quiz ដែលបានបញ្ចប់') }}
             </a>
         </div>
@@ -35,7 +35,7 @@
                         <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6 flex flex-col justify-between hover:shadow-2xl transition-all duration-300">
                             <div>
                                 <h3 class="text-xl font-bold text-gray-900 mb-2">{{ $quiz->title_km ?? 'N/A' }}</h3>
-                                <p class="text-sm text-gray-600 mb-4 font-medium">{{ __('មុខវិជ្ជា:') }} <span class="text-indigo-600">{{ $quiz->courseOffering->course->title_km ?? 'N/A' }}</span></p>
+                                <p class="text-sm text-gray-600 mb-4 font-medium">{{ __('មុខវិជ្ជា:') }} <span class="text-emerald-600">{{ $quiz->courseOffering->course->title_km ?? 'N/A' }}</span></p>
                                 <p class="text-gray-700 mb-4 line-clamp-3">{{ $quiz->description_km ?? 'N/A' }}</p>
                             </div>
                             <div class="flex items-center justify-between mt-4">
@@ -48,7 +48,7 @@
                                     </button>
                                 @else
                                     <span class="text-sm text-red-500 font-semibold">{{ __('មិនទាន់បានធ្វើ') }}</span>
-                                    <a href="{{ route('student.take-quiz', $quiz->id) }}" class="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 transition-all duration-200 ease-in-out">
+                                    <a href="{{ route('student.take-quiz', $quiz->id) }}" class="bg-emerald-600 text-white px-5 py-2 rounded-lg hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 transition-all duration-200 ease-in-out">
                                         {{ __('ចូលរួម Quiz') }}
                                     </a>
                                 @endif

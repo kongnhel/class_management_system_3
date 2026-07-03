@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         {{-- Responsive Header: Smaller text on mobile --}}
         <h2 class="font-extrabold text-2xl md:text-4xl text-gray-900 leading-tight tracking-wide">
@@ -88,7 +88,7 @@
 
                                                 {{-- Telegram Icon --}}
                                                 @if($lecturerProfile && $lecturerProfile->telegram_user)
-                                                    <a href="https://t.me/{{ $lecturerProfile->telegram_user }}" target="_blank" class="text-[#0088cc] hover:text-blue-600 transition-transform transform hover:scale-110">
+                                                    <a href="https://t.me/{{ $lecturerProfile->telegram_user }}" target="_blank" class="text-[#0088cc] hover:text-emerald-600 transition-transform transform hover:scale-110">
                                                         <i class="fab fa-telegram text-2xl md:text-3xl"></i>
                                                     </a>
                                                 @endif
@@ -115,7 +115,7 @@
                                                     <a href="{{ route('student.leader.attendance', $enrollment->course_offering_id) }}" class="flex items-center justify-center bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded-xl text-[9px] md:text-[10px] font-bold transition shadow-sm">
                                                         <i class="fas fa-clipboard-list mr-1"></i> {{ __('វត្តមាន') }}
                                                     </a>
-                                                    <a href="{{ route('student.leader.report', $enrollment->course_offering_id) }}" class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-xl text-[9px] md:text-[10px] font-bold transition shadow-sm">
+                                                    <a href="{{ route('student.leader.report', $enrollment->course_offering_id) }}" class="flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-xl text-[9px] md:text-[10px] font-bold transition shadow-sm">
                                                         <i class="fas fa-file-invoice mr-1"></i> {{ __('របាយការណ៍') }}
                                                     </a>
                                                 </div>

@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <h2 class="font-bold text-3xl text-gray-900 leading-tight flex items-center gap-2">
             📢 {{ __('ការជូនដំណឹង') }}
@@ -75,7 +75,7 @@
                                      data-read="{{ $item->is_read ? 'true' : 'false' }}"
                                      x-show="filter === 'all' || (filter === 'unread' && $el.dataset.read === 'false')"
                                      class="p-4 rounded-xl border transition-all duration-300 flex items-start gap-4 @if(!$item->is_read) bg-green-50 border-green-200 shadow-sm @else bg-white border-gray-200 @endif">
-                                    <div class="flex-shrink-0 h-10 w-10 rounded-full @if($item->type === 'announcement') bg-blue-100 text-blue-600 @else bg-green-100 text-green-600 @endif flex items-center justify-center">
+                                    <div class="flex-shrink-0 h-10 w-10 rounded-full @if($item->type === 'announcement') bg-emerald-100 text-emerald-600 @else bg-green-100 text-green-600 @endif flex items-center justify-center">
                                         @if($item->type === 'announcement')
                                             <i class="fas fa-bullhorn"></i>
                                         @else
@@ -89,7 +89,7 @@
                                             <span>{{ __('ដោយ៖') }} <strong>{{ $item->from_user_name }}</strong> - {{ $item->created_at->locale('km')->diffForHumans() }}</span>
                                             <div class="flex items-center gap-2">
                                                 @if($item->type === 'announcement')
-                                                    <span class="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-semibold">{{ __('ការជូនដំណឹង') }}</span>
+                                                    <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-semibold">{{ __('ការជូនដំណឹង') }}</span>
                                                 @endif
                                                 @if(!$item->is_read)
                                                     @if($item->type === 'notification')

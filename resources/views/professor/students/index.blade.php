@@ -451,18 +451,18 @@
                 @php
                     $profile = $student->studentProfile;
                     $enrollment = $student->studentProgramEnrollments->first();
-                    $genderKm = in_array(strtoupper($profile->gender ?? ''), ['M', 'MALE']) ? 'ប្រុស' : 'ស្រី';
+                    $genderKm = in_array(strtoupper($profile?->gender ?? ''), ['M', 'MALE']) ? 'ប្រុស' : 'ស្រី';
                 @endphp
                 <tr>
                     <td class="border border-black px-2 py-2 text-center">{{ $index + 1 }}</td>
                     <td class="border border-black px-2 py-2 text-center font-mono">{{ $student->student_id_code ?? '-' }}</td>
-                    <td class="border border-black px-2 py-2 font-medium">{{ $profile->full_name_km ?? $student->name }}</td>
+                    <td class="border border-black px-2 py-2 font-medium">{{ $profile?->full_name_km ?? $student->name }}</td>
                     <td class="border border-black px-2 py-2 text-center">{{ $genderKm }}</td>
                     <td class="border border-black px-2 py-2 text-center font-mono">
-                        {{ $profile->date_of_birth ? \Carbon\Carbon::parse($profile->date_of_birth)->format('d/m/Y') : '-' }}
+                        {{ $profile?->date_of_birth ? \Carbon\Carbon::parse($profile->date_of_birth)->format('d/m/Y') : '-' }}
                     </td>
                     <td class="border border-black px-2 py-2 leading-tight">{{ $enrollment->program->name_km ?? __('មិនទាន់កំណត់') }}</td>
-                    <td class="border border-black px-2 py-2 text-center font-mono">{{ $profile->phone_number ?? '-' }}</td>
+                    <td class="border border-black px-2 py-2 text-center font-mono">{{ $profile?->phone_number ?? '-' }}</td>
                 </tr>
             @endforeach
         </tbody>

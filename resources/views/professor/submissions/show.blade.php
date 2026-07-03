@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
@@ -53,7 +53,7 @@
             {{-- Student Info Card --}}
             <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 mb-6">
                 <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                    <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-5 h-5 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                     </svg>
                     {{ __('ព័ត៌មាននិស្សិត') }}
@@ -86,14 +86,14 @@
             @if($submission->file_path)
                 <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 mb-6">
                     <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                        <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-5 h-5 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                         </svg>
                         {{ __('ឯកសារដែលបានដាក់ស្នើ') }}
                     </h3>
                     <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
                         <div class="flex items-center">
-                            <svg class="w-10 h-10 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-10 h-10 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
                             </svg>
                             <div class="ml-3">
@@ -102,7 +102,7 @@
                             </div>
                         </div>
                         <a href="{{ route('professor.submissions.download', ['offering_id' => $courseOffering->id, 'assignment_id' => $assignment->id, 'submission_id' => $submission->id]) }}"
-                            class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm transition-all">
+                            class="inline-flex items-center px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-sm transition-all">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                             </svg>
@@ -129,7 +129,7 @@
                                 <input type="number" id="grade_received" name="grade_received" 
                                     value="{{ $submission->grade_received ?? '' }}" 
                                     min="0" max="{{ $assignment->max_score }}" required
-                                    class="block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-lg font-bold">
+                                    class="block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all text-lg font-bold">
                                 <span class="ml-3 text-gray-500 font-medium">/ {{ $assignment->max_score }}</span>
                             </div>
                             @error('grade_received')
@@ -141,7 +141,7 @@
                     <div class="mb-6">
                         <label for="feedback" class="block text-sm font-medium text-gray-700">{{ __('មតិយោបល់') }}</label>
                         <textarea id="feedback" name="feedback" rows="4"
-                            class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                            class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
                             placeholder="{{ __('សូមបញ្ចូលមតិយោបល់សម្រាប់និស្សិត...') }}">{{ $submission->feedback ?? '' }}</textarea>
                         @error('feedback')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -154,7 +154,7 @@
                             {{ __('បោះបង់') }}
                         </a>
                         <button type="submit"
-                            class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-sm shadow-sm transition-all">
+                            class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-sm shadow-sm transition-all">
                             {{ __('រក្សាទុកពិន្ទុ') }}
                         </button>
                     </div>

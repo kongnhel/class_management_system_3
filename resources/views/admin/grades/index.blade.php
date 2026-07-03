@@ -1,9 +1,9 @@
-<x-app-layout>
+﻿<x-app-layout>
     <div class="bg-gray-50 min-h-screen font-sans text-gray-900">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             {{-- Header --}}
             <div class="flex items-center gap-4 mb-8">
-                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center shadow-lg">
                     <i class="fas fa-chart-line text-white text-lg"></i>
                 </div>
                 <div>
@@ -23,12 +23,12 @@
                                     <i class="fas fa-search text-gray-400"></i>
                                 </span>
                                 <input type="text" name="search" value="{{ request('search') }}" placeholder="វាយបញ្ចូលឈ្មោះមុខវិជ្ជា ឬសាស្ត្រាចារ្យ..."
-                                    class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm transition-all">
+                                    class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
                             </div>
                         </div>
                         <div class="md:col-span-3">
                             <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">កម្មវិធីសិក្សា</label>
-                            <select name="program_id" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm transition-all">
+                            <select name="program_id" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
                                 <option value="">បង្ហាញទាំងអស់</option>
                                 @foreach($programs as $program)
                                     <option value="{{ $program->id }}" {{ request('program_id') == $program->id ? 'selected' : '' }}>{{ $program->name_km }}</option>
@@ -37,7 +37,7 @@
                         </div>
                         <div class="md:col-span-2">
                             <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">ឆមាស</label>
-                            <select name="semester" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm transition-all">
+                            <select name="semester" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
                                 <option value="">ទាំងអស់</option>
                                 <option value="ឆមាសទី១" {{ request('semester') == 'ឆមាសទី១' ? 'selected' : '' }}>ឆមាសទី១</option>
                                 <option value="ឆមាសទី២" {{ request('semester') == 'ឆមាសទី២' ? 'selected' : '' }}>ឆមាសទី២</option>
@@ -46,13 +46,13 @@
                         <div class="md:col-span-2">
                             <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">ឆ្នាំសិក្សា</label>
                             <input type="text" name="academic_year" value="{{ request('academic_year') }}" placeholder="ឧ. 2024-2025"
-                                class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm transition-all">
+                                class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
                         </div>
                         <div class="md:col-span-2 flex items-end gap-2">
                             <a href="{{ route('admin.grades.index') }}" title="កំណត់ឡើងវិញ" class="px-3 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl transition-colors font-bold text-sm">
                                 <i class="fas fa-sync-alt"></i>
                             </a>
-                            <button type="submit" class="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold px-4 py-2.5 rounded-xl transition-all shadow-md text-sm whitespace-nowrap">
+                            <button type="submit" class="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-bold px-4 py-2.5 rounded-xl transition-all shadow-md text-sm whitespace-nowrap">
                                 <i class="fas fa-filter mr-1"></i> តម្រង់ទិស
                             </button>
                         </div>
@@ -83,7 +83,7 @@
                             <tr class="hover:bg-gray-50 transition-colors">
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center flex-shrink-0">
+                                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-500 flex items-center justify-center flex-shrink-0">
                                             <i class="fas fa-book text-white text-sm"></i>
                                         </div>
                                         <div>
@@ -97,7 +97,7 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-2">
-                                        <span class="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 text-xs font-bold">{{ $offering->semester }}</span>
+                                        <span class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-xs font-bold">{{ $offering->semester }}</span>
                                         <span class="text-sm text-gray-500">{{ $offering->academic_year }}</span>
                                     </div>
                                 </td>
@@ -108,7 +108,7 @@
                                 </td>
                                 <td class="px-6 py-4 text-center">
                                     <div class="flex justify-center gap-2">
-                                        <a href="{{ route('admin.grades.show', $offering->id) }}" class="p-2.5 text-blue-600 hover:bg-blue-50 rounded-xl transition-colors" title="មើលពិន្ទុ">
+                                        <a href="{{ route('admin.grades.show', $offering->id) }}" class="p-2.5 text-emerald-600 hover:bg-emerald-50 rounded-xl transition-colors" title="មើលពិន្ទុ">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                         <a href="{{ route('admin.grades.export', $offering->id) }}" class="p-2.5 text-emerald-600 hover:bg-emerald-50 rounded-xl transition-colors" title="នាំចេញ">

@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <div class="bg-gray-50 min-h-screen font-sans text-gray-900">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             {{-- Header --}}
@@ -30,12 +30,12 @@
                 </div>
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-5">
                     <div class="flex items-center gap-3 mb-2">
-                        <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
-                            <i class="fas fa-list text-blue-500"></i>
+                        <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
+                            <i class="fas fa-list text-emerald-500"></i>
                         </div>
                         <span class="text-xs font-bold text-gray-500 uppercase">កំណត់ត្រាសរុប</span>
                     </div>
-                    <div class="text-2xl font-bold text-blue-600">{{ $stats['total_records'] }}</div>
+                    <div class="text-2xl font-bold text-emerald-600">{{ $stats['total_records'] }}</div>
                 </div>
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-5">
                     <div class="flex items-center gap-3 mb-2">
@@ -66,12 +66,12 @@
                 </div>
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-5">
                     <div class="flex items-center gap-3 mb-2">
-                        <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center">
-                            <i class="fas fa-percentage text-indigo-500"></i>
+                        <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
+                            <i class="fas fa-percentage text-emerald-500"></i>
                         </div>
                         <span class="text-xs font-bold text-gray-500 uppercase">អត្រាវត្តមាន</span>
                     </div>
-                    <div class="text-2xl font-bold text-indigo-600">{{ $stats['overall_rate'] }}%</div>
+                    <div class="text-2xl font-bold text-emerald-600">{{ $stats['overall_rate'] }}%</div>
                 </div>
             </div>
 
@@ -129,7 +129,7 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-center">
-                                    <span class="inline-flex items-center justify-center min-w-[28px] h-7 px-2 rounded-lg bg-indigo-50 text-indigo-600 font-bold text-xs">
+                                    <span class="inline-flex items-center justify-center min-w-[28px] h-7 px-2 rounded-lg bg-emerald-50 text-emerald-600 font-bold text-xs">
                                         {{ $data['permission_days'] }}
                                     </span>
                                 </td>

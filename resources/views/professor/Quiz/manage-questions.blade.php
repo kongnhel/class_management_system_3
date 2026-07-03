@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
@@ -6,7 +6,7 @@
                     {{ __('គ្រប់គ្រងសំណួរ') }}
                 </h2>
                 <p class="mt-1 text-lg text-gray-500">
-                    Quiz: <span class="font-semibold text-indigo-600">{{ $quiz->title_km ?? $quiz->title_en }}</span>
+                    Quiz: <span class="font-semibold text-emerald-600">{{ $quiz->title_km ?? $quiz->title_en }}</span>
                     | មុខវិជ្ជា: {{ $courseOffering->course->title_km ?? 'N/A' }}
                 </p>
             </div>
@@ -15,16 +15,16 @@
                 <a href="{{ route('professor.quizzes.index', $courseOffering->id) }}"
                    class="inline-flex items-center px-6 py-3 border border-gray-300 bg-white 
                           hover:bg-gray-100 text-gray-700 text-sm font-semibold rounded-lg shadow-sm 
-                          transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                          transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-emerald-400">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                     {{ __('ត្រលប់ទៅបញ្ជី Quiz') }}
                 </a>
 
                 <button onclick="document.getElementById('create-question-modal').classList.remove('hidden')"
-                    class="inline-flex items-center px-6 py-3 bg-indigo-600 
-                           hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg shadow-md 
+                    class="inline-flex items-center px-6 py-3 bg-emerald-600 
+                           hover:bg-emerald-700 text-white text-sm font-semibold rounded-lg shadow-md 
                            hover:shadow-lg transform hover:scale-105 
-                           transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                           transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-emerald-400">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
                     {{ __('បន្ថែមសំណួរថ្មី') }}
                 </button>
@@ -103,7 +103,7 @@
                 {{-- Placeholder for Question Type --}}
                 <div class="mb-4">
                     <label for="create_question_type" class="block text-sm font-medium text-gray-700">{{ __('ប្រភេទសំណួរ') }}<span class="text-red-500">*</span></label>
-                    <select name="type" id="create_question_type" required class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                    <select name="type" id="create_question_type" required class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500">
                         <option value="multiple_choice">{{ __('ពហុជ្រើសរើស (Multiple Choice)') }}</option>
                         {{-- Add other types as needed --}}
                     </select>
@@ -112,13 +112,13 @@
                 <!-- Question Text (Khmer) -->
                 <div class="mb-4">
                     <label for="create_text_km" class="block text-sm font-medium text-gray-700">{{ __('សំណួរ (ខ្មែរ)') }}<span class="text-red-500">*</span></label>
-                    <textarea name="text_km" id="create_text_km" rows="4" required class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('text_km') }}</textarea>
+                    <textarea name="text_km" id="create_text_km" rows="4" required class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500">{{ old('text_km') }}</textarea>
                 </div>
 
                 <!-- Score -->
                 <div class="mb-6">
                     <label for="create_score" class="block text-sm font-medium text-gray-700">{{ __('ពិន្ទុសម្រាប់សំណួរនេះ') }}<span class="text-red-500">*</span></label>
-                    <input type="number" name="score" id="create_score" required step="0.1" min="0" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" value="{{ old('score', 1) }}">
+                    <input type="number" name="score" id="create_score" required step="0.1" min="0" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500" value="{{ old('score', 1) }}">
                 </div>
 
                 {{-- Note: Options/Answers Management requires a dedicated component/further logic --}}
@@ -129,7 +129,7 @@
                             class="px-4 py-2 text-gray-700 font-semibold rounded-lg shadow-sm transition-all duration-200 hover:bg-gray-200">
                         {{ __('បោះបង់') }}
                     </button>
-                    <button type="submit" class="px-6 py-3 text-white font-extrabold rounded-lg shadow-md transition-all duration-200 bg-indigo-600 hover:bg-indigo-700">
+                    <button type="submit" class="px-6 py-3 text-white font-extrabold rounded-lg shadow-md transition-all duration-200 bg-emerald-600 hover:bg-emerald-700">
                         {{ __('បង្កើតសំណួរ') }}
                     </button>
                 </div>
@@ -148,7 +148,7 @@
                 
                 <div class="mb-4">
                     <label for="edit_question_type" class="block text-sm font-medium text-gray-700">{{ __('ប្រភេទសំណួរ') }}<span class="text-red-500">*</span></label>
-                    <select name="type" id="edit_question_type" required class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                    <select name="type" id="edit_question_type" required class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500">
                         <option value="multiple_choice">{{ __('ពហុជ្រើសរើស (Multiple Choice)') }}</option>
                     </select>
                 </div>
@@ -156,13 +156,13 @@
                 <!-- Question Text (Khmer) -->
                 <div class="mb-4">
                     <label for="edit_text_km" class="block text-sm font-medium text-gray-700">{{ __('សំណួរ (ខ្មែរ)') }}<span class="text-red-500">*</span></label>
-                    <textarea name="text_km" id="edit_text_km" rows="4" required class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"></textarea>
+                    <textarea name="text_km" id="edit_text_km" rows="4" required class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"></textarea>
                 </div>
 
                 <!-- Score -->
                 <div class="mb-6">
                     <label for="edit_score" class="block text-sm font-medium text-gray-700">{{ __('ពិន្ទុសម្រាប់សំណួរនេះ') }}<span class="text-red-500">*</span></label>
-                    <input type="number" name="score" id="edit_score" required step="0.1" min="0" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                    <input type="number" name="score" id="edit_score" required step="0.1" min="0" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500">
                 </div>
                 
                 <div class="flex justify-end space-x-3">

@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between px-4 md:px-6 lg:px-8">
             <div>
@@ -21,8 +21,8 @@
                     <div class="relative overflow-hidden bg-white border border-gray-200 shadow-lg rounded-xl p-4">
                         <div class="flex items-start gap-3">
                             @if(session('success'))
-                                <div class="h-8 w-8 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                                    <svg class="h-4 w-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                                <div class="h-8 w-8 bg-emerald-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <svg class="h-4 w-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                                 </div>
                             @else
                                 <div class="h-8 w-8 bg-red-50 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -34,7 +34,7 @@
                                 <p class="mt-0.5 text-sm text-gray-500">{{ session('success') ?? session('error') }}</p>
                             </div>
                         </div>
-                        <div class="absolute bottom-0 left-0 h-1 bg-blue-500 rounded-b-xl transition-all duration-100" :style="{ width: progress + '%' }"></div>
+                        <div class="absolute bottom-0 left-0 h-1 bg-emerald-500 rounded-b-xl transition-all duration-100" :style="{ width: progress + '%' }"></div>
                     </div>
                 </div>
             @endif
@@ -42,8 +42,8 @@
             {{-- Info Banner --}}
             <div class="bg-white border border-gray-200 rounded-2xl p-5">
                 <div class="flex items-start gap-3">
-                    <div class="h-9 w-9 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <svg class="h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <div class="h-9 w-9 bg-emerald-50 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <svg class="h-4 w-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                     </div>
@@ -57,19 +57,19 @@
             {{-- Eligible Students --}}
             @php
                 $yearColors = [
-                    1 => 'bg-blue-50 text-blue-600',
+                    1 => 'bg-emerald-50 text-emerald-600',
                     2 => 'bg-amber-50 text-amber-600',
                     3 => 'bg-violet-50 text-violet-600',
                     4 => 'bg-emerald-50 text-emerald-600',
                 ];
-                $avatarColors = ['bg-blue-50 text-blue-600', 'bg-amber-50 text-amber-600', 'bg-violet-50 text-violet-600', 'bg-emerald-50 text-emerald-600'];
+                $avatarColors = ['bg-emerald-50 text-emerald-600', 'bg-amber-50 text-amber-600', 'bg-violet-50 text-violet-600', 'bg-emerald-50 text-emerald-600'];
             @endphp
             @if($eligibleStudents->isNotEmpty())
                 <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden">
                     <div class="px-6 py-4 border-b border-gray-100">
                         <div class="flex items-center justify-between">
                             <h3 class="text-sm font-semibold text-gray-900">និស្សិតមានសិទ្ធិជំរុញ <span class="text-gray-400 font-normal">· {{ $eligibleStudents->count() }} នាក់</span></h3>
-                            <button onclick="selectAll()" class="text-sm text-blue-500 hover:text-blue-600 font-medium">
+                            <button onclick="selectAll()" class="text-sm text-emerald-500 hover:text-emerald-600 font-medium">
                                 ជ្រើសរើសទាំងអស់
                             </button>
                         </div>
@@ -85,7 +85,7 @@
                                 <thead>
                                     <tr class="border-b border-gray-100">
                                         <th class="px-6 py-3 text-center w-12">
-                                            <input type="checkbox" id="checkAll" onchange="toggleAll(this)" class="rounded border-gray-300 text-blue-500 focus:ring-blue-500">
+                                            <input type="checkbox" id="checkAll" onchange="toggleAll(this)" class="rounded border-gray-300 text-emerald-500 focus:ring-emerald-500">
                                         </th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-400">ល.រ</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-400">ឈ្មោះ</th>
@@ -105,7 +105,7 @@
                                         @endphp
                                         <tr class="hover:bg-gray-50 transition">
                                             <td class="px-6 py-3.5 text-center">
-                                                <input type="checkbox" name="student_ids[]" value="{{ $student->id }}" class="student-cb rounded border-gray-300 text-blue-500 focus:ring-blue-500">
+                                                <input type="checkbox" name="student_ids[]" value="{{ $student->id }}" class="student-cb rounded border-gray-300 text-emerald-500 focus:ring-emerald-500">
                                             </td>
                                             <td class="px-6 py-3.5 text-sm text-gray-400">{{ $index + 1 }}</td>
                                             <td class="px-6 py-3.5">
@@ -131,7 +131,7 @@
                                                         បញ្ចប់ការសិក្សា
                                                     </span>
                                                 @else
-                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-600">
+                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-50 text-emerald-600">
                                                         ជំរុញទៅឆ្នាំទី{{ $nextYr }}
                                                     </span>
                                                 @endif
@@ -155,7 +155,7 @@
                                 <div class="px-4 py-3 hover:bg-gray-50 transition">
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center gap-3">
-                                            <input type="checkbox" name="student_ids[]" value="{{ $student->id }}" class="student-cb rounded border-gray-300 text-blue-500 focus:ring-blue-500">
+                                            <input type="checkbox" name="student_ids[]" value="{{ $student->id }}" class="student-cb rounded border-gray-300 text-emerald-500 focus:ring-emerald-500">
                                             <div class="h-8 w-8 rounded-lg {{ $avatarColor }} flex items-center justify-center font-semibold text-xs">
                                                 {{ mb_substr($student->name, 0, 1, 'UTF-8') }}
                                             </div>
@@ -172,7 +172,7 @@
                                                 បញ្ចប់
                                             </span>
                                         @else
-                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium bg-blue-50 text-blue-600">
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-50 text-emerald-600">
                                                 ជំរុញ
                                             </span>
                                         @endif
@@ -188,7 +188,7 @@
                                     <span id="selectedCount">0</span> និស្សិតត្រូវបានជ្រើសរើស
                                 </p>
                                 <button type="submit" id="submitBtn"
-                                    class="inline-flex items-center gap-2 bg-blue-500 text-white px-6 py-2.5 rounded-xl font-medium text-sm shadow-sm shadow-blue-200 hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                                    class="inline-flex items-center gap-2 bg-emerald-500 text-white px-6 py-2.5 rounded-xl font-medium text-sm shadow-sm shadow-emerald-200 hover:bg-emerald-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
                                     disabled>
                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                                     ជំរុញនិស្សិតដែលបានជ្រើសរើស

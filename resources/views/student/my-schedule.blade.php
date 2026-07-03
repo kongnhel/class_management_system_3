@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <div class="flex flex-col md:flex-row items-center justify-between gap-4 no-print px-2 font-['Battambang']">
             <div>
@@ -9,7 +9,7 @@
             </div>
             
             <div class="flex gap-2 w-full md:w-auto">
-                <button onclick="exportToWord()" class="flex-1 md:flex-none inline-flex items-center justify-center px-4 py-2.5 bg-blue-600 text-white font-bold rounded-xl shadow-lg shadow-blue-100 hover:bg-blue-700 transition-all text-xs">
+                <button onclick="exportToWord()" class="flex-1 md:flex-none inline-flex items-center justify-center px-4 py-2.5 bg-emerald-600 text-white font-bold rounded-xl shadow-lg shadow-emerald-100 hover:bg-emerald-700 transition-all text-xs">
                     <i class="fas fa-file-word mr-2"></i> Word
                 </button>
                 <button onclick="window.print()" class="flex-1 md:flex-none inline-flex items-center justify-center px-4 py-2.5 bg-emerald-600 text-white font-bold rounded-xl shadow-lg shadow-emerald-100 hover:bg-emerald-700 transition-all text-xs">
@@ -96,7 +96,7 @@
         
         .header-col { display: flex; flex-direction: column; align-items: center; }
         .font-moul { font-family: var(--font-header) !important; font-weight: normal; }
-        .text-blue-custom { color: #2a58ad; }
+        .text-emerald-custom { color: #2a58ad; }
         .header-logo img { width: 70px; height: auto; margin-bottom: 5px; }
         .header-line img { width: 100px; height: auto; margin-top: 5px; }
         
@@ -171,8 +171,8 @@
             <div class="header-layout">
                 <div class="header-col header-logo">
                     <img id="logoImg" src="{{ asset('assets/image/nmu_Logo.png') }}" alt="Logo">
-                    <h3 class="font-moul text-blue-custom header-title-km">សាកលវិទ្យាល័យជាតិមានជ័យ</h3>
-                    <h3 class="font-moul text-blue-custom header-title-km">{{ __('ការិយាល័យសិក្សា') }}</h3>
+                    <h3 class="font-moul text-emerald-custom header-title-km">សាកលវិទ្យាល័យជាតិមានជ័យ</h3>
+                    <h3 class="font-moul text-emerald-custom header-title-km">{{ __('ការិយាល័យសិក្សា') }}</h3>
                 </div>
                 <div class="header-col">
                     <h2 class="font-moul header-kingdom">ព្រះរាជាណាចក្រកម្ពុជា</h2>

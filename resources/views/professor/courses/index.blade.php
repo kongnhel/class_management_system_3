@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <h2 class="font-bold text-3xl text-gray-800 leading-tight">
             {{ __('គ្រប់គ្រងមុខវិជ្ជា') }}
@@ -84,7 +84,7 @@
                                         <p class="text-gray-700 font-medium"><span class="font-bold text-gray-800">{{ __('ដេប៉ាតឺម៉ង់') }}</span>: <span class="text-gray-600">{{ $course->department->name_km ?? 'N/A' }}</span></p>
                                     </div>
                                     <div class="flex justify-end space-x-3 mt-auto">
-                                        {{-- <a href="{{ route('professor.view-courses', $course->id) }}" class="p-3 bg-gray-100 rounded-full text-blue-600 hover:bg-gray-200 transition duration-150 ease-in-out" title="{{ __('មើល') }}">
+                                        {{-- <a href="{{ route('professor.view-courses', $course->id) }}" class="p-3 bg-gray-100 rounded-full text-emerald-600 hover:bg-gray-200 transition duration-150 ease-in-out" title="{{ __('មើល') }}">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                                 <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
                                                 <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />

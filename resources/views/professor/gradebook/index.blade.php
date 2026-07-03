@@ -1,4 +1,4 @@
-<div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+﻿<div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
     <table class="w-full text-left border-collapse">
         <thead class="bg-slate-50 border-b border-slate-200">
             <tr>
@@ -33,7 +33,7 @@
                 <td class="px-6 py-4 text-sm font-medium text-slate-900">
                     {{ $student->profile->full_name_km ?? $student->name }}
                 </td>
-                <td class="px-6 py-4 text-sm text-center font-bold text-indigo-600">
+                <td class="px-6 py-4 text-sm text-center font-bold text-emerald-600">
                     {{ number_format($student->total_score, 2) }}
                 </td>
                 <td class="px-6 py-4 text-center">

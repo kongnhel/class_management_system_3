@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div>
@@ -30,34 +30,34 @@
                         
                         <div>
                             <label for="title_km" class="block text-sm font-medium text-gray-700">{{ __('ចំណងជើង (ខ្មែរ)') }} <span class="text-red-500">*</span></label>
-                            <input type="text" id="title_km" name="title_km" value="{{ old('title_km', $assignment->title_km) }}" required class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300">
+                            <input type="text" id="title_km" name="title_km" value="{{ old('title_km', $assignment->title_km) }}" required class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300">
                         </div>
                         <div>
                             <label for="title_en" class="block text-sm font-medium text-gray-700">{{ __('ចំណងជើង (អង់គ្លេស)') }}</label>
-                            <input type="text" id="title_en" name="title_en" value="{{ old('title_en', $assignment->title_en) }}" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300">
+                            <input type="text" id="title_en" name="title_en" value="{{ old('title_en', $assignment->title_en) }}" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300">
                         </div>
                         <div class="md:col-span-2">
                             <label for="description_km" class="block text-sm font-medium text-gray-700">{{ __('បរិយាយ (ខ្មែរ)') }}</label>
-                            <textarea id="description_km" name="description_km" rows="3" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300">{{ old('description_km', $assignment->description_km) }}</textarea>
+                            <textarea id="description_km" name="description_km" rows="3" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300">{{ old('description_km', $assignment->description_km) }}</textarea>
                         </div>
                         <div class="md:col-span-2">
                             <label for="description_en" class="block text-sm font-medium text-gray-700">{{ __('បរិយាយ (អង់គ្លេស)') }}</label>
-                            <textarea id="description_en" name="description_en" rows="3" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300">{{ old('description_en', $assignment->description_en) }}</textarea>
+                            <textarea id="description_en" name="description_en" rows="3" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300">{{ old('description_en', $assignment->description_en) }}</textarea>
                         </div>
                         <div>
                             <label for="due_date" class="block text-sm font-medium text-gray-700">{{ __('ថ្ងៃផុតកំណត់') }} <span class="text-red-500">*</span></label>
                             {{-- Format the date for the datetime-local input --}}
-                            <input type="datetime-local" id="due_date" name="due_date" value="{{ old('due_date', \Carbon\Carbon::parse($assignment->due_date)->format('Y-m-d\TH:i')) }}" required class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300">
+                            <input type="datetime-local" id="due_date" name="due_date" value="{{ old('due_date', \Carbon\Carbon::parse($assignment->due_date)->format('Y-m-d\TH:i')) }}" required class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300">
                         </div>
                         <div>
                             <label for="max_score" class="block text-sm font-medium text-gray-700">{{ __('ពិន្ទុអតិបរមា') }} <span class="text-red-500">*</span></label>
-                            <input type="number" id="max_score" name="max_score" value="{{ old('max_score', $assignment->max_score) }}" required min="0" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300">
+                            <input type="number" id="max_score" name="max_score" value="{{ old('max_score', $assignment->max_score) }}" required min="0" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300">
                         </div>
                         
                         {{-- Uncomment and implement if you use Grading Categories --}}
                         {{-- <div class="md:col-span-2">
                             <label for="grading_category_id" class="block text-sm font-medium text-gray-700">{{ __('ប្រភេទពិន្ទុ') }} <span class="text-red-500">*</span></label>
-                            <select id="grading_category_id" name="grading_category_id" required class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300">
+                            <select id="grading_category_id" name="grading_category_id" required class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300">
                                 @forelse ($gradingCategories as $category)
                                     <option value="{{ $category->id }}" {{ $assignment->grading_category_id == $category->id ? 'selected' : '' }}>
                                         {{ $category->name_km }} ({{ $category->weight_percentage }}%)

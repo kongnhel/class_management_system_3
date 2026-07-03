@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between px-4 md:px-6 lg:px-8">
             <div>
@@ -21,8 +21,8 @@
                     <div class="relative overflow-hidden bg-white border border-gray-200 shadow-lg rounded-xl p-4">
                         <div class="flex items-start gap-3">
                             @if(session('success'))
-                                <div class="h-8 w-8 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                                    <svg class="h-4 w-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                                <div class="h-8 w-8 bg-emerald-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <svg class="h-4 w-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                                 </div>
                             @else
                                 <div class="h-8 w-8 bg-red-50 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -34,7 +34,7 @@
                                 <p class="mt-0.5 text-sm text-gray-500">{{ session('success') ?? session('error') }}</p>
                             </div>
                         </div>
-                        <div class="absolute bottom-0 left-0 h-1 bg-blue-500 rounded-b-xl transition-all duration-100" :style="{ width: progress + '%' }"></div>
+                        <div class="absolute bottom-0 left-0 h-1 bg-emerald-500 rounded-b-xl transition-all duration-100" :style="{ width: progress + '%' }"></div>
                     </div>
                 </div>
             @endif
@@ -45,7 +45,7 @@
                 <div class="flex flex-wrap gap-2">
                     @foreach($programs as $prog)
                         <a href="{{ route('admin.progression.index', ['program_id' => $prog->id]) }}"
-                           class="px-4 py-2 rounded-lg text-sm font-medium transition {{ $program->id === $prog->id ? 'bg-blue-500 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
+                           class="px-4 py-2 rounded-lg text-sm font-medium transition {{ $program->id === $prog->id ? 'bg-emerald-500 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
                             {{ $prog->name_km }}
                         </a>
                     @endforeach
@@ -59,12 +59,12 @@
                     ? (int) preg_replace('/\D/', '', substr(\App\Models\AcademicYear::getCurrent()->name, 0, 4))
                     : (int) date('Y');
                 $yearColors = [
-                    1 => ['icon_bg' => 'bg-blue-50', 'icon_text' => 'text-blue-500', 'border' => 'border-blue-100'],
+                    1 => ['icon_bg' => 'bg-emerald-50', 'icon_text' => 'text-emerald-500', 'border' => 'border-emerald-100'],
                     2 => ['icon_bg' => 'bg-amber-50', 'icon_text' => 'text-amber-500', 'border' => 'border-amber-100'],
                     3 => ['icon_bg' => 'bg-violet-50', 'icon_text' => 'text-violet-500', 'border' => 'border-violet-100'],
                     4 => ['icon_bg' => 'bg-emerald-50', 'icon_text' => 'text-emerald-500', 'border' => 'border-emerald-100'],
                 ];
-                $studentAvatarColors = ['bg-blue-50 text-blue-600', 'bg-amber-50 text-amber-600', 'bg-violet-50 text-violet-600', 'bg-emerald-50 text-emerald-600'];
+                $studentAvatarColors = ['bg-emerald-50 text-emerald-600', 'bg-amber-50 text-amber-600', 'bg-violet-50 text-violet-600', 'bg-emerald-50 text-emerald-600'];
             @endphp
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 @for($year = 1; $year <= $program->duration_years; $year++)
@@ -248,7 +248,7 @@
             {{-- Action Button --}}
             <div class="flex justify-center">
                 <a href="{{ route('admin.progression.advance', ['program_id' => $program->id]) }}"
-                   class="inline-flex items-center gap-2 bg-blue-500 text-white px-6 py-3 rounded-xl font-medium text-sm hover:bg-blue-600 shadow-sm shadow-blue-200 transition">
+                   class="inline-flex items-center gap-2 bg-emerald-500 text-white px-6 py-3 rounded-xl font-medium text-sm hover:bg-emerald-600 shadow-sm shadow-emerald-200 transition">
                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                     ជំរុញនិស្សិតទៅជំនាន់ថ្មី
                 </a>

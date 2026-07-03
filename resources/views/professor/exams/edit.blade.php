@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-2 md:space-y-0">
             <div>
@@ -30,32 +30,32 @@
                         
                         <div class="md:col-span-1">
                             <label for="title_km" class="block text-sm font-medium text-gray-700 mb-1">{{ __('ចំណងជើង (ខ្មែរ)') }}</label>
-                            <input type="text" id="title_km" name="title_km" value="{{ old('title_km', $exam->title_km) }}" required class="block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300">
+                            <input type="text" id="title_km" name="title_km" value="{{ old('title_km', $exam->title_km) }}" required class="block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300">
                         </div>
                         <div class="md:col-span-1">
                             <label for="title_en" class="block text-sm font-medium text-gray-700 mb-1">{{ __('ចំណងជើង (អង់គ្លេស)') }}</label>
-                            <input type="text" id="title_en" name="title_en" value="{{ old('title_en', $exam->title_en) }}" required class="block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300">
+                            <input type="text" id="title_en" name="title_en" value="{{ old('title_en', $exam->title_en) }}" required class="block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300">
                         </div>
                         <div class="lg:col-span-1">
                             <label for="max_score" class="block text-sm font-medium text-gray-700 mb-1">{{ __('ពិន្ទុអតិបរមា') }}</label>
-                            <input type="number" id="max_score" name="max_score" value="{{ old('max_score', $exam->max_score) }}" required min="0" class="block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300">
+                            <input type="number" id="max_score" name="max_score" value="{{ old('max_score', $exam->max_score) }}" required min="0" class="block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300">
                         </div>
 
                         <div class="md:col-span-1">
                             <label for="exam_date" class="block text-sm font-medium text-gray-700 mb-1">{{ __('ថ្ងៃប្រលង') }}</label>
-                            <input type="datetime-local" id="exam_date" name="exam_date" value="{{ old('exam_date', \Carbon\Carbon::parse($exam->exam_date)->format('Y-m-d\TH:i')) }}" required class="block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300">
+                            <input type="datetime-local" id="exam_date" name="exam_date" value="{{ old('exam_date', \Carbon\Carbon::parse($exam->exam_date)->format('Y-m-d\TH:i')) }}" required class="block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300">
                         </div>
                         <div class="md:col-span-1">
                             <label for="duration_minutes" class="block text-sm font-medium text-gray-700 mb-1">{{ __('រយៈពេល (នាទី)') }}</label>
-                            <input type="number" id="duration_minutes" name="duration_minutes" value="{{ old('duration_minutes', $exam->duration_minutes) }}" required min="10" class="block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300">
+                            <input type="number" id="duration_minutes" name="duration_minutes" value="{{ old('duration_minutes', $exam->duration_minutes) }}" required min="10" class="block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300">
                         </div>
                         <div class="md:col-span-2 lg:col-span-3">
                             <label for="description_km" class="block text-sm font-medium text-gray-700 mb-1">{{ __('បរិយាយ (ខ្មែរ)') }}</label>
-                            <textarea id="description_km" name="description_km" rows="2" class="block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300">{{ old('description_km', $exam->description_km) }}</textarea>
+                            <textarea id="description_km" name="description_km" rows="2" class="block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300">{{ old('description_km', $exam->description_km) }}</textarea>
                         </div>
                         <div class="md:col-span-2 lg:col-span-3">
                             <label for="description_en" class="block text-sm font-medium text-gray-700 mb-1">{{ __('បរិយាយ (អង់គ្លេស)') }}</label>
-                            <textarea id="description_en" name="description_en" rows="2" class="block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300">{{ old('description_en', $exam->description_en) }}</textarea>
+                            <textarea id="description_en" name="description_en" rows="2" class="block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300">{{ old('description_en', $exam->description_en) }}</textarea>
                         </div>
                         
                         <div class="md:col-span-2 lg:col-span-3 flex justify-end mt-4">

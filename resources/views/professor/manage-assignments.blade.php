@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
@@ -9,11 +9,11 @@
             </div>
             <a href="{{ route('professor.my-course-offerings', ['offering_id' => $courseOffering->id]) }}"
                 class="inline-flex items-center px-6 py-3 
-                bg-gradient-to-r from-indigo-500 via-indigo-600 to-indigo-700 
-                hover:from-indigo-600 hover:via-indigo-700 hover:to-indigo-800 
+                bg-gradient-to-r from-emerald-500 via-emerald-600 to-emerald-700 
+                hover:from-emerald-600 hover:via-emerald-700 hover:to-emerald-800 
                 text-white text-sm font-semibold rounded-lg shadow-md 
                 hover:shadow-lg transform hover:scale-105 
-                transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-emerald-400">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor"
                     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -51,11 +51,11 @@
             <div class="bg-white overflow-hidden shadow-2xl sm:rounded-3xl p-8 lg:p-12 border border-gray-100 transition-transform duration-500 ease-in-out">
 
                 {{-- Course Info Card --}}
-                <div class="bg-blue-50 p-6 rounded-2xl shadow-md border-l-4 border-blue-500 mb-10 transition-all duration-300 transform hover:scale-[1.005]">
+                <div class="bg-emerald-50 p-6 rounded-2xl shadow-md border-l-4 border-emerald-500 mb-10 transition-all duration-300 transform hover:scale-[1.005]">
                     <div class="flex items-center space-x-4">
-                        <svg class="w-10 h-10 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <svg class="w-10 h-10 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         <div>
-                            <p class="text-xl font-bold text-blue-800">{{ __('ព័ត៌មានវគ្គសិក្សា') }}</p>
+                            <p class="text-xl font-bold text-emerald-800">{{ __('ព័ត៌មានវគ្គសិក្សា') }}</p>
                             <ul class="list-disc list-inside text-gray-700 mt-2 text-sm md:text-base">
                                 {{-- <li>{{ __('លេខកូដមុខវិជ្ជា:') }} <span class="font-semibold text-gray-900">{{ $courseOffering->course->code ?? 'N/A' }}</span></li> --}}
                                 <li>{{ __('គ្រូបង្រៀន:') }} <span class="font-semibold text-gray-900">{{ $courseOffering->lecturer->name ?? 'N/A' }}</span></li>
@@ -67,7 +67,7 @@
 
                 {{-- Add New Assignment Form --}}
                 <h4 class="text-2xl font-bold text-gray-700 mb-6 flex items-center">
-                    <svg class="w-6 h-6 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <svg class="w-6 h-6 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     {{ __('បន្ថែមកិច្ចការស្រាវជ្រាវថ្មី') }}
                 </h4>
                 <div class="bg-gray-50 p-8 rounded-2xl shadow-inner mb-10 border border-gray-100">
@@ -76,32 +76,32 @@
                         <input type="hidden" name="course_offering_id" value="{{ $courseOffering->id }}">
                         <div>
                             <label for="title_km" class="block text-sm font-medium text-gray-700">{{ __('ចំណងជើង (ខ្មែរ)') }} <span class="text-red-500">*</span></label>
-                            <input type="text" id="title_km" name="title_km" required class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300">
+                            <input type="text" id="title_km" name="title_km" required class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300">
                         </div>
                         <div>
                             <label for="title_en" class="block text-sm font-medium text-gray-700">{{ __('ចំណងជើង (អង់គ្លេស)') }}</label>
-                            <input type="text" id="title_en" name="title_en" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300">
+                            <input type="text" id="title_en" name="title_en" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300">
                         </div>
                         <div class="md:col-span-2">
                             <label for="description_km" class="block text-sm font-medium text-gray-700">{{ __('បរិយាយ (ខ្មែរ)') }}</label>
-                            <textarea id="description_km" name="description_km" rows="3" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300"></textarea>
+                            <textarea id="description_km" name="description_km" rows="3" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300"></textarea>
                         </div>
                         <div class="md:col-span-2">
                             <label for="description_en" class="block text-sm font-medium text-gray-700">{{ __('បរិយាយ (អង់គ្លេស)') }}</label>
-                            <textarea id="description_en" name="description_en" rows="3" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300"></textarea>
+                            <textarea id="description_en" name="description_en" rows="3" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300"></textarea>
                         </div>
                         <div>
                             <label for="due_date" class="block text-sm font-medium text-gray-700">{{ __('ថ្ងៃផុតកំណត់') }} <span class="text-red-500">*</span></label>
-                            <input type="datetime-local" id="due_date" name="due_date" required class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300">
+                            <input type="datetime-local" id="due_date" name="due_date" required class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300">
                         </div>
                         <div>
                             <label for="max_score" class="block text-sm font-medium text-gray-700">{{ __('ពិន្ទុអតិបរមា') }} <span class="text-red-500">*</span></label>
-                            <input type="number" id="max_score" name="max_score" required value="20" min="0" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300">
+                            <input type="number" id="max_score" name="max_score" required value="20" min="0" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300">
                         </div>
                         
                         {{-- <div class="md:col-span-2">
                             <label for="grading_category_id" class="block text-sm font-medium text-gray-700">{{ __('ប្រភេទពិន្ទុ') }} <span class="text-red-500">*</span></label>
-                            <select id="grading_category_id" name="grading_category_id" required class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300">
+                            <select id="grading_category_id" name="grading_category_id" required class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300">
                                 @forelse ($gradingCategories as $category)
                                     <option value="{{ $category->id }}">{{ $category->name_km }} ({{ $category->weight_percentage }}%)</option>
                                 @empty
@@ -112,7 +112,7 @@
 
                         {{-- Submit Button --}}
                         <div class="md:col-span-2 flex justify-end mt-4">
-                            <button type="submit" class="w-full md:w-auto px-8 py-4 text-white font-extrabold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out transform hover:scale-[1.01] bg-gradient-to-r from-indigo-600 to-purple-700 hover:from-indigo-700 hover:to-purple-800">
+                            <button type="submit" class="w-full md:w-auto px-8 py-4 text-white font-extrabold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out transform hover:scale-[1.01] bg-gradient-to-r from-emerald-600 to-purple-700 hover:from-emerald-700 hover:to-purple-800">
                                 <span class="flex items-center justify-center space-x-2">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
                                     <span>{{ __('បន្ថែមកិច្ចការស្រាវជ្រាវ') }}</span>
@@ -157,7 +157,7 @@
                                     <td class="py-4 px-6 text-center space-x-2">
                                         <div class="flex items-center justify-center space-x-2">
                                             <a href="{{ route('professor.submissions.index', ['offering_id' => $courseOffering->id, 'assignment_id' => $assignment->id]) }}"
-                                                class="inline-flex items-center text-sm font-semibold text-blue-600 hover:text-blue-800 transition-colors duration-200 hover:bg-blue-100 rounded-full px-3 py-1">
+                                                class="inline-flex items-center text-sm font-semibold text-emerald-600 hover:text-emerald-800 transition-colors duration-200 hover:bg-emerald-100 rounded-full px-3 py-1">
                                                 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                                 </svg>
@@ -240,7 +240,7 @@
                             <div class="mt-4 pt-4 border-t border-gray-100 flex justify-end space-x-3">
                                 
                                 <a href="{{ route('professor.submissions.index', ['offering_id' => $courseOffering->id, 'assignment_id' => $assignment->id]) }}"
-                                    class="inline-flex items-center text-sm font-semibold text-blue-600 hover:text-blue-800 transition-colors duration-200 bg-blue-50 hover:bg-blue-100 rounded-full px-3 py-1">
+                                    class="inline-flex items-center text-sm font-semibold text-emerald-600 hover:text-emerald-800 transition-colors duration-200 bg-emerald-50 hover:bg-emerald-100 rounded-full px-3 py-1">
                                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                     </svg>
@@ -335,27 +335,27 @@
                     
                     <div>
                         <label for="edit_title_km" class="block text-sm font-medium text-gray-700">{{ __('ចំណងជើង (ខ្មែរ)') }} <span class="text-red-500">*</span></label>
-                        <input type="text" id="edit_title_km" name="title_km" x-model="titleKm" required class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300">
+                        <input type="text" id="edit_title_km" name="title_km" x-model="titleKm" required class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300">
                     </div>
                     <div>
                         <label for="edit_title_en" class="block text-sm font-medium text-gray-700">{{ __('ចំណងជើង (អង់គ្លេស)') }}</label>
-                        <input type="text" id="edit_title_en" name="title_en" x-model="titleEn" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300">
+                        <input type="text" id="edit_title_en" name="title_en" x-model="titleEn" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300">
                     </div>
                     <div class="md:col-span-2">
                         <label for="edit_description_km" class="block text-sm font-medium text-gray-700">{{ __('បរិយាយ (ខ្មែរ)') }}</label>
-                        <textarea id="edit_description_km" name="description_km" x-model="descriptionKm" rows="3" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300"></textarea>
+                        <textarea id="edit_description_km" name="description_km" x-model="descriptionKm" rows="3" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300"></textarea>
                     </div>
                     <div class="md:col-span-2">
                         <label for="edit_description_en" class="block text-sm font-medium text-gray-700">{{ __('បរិយាយ (អង់គ្លេស)') }}</label>
-                        <textarea id="edit_description_en" name="description_en" x-model="descriptionEn" rows="3" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300"></textarea>
+                        <textarea id="edit_description_en" name="description_en" x-model="descriptionEn" rows="3" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300"></textarea>
                     </div>
                     <div>
                         <label for="edit_due_date" class="block text-sm font-medium text-gray-700">{{ __('ថ្ងៃផុតកំណត់') }} <span class="text-red-500">*</span></label>
-                        <input type="datetime-local" id="edit_due_date" name="due_date" x-model="dueDate" required class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300">
+                        <input type="datetime-local" id="edit_due_date" name="due_date" x-model="dueDate" required class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300">
                     </div>
                     <div>
                         <label for="edit_max_score" class="block text-sm font-medium text-gray-700">{{ __('ពិន្ទុអតិបរមា') }} <span class="text-red-500">*</span></label>
-                        <input type="number" id="edit_max_score" name="max_score" x-model="maxScore" required min="0" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300">
+                        <input type="number" id="edit_max_score" name="max_score" x-model="maxScore" required min="0" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300">
                     </div>
 
                     <div class="md:col-span-2 flex justify-end space-x-3 mt-4">

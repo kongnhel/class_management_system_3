@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between px-4 md:px-6 lg:px-8">
             <div>
@@ -10,11 +10,6 @@
                 </h2>
                 <p class="mt-1 text-sm text-gray-500 ml-12">{{ __('admin_dashboard_subtitle') }}</p>
             </div>
-            {{-- Optional: Date or Breadcrumb could go here --}}
-                                <a href="{{ route('qr.scanner') }}" class="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-xl font-bold text-sm">
-    <i class="fa-solid fa-camera"></i>
-    <span>{{ __('admin_scan_qr') }}</span>
-</a>
         </div>
     </x-slot>
 
@@ -193,15 +188,15 @@
                     </div>
                     <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
                         
-                        <a href="{{ route('admin.create-user') }}" class="group flex items-center p-4 bg-gray-50 rounded-xl border border-transparent hover:border-blue-200 hover:bg-blue-50 transition-all duration-200">
-                            <div class="h-12 w-12 rounded-lg bg-white flex items-center justify-center shadow-sm text-blue-600 group-hover:scale-110 transition-transform">
+                        <a href="{{ route('admin.create-user') }}" class="group flex items-center p-4 bg-gray-50 rounded-xl border border-transparent hover:border-emerald-200 hover:bg-emerald-50 transition-all duration-200">
+                            <div class="h-12 w-12 rounded-lg bg-white flex items-center justify-center shadow-sm text-emerald-600 group-hover:scale-110 transition-transform">
                                 <i class="fas fa-user-plus text-lg"></i>
                             </div>
                             <div class="ml-4">
-                                <h5 class="font-bold text-gray-800 group-hover:text-blue-700">{{ __('admin_add_user') }}</h5>
+                                <h5 class="font-bold text-gray-800 group-hover:text-emerald-700">{{ __('admin_add_user') }}</h5>
                                 <p class="text-xs text-gray-500 mt-0.5">{{ __('admin_create_account') }}</p>
                             </div>
-                            <i class="fas fa-chevron-right ml-auto text-gray-300 group-hover:text-blue-400"></i>
+                            <i class="fas fa-chevron-right ml-auto text-gray-300 group-hover:text-emerald-400"></i>
                         </a>
 
                         <a href="{{ route('admin.create-faculty') }}" class="group flex items-center p-4 bg-gray-50 rounded-xl border border-transparent hover:border-green-200 hover:bg-green-50 transition-all duration-200">
@@ -244,7 +239,7 @@
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
                     <div class="p-6 border-b border-gray-50">
                         <h4 class="text-lg font-bold text-gray-800 flex items-center gap-2">
-                            <i class="fas fa-info-circle text-blue-500"></i>
+                            <i class="fas fa-info-circle text-emerald-500"></i>
                             {{ __('admin_system_info') }}
                         </h4>
                     </div>
@@ -253,12 +248,12 @@
                             {{-- Item 1 --}}
                             <div class="flex items-center justify-between group">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+                                    <div class="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
                                         <i class="fas fa-sitemap text-xs"></i>
                                     </div>
                                     <span class="text-gray-600 font-medium">{{ __('admin_total_departments') }}</span>
                                 </div>
-                                <span class="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{{ $totalDepartments }}</span>
+                                <span class="text-lg font-bold text-gray-900 group-hover:text-emerald-600 transition-colors">{{ $totalDepartments }}</span>
                             </div>
                             <hr class="border-gray-50">
 
@@ -289,12 +284,12 @@
                             {{-- Item 4 --}}
                             <div class="flex items-center justify-between group">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600">
+                                    <div class="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
                                         <i class="fas fa-layer-group text-xs"></i>
                                     </div>
                                     <span class="text-gray-600 font-medium">{{ __('admin_total_offerings') }}</span>
                                 </div>
-                                <span class="text-lg font-bold text-gray-900 group-hover:text-indigo-600 transition-colors">{{ $totalCourseOfferings }}</span>
+                                <span class="text-lg font-bold text-gray-900 group-hover:text-emerald-600 transition-colors">{{ $totalCourseOfferings }}</span>
                             </div>
                         </div>
                     </div>
@@ -310,7 +305,7 @@
                             <p class="text-sm font-medium text-gray-500 mb-1">{{ __('admin_today_total_attendance') }}</p>
                             <h3 class="text-3xl font-extrabold text-gray-800">{{ $todayAttendanceCount }}</h3>
                         </div>
-                        <div class="p-3 bg-blue-50 rounded-xl text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
+                        <div class="p-3 bg-emerald-50 rounded-xl text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors duration-300">
                             <i class="fas fa-clipboard-list text-xl"></i>
                         </div>
                     </div>
@@ -348,7 +343,7 @@
                 <div class="xl:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                     <div class="p-6 border-b border-gray-50 flex items-center justify-between">
                         <h4 class="text-lg font-bold text-gray-800 flex items-center gap-2">
-                            <i class="fas fa-user-clock text-indigo-500"></i>
+                            <i class="fas fa-user-clock text-emerald-500"></i>
                             {{ __('admin_recent_users') }}
                         </h4>
                     </div>

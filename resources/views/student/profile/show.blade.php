@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     @php
         // ទាញយក URL រូបភាពពី ImgBB ដោយផ្ទាល់ចេញពី userProfile
         $profileUrl = $user->userProfile?->profile_picture_url;
@@ -11,7 +11,7 @@
             <div class="bg-white shadow-xl shadow-slate-200/50 rounded-[3rem] overflow-hidden border border-slate-100">
                 
                 {{-- Header Section --}}
-                <div class="relative h-32 bg-gradient-to-r from-indigo-600 to-blue-500">
+                <div class="relative h-32 bg-gradient-to-r from-emerald-600 to-emerald-500">
                     <div class="absolute -bottom-16 left-0 right-0 flex justify-center">
                         <div class="relative group">
                             {{-- Profile Picture Container --}}
@@ -24,7 +24,7 @@
              class="object-cover w-full h-full" 
              id="profile-picture-preview">
     @else
-        <div id="profile-picture-placeholder" class="text-indigo-500 text-4xl font-black">
+        <div id="profile-picture-placeholder" class="text-emerald-500 text-4xl font-black">
             {{ Str::upper(Str::substr($user->name, 0, 1)) }}
         </div>
     @endif
@@ -215,7 +215,7 @@
                                         <i class="fas fa-user-tag"></i>
                                     </span>
                                     <input type="text" name="full_name_km" id="full_name_km" value="{{ old('full_name_km', $user->userProfile->full_name_km ?? '') }}" required 
-                                           class="block w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 focus:bg-white outline-none transition-all font-bold text-slate-700" 
+                                           class="block w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 focus:bg-white outline-none transition-all font-bold text-slate-700" 
                                            placeholder="បញ្ជាក់ឈ្មោះជាភាសាខ្មែរ">
                                 </div>
                                 <x-input-error :messages="$errors->get('full_name_km')" class="mt-2" />
@@ -229,7 +229,7 @@
                                         <i class="fas fa-id-card"></i>
                                     </span>
                                     <input type="text" name="full_name_en" id="full_name_en" value="{{ old('full_name_en', $user->userProfile->full_name_en ?? '') }}" 
-                                           class="block w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 focus:bg-white outline-none transition-all font-bold text-slate-700" 
+                                           class="block w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 focus:bg-white outline-none transition-all font-bold text-slate-700" 
                                            placeholder="Full Name in English">
                                 </div>
                             </div>
@@ -242,7 +242,7 @@
                                         <i class="fas fa-venus-mars"></i>
                                     </span>
                                     <select id="gender" name="gender" required 
-                                            class="block w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 focus:bg-white outline-none transition-all font-bold text-slate-700 appearance-none cursor-pointer">
+                                            class="block w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 focus:bg-white outline-none transition-all font-bold text-slate-700 appearance-none cursor-pointer">
                                         <option value="" disabled selected>{{ __('ជ្រើសរើសភេទ') }}</option>
                                         <option value="male" @if(old('gender', $user->userProfile->gender ?? '') == 'male') selected @endif>{{ __('ប្រុស') }}</option>
                                         <option value="female" @if(old('gender', $user->userProfile->gender ?? '') == 'female') selected @endif>{{ __('ស្រី') }}</option>
@@ -258,7 +258,7 @@
                                         <i class="fas fa-calendar-alt"></i>
                                     </span>
                                     <input type="date" name="date_of_birth" id="date_of_birth" value="{{ old('date_of_birth', isset($user->userProfile->date_of_birth) ? \Carbon\Carbon::parse($user->userProfile->date_of_birth)->format('Y-m-d') : '') }}" 
-                                           class="block w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 focus:bg-white outline-none transition-all font-bold text-slate-700">
+                                           class="block w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 focus:bg-white outline-none transition-all font-bold text-slate-700">
                                 </div>
                             </div>
 
@@ -270,7 +270,7 @@
                                         <i class="fas fa-phone-alt"></i>
                                     </span>
                                     <input type="text" name="phone_number" id="phone_number" value="{{ old('phone_number', $user->userProfile->phone_number ?? '') }}" 
-                                           class="block w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 focus:bg-white outline-none transition-all font-bold text-slate-700" 
+                                           class="block w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 focus:bg-white outline-none transition-all font-bold text-slate-700" 
                                            placeholder="012 345 678">
                                 </div>
                             </div>
@@ -283,7 +283,7 @@
                                         <i class="fas fa-map-marker-alt"></i>
                                     </span>
                                     <input type="text" name="address" id="address" value="{{ old('address', $user->userProfile->address ?? '') }}" 
-                                           class="block w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 focus:bg-white outline-none transition-all font-bold text-slate-700" 
+                                           class="block w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 focus:bg-white outline-none transition-all font-bold text-slate-700" 
                                            placeholder="{{ __('រាជធានីភ្នំពេញ, កម្ពុជា') }}">
                                 </div>
                             </div>
@@ -292,7 +292,7 @@
                         {{-- Action Buttons --}}
                         <div class="flex flex-col sm:flex-row items-center gap-4 pt-10">
                             <button type="submit" 
-                                    class="w-full sm:flex-[2] py-4 bg-indigo-600 text-white rounded-2xl font-black shadow-xl shadow-indigo-100 hover:bg-indigo-700 hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-2">
+                                    class="w-full sm:flex-[2] py-4 bg-emerald-600 text-white rounded-2xl font-black shadow-xl shadow-emerald-100 hover:bg-emerald-700 hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-2">
                                 <i class="fas fa-save"></i>
                                 {{ __('រក្សាទុកការកែប្រែ') }}
                             </button>

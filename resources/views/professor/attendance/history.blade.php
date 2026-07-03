@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <style>
         .font-khmer { font-family: 'Battambang', 'Hanuman', sans-serif; }
     </style>
@@ -26,8 +26,8 @@
             {{-- Summary Stats --}}
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
                 <div class="bg-white rounded-2xl border border-slate-100 p-5 flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center">
-                        <i class="fas fa-clipboard-check text-indigo-500 text-xl"></i>
+                    <div class="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center">
+                        <i class="fas fa-clipboard-check text-emerald-500 text-xl"></i>
                     </div>
                     <div>
                         <p class="text-2xl font-black text-slate-800">{{ $attendances->total() }}</p>

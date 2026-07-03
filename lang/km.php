@@ -135,6 +135,7 @@ return [
     'admin_manage_faculties' => 'គ្រប់គ្រងមហាវិទ្យាល័យ',
     'admin_institution_data' => 'ទិន្នន័យស្ថាប័ន',
     'admin_system_info' => 'ព័ត៌មានប្រព័ន្ធ',
+    'admin_active_course_offerings' => 'វគ្គសិក្សាកំពុងដំណើរការ',
 
     // ============================================
     // ADMIN USERS

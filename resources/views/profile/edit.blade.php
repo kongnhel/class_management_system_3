@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     @php
         $user = Auth::user()->loadMissing('userProfile');
         $profileUrl = $user->userProfile?->profile_picture_url;
@@ -72,8 +72,8 @@
                     {{-- 1. Profile Information --}}
                     <section class="bg-white dark:bg-gray-800 rounded-[2rem] shadow-sm border border-slate-200 dark:border-gray-700 p-8">
                         <div class="flex items-center gap-4 mb-8">
-                            <div class="p-3 bg-blue-50 dark:bg-blue-900/30 rounded-2xl">
-                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                            <div class="p-3 bg-emerald-50 dark:bg-emerald-900/30 rounded-2xl">
+                                <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                             </div>
                             <div>
                                 <h2 class="text-xl font-bold text-slate-900 dark:text-white">{{ __('profile_basic_info') }}</h2>
@@ -86,12 +86,12 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <x-input-label for="name" :value="__('profile_full_name')" class="text-slate-700 font-bold ml-1" />
-                                    <x-text-input id="name" name="name" type="text" class="mt-1.5 block w-full rounded-2xl border-slate-200 bg-slate-50/50 focus:bg-white transition-all shadow-sm" :value="old('name', $user->name)" required autofocus />
+                                    <x-text-input id="name" name="name" type="text" class="mt-1.5 block w-full rounded-2xl border-slate-200 bg-slate-50/50 focus:bg-white transition-all shadow-sm" :value="old('name', $user->name)" placeholder="ឈ្មោះពេញ" required autofocus />
                                     <x-input-error :messages="$errors->get('name')" class="mt-2" />
                                 </div>
                                 <div>
                                     <x-input-label for="email" :value="__('profile_email')" class="text-slate-700 font-bold ml-1" />
-                                    <x-text-input id="email" name="email" type="email" class="mt-1.5 block w-full rounded-2xl border-slate-200 bg-slate-50/50 focus:bg-white transition-all shadow-sm" :value="old('email', $user->email)" required />
+                                    <x-text-input id="email" name="email" type="email" class="mt-1.5 block w-full rounded-2xl border-slate-200 bg-slate-50/50 focus:bg-white transition-all shadow-sm" :value="old('email', $user->email)" placeholder="example@gmail.com" required />
                                     <x-input-error :messages="$errors->get('email')" class="mt-2" />
                                 </div>
                             </div>
@@ -134,18 +134,18 @@
                             <div class="space-y-5">
                                 <div>
                                     <x-input-label for="current_password" :value="__('profile_current_password')" class="text-slate-700 font-bold ml-1" />
-                                    <x-text-input id="current_password" name="current_password" type="password" class="mt-1.5 block w-full rounded-2xl border-slate-200 bg-slate-50/50 shadow-sm" />
+                                    <x-text-input id="current_password" name="current_password" type="password" class="mt-1.5 block w-full rounded-2xl border-slate-200 bg-slate-50/50 shadow-sm" placeholder="ពាក្យសម្ងាត់បច្ចុប្បន្ន" />
                                     <x-input-error :messages="$errors->updatePassword->get('current_password')" class="mt-2" />
                                 </div>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
                                         <x-input-label for="password" :value="__('profile_new_password')" class="text-slate-700 font-bold ml-1" />
-                                        <x-text-input id="password" name="password" type="password" class="mt-1.5 block w-full rounded-2xl border-slate-200 bg-slate-50/50 shadow-sm" />
+                                        <x-text-input id="password" name="password" type="password" class="mt-1.5 block w-full rounded-2xl border-slate-200 bg-slate-50/50 shadow-sm" placeholder="ពាក្យសម្ងាត់ថ្មី" />
                                         <x-input-error :messages="$errors->updatePassword->get('password')" class="mt-2" />
                                     </div>
                                     <div>
                                         <x-input-label for="password_confirmation" :value="__('profile_confirm_password')" class="text-slate-700 font-bold ml-1" />
-                                        <x-text-input id="password_confirmation" name="password_confirmation" type="password" class="mt-1.5 block w-full rounded-2xl border-slate-200 bg-slate-50/50 shadow-sm" />
+                                        <x-text-input id="password_confirmation" name="password_confirmation" type="password" class="mt-1.5 block w-full rounded-2xl border-slate-200 bg-slate-50/50 shadow-sm" placeholder="បញ្ជាក់ពាក្យសម្ងាត់ថ្មី" />
                                     </div>
                                 </div>
                             </div>

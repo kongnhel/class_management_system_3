@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
@@ -54,7 +54,7 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
                     <div class="flex items-center">
-                        <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+                        <div class="p-3 rounded-full bg-emerald-100 text-emerald-600">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                             </svg>
@@ -100,16 +100,16 @@
                 <form action="{{ route('professor.submissions.index', ['offering_id' => $courseOffering->id, 'assignment_id' => $assignment->id]) }}" method="GET" class="flex flex-col md:flex-row gap-4">
                     <div class="flex-1">
                         <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('ស្វែងរកនិស្សិត...') }}"
-                            class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all">
+                            class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
                     </div>
                     <div class="w-full md:w-48">
-                        <select name="status" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all">
+                        <select name="status" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
                             <option value="">{{ __('ទាំងអស់') }}</option>
                             <option value="graded" {{ request('status') === 'graded' ? 'selected' : '' }}>{{ __('បានពិន្ទុ') }}</option>
                             <option value="ungraded" {{ request('status') === 'ungraded' ? 'selected' : '' }}>{{ __('មិនទាន់ពិន្ទុ') }}</option>
                         </select>
                     </div>
-                    <button type="submit" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-sm transition-all">
+                    <button type="submit" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-sm transition-all">
                         {{ __('ស្វែងរក') }}
                     </button>
                 </form>
@@ -150,7 +150,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         @if($submission->file_path)
                                             <a href="{{ route('professor.submissions.download', ['offering_id' => $courseOffering->id, 'assignment_id' => $assignment->id, 'submission_id' => $submission->id]) }}"
-                                                class="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-xs font-medium">
+                                                class="inline-flex items-center px-3 py-1 bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200 transition-colors text-xs font-medium">
                                                 <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                                                 </svg>
@@ -178,7 +178,7 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-center">
                                         <a href="{{ route('professor.submissions.show', ['offering_id' => $courseOffering->id, 'assignment_id' => $assignment->id, 'submission_id' => $submission->id]) }}"
-                                            class="inline-flex items-center px-3 py-1.5 bg-indigo-100 text-indigo-700 rounded-lg hover:bg-indigo-200 transition-colors text-xs font-medium">
+                                            class="inline-flex items-center px-3 py-1.5 bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200 transition-colors text-xs font-medium">
                                             <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>

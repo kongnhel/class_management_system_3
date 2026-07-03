@@ -1,9 +1,9 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <div class="max-w-7xl mx-auto px-2">
             <div class="flex items-center gap-3">
                 <a href="{{ route('professor.manage-grades', ['offering_id' => $courseOffering->id]) }}"
-                   class="p-2 bg-white border border-slate-200 rounded-xl text-slate-500 hover:bg-indigo-50 transition-colors">
+                   class="p-2 bg-white border border-slate-200 rounded-xl text-slate-500 hover:bg-emerald-50 transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
                 </a>
                 <div>
@@ -11,7 +11,7 @@
                         {{ __('បង្កើតការវាយតម្លៃថ្មី') }}
                     </h2>
                     <p class="text-[11px] sm:text-sm text-gray-500 mt-0.5">
-                        {{ __('មុខវិជ្ជា:') }} <span class="font-bold text-indigo-600">{{ $courseOffering->course->title_km }}</span>
+                        {{ __('មុខវិជ្ជា:') }} <span class="font-bold text-emerald-600">{{ $courseOffering->course->title_km }}</span>
                     </p>
                 </div>
             </div>
@@ -69,13 +69,13 @@
                                             </button>
                                             {{-- Group Assignment --}}
                                             <button type="button" onclick="selectType('assignment')"
-                                                    class="type-card group p-4 rounded-xl border-2 border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all text-center"
+                                                    class="type-card group p-4 rounded-xl border-2 border-gray-200 hover:border-emerald-300 hover:bg-emerald-50 transition-all text-center"
                                                     data-type="assignment" data-title-km="កិច្ចការស្រាវជ្រាវ" data-title-en="Group Assignment"
                                                     data-grading="Group Assignment" data-icon="📋" data-color="blue" data-default-score="100">
                                                 <span class="text-2xl block mb-1">📋</span>
-                                                <span class="text-[10px] font-bold text-gray-600 group-hover:text-blue-700 uppercase leading-tight block">កិច្ចការស្រាវជ្រាវ</span>
+                                                <span class="text-[10px] font-bold text-gray-600 group-hover:text-emerald-700 uppercase leading-tight block">កិច្ចការស្រាវជ្រាវ</span>
                                                 <span class="text-[9px] text-gray-400 block mt-1">Group Assignment</span>
-                                                <span class="text-[9px] font-black text-blue-500 block mt-1">20%</span>
+                                                <span class="text-[9px] font-black text-emerald-500 block mt-1">20%</span>
                                             </button>
                                             {{-- Final Exam --}}
                                             <button type="button" onclick="selectType('final')"
@@ -122,7 +122,7 @@
                                                 <span id="dateLabel">{{ __('កាលបរិច្ឆេទ') }}</span> <span class="text-rose-500">*</span>
                                             </label>
                                             <input type="date" name="assessment_date" id="assessment_date" value="{{ old('assessment_date', date('Y-m-d')) }}" required
-                                                   class="w-full bg-gray-50 border-gray-200 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 rounded-xl py-3.5 px-5 transition-all font-bold text-gray-700">
+                                                   class="w-full bg-gray-50 border-gray-200 focus:bg-white focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 rounded-xl py-3.5 px-5 transition-all font-bold text-gray-700">
                                             @error('assessment_date')<p class="text-rose-500 text-xs mt-2 font-medium ml-1">{{ $message }}</p>@enderror
                                         </div>
 
@@ -132,7 +132,7 @@
                                                 ពិន្ទុអតិបរមា <span class="text-rose-500">*</span>
                                             </label>
                                             <input type="number" name="max_score" id="max_score" value="{{ old('max_score', 100) }}" required min="1"
-                                                   class="w-full bg-gray-50 border-gray-200 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 rounded-xl py-3.5 px-5 transition-all font-bold text-gray-700">
+                                                   class="w-full bg-gray-50 border-gray-200 focus:bg-white focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 rounded-xl py-3.5 px-5 transition-all font-bold text-gray-700">
                                             @error('max_score')<p class="text-rose-500 text-xs mt-2 font-medium ml-1">{{ $message }}</p>@enderror
                                         </div>
                                     </div>
@@ -145,7 +145,7 @@
                                                 រយៈពេល (នាទី) <span class="text-rose-500">*</span>
                                             </label>
                                             <input type="number" name="duration_minutes" id="duration_minutes" value="{{ old('duration_minutes', 120) }}" min="1"
-                                                   class="w-full bg-gray-50 border-gray-200 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 rounded-xl py-3.5 px-5 transition-all font-bold text-gray-700">
+                                                   class="w-full bg-gray-50 border-gray-200 focus:bg-white focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 rounded-xl py-3.5 px-5 transition-all font-bold text-gray-700">
                                             @error('duration_minutes')<p class="text-rose-500 text-xs mt-2 font-medium ml-1">{{ $message }}</p>@enderror
                                         </div>
                                     </div>
@@ -167,7 +167,7 @@
                                         បោះបង់
                                     </a>
                                     <button type="submit" id="submitBtn" disabled
-                                            class="w-full sm:w-auto inline-flex justify-center items-center px-10 py-3.5 border border-transparent text-sm font-bold rounded-xl shadow-xl shadow-indigo-100 text-white bg-indigo-400 cursor-not-allowed transition-all transform disabled:active:scale-100">
+                                            class="w-full sm:w-auto inline-flex justify-center items-center px-10 py-3.5 border border-transparent text-sm font-bold rounded-xl shadow-xl shadow-emerald-100 text-white bg-emerald-400 cursor-not-allowed transition-all transform disabled:active:scale-100">
                                         រក្សាទុកការវាយតម្លៃ
                                     </button>
                                 </div>
@@ -245,7 +245,7 @@
                                         <span class="text-[10px] font-black text-gray-400">{{ $category->weight_percentage }}%</span>
                                     </div>
                                     <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
-                                        <div class="h-full rounded-full transition-all duration-500 {{ $usedScore > 0 ? 'bg-indigo-500' : 'bg-gray-200' }}"
+                                        <div class="h-full rounded-full transition-all duration-500 {{ $usedScore > 0 ? 'bg-emerald-500' : 'bg-gray-200' }}"
                                              style="width: {{ min($usedScore > 0 ? ($usedScore / 100) * 100 : 0, 100) }}%"></div>
                                     </div>
                                     <p class="text-[9px] text-gray-400 mt-1">{{ $usedScore }} ពិន្ទុប្រើប្រាស់រួចហើយ</p>
@@ -257,12 +257,12 @@
                     </div>
 
                     {{-- Course Evaluation Structure --}}
-                    <div class="bg-indigo-50 rounded-2xl border border-indigo-100 p-5">
-                        <h3 class="text-[11px] font-black text-indigo-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                    <div class="bg-emerald-50 rounded-2xl border border-emerald-100 p-5">
+                        <h3 class="text-[11px] font-black text-emerald-400 uppercase tracking-widest mb-3 flex items-center gap-2">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
                             រចនាសម្ព័ន្ធវាយតម្លៃ
                         </h3>
-                        <ul class="text-[11px] text-indigo-700 space-y-2">
+                        <ul class="text-[11px] text-emerald-700 space-y-2">
                             <li class="flex items-center justify-between">
                                 <span>វត្តមាន (Attendance)</span>
                                 <span class="font-black">15%</span>
@@ -279,7 +279,7 @@
                                 <span>ប្រឡងប្រចាំឆមាស (Final)</span>
                                 <span class="font-black">50%</span>
                             </li>
-                            <li class="border-t border-indigo-200 pt-2 flex items-center justify-between font-black">
+                            <li class="border-t border-emerald-200 pt-2 flex items-center justify-between font-black">
                                 <span>{{ __('សរុប') }}</span>
                                 <span>100%</span>
                             </li>
@@ -352,7 +352,7 @@
 
             // Update card styles
             document.querySelectorAll('.type-card').forEach(card => {
-                card.classList.remove('border-amber-400', 'bg-amber-50', 'border-blue-400', 'bg-blue-50', 'border-rose-400', 'bg-rose-50', 'border-purple-400', 'bg-purple-50');
+                card.classList.remove('border-amber-400', 'bg-amber-50', 'border-emerald-400', 'bg-emerald-50', 'border-rose-400', 'bg-rose-50', 'border-purple-400', 'bg-purple-50');
                 card.classList.add('border-gray-200');
             });
             const activeCard = document.querySelector(`[data-type="${type}"]`);
@@ -377,8 +377,8 @@
             // Enable submit
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = false;
-            submitBtn.classList.remove('bg-indigo-400', 'cursor-not-allowed');
-            submitBtn.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
+            submitBtn.classList.remove('bg-emerald-400', 'cursor-not-allowed');
+            submitBtn.classList.add('bg-emerald-600', 'hover:bg-emerald-700');
 
             updatePreview();
             checkDuplicate();

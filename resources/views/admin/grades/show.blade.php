@@ -1,10 +1,10 @@
-<x-app-layout>
+﻿<x-app-layout>
     <div class="bg-gray-50 min-h-screen font-sans text-gray-900">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             {{-- Header --}}
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                 <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center shadow-lg">
                         <i class="fas fa-chart-line text-white text-lg"></i>
                     </div>
                     <div>
@@ -40,12 +40,12 @@
                 </div>
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-5">
                     <div class="flex items-center gap-3 mb-2">
-                        <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
-                            <i class="fas fa-pen text-blue-500"></i>
+                        <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
+                            <i class="fas fa-pen text-emerald-500"></i>
                         </div>
                         <span class="text-xs font-bold text-gray-500 uppercase">មានពិន្ទុ</span>
                     </div>
-                    <div class="text-2xl font-bold text-blue-600">{{ $stats['graded'] }}</div>
+                    <div class="text-2xl font-bold text-emerald-600">{{ $stats['graded'] }}</div>
                 </div>
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-5">
                     <div class="flex items-center gap-3 mb-2">
@@ -91,7 +91,7 @@
                                 <th class="px-4 py-3 text-center text-[11px] font-bold text-emerald-600 uppercase tracking-wider">វត្តមាន</th>
                                 @foreach($assessments as $assessment)
                                     <th class="px-3 py-3 text-center text-[11px] font-bold uppercase tracking-wider
-                                        {{ $assessment instanceof \App\Models\Assignment ? 'text-blue-600' : ($assessment instanceof \App\Models\Quiz ? 'text-amber-600' : 'text-purple-600') }}">
+                                        {{ $assessment instanceof \App\Models\Assignment ? 'text-emerald-600' : ($assessment instanceof \App\Models\Quiz ? 'text-amber-600' : 'text-purple-600') }}">
                                         {{ Str::limit($assessment->title_km, 15) }}
                                     </th>
                                 @endforeach
@@ -109,7 +109,7 @@
                                         @php
                                             $profilePic = $student->userProfile?->profile_picture_url ?? $student->studentProfile?->profile_picture_url;
                                         @endphp
-                                        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                                        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-500 flex items-center justify-center flex-shrink-0 overflow-hidden">
                                             @if($profilePic)
                                                 <img src="{{ $profilePic }}?tr=w-64,h-64,fo-face" class="w-full h-full object-cover" alt="">
                                             @else
@@ -150,8 +150,8 @@
                                         $gradeColors = [
                                             'A' => 'bg-emerald-100 text-emerald-700',
                                             'B+' => 'bg-emerald-50 text-emerald-600',
-                                            'B' => 'bg-blue-100 text-blue-700',
-                                            'C+' => 'bg-blue-50 text-blue-600',
+                                            'B' => 'bg-emerald-100 text-emerald-700',
+                                            'C+' => 'bg-emerald-50 text-emerald-600',
                                             'C' => 'bg-amber-100 text-amber-700',
                                             'D+' => 'bg-amber-50 text-amber-600',
                                             'D' => 'bg-orange-100 text-orange-700',

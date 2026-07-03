@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('កិច្ចការផ្ទះទាំងអស់') }}
@@ -40,7 +40,7 @@
                                     </td>
                                     <td class="py-3 px-4 text-center space-x-2">
                                         {{-- Link to view submissions for this assignment (requires a specific route) --}}
-                                        <a href="{{ route('professor.manage-assignments', ['offering_id' => $assignment->course_offering_id]) }}" class="text-blue-600 hover:text-blue-800 font-semibold py-1 px-3 rounded-full text-sm transition-colors duration-200 hover:bg-blue-100">
+                                        <a href="{{ route('professor.manage-assignments', ['offering_id' => $assignment->course_offering_id]) }}" class="text-emerald-600 hover:text-emerald-800 font-semibold py-1 px-3 rounded-full text-sm transition-colors duration-200 hover:bg-emerald-100">
                                             {{ __('មើលការដាក់ស្នើ') }} (0)
                                         </a>
                                         {{-- Edit Button (placeholder for now) --}}

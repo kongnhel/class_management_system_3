@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <div class="bg-gray-50 min-h-screen py-8">
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
 
@@ -10,7 +10,7 @@
                     </svg>
                 </a>
                 <div class="flex items-center gap-3">
-                    <div class="flex-shrink-0 w-12 h-12 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-sm">
+                    <div class="flex-shrink-0 w-12 h-12 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-sm">
                         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                         </svg>
@@ -38,7 +38,7 @@
                             required
                             autofocus
                             placeholder="{{ __('ឧ. មហាវិទ្យាល័យវិទ្យាសាស្ត្រ និងបច្ចេកវិទ្យា') }}"
-                            class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 @error('name_km') border-red-500 focus:border-red-500 focus:ring-red-500/20 @enderror"
+                            class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200 @error('name_km') border-red-500 focus:border-red-500 focus:ring-red-500/20 @enderror"
                         />
                         @error('name_km')
                             <p class="mt-1.5 text-xs text-red-600 flex items-center gap-1">
@@ -60,7 +60,7 @@
                             value="{{ old('name_en') }}"
                             required
                             placeholder="{{ __('e.g. Faculty of Science and Technology') }}"
-                            class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 @error('name_en') border-red-500 focus:border-red-500 focus:ring-red-500/20 @enderror"
+                            class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200 @error('name_en') border-red-500 focus:border-red-500 focus:ring-red-500/20 @enderror"
                         />
                         @error('name_en')
                             <p class="mt-1.5 text-xs text-red-600 flex items-center gap-1">
@@ -78,7 +78,7 @@
                         <select
                             id="dean_user_id"
                             name="dean_user_id"
-                            class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 @error('dean_user_id') border-red-500 focus:border-red-500 focus:ring-red-500/20 @enderror"
+                            class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200 @error('dean_user_id') border-red-500 focus:border-red-500 focus:ring-red-500/20 @enderror"
                         >
                             <option value="">{{ __('ជ្រើសរើសប្រធានមហាវិទ្យាល័យ (ស្រេចចិត្ត)') }}</option>
                             @foreach ($professors as $professor)
@@ -102,7 +102,7 @@
                         <a href="{{ route('admin.manage-faculties') }}" class="px-5 py-2.5 text-sm font-semibold text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
                             {{ __('បោះបង់') }}
                         </a>
-                        <button type="submit" class="inline-flex items-center gap-2 px-6 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-xl shadow-sm hover:bg-blue-700 transition-colors">
+                        <button type="submit" class="inline-flex items-center gap-2 px-6 py-2.5 bg-emerald-600 text-white text-sm font-semibold rounded-xl shadow-sm hover:bg-emerald-700 transition-colors">
                             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                             </svg>

@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             {{ __('កម្មវិធីសិក្សាសម្រាប់ចុះឈ្មោះ') }}
@@ -19,7 +19,7 @@
                     </div>
                 @endif
                 @if (session('info'))
-                    <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4 rounded" role="alert">
+                    <div class="bg-emerald-100 border-l-4 border-emerald-500 text-emerald-700 p-4 mb-4 rounded" role="alert">
                         <p class="font-bold">{{ __('ព័ត៌មាន!') }}</p>
                         <p>{{ session('info') }}</p>
                     </div>
@@ -41,7 +41,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         @foreach ($availablePrograms as $program) {{-- 💡 ឥឡូវនេះ loop លើ Programs --}}
                             <div class="bg-white dark:bg-gray-700 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-600 transform transition-transform duration-200 hover:scale-102 hover:shadow-xl">
-                                <h4 class="text-xl font-bold text-indigo-700 dark:text-indigo-400 mb-2">{{ $program->name_km ?? $program->name }}</h4> {{-- 💡 បង្ហាញឈ្មោះ Program --}}
+                                <h4 class="text-xl font-bold text-emerald-700 dark:text-emerald-400 mb-2">{{ $program->name_km ?? $program->name }}</h4> {{-- 💡 បង្ហាញឈ្មោះ Program --}}
                                 <p class="text-sm text-gray-700 dark:text-gray-300 mb-1">
                                     {{ $program->description_km ?? $program->description }}
                                 </p>

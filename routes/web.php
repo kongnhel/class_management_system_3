@@ -18,7 +18,6 @@ use App\Http\Controllers\admin\TransitionController;
 use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\Auth\GoogleAuthController;
-use App\Http\Controllers\Auth\QrLoginController;
 use App\Http\Controllers\professor\ProfessorAttendanceController;
 use App\Http\Controllers\professor\ProfessorController;
 use App\Http\Controllers\professor\ProfessorCourseOfferingController;
@@ -80,32 +79,6 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-// QR Login Routes
-Route::get('/qr-login/finalize/{token}', [QrLoginController::class, 'finalizeLogin'])
-    ->name('qr.finalize');
-
-// // Desktop ហៅ finalize — Public (web middleware ស្វ័យប្រវត្តិ), គ្មាន auth
-// Route::get('/qr-login/finalize/{token}', [QrLoginController::class, 'finalizeLogin'])
-//     ->name('qr.finalize');
-
-// // Mobile refresh QR — Public
-// Route::get('/qr-refresh', [QrLoginController::class, 'refreshQr'])->name('qr.refresh');
-
-// // Mobile ស្កែន — ត្រូវការ auth (user login នៅ mobile)
-// Route::middleware(['auth'])->group(function () {
-//     Route::post('/qr-authorize', [QrLoginController::class, 'handleScan'])
-//         ->name('qr.authorize');
-
-//     Route::get('/qr-scanner', function () {
-//         return view('qr-scanner');
-//     })->name('qr.scanner');
-// });
-
-//     Route::middleware(['web'])->group(function () {
-//         Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-//         Route::post('/login', [LoginController::class, 'login']);
-//     });
-
 Route::get('/api/check-student/{code}', [StudentRegistrationController::class, 'checkStudent']);
 /*
 |--------------------------------------------------------------------------
@@ -130,15 +103,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/profile/update-picture', [ProfileController::class, 'updateProfilePicture'])->name('profile.update-picture');
 });
 
-Route::middleware(['auth'])->post('/qr-authorize', [QrLoginController::class, 'handleScan'])
-    ->name('qr.authorize');
-
-Route::get('/qr-refresh', [QrLoginController::class, 'refreshQr'])->name('qr.refresh');
-/*
-|--------------------------------------------------------------------------
-| Admin Routes (Protected by 'role:admin' middleware)
-|--------------------------------------------------------------------------
-*/
 Route::middleware(['auth', 'role:admin', 'throttle:120,1'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::get('/get-courses-by-program-and-generation', [CourseOfferingController::class, 'getCoursesByProgramAndGeneration'])->name('get-courses-by-program-and-generation');
@@ -440,12 +404,6 @@ Route::middleware(['auth', 'role:professor'])->group(function () {
     Route::get('assessment/{id}/export-csv', [ProfessorGradeController::class, 'exportCSV'])->name('grades.export');
     Route::post('/assessment/{id}/import-csv', [ProfessorGradeController::class, 'importCSV'])->name('grades.import');
 });
-
-Route::post('/api/qr-scan', [QrLoginController::class, 'handleScan'])->middleware('auth:sanctum');
-
-Route::middleware(['auth'])->get('/qr-scanner', function () {
-    return view('qr-scanner');
-})->name('qr.scanner');
 
 Route::post('/auth/google/callback', [GoogleAuthController::class, 'handleCallback'])
     ->name('auth.google.callback');

@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <div class="min-h-screen bg-slate-50/80 font-['Battambang'] pb-12">
 
         {{-- Header --}}
@@ -6,7 +6,7 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex flex-col md:flex-row md:items-center justify-between py-4 gap-4">
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-indigo-200">
+                        <div class="w-12 h-12 bg-emerald-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-emerald-200">
                             <i class="fas fa-graduation-cap text-xl"></i>
                         </div>
                         <div>
@@ -21,7 +21,7 @@
                         <div class="flex items-center gap-2 bg-slate-50 px-4 py-2 rounded-xl border border-slate-100">
                             <span class="text-xs font-bold text-slate-400 uppercase">{{ __('stu_semester') }}</span>
                             <div class="h-4 w-px bg-slate-300"></div>
-                            <span class="text-sm font-bold text-indigo-600">{{ $currentYear }}</span>
+                            <span class="text-sm font-bold text-emerald-600">{{ $currentYear }}</span>
                             @if($currentSemester)
                                 <span class="text-xs font-bold text-slate-500">· {{ $currentSemester }}</span>
                             @endif
@@ -39,7 +39,7 @@
                 <form action="{{ route('student.my-grades') }}" method="GET" class="flex flex-wrap items-end gap-4">
                     <div class="flex-1 min-w-[180px]">
                         <label class="block text-xs font-bold text-slate-500 mb-1.5 uppercase">{{ __('ឆ្នាំសិក្សា') }}</label>
-                        <select name="academic_year" class="w-full border-slate-200 rounded-xl text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        <select name="academic_year" class="w-full border-slate-200 rounded-xl text-sm focus:ring-emerald-500 focus:border-emerald-500">
                             <option value="">{{ __('គ្រប់ឆ្នាំសិក្សា') }}</option>
                             @foreach($academicYears as $year)
                                 <option value="{{ $year }}" {{ $currentYear == $year ? 'selected' : '' }}>{{ $year }}</option>
@@ -48,7 +48,7 @@
                     </div>
                     <div class="flex-1 min-w-[180px]">
                         <label class="block text-xs font-bold text-slate-500 mb-1.5 uppercase">{{ __('ឆមាស') }}</label>
-                        <select name="semester" class="w-full border-slate-200 rounded-xl text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        <select name="semester" class="w-full border-slate-200 rounded-xl text-sm focus:ring-emerald-500 focus:border-emerald-500">
                             <option value="">{{ __('គ្រប់ឆមាស') }}</option>
                             @foreach($semesters as $sem)
                                 <option value="{{ $sem }}" {{ $currentSemester == $sem ? 'selected' : '' }}>{{ $sem }}</option>
@@ -56,7 +56,7 @@
                         </select>
                     </div>
                     <div class="flex gap-2">
-                        <button type="submit" class="px-5 py-2 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 transition-all shadow-md shadow-indigo-200">
+                        <button type="submit" class="px-5 py-2 bg-emerald-600 text-white rounded-xl font-bold text-sm hover:bg-emerald-700 transition-all shadow-md shadow-emerald-200">
                             <i class="fas fa-filter mr-1.5"></i> {{ __('ចម្រាញ់') }}
                         </button>
                         <a href="{{ route('student.my-grades') }}" class="px-5 py-2 bg-slate-100 text-slate-600 rounded-xl font-bold text-sm hover:bg-slate-200 transition-all">
@@ -115,10 +115,10 @@
                         <h3 class="text-3xl font-black text-slate-800">{{ number_format($totalFinalScore, 1) }}</h3>
                         <p class="text-[10px] text-slate-400 mt-0.5">{{ $grades->total() }} {{ __('មុខវិជ្ជា') }}</p>
                     </div>
-                    <div class="w-12 h-12 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                    <div class="w-12 h-12 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
                         <i class="fas fa-calculator"></i>
                     </div>
-                    <div class="absolute -bottom-4 -left-4 w-24 h-24 bg-blue-50 rounded-full opacity-50 blur-2xl"></div>
+                    <div class="absolute -bottom-4 -left-4 w-24 h-24 bg-emerald-50 rounded-full opacity-50 blur-2xl"></div>
                 </div>
             </div>
 
@@ -126,7 +126,7 @@
             <div class="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
                 <div class="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-white">
                     <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-                        <span class="w-2 h-6 bg-indigo-500 rounded-full"></span>
+                        <span class="w-2 h-6 bg-emerald-500 rounded-full"></span>
                         {{ __('ប្រតិបត្តិពិន្ទុតាមមុខវិជ្ជា') }}
                     </h3>
                     <button onclick="window.print()" class="md:hidden inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold">
@@ -160,7 +160,7 @@
                                                 {{ strtoupper(substr($grade->course_name_en, 0, 2)) }}
                                             </div>
                                             <div class="min-w-0">
-                                                <div class="text-sm font-bold text-slate-800 group-hover:text-indigo-600 transition-colors truncate">{{ $grade->course_name_en }}</div>
+                                                <div class="text-sm font-bold text-slate-800 group-hover:text-emerald-600 transition-colors truncate">{{ $grade->course_name_en }}</div>
                                                 <div class="text-[11px] text-slate-400 mt-0.5 truncate">{{ $grade->course_name_km }}</div>
                                                 @if($grade->is_failed)
                                                     <span class="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded text-[10px] font-bold bg-rose-50 text-rose-600 border border-rose-100">
@@ -208,12 +208,12 @@
                                     <td class="px-4 py-5">
                                         <div class="flex items-center justify-between mb-1.5">
                                             <span class="text-sm font-black text-slate-800">{{ number_format($grade->total_score, 1) }}</span>
-                                            <span class="px-2 py-0.5 rounded-md text-xs font-bold {{ $grade->is_failed ? 'bg-rose-100 text-rose-600' : 'bg-indigo-50 text-indigo-600' }}">
+                                            <span class="px-2 py-0.5 rounded-md text-xs font-bold {{ $grade->is_failed ? 'bg-rose-100 text-rose-600' : 'bg-emerald-50 text-emerald-600' }}">
                                                 {{ $grade->grade }}
                                             </span>
                                         </div>
                                         <div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                                            <div class="h-full rounded-full transition-all duration-500 {{ $grade->is_failed ? 'bg-rose-500' : ($percentage >= 80 ? 'bg-emerald-500' : ($percentage >= 50 ? 'bg-indigo-500' : 'bg-amber-500')) }}"
+                                            <div class="h-full rounded-full transition-all duration-500 {{ $grade->is_failed ? 'bg-rose-500' : ($percentage >= 80 ? 'bg-emerald-500' : ($percentage >= 50 ? 'bg-emerald-500' : 'bg-amber-500')) }}"
                                                  style="width: {{ $percentage }}%"></div>
                                         </div>
                                     </td>
@@ -248,7 +248,7 @@
                                     <span class="text-[10px] text-slate-400 font-bold">{{ $grade->credits }} Credits</span>
                                 </div>
                                 <div class="flex flex-col items-end shrink-0 ml-3">
-                                    <span class="text-lg font-black {{ $grade->is_failed ? 'text-rose-600' : 'text-indigo-600' }}">
+                                    <span class="text-lg font-black {{ $grade->is_failed ? 'text-rose-600' : 'text-emerald-600' }}">
                                         {{ $grade->grade }}
                                     </span>
                                     <span class="text-[10px] text-slate-400 font-bold">#{{ $grade->course_rank }}/{{ $grade->total_students }}</span>
@@ -271,7 +271,7 @@
                             {{-- Progress --}}
                             <div class="flex items-center gap-3">
                                 <div class="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
-                                    <div class="h-full rounded-full {{ $grade->is_failed ? 'bg-rose-500' : 'bg-indigo-500' }}" style="width: {{ $percentage }}%"></div>
+                                    <div class="h-full rounded-full {{ $grade->is_failed ? 'bg-rose-500' : 'bg-emerald-500' }}" style="width: {{ $percentage }}%"></div>
                                 </div>
                                 <span class="text-xs font-bold text-slate-700">{{ number_format($grade->total_score, 1) }}%</span>
                             </div>

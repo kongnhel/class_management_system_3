@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <div class="bg-gray-50 min-h-screen py-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
@@ -41,7 +41,7 @@
             {{-- Header --}}
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                 <div class="flex items-center gap-4">
-                    <div class="h-12 w-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-200">
+                    <div class="h-12 w-12 bg-emerald-600 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-200">
                         <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                         </svg>
@@ -52,7 +52,7 @@
                     </div>
                 </div>
                 <a href="{{ route('admin.rooms.create') }}"
-                   class="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-200 hover:shadow-xl hover:-translate-y-0.5">
+                   class="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-emerald-200 hover:shadow-xl hover:-translate-y-0.5">
                     <svg class="h-5 w-5" fill="none" viewBox="0 0 20 20" stroke="currentColor" stroke-width="2.5">
                         <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
                     </svg>
@@ -67,7 +67,7 @@
                         <div class="relative flex-1">
                             <svg class="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                             <input type="text" name="search" value="{{ $search }}" placeholder="ស្វែងរកបន្ទប់..."
-                                   class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition">
+                                   class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm transition">
                         </div>
                         <div class="flex gap-2">
                             <button type="submit" class="px-5 py-2.5 bg-gray-900 hover:bg-gray-800 text-white font-bold rounded-xl transition text-sm">
@@ -102,7 +102,7 @@
                         </p>
                         @if(!$search)
                             <a href="{{ route('admin.rooms.create') }}"
-                               class="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition shadow-lg shadow-blue-200">
+                               class="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition shadow-lg shadow-emerald-200">
                                 <svg class="h-5 w-5" fill="none" viewBox="0 0 20 20" stroke="currentColor" stroke-width="2.5">
                                     <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
                                 </svg>
@@ -149,11 +149,11 @@
                             <tr class="hover:bg-gray-50 transition-colors">
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-3">
-                                        <div class="h-10 w-10 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0">
+                                        <div class="h-10 w-10 rounded-xl bg-emerald-50 flex items-center justify-center flex-shrink-0">
                                             @if($room->wifi_qr_code)
                                                 <img src="{{ $room->wifi_qr_code }}" alt="" class="h-10 w-10 rounded-xl object-cover">
                                             @else
-                                                <svg class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <svg class="h-5 w-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                                                 </svg>
                                             @endif
@@ -183,7 +183,7 @@
                                             មើល
                                         </a>
                                         <a href="{{ route('admin.rooms.edit', $room->id) }}"
-                                           class="px-3 py-1.5 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition">
+                                           class="px-3 py-1.5 text-sm font-medium text-emerald-600 hover:bg-emerald-50 rounded-lg transition">
                                             កែប្រែ
                                         </a>
                                         <button onclick="openDeleteModal({{ $room->id }}, '{{ $room->room_number }}')"
@@ -204,11 +204,11 @@
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4">
                         <div class="flex items-start justify-between">
                             <div class="flex items-center gap-3">
-                                <div class="h-12 w-12 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0">
+                                <div class="h-12 w-12 rounded-xl bg-emerald-50 flex items-center justify-center flex-shrink-0">
                                     @if($room->wifi_qr_code)
                                         <img src="{{ $room->wifi_qr_code }}" alt="" class="h-12 w-12 rounded-xl object-cover">
                                     @else
-                                        <svg class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <svg class="h-6 w-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                                         </svg>
                                     @endif
@@ -235,7 +235,7 @@
                                 មើល
                             </a>
                             <a href="{{ route('admin.rooms.edit', $room->id) }}"
-                               class="px-3 py-1.5 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition">
+                               class="px-3 py-1.5 text-sm font-medium text-emerald-600 hover:bg-emerald-50 rounded-lg transition">
                                 កែប្រែ
                             </a>
                             <button onclick="openDeleteModal({{ $room->id }}, '{{ $room->room_number }}')"
@@ -263,7 +263,7 @@
 
                             @foreach($rooms->getUrlRange(max(1, $rooms->currentPage() - 2), min($rooms->lastPage(), $rooms->currentPage() + 2)) as $page => $url)
                                 <a href="{{ $url }}"
-                                   class="px-3 py-1.5 text-sm font-medium rounded-lg transition {{ $page == $rooms->currentPage() ? 'bg-blue-600 text-white shadow-sm' : 'text-gray-600 bg-white border border-gray-200 hover:bg-gray-50' }}">
+                                   class="px-3 py-1.5 text-sm font-medium rounded-lg transition {{ $page == $rooms->currentPage() ? 'bg-emerald-600 text-white shadow-sm' : 'text-gray-600 bg-white border border-gray-200 hover:bg-gray-50' }}">
                                     {{ $page }}
                                 </a>
                             @endforeach

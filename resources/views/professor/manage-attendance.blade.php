@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
@@ -10,11 +10,11 @@
 
             <a href="{{ route('professor.my-course-offerings', ['offering_id' => $courseOffering->id]) }}"
                 class="inline-flex items-center px-6 py-3 
-                bg-gradient-to-r from-indigo-500 via-indigo-600 to-indigo-700 
-                hover:from-indigo-600 hover:via-indigo-700 hover:to-indigo-800 
+                bg-gradient-to-r from-emerald-500 via-emerald-600 to-emerald-700 
+                hover:from-emerald-600 hover:via-emerald-700 hover:to-emerald-800 
                 text-white text-sm font-semibold rounded-lg shadow-md 
                 hover:shadow-lg transform hover:scale-105 
-                transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-emerald-400">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor"
                     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -51,11 +51,11 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-2xl sm:rounded-3xl p-8 lg:p-12 border border-gray-100 transition-transform duration-500 ease-in-out">
 
-                <div class="bg-indigo-50 p-6 rounded-2xl shadow-md border-l-4 border-indigo-500 mb-10 transition-all duration-300 transform hover:scale-[1.005]">
+                <div class="bg-emerald-50 p-6 rounded-2xl shadow-md border-l-4 border-emerald-500 mb-10 transition-all duration-300 transform hover:scale-[1.005]">
                     <div class="flex items-center space-x-4">
-                        <svg class="w-10 h-10 text-indigo-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <svg class="w-10 h-10 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         <div>
-                            <p class="text-xl font-bold text-indigo-800">{{ __('ព័ត៌មានវគ្គសិក្សា') }}</p>
+                            <p class="text-xl font-bold text-emerald-800">{{ __('ព័ត៌មានវគ្គសិក្សា') }}</p>
                             <ul class="list-disc list-inside text-gray-700 mt-2 text-sm md:text-base">
                                 <li>{{ __('លេខកូដមុខវិជ្ជា:') }} <span class="font-semibold text-gray-900">{{ $courseOffering->course->code ?? 'N/A' }}</span></li>
                                 <li>{{ __('គ្រូបង្រៀន:') }} <span class="font-semibold text-gray-900">{{ $courseOffering->lecturer->name ?? 'N/A' }}</span></li>
@@ -78,7 +78,7 @@
 
                         <div>
                             <label for="student_user_id" class="block text-sm font-medium text-gray-700">{{ __('និស្សិត') }}</label>
-                            <select id="student_user_id" name="student_user_id" required class="mt-1 block w-full p-3 text-base border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300">
+                            <select id="student_user_id" name="student_user_id" required class="mt-1 block w-full p-3 text-base border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all duration-300">
                                 <option value="">{{ __('ជ្រើសរើសនិស្សិត') }}</option>
                                 @foreach ($courseOffering->studentCourseEnrollments as $enrollment)
                                     <option value="{{ $enrollment->student->id }}">
@@ -91,13 +91,13 @@
 
                         <div>
                             <label for="date" class="block text-sm font-medium text-gray-700">{{ __('កាលបរិច្ឆេទ') }}</label>
-                            <input type="date" id="date" name="date" required value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 transition-all duration-300">
+                            <input type="date" id="date" name="date" required value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-emerald-500 transition-all duration-300">
                             @error('date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
 
                         <div>
                             <label for="status" class="block text-sm font-medium text-gray-700">{{ __('ស្ថានភាព') }}</label>
-                            <select id="status" name="status" required class="mt-1 block w-full p-3 text-base border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300">
+                            <select id="status" name="status" required class="mt-1 block w-full p-3 text-base border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all duration-300">
                                 <option value="present">{{ __('មានវត្តមាន') }}</option>
                                 <option value="absent">{{ __('អវត្តមាន') }}</option>
                                 <option value="late">{{ __('មកយឺត') }}</option>
@@ -108,12 +108,12 @@
 
                         <div class="md:col-span-2 lg:col-span-3">
                             <label for="remarks" class="block text-sm font-medium text-gray-700">{{ __('កំណត់ចំណាំ (ស្រេចចិត្ត)') }}</label>
-                            <textarea id="remarks" name="remarks" rows="3" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 transition-all duration-300"></textarea>
+                            <textarea id="remarks" name="remarks" rows="3" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-emerald-500 transition-all duration-300"></textarea>
                             @error('remarks') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
 
                         <div class="md:col-span-2 lg:col-span-3 flex justify-end mt-4">
-                            <button type="submit" class="w-full md:w-auto px-8 py-4 text-white font-extrabold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out transform hover:scale-[1.01] bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800">
+                            <button type="submit" class="w-full md:w-auto px-8 py-4 text-white font-extrabold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out transform hover:scale-[1.01] bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800">
                                 <span class="flex items-center justify-center space-x-2">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4a2 2 0 11-4 0m4 0a2 2 0 10-4 0m-9 8h10M4 16h10"></path></svg>
                                     <span>{{ __('រក្សាទុកវត្តមាន') }}</span>
@@ -133,7 +133,7 @@
     <div class="block sm:table min-w-full leading-normal">
 
         {{-- Table Header (បង្ហាញតែនៅលើអេក្រង់ធំ) --}}
-        <div class="hidden sm:table-header-group bg-gradient-to-r from-indigo-700 to-blue-700">
+        <div class="hidden sm:table-header-group bg-gradient-to-r from-emerald-700 to-emerald-700">
             <div class="sm:table-row">
                 <div class="sm:table-cell py-4 px-6 text-left text-sm font-bold text-white uppercase tracking-wider rounded-tl-2xl">{{ __('ឈ្មោះនិស្សិត') }}</div>
                 <div class="sm:table-cell py-4 px-6 text-left text-sm font-bold text-white uppercase tracking-wider">{{ __('កាលបរិច្ឆេទ') }}</div>
@@ -148,7 +148,7 @@
             @forelse ($attendanceRecords as $record)
                 
                 {{-- រចនាប័ទ្ម Card សម្រាប់អេក្រង់តូច (sm:hidden) --}}
-                <div class="sm:hidden p-4 mb-4 bg-white rounded-xl shadow-md border border-gray-200 hover:bg-indigo-50 transition-colors duration-200">
+                <div class="sm:hidden p-4 mb-4 bg-white rounded-xl shadow-md border border-gray-200 hover:bg-emerald-50 transition-colors duration-200">
                     <div class="flex justify-between items-center mb-2 border-b pb-2">
                         <span class="text-lg font-bold text-gray-800">{{ $record->student->profile->full_name_km ?? $record->student->name ?? 'N/A' }}</span>
                         @php
@@ -189,7 +189,7 @@
                 </div>
 
                 {{-- រចនាប័ទ្ម Table Row សម្រាប់អេក្រង់ធំ (sm:table-row) --}}
-                <div class="hidden sm:table-row hover:bg-indigo-50 transition-colors duration-200">
+                <div class="hidden sm:table-row hover:bg-emerald-50 transition-colors duration-200">
                     <div class="sm:table-cell py-4 px-6 text-gray-800 font-medium">{{ $record->student->profile->full_name_km ?? $record->student->name ?? 'N/A' }}</div>
                     <div class="sm:table-cell py-4 px-6 text-gray-600">{{ \Carbon\Carbon::parse($record->date)->format('Y-m-d') }}</div>
                     <div class="sm:table-cell py-4 px-6 font-bold uppercase">
@@ -284,7 +284,7 @@
 
                     <div class="mb-4">
                         <label for="edit_student_user_id" class="block text-sm font-medium text-gray-700">{{ __('និស្សិត') }}</label>
-                        <select id="edit_student_user_id" name="student_user_id" x-model="studentUserId" required class="mt-1 block w-full p-3 border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300">
+                        <select id="edit_student_user_id" name="student_user_id" x-model="studentUserId" required class="mt-1 block w-full p-3 border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all duration-300">
                             @foreach ($courseOffering->studentCourseEnrollments as $enrollment)
                                 <option value="{{ $enrollment->student->id }}">
                                     {{ $enrollment->student->profile->full_name_km ?? $enrollment->student->name }}
@@ -295,12 +295,12 @@
 
                     <div class="mb-4">
                         <label for="edit_date" class="block text-sm font-medium text-gray-700">{{ __('កាលបរិច្ឆេទ') }}</label>
-                        <input type="date" id="edit_date" name="date" x-model="date" required class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 transition-all duration-300">
+                        <input type="date" id="edit_date" name="date" x-model="date" required class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-emerald-500 transition-all duration-300">
                     </div>
 
                     <div class="mb-4">
                         <label for="edit_status" class="block text-sm font-medium text-gray-700">{{ __('ស្ថានភាព') }}</label>
-                        <select id="edit_status" name="status" x-model="status" required class="mt-1 block w-full p-3 text-base border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300">
+                        <select id="edit_status" name="status" x-model="status" required class="mt-1 block w-full p-3 text-base border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all duration-300">
                             <option value="present">{{ __('មានវត្តមាន') }}</option>
                             <option value="absent">{{ __('អវត្តមាន') }}</option>
                             <option value="late">{{ __('មកយឺត') }}</option>
@@ -309,14 +309,14 @@
                     </div>
                     <div class="mb-6">
                         <label for="edit_remarks" class="block text-sm font-medium text-gray-700">{{ __('កំណត់ចំណាំ (ស្រេចចិត្ត)') }}</label>
-                        <input type="text" id="edit_remarks" name="remarks" x-model="remarks" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 transition-all duration-300">
+                        <input type="text" id="edit_remarks" name="remarks" x-model="remarks" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-emerald-500 transition-all duration-300">
                     </div>
 
                     <div class="flex justify-end space-x-3">
                         <button type="button" @click="open = false" class="px-6 py-3 text-gray-700 font-semibold rounded-xl shadow-sm transition-all duration-200 hover:bg-gray-200">
                             {{ __('បោះបង់') }}
                         </button>
-                        <button type="submit" class="px-6 py-3 text-white font-semibold rounded-xl shadow-md transition-all duration-200 bg-blue-600 hover:bg-blue-700">
+                        <button type="submit" class="px-6 py-3 text-white font-semibold rounded-xl shadow-md transition-all duration-200 bg-emerald-600 hover:bg-emerald-700">
                             {{ __('រក្សាទុកការកែប្រែ') }}
                         </button>
                     </div>

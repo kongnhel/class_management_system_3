@@ -1,16 +1,16 @@
-<x-app-layout>
+﻿<x-app-layout>
     <div class="bg-slate-50 min-h-screen font-['Battambang'] antialiased">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8 space-y-6">
 
             {{-- Breadcrumb + Back --}}
             <div class="no-print flex items-center gap-2 text-xs font-semibold text-slate-400">
-                <a href="{{ route('student.my-enrolled-courses') }}" class="hover:text-indigo-600 transition-colors">{{ __('មុខវិជ្ជារបស់ខ្ញុំ') }}</a>
+                <a href="{{ route('student.my-enrolled-courses') }}" class="hover:text-emerald-600 transition-colors">{{ __('មុខវិជ្ជារបស់ខ្ញុំ') }}</a>
                 <i class="fas fa-chevron-right text-[8px]"></i>
                 <span class="text-slate-600">{{ __('របាយការណ៍វត្តមាន') }}</span>
             </div>
 
             {{-- HERO Header --}}
-            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-600 via-indigo-700 to-purple-700 text-white shadow-xl shadow-indigo-200/50 no-print">
+            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-600 via-emerald-700 to-purple-700 text-white shadow-xl shadow-emerald-200/50 no-print">
                 <div class="absolute -top-16 -right-16 w-64 h-64 bg-white/5 rounded-full blur-2xl"></div>
                 <div class="absolute -bottom-20 -left-10 w-72 h-72 bg-purple-400/10 rounded-full blur-3xl"></div>
 
@@ -22,9 +22,9 @@
                             </div>
                             <div>
                                 <h1 class="text-xl sm:text-2xl font-black leading-tight">{{ __('របាយការណ៍វត្តមានរួម') }}</h1>
-                                <p class="text-indigo-200 text-sm mt-1">{{ $courseOffering->course->title_km ?? $courseOffering->course->title_en }}</p>
+                                <p class="text-emerald-200 text-sm mt-1">{{ $courseOffering->course->title_km ?? $courseOffering->course->title_en }}</p>
                                 @if($courseOffering->lecturer)
-                                    <p class="text-indigo-300 text-xs mt-0.5">{{ __('សាស្ត្រាចារ្យ') }}: {{ $courseOffering->lecturer->name }}</p>
+                                    <p class="text-emerald-300 text-xs mt-0.5">{{ __('សាស្ត្រាចារ្យ') }}: {{ $courseOffering->lecturer->name }}</p>
                                 @endif
                             </div>
                         </div>
@@ -43,7 +43,7 @@
                                 <i class="fas fa-calendar-alt"></i>
                             </div>
                             <div>
-                                <p class="text-indigo-300 text-[10px] font-bold uppercase tracking-wider">{{ __('ឆ្នាំសិក្សា') }}</p>
+                                <p class="text-emerald-300 text-[10px] font-bold uppercase tracking-wider">{{ __('ឆ្នាំសិក្សា') }}</p>
                                 <p class="text-sm font-bold">{{ $courseOffering->academic_year }}</p>
                             </div>
                         </div>
@@ -52,7 +52,7 @@
                                 <i class="fas fa-graduation-cap"></i>
                             </div>
                             <div>
-                                <p class="text-indigo-300 text-[10px] font-bold uppercase tracking-wider">{{ __('ឆមាស') }}</p>
+                                <p class="text-emerald-300 text-[10px] font-bold uppercase tracking-wider">{{ __('ឆមាស') }}</p>
                                 <p class="text-sm font-bold">{{ $courseOffering->semester }}</p>
                             </div>
                         </div>
@@ -61,7 +61,7 @@
                                 <i class="fas fa-users"></i>
                             </div>
                             <div>
-                                <p class="text-indigo-300 text-[10px] font-bold uppercase tracking-wider">{{ __('និស្សិត') }}</p>
+                                <p class="text-emerald-300 text-[10px] font-bold uppercase tracking-wider">{{ __('និស្សិត') }}</p>
                                 <p class="text-sm font-bold">{{ $students->count() }} {{ __('នាក់') }}</p>
                             </div>
                         </div>
@@ -91,8 +91,8 @@
                     <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center"><i class="fas fa-clock"></i></div>
                     <div><p class="text-[10px] font-bold text-gray-400 uppercase">{{ __('មកយឺត') }}</p><h3 class="text-lg font-black text-gray-800">{{ $totalLate }}</h3></div>
                 </div>
-                <div class="bg-white p-4 rounded-2xl border border-blue-100 shadow-sm flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center"><i class="fas fa-file-contract"></i></div>
+                <div class="bg-white p-4 rounded-2xl border border-emerald-100 shadow-sm flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center"><i class="fas fa-file-contract"></i></div>
                     <div><p class="text-[10px] font-bold text-gray-400 uppercase">{{ __('ច្បាប់') }}</p><h3 class="text-lg font-black text-gray-800">{{ $totalPerm }}</h3></div>
                 </div>
                 <div class="col-span-3 lg:col-span-2 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
@@ -111,7 +111,7 @@
             <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
                 <div class="px-5 py-4 border-b border-slate-50 flex items-center justify-between">
                     <div class="flex items-center gap-2.5">
-                        <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm"><i class="fas fa-table"></i></div>
+                        <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm"><i class="fas fa-table"></i></div>
                         <h3 class="text-sm font-bold text-gray-800">{{ __('បញ្ជីវត្តមាននិស្សិត') }}</h3>
                     </div>
                     <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-slate-50 text-slate-500">{{ $students->count() }} {{ __('នាក់') }}</span>
@@ -126,7 +126,7 @@
                                 <th class="px-5 py-3.5 text-left text-[11px] font-bold text-slate-400 uppercase tracking-wider">{{ __('និស្សិត') }}</th>
                                 <th class="px-3 py-3.5 text-center text-[11px] font-bold text-emerald-600 uppercase tracking-wider">{{ __('មក') }}</th>
                                 <th class="px-3 py-3.5 text-center text-[11px] font-bold text-amber-600 uppercase tracking-wider">{{ __('មកយឺត') }}</th>
-                                <th class="px-3 py-3.5 text-center text-[11px] font-bold text-blue-600 uppercase tracking-wider">{{ __('ច្បាប់') }}</th>
+                                <th class="px-3 py-3.5 text-center text-[11px] font-bold text-emerald-600 uppercase tracking-wider">{{ __('ច្បាប់') }}</th>
                                 <th class="px-3 py-3.5 text-center text-[11px] font-bold text-rose-600 uppercase tracking-wider">{{ __('អវត្តមាន') }}</th>
                                 <th class="px-5 py-3.5 text-right text-[11px] font-bold text-slate-400 uppercase tracking-wider">{{ __('ភាគរយ') }}</th>
                             </tr>
@@ -147,7 +147,7 @@
                                                     ?? $data->profile?->profile_picture_url
                                                     ?? $data->avatar;
                                             @endphp
-                                            <div class="w-9 h-9 rounded-xl overflow-hidden flex items-center justify-center flex-shrink-0 {{ $pic ? '' : 'bg-indigo-50 text-indigo-600' }}">
+                                            <div class="w-9 h-9 rounded-xl overflow-hidden flex items-center justify-center flex-shrink-0 {{ $pic ? '' : 'bg-emerald-50 text-emerald-600' }}">
                                                 @if($pic)
                                                     <img src="{{ $pic }}" alt="{{ $data->name }}" class="w-full h-full object-cover">
                                                 @else
@@ -162,7 +162,7 @@
                                     </td>
                                     <td class="px-3 py-3.5 text-center"><span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 text-xs font-black">{{ $data->present_count }}</span></td>
                                     <td class="px-3 py-3.5 text-center"><span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-amber-50 text-amber-700 text-xs font-black">{{ $data->late_count ?? 0 }}</span></td>
-                                    <td class="px-3 py-3.5 text-center"><span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 text-blue-700 text-xs font-black">{{ $data->permission_count }}</span></td>
+                                    <td class="px-3 py-3.5 text-center"><span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 text-xs font-black">{{ $data->permission_count }}</span></td>
                                     <td class="px-3 py-3.5 text-center"><span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-rose-50 text-rose-700 text-xs font-black">{{ $data->absent_count }}</span></td>
                                     <td class="px-5 py-3.5">
                                         <div class="flex items-center gap-2.5 justify-end">
@@ -193,7 +193,7 @@
                                         ?? $data->profile?->profile_picture_url
                                         ?? $data->avatar;
                                 @endphp
-                                <div class="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center flex-shrink-0 {{ $pic ? '' : 'bg-indigo-50 text-indigo-600' }}">
+                                <div class="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center flex-shrink-0 {{ $pic ? '' : 'bg-emerald-50 text-emerald-600' }}">
                                     @if($pic)
                                         <img src="{{ $pic }}" alt="{{ $data->name }}" class="w-full h-full object-cover">
                                     @else
@@ -216,9 +216,9 @@
                                     <p class="text-[9px] font-bold text-amber-500 uppercase">{{ __('យឺត') }}</p>
                                     <p class="text-sm font-black text-amber-700">{{ $data->late_count ?? 0 }}</p>
                                 </div>
-                                <div class="text-center bg-blue-50 rounded-lg py-1.5">
-                                    <p class="text-[9px] font-bold text-blue-500 uppercase">{{ __('ច្បាប់') }}</p>
-                                    <p class="text-sm font-black text-blue-700">{{ $data->permission_count }}</p>
+                                <div class="text-center bg-emerald-50 rounded-lg py-1.5">
+                                    <p class="text-[9px] font-bold text-emerald-500 uppercase">{{ __('ច្បាប់') }}</p>
+                                    <p class="text-sm font-black text-emerald-700">{{ $data->permission_count }}</p>
                                 </div>
                                 <div class="text-center bg-rose-50 rounded-lg py-1.5">
                                     <p class="text-[9px] font-bold text-rose-500 uppercase">{{ __('អវ') }}</p>

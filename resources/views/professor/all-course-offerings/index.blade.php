@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <h2 class="font-bold text-3xl text-gray-800 leading-tight">
             {{ __('ការផ្តល់ជូនមុខវិជ្ជា') }}
@@ -57,7 +57,7 @@
                             @foreach ($courseOfferings as $offering)
                                 <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 flex flex-col justify-between hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
                                     <div class="flex flex-col items-start mb-6">
-                                        <div class="flex-shrink-0 w-14 h-14 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4">
+                                        <div class="flex-shrink-0 w-14 h-14 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                                                 <polyline points="14 2 14 8 20 8"></polyline>
@@ -79,7 +79,7 @@
                                         <p class="text-gray-700 font-medium"><span class="font-bold text-gray-800">{{ __('គ្រូបង្រៀន') }}</span>: <span class="text-gray-600">{{ $offering->lecturer->name ?? 'N/A' }}</span></p>
                                     </div>
                                     {{-- <div class="flex justify-end space-x-3 mt-auto">
-                                        <a href="{{ route('professor.view-all-course-offerings', $offering->id) }}" class="p-3 bg-gray-100 rounded-full text-blue-600 hover:bg-gray-200 transition duration-150 ease-in-out" title="{{ __('មើល') }}">
+                                        <a href="{{ route('professor.view-all-course-offerings', $offering->id) }}" class="p-3 bg-gray-100 rounded-full text-emerald-600 hover:bg-gray-200 transition duration-150 ease-in-out" title="{{ __('មើល') }}">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                                 <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
                                                 <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />

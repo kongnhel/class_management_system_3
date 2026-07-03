@@ -137,7 +137,7 @@ class SmartAssistantController extends Controller
                 $courseNames = $courses->map(fn ($c) => "{$c->title_km} (Section: {$c->section})")->implode(', ');
                 $context .= '- មុខវិជ្ជាកំពុងរៀន៖ '.($courseNames ?: 'មិនទាន់មាន')."\n";
 
-                $attendance = DB::table('attendance_records')
+                $attendance = DB::table('attendances')
                     ->where('student_user_id', $user->id)
                     ->selectRaw("COUNT(CASE WHEN status = 'present' THEN 1 END) as present_count")
                     ->selectRaw("COUNT(CASE WHEN status != 'present' THEN 1 END) as absent_count")
