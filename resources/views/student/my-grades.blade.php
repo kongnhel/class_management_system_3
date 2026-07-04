@@ -113,7 +113,7 @@
                     <div class="relative z-10">
                         <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('stu_total_grade') }}</p>
                         <h3 class="text-3xl font-black text-slate-800">{{ number_format($totalFinalScore, 1) }}</h3>
-                        <p class="text-[10px] text-slate-400 mt-0.5">{{ $grades->total() }} {{ __('មុខវិជ្ជា') }}</p>
+                        <p class="text-[10px] text-slate-400 mt-0.5">{{ $grades->count() }} {{ __('មុខវិជ្ជា') }}</p>
                     </div>
                     <div class="w-12 h-12 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
                         <i class="fas fa-calculator"></i>

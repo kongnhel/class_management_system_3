@@ -46,4 +46,52 @@ class ExamResult extends Model
     {
         return $this->belongsTo(Assignment::class, 'assessment_id');
     }
+
+    public function quiz()
+    {
+        return $this->belongsTo(Quiz::class, 'assessment_id');
+    }
+
+    public function getCourseOfferingIdAttribute()
+    {
+        return match($this->assessment_type) {
+            'assignment' => $this->assignment?->course_offering_id,
+            'exam' => $this->exam?->course_offering_id,
+            'quiz' => $this->quiz?->course_offering_id,
+            default => null,
+        };
+    }
+
+    public function getDisplayTypeAttribute()
+    {
+        if ($this->assessment_type === 'assignment') return 'Assignment';
+        if ($this->assessment_type === 'quiz') return 'Quiz';
+        $title = match($this->assessment_type) {
+            'exam' => $this->exam?->title_en ?? '',
+            default => '',
+        };
+        if (str_contains($title, 'Final')) return 'Final';
+        if (str_contains($title, 'Midterm')) return 'Midterm';
+        return 'Exam';
+    }
+
+    public function getCourseIdAttribute()
+    {
+        return match($this->assessment_type) {
+            'assignment' => $this->assignment?->courseOffering?->course_id,
+            'exam' => $this->exam?->courseOffering?->course_id,
+            'quiz' => $this->quiz?->courseOffering?->course_id,
+            default => null,
+        };
+    }
+
+    public function getCreditsAttribute()
+    {
+        return match($this->assessment_type) {
+            'assignment' => $this->assignment?->courseOffering?->course?->credits ?? 3,
+            'exam' => $this->exam?->courseOffering?->course?->credits ?? 3,
+            'quiz' => $this->quiz?->courseOffering?->course?->credits ?? 3,
+            default => 3,
+        };
+    }
 }

@@ -199,6 +199,7 @@
   'stu_to' => 'to',
   'stu_no_schedule' => 'No schedule for today',
   'stu_enrolled_courses' => 'Enrolled Courses',
+  'stu_no_enrolled_courses' => 'No courses enrolled today',
   'stu_not_recorded' => 'Not recorded',
   'stu_grades_title' => 'Academic Results',
   'stu_semester' => 'Semester 1',

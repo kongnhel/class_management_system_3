@@ -254,6 +254,7 @@ return [
     'stu_to' => 'ដល់',
     'stu_no_schedule' => 'មិនមានកាលវិភាគសម្រាប់ថ្ងៃនេះទេ',
     'stu_enrolled_courses' => 'មុខវិជ្ជាដែលកំពុងសិក្សា',
+    'stu_no_enrolled_courses' => 'មិនមានមុខវិជ្ជាចូលរៀនថ្ងៃនេះទេ',
     'stu_not_recorded' => 'មិនទាន់កត់ត្រា',
 
     // Student Grades

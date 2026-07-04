@@ -362,13 +362,9 @@ Route::get('/professor/attendance/history', [ProfessorAttendanceController::clas
 Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')->group(function () {
     Route::get('/dashboard', [StudentController::class, 'dashboard'])->name('dashboard');
     Route::get('/my-grades', [StudentGradeController::class, 'myGrades'])->name('my-grades');
+    Route::get('/my-assessments', [StudentGradeController::class, 'myAssessments'])->name('my-assessments');
     Route::get('/my-enrolled-courses', [StudentGradeController::class, 'myEnrolledCourses'])->name('my-enrolled-courses');
     Route::get('/my-schedule', [StudentGradeController::class, 'mySchedule'])->name('my-schedule');
-    Route::get('/my-assignments', [StudentGradeController::class, 'myAssignments'])->name('my-assignments');
-    Route::get('/my-exams', [StudentGradeController::class, 'myExams'])->name('my-exams');
-    Route::get('/my-quizzes', [StudentGradeController::class, 'myQuizzes'])->name('my-quizzes');
-    Route::get('/quizzes/{quiz_id}', [StudentGradeController::class, 'takeQuiz'])->name('take-quiz');
-    Route::post('/quizzes/{quiz_id}/submit', [StudentGradeController::class, 'submitQuiz'])->name('submit-quiz');
     Route::get('/{studentId}/enrolled-courses', [StudentGradeController::class, 'enrolledCourses'])->name('enrolled_courses');
     Route::get('/available-programs', [StudentGradeController::class, 'availablePrograms'])->name('available_programs');
     Route::post('/enroll-self', [StudentGradeController::class, 'enrollSelf'])->name('enroll_self');

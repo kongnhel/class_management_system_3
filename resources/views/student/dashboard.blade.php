@@ -136,15 +136,6 @@
                     </div>
                 </div>
 
-                {{-- Pending submissions --}}
-                <div class="bg-white p-4 rounded-2xl border border-orange-100 shadow-sm flex items-center gap-3">
-                    <div class="w-11 h-11 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center text-lg flex-shrink-0"><i class="fas fa-file-signature"></i></div>
-                    <div class="min-w-0">
-                        <p class="text-[10px] text-gray-400 font-bold uppercase truncate">{{ __('ការងាររងសង់') }}</p>
-                        <h4 class="text-xl font-black text-gray-800">{{ $pendingSubmissions ?? 0 }}</h4>
-                    </div>
-                </div>
-
                 {{-- Completed courses --}}
                 @if($totalCoursesInProgram > 0)
                 <div class="bg-white p-4 rounded-2xl border border-violet-100 shadow-sm flex items-center gap-3">
@@ -158,40 +149,56 @@
             </div>
 
             {{-- =========================================================== --}}
-            {{-- UPCOMING ASSESSMENTS STRIP --}}
+            {{-- ACADEMIC PERFORMANCE --}}
             {{-- =========================================================== --}}
-            @php
-                $upcomingStats = [
-                    ['label' => __('stu_quizzes'), 'count' => $upcomingQuizzes->count(), 'icon' => 'fa-stopwatch', 'color' => 'indigo', 'items' => $upcomingQuizzes, 'dateField' => 'quiz_date', 'titleField' => 'title_km'],
-                    ['label' => __('stu_assignments'), 'count' => $upcomingAssignments->count(), 'icon' => 'fa-file-signature', 'color' => 'emerald', 'items' => $upcomingAssignments, 'dateField' => 'due_date', 'titleField' => 'title_km'],
-                    ['label' => __('stu_exams'), 'count' => $upcomingExams->count(), 'icon' => 'fa-graduation-cap', 'color' => 'rose', 'items' => $upcomingExams, 'dateField' => 'exam_date', 'titleField' => 'title_km'],
-                ];
-            @endphp
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                @foreach($upcomingStats as $stat)
-                    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-                        <div class="flex items-center justify-between px-5 py-4 border-b border-slate-50">
-                            <div class="flex items-center gap-2.5">
-                                <div class="w-8 h-8 rounded-lg bg-{{ $stat['color'] }}-50 text-{{ $stat['color'] }}-600 flex items-center justify-center text-sm">
-                                    <i class="fas {{ $stat['icon'] }}"></i>
-                                </div>
-                                <h4 class="text-sm font-bold text-gray-700">{{ $stat['label'] }}</h4>
-                            </div>
-                            <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-{{ $stat['color'] }}-50 text-{{ $stat['color'] }}-700">{{ $stat['count'] }}</span>
+            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                <div class="flex items-center justify-between px-6 py-4 border-b border-slate-50">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm">
+                            <i class="fas fa-chart-line"></i>
                         </div>
-                        <div class="px-5 py-3 space-y-2 max-h-32 overflow-y-auto custom-scrollbar">
-                            @forelse($stat['items'] as $item)
-                                <div class="flex items-center gap-3 py-1.5">
-                                    <div class="w-1.5 h-1.5 rounded-full bg-{{ $stat['color'] }}-400 flex-shrink-0"></div>
-                                    <p class="text-xs font-semibold text-gray-700 truncate flex-1">{{ $item->{$stat['titleField']} ?? $item->title ?? '' }}</p>
-                                    <span class="text-[10px] font-bold text-gray-400 whitespace-nowrap">{{ \Carbon\Carbon::parse($item->{$stat['dateField']})->format('d M') }}</span>
-                                </div>
-                            @empty
-                                <p class="text-xs text-gray-300 italic text-center py-3">{{ __('មិនមានទិន្នន័យ') }}</p>
-                            @endforelse
+                        <h4 class="text-base font-bold text-gray-800">{{ __('សមិទ្ធផលសិក្សា') }}</h4>
+                    </div>
+                    <a href="{{ route('student.my-grades') }}" class="text-xs font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1">
+                        {{ __('មើលពិន្ទុទាំងអស់') }} <i class="fas fa-arrow-right text-[10px]"></i>
+                    </a>
+                </div>
+                <div class="p-6">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        {{-- GPA --}}
+                        <div class="text-center p-4 bg-emerald-50/50 rounded-2xl border border-emerald-100">
+                            <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-2">
+                                <i class="fas fa-award text-lg"></i>
+                            </div>
+                            <p class="text-2xl font-black text-emerald-700">{{ $gpa }}</p>
+                            <p class="text-[10px] font-bold text-emerald-500 uppercase tracking-wide mt-1">GPA (4.0)</p>
+                        </div>
+                        {{-- Average --}}
+                        <div class="text-center p-4 bg-blue-50/50 rounded-2xl border border-blue-100">
+                            <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center mx-auto mb-2">
+                                <i class="fas fa-percent text-lg"></i>
+                            </div>
+                            <p class="text-2xl font-black text-blue-700">{{ $averageScore }}%</p>
+                            <p class="text-[10px] font-bold text-blue-500 uppercase tracking-wide mt-1">{{ __('មធ្យមភាគ') }}</p>
+                        </div>
+                        {{-- Rank --}}
+                        <div class="text-center p-4 bg-purple-50/50 rounded-2xl border border-purple-100">
+                            <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center mx-auto mb-2">
+                                <i class="fas fa-trophy text-lg"></i>
+                            </div>
+                            <p class="text-2xl font-black text-purple-700">{{ $overallRank }}<span class="text-sm font-bold text-purple-400">/{{ $totalClassmates }}</span></p>
+                            <p class="text-[10px] font-bold text-purple-500 uppercase tracking-wide mt-1">{{ __('ចំណាត់ថ្នាក់') }}</p>
+                        </div>
+                        {{-- Grade --}}
+                        <div class="text-center p-4 bg-amber-50/50 rounded-2xl border border-amber-100">
+                            <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center mx-auto mb-2">
+                                <i class="fas fa-medal text-lg"></i>
+                            </div>
+                            <p class="text-2xl font-black text-amber-700">{{ $overallGrade }}</p>
+                            <p class="text-[10px] font-bold text-amber-500 uppercase tracking-wide mt-1">{{ __('និទ្ទេសរួម') }}</p>
                         </div>
                     </div>
-                @endforeach
+                </div>
             </div>
 
             {{-- =========================================================== --}}
