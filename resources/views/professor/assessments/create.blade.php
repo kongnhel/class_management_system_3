@@ -137,19 +137,6 @@
                                         </div>
                                     </div>
 
-                                    {{-- Exam: Duration --}}
-                                    <div id="durationGroup" class="hidden">
-                                        <div class="group">
-                                            <label for="duration_minutes" class="flex items-center gap-2 text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">
-                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                                រយៈពេល (នាទី) <span class="text-rose-500">*</span>
-                                            </label>
-                                            <input type="number" name="duration_minutes" id="duration_minutes" value="{{ old('duration_minutes', 120) }}" min="1"
-                                                   class="w-full bg-gray-50 border-gray-200 focus:bg-white focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 rounded-xl py-3.5 px-5 transition-all font-bold text-gray-700">
-                                            @error('duration_minutes')<p class="text-rose-500 text-xs mt-2 font-medium ml-1">{{ $message }}</p>@enderror
-                                        </div>
-                                    </div>
-
                                     {{-- Duplicate Warning --}}
                                     <div id="duplicateWarning" class="hidden">
                                         <div class="bg-amber-50 border border-amber-200 text-amber-700 p-4 rounded-xl flex items-center gap-3">
@@ -368,9 +355,6 @@
             // Update date label
             document.getElementById('dateLabel').textContent = config.dateLabel;
 
-            // Show/hide duration
-            document.getElementById('durationGroup').classList.toggle('hidden', !config.showDuration);
-
             // Update max_score default
             document.getElementById('max_score').value = config.defaultScore;
 
@@ -389,7 +373,7 @@
             const config = typeConfigs[selectedType];
             const maxScore = document.getElementById('max_score').value || '0';
             const date = document.getElementById('assessment_date').value;
-            const duration = document.getElementById('duration_minutes') ? document.getElementById('duration_minutes').value : '';
+            const duration = '';
 
             document.getElementById('previewEmpty').classList.add('hidden');
             document.getElementById('previewContent').classList.remove('hidden');
@@ -434,7 +418,6 @@
         document.getElementById('max_score').addEventListener('input', updatePreview);
 
         document.getElementById('assessment_date').addEventListener('change', updatePreview);
-        document.getElementById('duration_minutes')?.addEventListener('input', updatePreview);
 
         document.addEventListener('DOMContentLoaded', function() {
             @if(old('assessment_type'))

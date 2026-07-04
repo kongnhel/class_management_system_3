@@ -48,11 +48,6 @@ class GoogleAuthController extends Controller
 
         Auth::login($user);
 
-        $user->update([
-            'is_verified' => true,
-            'email_verified_at' => $user->email_verified_at ?? now(),
-        ]);
-
         return response()->json(['status' => 'success']);
     }
 

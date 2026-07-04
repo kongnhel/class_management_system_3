@@ -67,7 +67,8 @@ class ProfessorGradeController extends Controller
             $student = $enrollment->student;
 
             $attendanceScore = (float) ($student->getAttendanceScoreByCourse($offering_id) ?? 0);
-            $totalScore = $attendanceScore;
+            $baseScore = $attendanceScore;
+            $quizBonus = 0;
 
             foreach ($assessments as $assessment) {
                 $type = ($assessment instanceof \App\Models\Assignment) ? 'assignment' :
@@ -81,9 +82,14 @@ class ProfessorGradeController extends Controller
                 $score = $scoreRecord ? (float) $scoreRecord->score_obtained : 0;
                 $gradebook[$student->id][$type.'_'.$assessment->id] = $score;
 
-                $totalScore += $score;
+                if ($type === 'quiz') {
+                    $quizBonus += $score;
+                } else {
+                    $baseScore += $score;
+                }
             }
 
+            $totalScore = min($baseScore + $quizBonus, 100);
             $student->temp_total = (float) $totalScore;
 
             return $student;
@@ -115,7 +121,7 @@ class ProfessorGradeController extends Controller
             'title_km' => 'required|string|max:255',
             'max_score' => 'required|numeric|min:1',
             'assessment_date' => 'required|date',
-            'duration_minutes' => 'required_if:assessment_type,exam|nullable|integer|min:1',
+            'duration_minutes' => 'nullable|integer|min:1',
         ]);
 
         $courseOffering = CourseOffering::findOrFail($offering_id);
@@ -170,7 +176,7 @@ class ProfessorGradeController extends Controller
                 'title_en' => $titleEn,
                 'max_score' => $request->max_score,
                 'exam_date' => $request->assessment_date,
-                'duration_minutes' => $request->input('duration_minutes', 120),
+                'duration_minutes' => $request->input('duration_minutes'),
             ]);
         }
 

@@ -100,7 +100,9 @@ class StudentGradeController extends Controller
                 ->where('course_offering_id', $courseId)
                 ->where('status', 'permission')->count();
 
-            $totalObtained = $items->sum('score_obtained') + $attendanceScore;
+            $totalObtained = $items->where('assessment_type', '!=', 'quiz')->sum('score_obtained') + $attendanceScore;
+            $quizBonus = $items->where('assessment_type', 'quiz')->sum('score_obtained');
+            $totalObtained = min($totalObtained + $quizBonus, 100);
 
             $finalExamScore = $items->where('display_type', 'Final')->sum('score_obtained');
             $midtermScore = $items->where('display_type', 'Midterm')->sum('score_obtained');
@@ -114,14 +116,19 @@ class StudentGradeController extends Controller
             $rankings = $enrollments->map(function ($enrol) use ($courseId) {
                 $student = User::find($enrol->student_user_id);
                 $att = $student ? $student->getAttendanceScoreByCourse($courseId) : 0;
-                $allPoints = \App\Models\ExamResult::where('student_user_id', $enrol->student_user_id)
+                $nonQuizPoints = \App\Models\ExamResult::where('student_user_id', $enrol->student_user_id)
+                    ->where('assessment_type', '!=', 'quiz')
                     ->whereIn('assessment_id', function ($q) use ($courseId) {
                         $q->select('id')->from('assignments')->where('course_offering_id', $courseId)
-                            ->union(DB::table('quizzes')->select('id')->where('course_offering_id', $courseId))
                             ->union(DB::table('exams')->select('id')->where('course_offering_id', $courseId));
                     })->sum('score_obtained');
+                $quizPoints = \App\Models\ExamResult::where('student_user_id', $enrol->student_user_id)
+                    ->where('assessment_type', 'quiz')
+                    ->whereIn('assessment_id', function ($q) use ($courseId) {
+                        $q->select('id')->from('quizzes')->where('course_offering_id', $courseId);
+                    })->sum('score_obtained');
 
-                return ['id' => $enrol->student_user_id, 'total' => (float) $att + (float) $allPoints];
+                return ['id' => $enrol->student_user_id, 'total' => min((float) $att + (float) $nonQuizPoints + (float) $quizPoints, 100)];
             })->sortByDesc('total')->values();
 
             $rankIndex = $rankings->search(fn ($r) => $r['id'] == $user->id);
@@ -165,17 +172,20 @@ class StudentGradeController extends Controller
 
                 $total = 0;
                 foreach ($filteredOfferingIds as $offeringId) {
-                    // Sum exam results for this specific course offering
-                    $courseExamPoints = \App\Models\ExamResult::where('student_user_id', $peerId)
+                    $nonQuizPoints = \App\Models\ExamResult::where('student_user_id', $peerId)
+                        ->where('assessment_type', '!=', 'quiz')
                         ->whereIn('assessment_id', function ($q) use ($offeringId) {
                             $q->select('id')->from('assignments')->where('course_offering_id', $offeringId)
-                                ->union(DB::table('quizzes')->select('id')->where('course_offering_id', $offeringId))
                                 ->union(DB::table('exams')->select('id')->where('course_offering_id', $offeringId));
                         })->sum('score_obtained');
+                    $quizPoints = \App\Models\ExamResult::where('student_user_id', $peerId)
+                        ->where('assessment_type', 'quiz')
+                        ->whereIn('assessment_id', function ($q) use ($offeringId) {
+                            $q->select('id')->from('quizzes')->where('course_offering_id', $offeringId);
+                        })->sum('score_obtained');
 
-                    // Add attendance for this specific course offering
                     $att = $peerStudent->getAttendanceScoreByCourse($offeringId);
-                    $total += (float) $courseExamPoints + (float) $att;
+                    $total += min((float) $nonQuizPoints + (float) $quizPoints + (float) $att, 100);
                 }
 
                 return ['id' => $peerId, 'total' => $total];

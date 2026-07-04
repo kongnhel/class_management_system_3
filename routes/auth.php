@@ -5,7 +5,6 @@ use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Auth\NewPasswordController;
-use App\Http\Controllers\Auth\OtpController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PhoneLoginController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
@@ -19,24 +18,9 @@ Route::middleware('guest')->group(function () {
 
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
 
-    // Phone + Telegram OTP Login
+    // Phone check (AJAX)
     Route::get('phone-login/check', [PhoneLoginController::class, 'checkPhone'])
         ->name('phone-otp.check');
-    Route::post('phone-login', [PhoneLoginController::class, 'sendOtp'])
-        ->name('phone-otp.send');
-    Route::get('phone-login/verify', [PhoneLoginController::class, 'show'])
-        ->name('phone-otp.show');
-    Route::post('phone-login/verify', [PhoneLoginController::class, 'verify'])
-        ->name('phone-otp.verify');
-    Route::post('phone-login/resend', [PhoneLoginController::class, 'resend'])
-        ->name('phone-otp.resend');
-    Route::get('phone-login/2fa', [PhoneLoginController::class, 'show2fa'])
-        ->name('phone-otp.2fa');
-    Route::post('phone-login/2fa', [PhoneLoginController::class, 'verify2fa'])
-        ->name('phone-otp.2fa.verify');
-
-    Route::get('check-verification', [OtpController::class, 'showLookup'])->name('check-verification');
-    Route::post('check-verification', [OtpController::class, 'lookup'])->name('check-verification.lookup');
 
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
         ->name('password.request');
@@ -59,10 +43,6 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('verify-otp', [OtpController::class, 'show'])->name('otp.show');
-    Route::post('verify-otp', [OtpController::class, 'verify'])->name('otp.verify');
-    Route::post('verify-otp/resend', [OtpController::class, 'resend'])->name('otp.resend');
-
     Route::get('verify-email', EmailVerificationPromptController::class)
         ->name('verification.notice');
 

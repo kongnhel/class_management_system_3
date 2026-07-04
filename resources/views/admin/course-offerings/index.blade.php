@@ -512,42 +512,6 @@
         </div>
     </div>
 
-    {{-- TOAST --}}
-    @if(session('success'))
-    <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 4000)" x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-4"
-        class="fixed bottom-6 right-6 z-50 bg-white rounded-2xl shadow-2xl border border-gray-200 p-5 max-w-sm">
-        <div class="flex items-start gap-3">
-            <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center flex-shrink-0">
-                <i class="fas fa-check text-emerald-500"></i>
-            </div>
-            <div class="flex-1">
-                <p class="font-bold text-gray-900 text-sm">{{ __('ជោគជ័យ!') }}</p>
-                <p class="text-gray-500 text-xs mt-0.5">{{ session('success') }}</p>
-            </div>
-            <button @click="show = false" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times text-xs"></i></button>
-        </div>
-        <div class="absolute bottom-0 left-0 h-1 bg-emerald-500 rounded-b-2xl animate-shrink" style="animation: shrink 4s linear forwards;"></div>
-    </div>
-    <style>@keyframes shrink { from { width: 100%; } to { width: 0%; } }</style>
-    @endif
-
-    @if(session('error'))
-    <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-4"
-        class="fixed bottom-6 right-6 z-50 bg-white rounded-2xl shadow-2xl border border-gray-200 p-5 max-w-sm">
-        <div class="flex items-start gap-3">
-            <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center flex-shrink-0">
-                <i class="fas fa-exclamation-circle text-red-500"></i>
-            </div>
-            <div class="flex-1">
-                <p class="font-bold text-gray-900 text-sm">{{ __('បញ្ហា!') }}</p>
-                <p class="text-gray-500 text-xs mt-0.5">{{ session('error') }}</p>
-            </div>
-            <button @click="show = false" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times text-xs"></i></button>
-        </div>
-        <div class="absolute bottom-0 left-0 h-1 bg-red-500 rounded-b-2xl animate-shrink" style="animation: shrink 5s linear forwards;"></div>
-    </div>
-    @endif
-
     <script>
         function openDeleteModal(id) {
             const form = document.getElementById('delete-form');
@@ -585,7 +549,7 @@
                     .matrix-table { width: 100%; border-collapse: collapse; }
                     th, td { border: 1pt solid black; padding: 5px; text-align: center; }
                     th { background-color: #f1f5f9; font-family: 'Moul', serif; font-size: 9pt; }
-                    @page { size: A4 landscape; margin: 1cm; }
+                    @@page { size: A4 landscape; margin: 1cm; }
                 </style></head>
                 <body>${content.innerHTML}</body></html>`;
 

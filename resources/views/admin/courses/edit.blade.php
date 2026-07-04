@@ -144,7 +144,7 @@
                                                 <option value="">{{ __('ជ្រើសរើសកម្មវិធីសិក្សា') }}</option>
                                                 @foreach($programs as $program)
                                                     <option value="{{ $program->id }}" x-bind:selected="item == {{ $program->id }}">
-                                                        {{ $program->name_km }} ({{ $program->name_en }})
+                                                        {{ $program->name_km }}
                                                     </option>
                                                 @endforeach
                                             </select>

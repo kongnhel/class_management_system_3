@@ -75,8 +75,8 @@
                         </div>
                     </div>
 
-                    {{-- Program + Generation --}}
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {{-- Program + Degree Level + Generation --}}
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('កម្មវិធីសិក្សា') }}</label>
                             <select name="program_id" required class="block w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none">
@@ -86,6 +86,19 @@
                                 @endforeach
                             </select>
                             <x-input-error :messages="$errors->get('program_id')" class="mt-1 text-xs text-red-500" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('កម្រិតសញ្ញាបត្រ') }}</label>
+                            <select name="degree_level" required class="block w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none">
+                                <option value="">{{ __('ជ្រើសរើសកម្រិតសញ្ញាបត្រ') }}</option>
+                                <option value="បរិញ្ញាបត្រ" {{ old('degree_level') == 'បរិញ្ញាបត្រ' ? 'selected' : '' }}>បរិញ្ញាបត្រ</option>
+                                <option value="បរិញ្ញាបត្ររង" {{ old('degree_level') == 'បរិញ្ញាបត្ររង' ? 'selected' : '' }}>បរិញ្ញាបត្ររង</option>
+                                <option value="អនុបណ្ឌិត" {{ old('degree_level') == 'អនុបណ្ឌិត' ? 'selected' : '' }}>អនុបណ្ឌិត</option>
+                                <option value="បណ្ឌិត" {{ old('degree_level') == 'បណ្ឌិត' ? 'selected' : '' }}>បណ្ឌិត</option>
+                                <option value="វិញ្ញាបនបត្រ" {{ old('degree_level') == 'វិញ្ញាបនបត្រ' ? 'selected' : '' }}>វិញ្ញាបនបត្រ</option>
+                                <option value="ផ្សេងៗ" {{ old('degree_level') == 'ផ្សេងៗ' ? 'selected' : '' }}>ផ្សេងៗ</option>
+                            </select>
+                            <x-input-error :messages="$errors->get('degree_level')" class="mt-1 text-xs text-red-500" />
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('ជំនាន់') }}</label>

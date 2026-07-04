@@ -21,23 +21,6 @@
         </div>
 
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 pb-12 relative z-10">
-            {{-- Toast --}}
-            @if (session('success'))
-            <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 4000)" x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-4"
-                class="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 mb-6">
-                <div class="flex items-start gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-check text-emerald-500"></i>
-                    </div>
-                    <div class="flex-1">
-                        <p class="font-bold text-gray-900 text-sm">{{ __('ជោគជ័យ!') }}</p>
-                        <p class="text-gray-500 text-xs mt-0.5">{{ session('success') }}</p>
-                    </div>
-                    <button @click="show = false" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times text-xs"></i></button>
-                </div>
-            </div>
-            @endif
-
             @if ($errors->any())
             <div x-data="{ show: true }" x-show="show" class="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 mb-6">
                 <div class="flex items-start gap-3">

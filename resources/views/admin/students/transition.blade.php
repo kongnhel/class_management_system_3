@@ -67,7 +67,7 @@
                                 <option value="">{{ __('ជ្រើសរើសកម្មវិធីសិក្សា') }}</option>
                                 @foreach ($transitionPrograms as $program)
                                     <option value="{{ $program->id }}" {{ old('bachelor_program_id') == $program->id ? 'selected' : '' }}>
-                                        {{ $program->name_km }} ({{ $program->name_en }}) - {{ $program->duration_years }} ឆ្នាំ
+                                        {{ $program->name_km }} - {{ $program->duration_years }} ឆ្នាំ
                                     </option>
                                 @endforeach
                             </select>

@@ -10,6 +10,7 @@ use App\Http\Controllers\admin\CourseController;
 use App\Http\Controllers\admin\CourseOfferingController;
 use App\Http\Controllers\admin\DepartmentController;
 use App\Http\Controllers\admin\FacultyController;
+use App\Http\Controllers\admin\GenerationController;
 use App\Http\Controllers\admin\ProgramController;
 use App\Http\Controllers\admin\RoomController;
 use App\Http\Controllers\admin\StudentProgressionController;
@@ -108,6 +109,7 @@ Route::middleware(['auth', 'role:admin', 'throttle:120,1'])->prefix('admin')->na
     Route::get('/get-courses-by-program-and-generation', [CourseOfferingController::class, 'getCoursesByProgramAndGeneration'])->name('get-courses-by-program-and-generation');
     Route::get('/users', [UserController::class, 'manageUsers'])->name('manage-users');
     Route::get('/users/create', [UserController::class, 'createUser'])->name('create-user');
+    Route::get('/users/preview-student-id', [UserController::class, 'previewStudentId'])->name('preview-student-id');
     Route::post('/users', [UserController::class, 'storeUser'])->name('store-user');
     Route::get('/users/{user}/edit', [UserController::class, 'editUser'])->name('edit-user');
     Route::put('/users/{user}', [UserController::class, 'updateUser'])->name('update-user');
@@ -142,6 +144,11 @@ Route::middleware(['auth', 'role:admin', 'throttle:120,1'])->prefix('admin')->na
     Route::get('/programs/{program}/edit', [ProgramController::class, 'edit'])->name('edit-program');
     Route::put('/programs/{program}', [ProgramController::class, 'update'])->name('update-program');
     Route::delete('/programs/{program}', [ProgramController::class, 'destroy'])->name('delete-program');
+
+    // Generations
+    Route::get('/generations', [GenerationController::class, 'index'])->name('generations.index');
+    Route::post('/generations', [GenerationController::class, 'store'])->name('generations.store');
+    Route::delete('/generations/{generation}', [GenerationController::class, 'destroy'])->name('generations.destroy');
 
     Route::get('/courses', [CourseController::class, 'index'])->name('manage-courses');
     Route::get('/courses/create', [CourseController::class, 'create'])->name('create-course');
@@ -364,7 +371,6 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')
     Route::post('/quizzes/{quiz_id}/submit', [StudentGradeController::class, 'submitQuiz'])->name('submit-quiz');
     Route::get('/{studentId}/enrolled-courses', [StudentGradeController::class, 'enrolledCourses'])->name('enrolled_courses');
     Route::get('/available-programs', [StudentGradeController::class, 'availablePrograms'])->name('available_programs');
-    Route::get('/available-courses', [StudentGradeController::class, 'availableCourses'])->name('available_courses');
     Route::post('/enroll-self', [StudentGradeController::class, 'enrollSelf'])->name('enroll_self');
     Route::post('/enroll-program', [StudentGradeController::class, 'enrollProgram'])->name('enroll-program');
     Route::get('profile', [StudentProfileController::class, 'show'])->name('profile.show');

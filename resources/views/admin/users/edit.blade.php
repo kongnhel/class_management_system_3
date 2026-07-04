@@ -167,10 +167,33 @@
                             <x-input-error :messages="$errors->get('program_id')" class="mt-2" />
                         </div>
                         <div>
+                            <x-input-label for="degree_level" class="font-semibold text-gray-700 mb-1.5">
+                                <i class="fas fa-award mr-1.5 text-emerald-500"></i> {{ __('កម្រិតសញ្ញាបត្រ') }}
+                            </x-input-label>
+                            @php
+                                $enrollmentDegreeLevel = $user->studentProgramEnrollments()->where('status', 'active')->first()?->degree_level ?? '';
+                            @endphp
+                            <select id="degree_level" name="degree_level" class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
+                                <option value="">{{ __('ជ្រើសរើសកម្រិតសញ្ញាបត្រ') }}</option>
+                                <option value="បរិញ្ញាបត្រ" {{ old('degree_level', $enrollmentDegreeLevel) == 'បរិញ្ញាបត្រ' ? 'selected' : '' }}>បរិញ្ញាបត្រ</option>
+                                <option value="បរិញ្ញាបត្ររង" {{ old('degree_level', $enrollmentDegreeLevel) == 'បរិញ្ញាបត្ររង' ? 'selected' : '' }}>បរិញ្ញាបត្ររង</option>
+                                <option value="អនុបណ្ឌិត" {{ old('degree_level', $enrollmentDegreeLevel) == 'អនុបណ្ឌិត' ? 'selected' : '' }}>អនុបណ្ឌិត</option>
+                                <option value="បណ្ឌិត" {{ old('degree_level', $enrollmentDegreeLevel) == 'បណ្ឌិត' ? 'selected' : '' }}>បណ្ឌិត</option>
+                                <option value="វិញ្ញាបនបត្រ" {{ old('degree_level', $enrollmentDegreeLevel) == 'វិញ្ញាបនបត្រ' ? 'selected' : '' }}>វិញ្ញាបនបត្រ</option>
+                                <option value="ផ្សេងៗ" {{ old('degree_level', $enrollmentDegreeLevel) == 'ផ្សេងៗ' ? 'selected' : '' }}>ផ្សេងៗ</option>
+                            </select>
+                            <x-input-error :messages="$errors->get('degree_level')" class="mt-2" />
+                        </div>
+                        <div>
                             <x-input-label for="generation" class="font-semibold text-gray-700 mb-1.5">
                                 <i class="fas fa-layer-group mr-1.5 text-emerald-500"></i> {{ __('ជំនាន់') }}
                             </x-input-label>
-                            <x-text-input id="generation" name="generation" type="number" class="block w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition" placeholder="ឧ. 16" :value="old('generation', $user->generation)" />
+                            <select id="generation" name="generation" class="block w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white shadow-sm transition px-4 py-2.5">
+                                <option value="">{{ __('ជ្រើសរើសជំនាន់') }}</option>
+                                @foreach(\App\Models\Generation::orderByDesc('name')->get() as $gen)
+                                    <option value="{{ $gen->name }}" {{ old('generation', $user->generation) == $gen->name ? 'selected' : '' }}>{{ $gen->name }} (ចូលរៀនឆ្នាំ {{ $gen->join_year }})</option>
+                                @endforeach
+                            </select>
                             <x-input-error :messages="$errors->get('generation')" class="mt-2" />
                         </div>
                     </div>

@@ -60,11 +60,18 @@
 
         foreach ($students as $student) {
             $attendanceScore = $student->getAttendanceScoreByCourse($courseOffering->id);
-            $rowTotal = $attendanceScore;
+            $baseScore = $attendanceScore;
+            $quizBonus = 0;
             foreach ($assessments as $assessment) {
                 $type = ($assessment instanceof \App\Models\Assignment) ? 'assignment' : (($assessment instanceof \App\Models\Quiz) ? 'quiz' : 'exam');
-                $rowTotal += $gradebook[$student->id][$type . '_' . $assessment->id] ?? 0;
+                $score = $gradebook[$student->id][$type . '_' . $assessment->id] ?? 0;
+                if ($type === 'quiz') {
+                    $quizBonus += $score;
+                } else {
+                    $baseScore += $score;
+                }
             }
+            $rowTotal = min($baseScore + $quizBonus, 100);
             $totalSum += $rowTotal;
             $totalMax += 100;
             if ($rowTotal > $highestScore) $highestScore = $rowTotal;
@@ -205,11 +212,14 @@
                 @forelse ($students as $student)
                     @php
                         $attendanceScore = $student->getAttendanceScoreByCourse($courseOffering->id);
-                        $rowTotal = $attendanceScore;
+                        $baseScore = $attendanceScore;
+                        $quizBonus = 0;
                         foreach($assessments as $assessment) {
                             $type = ($assessment instanceof \App\Models\Assignment) ? 'assignment' : (($assessment instanceof \App\Models\Quiz) ? 'quiz' : 'exam');
-                            $rowTotal += $gradebook[$student->id][$type . '_' . $assessment->id] ?? 0;
+                            $score = $gradebook[$student->id][$type . '_' . $assessment->id] ?? 0;
+                            if ($type === 'quiz') { $quizBonus += $score; } else { $baseScore += $score; }
                         }
+                        $rowTotal = min($baseScore + $quizBonus, 100);
                         $grade = \App\Services\GradingService::getLetterGrade($rowTotal);
                     @endphp
                     <div class="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden student-card"
@@ -328,7 +338,8 @@
                             @foreach($students as $student)
                                 @php
                                     $attendanceScore = $student->getAttendanceScoreByCourse($courseOffering->id);
-                                    $rowTotal = $attendanceScore;
+                                    $baseScore = $attendanceScore;
+                                    $quizBonus = 0;
                                 @endphp
                                 <tr>
                                     <td class="border border-black px-1 py-0.5">{{ $loop->iteration }}</td>
@@ -341,11 +352,12 @@
                                         @php
                                             $type = ($assessment instanceof \App\Models\Assignment) ? 'assignment' : (($assessment instanceof \App\Models\Quiz) ? 'quiz' : 'exam');
                                             $score = $gradebook[$student->id][$type . '_' . $assessment->id] ?? 0;
-                                            $rowTotal += $score;
+                                            if ($type === 'quiz') { $quizBonus += $score; } else { $baseScore += $score; }
                                         @endphp
                                         <td class="border border-black px-1 py-0.5">{{ number_format($score, 1) }}</td>
                                     @endforeach
                                     @php
+                                        $rowTotal = min($baseScore + $quizBonus, 100);
                                         $grade = \App\Services\GradingService::getLetterGrade($rowTotal);
                                     @endphp
                                     <td class="border border-black px-1 py-0.5 font-bold">{{ number_format($rowTotal, 1) }}</td>
@@ -443,7 +455,8 @@
                             @forelse ($students as $student)
                                 @php
                                     $attendanceScore = $student->getAttendanceScoreByCourse($courseOffering->id);
-                                    $rowTotal = $attendanceScore;
+                                    $baseScore = $attendanceScore;
+                                    $quizBonus = 0;
                                 @endphp
                                 <tr class="hover:bg-slate-50/50 transition-colors duration-150 group student-row"
                                     data-name="{{ mb_strtolower($student->profile->full_name_km ?? $student->name ?? '', 'UTF-8') }}"
@@ -480,7 +493,7 @@
                                         @php
                                             $type = ($assessment instanceof \App\Models\Assignment) ? 'assignment' : (($assessment instanceof \App\Models\Quiz) ? 'quiz' : 'exam');
                                             $score = $gradebook[$student->id][$type . '_' . $assessment->id] ?? 0;
-                                            $rowTotal += $score;
+                                            if ($type === 'quiz') { $quizBonus += $score; } else { $baseScore += $score; }
                                         @endphp
                                         <td class="px-4 py-5 text-center border-r border-slate-50">
                                             <span class="text-xs font-black {{ $score < ($assessment->max_score/2) ? 'text-rose-500' : 'text-slate-700' }}">
@@ -488,6 +501,8 @@
                                             </span>
                                         </td>
                                     @endforeach
+
+                                    @php $rowTotal = min($baseScore + $quizBonus, 100); @endphp
 
                                     <td class="sticky right-24 bg-emerald-50/30 group-hover:bg-emerald-50/60 z-10 px-6 py-5 text-center border-l border-emerald-100/50">
                                         <span class="text-sm font-black text-emerald-700 total-score">

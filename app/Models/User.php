@@ -33,13 +33,6 @@ class User extends Authenticatable
         'profile_picture_path',
         'last_login_at',
         'face_descriptor',
-        'otp_code',
-        'otp_expires_at',
-        'otp_attempts',
-        'otp_last_sent_at',
-        'is_verified',
-        'verification_method',
-        'phone_verified_at',
     ];
 
     /**
@@ -64,9 +57,6 @@ class User extends Authenticatable
             'password' => 'hashed',
             'last_login_at' => 'datetime',
             'deleted_at' => 'datetime',
-            'otp_expires_at' => 'datetime',
-            'otp_last_sent_at' => 'datetime',
-            'is_verified' => 'boolean',
         ];
     }
 

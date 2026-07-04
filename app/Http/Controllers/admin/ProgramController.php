@@ -60,7 +60,7 @@ class ProgramController extends Controller
             'name_en' => 'required|string|max:255|unique:programs',
             'department_id' => 'required|exists:departments,id',
             'duration_years' => 'required|integer|min:1',
-            'degree_level' => 'required|string|max:50',
+            'degree_level' => 'nullable|string|max:50',
             'pathway_program_id' => 'nullable|exists:programs,id',
         ]);
 
@@ -88,7 +88,7 @@ class ProgramController extends Controller
             'name_en' => ['required', 'string', 'max:255', Rule::unique('programs')->ignore($program->id)],
             'department_id' => 'required|exists:departments,id',
             'duration_years' => 'required|integer|min:1',
-            'degree_level' => 'required|string|max:50',
+            'degree_level' => 'nullable|string|max:50',
             'pathway_program_id' => 'nullable|exists:programs,id',
         ]);
 

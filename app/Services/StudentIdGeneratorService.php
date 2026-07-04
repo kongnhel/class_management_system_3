@@ -26,10 +26,13 @@ class StudentIdGeneratorService
      * Format: [Prefix]-[GenerationRoman]-[Serial6Digit]
      * Example: B-XVI-004686
      */
-    public function generate(int $programId, int|string $generation): string
+    public function generate(int $programId, int|string $generation, ?string $degreeLevel = null): string
     {
-        $program = Program::findOrFail($programId);
-        $prefix = $this->getPrefix($program->degree_level);
+        if (! $degreeLevel) {
+            $program = Program::findOrFail($programId);
+            $degreeLevel = $program->degree_level;
+        }
+        $prefix = $this->getPrefix($degreeLevel);
         $romanGen = $this->toRoman((int) $generation);
         $serial = $this->getNextSerial($prefix, $romanGen);
 

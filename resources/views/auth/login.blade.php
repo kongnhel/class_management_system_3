@@ -67,20 +67,6 @@
                             <x-input-error :messages="$errors->get('password')" class="mt-1.5 text-xs text-red-500" />
                         </div>
 
-                        <div id="telegramHint" class="hidden p-3 rounded-xl bg-amber-50 border border-amber-200">
-                            <div class="flex items-center gap-2">
-                                <svg class="w-5 h-5 text-amber-600 shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M9.04 21.54c.96.29 1.93.46 2.96.46a10 10 0 0010-10A10 10 0 0012 2 10 10 0 002 12c0 1.03.17 2 .46 2.96L12 22l8.54-8.54-1.42-1.41L12 19.17 9.04 21.54z"/></svg>
-                                <p class="text-sm text-amber-700 font-medium">លេខទូរស័ព្ទនេះមិនទាន់ផ្ទៀងផ្ទាត់។ សូមចូលតាម Telegram OTP ដើម្បីផ្ទៀងផ្ទាត់។</p>
-                            </div>
-                        </div>
-
-                        <div id="phoneVerifiedHint" class="hidden p-3 rounded-xl bg-emerald-50 border border-emerald-200">
-                            <div class="flex items-center gap-2">
-                                <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-                                <p class="text-sm text-emerald-700 font-medium">លេខទូរស័ព្ទបានផ្ទៀងផ្ទាត់រួចហើយ។ សូមបញ្ចូលពាក្យសម្ងាត់ដើម្បីចូល។</p>
-                            </div>
-                        </div>
-
                         <button type="submit" id="loginBtn" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-emerald-200 hover:shadow-emerald-300 transition-all duration-200 text-sm">
                             {{ __('auth_login_btn') }}
                         </button>
@@ -106,12 +92,6 @@
                         {{ __('auth_register_link') }}
                     </a>
                 </p>
-
-                <p class="text-center text-xs text-gray-400 mt-3">
-                    <a href="{{ route('check-verification') }}" class="text-emerald-500 hover:text-emerald-600 transition-colors">
-                        ពិនិត្យស្ថានភាពផ្ទៀងផ្ទាត់គណនី
-                    </a>
-                </p>
             </div>
         </div>
     </div>
@@ -129,92 +109,6 @@
                 input.type = 'password';
                 open.classList.remove('hidden');
                 closed.classList.add('hidden');
-            }
-        }
-
-        const loginIdentifier = document.getElementById('login_identifier');
-        const passwordInput = document.getElementById('password');
-        const passwordSection = document.getElementById('passwordSection');
-        const telegramHint = document.getElementById('telegramHint');
-        const phoneVerifiedHint = document.getElementById('phoneVerifiedHint');
-        const loginBtn = document.getElementById('loginBtn');
-        const phoneRegex = /^\+?[0-9]{6,15}$/;
-        let phoneCheckTimer = null;
-        let phoneVerified = false;
-
-        function resetToDefault() {
-            passwordSection.classList.remove('hidden');
-            telegramHint.classList.add('hidden');
-            phoneVerifiedHint.classList.add('hidden');
-            if (passwordInput) passwordInput.required = true;
-            loginBtn.textContent = '{{ __("auth_login_btn") }}';
-            loginBtn.type = 'submit';
-            loginBtn.formAction = '{{ route("login") }}';
-            loginBtn.onclick = null;
-        }
-
-        function showVerifiedPhoneUI() {
-            passwordSection.classList.remove('hidden');
-            telegramHint.classList.add('hidden');
-            phoneVerifiedHint.classList.remove('hidden');
-            if (passwordInput) passwordInput.required = true;
-            loginBtn.textContent = 'ចូលប្រព័ន្ធ';
-            loginBtn.type = 'submit';
-            loginBtn.formAction = '{{ route("login") }}';
-            loginBtn.onclick = null;
-        }
-
-        function showUnverifiedPhoneUI() {
-            passwordSection.classList.add('hidden');
-            telegramHint.classList.remove('hidden');
-            phoneVerifiedHint.classList.add('hidden');
-            if (passwordInput) passwordInput.required = false;
-            loginBtn.textContent = 'ចូលជាមួយ Telegram OTP';
-            loginBtn.type = 'button';
-            loginBtn.onclick = function() {
-                const form = document.querySelector('form');
-                form.action = '{{ route("phone-otp.send") }}';
-                form.submit();
-            };
-        }
-
-        function checkPhoneStatus(phone) {
-            fetch('{{ route("phone-otp.check") }}?phone=' + encodeURIComponent(phone), {
-                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.exists && data.verified) {
-                    phoneVerified = true;
-                    showVerifiedPhoneUI();
-                } else {
-                    phoneVerified = false;
-                    showUnverifiedPhoneUI();
-                }
-            })
-            .catch(() => {
-                phoneVerified = false;
-                showUnverifiedPhoneUI();
-            });
-        }
-
-        function updateLoginUI() {
-            const val = loginIdentifier.value.trim();
-            const isPhone = phoneRegex.test(val);
-
-            if (isPhone) {
-                clearTimeout(phoneCheckTimer);
-                phoneCheckTimer = setTimeout(() => checkPhoneStatus(val), 300);
-            } else {
-                phoneVerified = false;
-                resetToDefault();
-            }
-        }
-
-        if (loginIdentifier) {
-            loginIdentifier.addEventListener('input', updateLoginUI);
-            if (phoneRegex.test(loginIdentifier.value.trim())) {
-                updateLoginUI();
             }
         }
     </script>
@@ -249,8 +143,6 @@
                 }).then(res => res.json()).then(data => {
                     if(data.status === 'success') {
                         window.location.href = "/dashboard";
-                    } else if(data.status === 'unverified') {
-                        window.location.href = data.redirect;
                     } else {
                         showToast(data.message, 'error');
                     }

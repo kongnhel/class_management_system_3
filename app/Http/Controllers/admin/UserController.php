@@ -188,9 +188,26 @@ class UserController extends Controller
         $faculties = Faculty::all();
         $departments = Department::all();
         $programs = Program::all();
-        $generations = User::where('role', 'student')->whereNotNull('generation')->distinct()->pluck('generation');
+        $generations = \App\Models\Generation::orderByDesc('name')->pluck('name')->toArray();
 
         return view('admin.users.create', compact('departments', 'programs', 'faculties', 'generations'));
+    }
+
+    public function previewStudentId(Request $request)
+    {
+        $request->validate([
+            'program_id' => 'required|exists:programs,id',
+            'generation' => 'required|string',
+            'degree_level' => 'required|string',
+        ]);
+
+        $studentId = $this->studentIdGenerator->generate(
+            $request->program_id,
+            $request->generation,
+            $request->degree_level
+        );
+
+        return response()->json(['student_id' => $studentId]);
     }
 
     public function storeUser(Request $request)
@@ -214,6 +231,7 @@ class UserController extends Controller
         if ($request->role === 'student') {
             $rules['program_id'] = 'required|exists:programs,id';
             $rules['generation'] = 'required|string|max:255';
+            $rules['degree_level'] = 'required|string|max:50';
         } elseif ($request->role === 'professor') {
             $rules['email'] = 'required|string|email|max:255|unique:users';
             $rules['password'] = [
@@ -257,7 +275,7 @@ class UserController extends Controller
 
         // Auto-generate student_id_code and create program enrollment for students
         if ($request->role === 'student') {
-            $studentId = $this->studentIdGenerator->generate($request->program_id, $request->generation);
+            $studentId = $this->studentIdGenerator->generate($request->program_id, $request->generation, $request->degree_level);
             $user->student_id_code = $studentId;
             $user->save();
 
@@ -265,6 +283,7 @@ class UserController extends Controller
             \App\Models\StudentProgramEnrollment::create([
                 'student_user_id' => $user->id,
                 'program_id' => $request->program_id,
+                'degree_level' => $request->degree_level,
                 'starting_year_level' => 1,
                 'enrollment_date' => now(),
                 'status' => 'active',
@@ -312,7 +331,7 @@ class UserController extends Controller
         $faculties = Faculty::all();
         $departments = Department::all();
         $programs = Program::all();
-        $generations = User::where('role', 'student')->whereNotNull('generation')->distinct()->pluck('generation');
+        $generations = \App\Models\Generation::orderByDesc('name')->pluck('name')->toArray();
 
         return view('admin.users.edit', compact('user', 'departments', 'programs', 'faculties', 'generations'));
     }
@@ -339,6 +358,7 @@ class UserController extends Controller
 
         if ($request->role === 'student') {
             $rules['program_id'] = 'required|exists:programs,id';
+            $rules['degree_level'] = 'nullable|string|max:50';
         } else {
             $rules['email'] = ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)];
             $rules['password'] = 'nullable|string|min:8|confirmed';
@@ -390,6 +410,13 @@ class UserController extends Controller
         $profile->save();
 
         $this->logUpdated($user, $oldAttributes);
+
+        // Update degree_level on active enrollment if provided
+        if ($request->role === 'student' && $request->filled('degree_level')) {
+            $user->studentProgramEnrollments()
+                ->where('status', 'active')
+                ->update(['degree_level' => $request->degree_level]);
+        }
 
         return redirect()->route('admin.manage-users')->with('success', 'ព័ត៌មានត្រូវបានធ្វើបច្ចុប្បន្នភាព។');
     }

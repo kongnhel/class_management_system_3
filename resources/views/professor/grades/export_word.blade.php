@@ -59,7 +59,8 @@
             @foreach ($students as $index => $student)
                 @php 
                     $attendanceScore = $student->getAttendanceScoreByCourse($courseOffering->id);
-                    $rowTotal = $attendanceScore; 
+                    $baseScore = $attendanceScore;
+                    $quizBonus = 0;
                 @endphp
                 <tr>
                     <td class="rank-col">{{ $index + 1 }}</td>
@@ -73,7 +74,7 @@
                         @php 
                             $type = ($assessment instanceof \App\Models\Assignment) ? 'assignment' : (($assessment instanceof \App\Models\Quiz) ? 'quiz' : 'exam');
                             $score = $gradebook[$student->id][$type . '_' . $assessment->id] ?? 0;
-                            $rowTotal += $score;
+                            if ($type === 'quiz') { $quizBonus += $score; } else { $baseScore += $score; }
                         @endphp
                         <td class="{{ $score < ($assessment->max_score/2) ? 'fail-score' : '' }}">
                             {{ number_format($score, 1) }}
@@ -81,6 +82,7 @@
                         
                     @endforeach
 
+                    @php $rowTotal = min($baseScore + $quizBonus, 100); @endphp
                     <td class="total-col">{{ number_format($rowTotal, 1) }}</td>
 
                     @php

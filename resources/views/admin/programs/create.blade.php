@@ -145,8 +145,8 @@
 
                         {{-- Degree Level --}}
                         <div>
-                            <label for="degree_level" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('កម្រិតសញ្ញាបត្រ') }} <span class="text-red-500">*</span></label>
-                            <select id="degree_level" name="degree_level" required
+                            <label for="degree_level" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('កម្រិតសញ្ញាបត្រ') }}</label>
+                            <select id="degree_level" name="degree_level"
                                 class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
                                 <option value="">{{ __('ជ្រើសរើសកម្រិតសញ្ញាបត្រ') }}</option>
                                 <option value="បរិញ្ញាបត្រ" {{ old('degree_level') == 'បរិញ្ញាបត្រ' ? 'selected' : '' }}>{{ __('បរិញ្ញាបត្រ') }}</option>
@@ -156,6 +156,7 @@
                                 <option value="វិញ្ញាបនបត្រ" {{ old('degree_level') == 'វិញ្ញាបនបត្រ' ? 'selected' : '' }}>{{ __('វិញ្ញាបនបត្រ') }}</option>
                                 <option value="ផ្សេងៗ" {{ old('degree_level') == 'ផ្សេងៗ' ? 'selected' : '' }}>{{ __('ផ្សេងៗ') }}</option>
                             </select>
+                            <p class="mt-1.5 text-xs text-gray-500">{{ __('ជម្រើស។ កម្រិតសញ្ញាបត្រពិតប្រាកដត្រូវបានកំណត់នៅពេលបង្កើតនិស្សិត។') }}</p>
                             @error('degree_level') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                         </div>
 
@@ -167,7 +168,7 @@
                                 <option value="">{{ __('មិនមានផ្លូវបន្ត') }}</option>
                                 @foreach ($programs as $program)
                                     <option value="{{ $program->id }}" {{ old('pathway_program_id') == $program->id ? 'selected' : '' }}>
-                                        {{ $program->name_km }} ({{ $program->name_en }}) - {{ $program->duration_years }} ឆ្នាំ
+                                        {{ $program->name_km }} - {{ $program->duration_years }} ឆ្នាំ
                                     </option>
                                 @endforeach
                             </select>

@@ -1,4 +1,6 @@
 ﻿<x-app-layout>
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
+
     <div class="min-h-screen bg-gray-50">
         {{-- Header --}}
         <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white pb-16 pt-10">
@@ -21,23 +23,6 @@
         </div>
 
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 pb-12 relative z-10">
-            {{-- Toast --}}
-            @if (session('success'))
-            <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 4000)" x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-4"
-                class="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 mb-6">
-                <div class="flex items-start gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-check text-emerald-500"></i>
-                    </div>
-                    <div class="flex-1">
-                        <p class="font-bold text-gray-900 text-sm">{{ __('ជោគជ័យ!') }}</p>
-                        <p class="text-gray-500 text-xs mt-0.5">{{ session('success') }}</p>
-                    </div>
-                    <button @click="show = false" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times text-xs"></i></button>
-                </div>
-            </div>
-            @endif
-
             @if ($errors->any() || session('error'))
             <div x-data="{ show: true }" x-show="show" class="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 mb-6">
                 <div class="flex items-start gap-3">
@@ -67,19 +52,29 @@
                         </div>
                         <div>
                             <h3 class="text-lg font-bold text-gray-900">{{ __('ព័ត៌មានមូលដ្ឋាន') }}</h3>
-                            <p class="text-xs text-gray-500">{{ __('ជ្រើសរើសមុខវិជ្ជាសម្រាប់ការផ្តល់ជូន') }}</p>
+                            <p class="text-xs text-gray-500">{{ __('ជ្រើសរើសកម្មវិធីសិក្សា និងមុខវិជ្ជា') }}</p>
                         </div>
                     </div>
-                    <div>
-                        <label for="course_id" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('មុខវិជ្ជា') }} <span class="text-red-500">*</span></label>
-                        <select id="course_id" name="course_id" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm" required>
-                            <option value="">{{ __('ជ្រើសរើសមុខវិជ្ជា') }}</option>
-                            @foreach ($courses as $course)
-                                <option value="{{ $course->id }}" data-programs='@json($course->programs)' data-generation="{{ $course->generation }}" {{ old('course_id') == $course->id ? 'selected' : '' }}>
-                                    {{ $course->title_km }} (Gen: {{ $course->generation ?? 'N/A' }})
-                                </option>
-                            @endforeach
-                        </select>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        {{-- Dropdown 1: Program + Generation --}}
+                        <div>
+                            <label for="program_gen_select" class="block text-sm font-bold text-gray-700 mb-1.5">
+                                {{ __('កម្មវិធីសិក្សា និងជំនាន់') }} <span class="text-red-500">*</span>
+                            </label>
+                            <select id="program_gen_select" class="w-full min-w-0 rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm px-4 py-2.5 bg-gray-50">
+                                <option value="">{{ __('ជ្រើសរើសកម្មវិធីសិក្សា និងជំនាន់') }}</option>
+                            </select>
+                        </div>
+
+                        {{-- Dropdown 2: Course (disabled until program+gen is selected) --}}
+                        <div>
+                            <label for="course_id" class="block text-sm font-bold text-gray-700 mb-1.5">
+                                {{ __('មុខវិជ្ជា') }} <span class="text-red-500">*</span>
+                            </label>
+                            <select id="course_id" name="course_id" disabled class="w-full min-w-0 rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm px-4 py-2.5 bg-gray-100 text-gray-400 cursor-not-allowed" required>
+                                <option value="">{{ __('សូមជ្រើសរើសកម្មវិធីសិក្សាមុន') }}</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
@@ -118,7 +113,7 @@
                         <div class="space-y-4">
                             <div>
                                 <label for="lecturer_user_id" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('សាស្ត្រាចារ្យ') }} <span class="text-red-500">*</span></label>
-                                <select id="lecturer_user_id" name="lecturer_user_id" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm" required>
+                                <select id="lecturer_user_id" name="lecturer_user_id" class="w-full min-w-0 rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm px-4 py-2.5" required>
                                     <option value="">{{ __('ជ្រើសរើសសាស្ត្រាចារ្យ') }}</option>
                                     @foreach ($professors as $professor)
                                         <option value="{{ $professor->id }}" {{ old('lecturer_user_id') == $professor->id ? 'selected' : '' }}>{{ $professor->name }}</option>
@@ -128,7 +123,7 @@
                             <div class="grid grid-cols-2 gap-3">
                                 <div>
                                     <label for="academic_year" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ឆ្នាំសិក្សា') }} <span class="text-red-500">*</span></label>
-                                    <select name="academic_year" id="academic_year" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>
+                                    <select name="academic_year" id="academic_year" class="w-full min-w-0 rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm px-4 py-2.5" required>
                                         <option value="">{{ __('ជ្រើសរើស') }}</option>
                                         @foreach ($academicYears as $year)
                                             <option value="{{ $year->name }}" data-start="{{ \Carbon\Carbon::parse($year->start_date)->format('Y-m-d') }}" data-end="{{ \Carbon\Carbon::parse($year->end_date)->format('Y-m-d') }}" {{ old('academic_year') == $year->name ? 'selected' : '' }}>
@@ -139,7 +134,7 @@
                                 </div>
                                 <div>
                                     <label for="semester" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ឆមាស') }} <span class="text-red-500">*</span></label>
-                                    <select name="semester" id="semester" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>
+                                    <select name="semester" id="semester" class="w-full min-w-0 rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm px-4 py-2.5" required>
                                         <option value="" disabled {{ old('semester') ? '' : 'selected' }}>{{ __('ជ្រើសរើស') }}</option>
                                         <option value="ឆមាសទី១" {{ old('semester') == 'ឆមាសទី១' ? 'selected' : '' }}>{{ __('ឆមាសទី១') }}</option>
                                         <option value="ឆមាសទី២" {{ old('semester') == 'ឆមាសទី២' ? 'selected' : '' }}>{{ __('ឆមាសទី២') }}</option>
@@ -148,16 +143,16 @@
                             </div>
                             <div>
                                 <label for="capacity" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ចំនួននិស្សិតអតិបរមា') }} <span class="text-red-500">*</span></label>
-                                <input type="number" name="capacity" id="capacity" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" value="{{ old('capacity') }}" placeholder="ឧទាហរណ៍: ៣០" required>
+                                <input type="number" name="capacity" id="capacity" class="w-full min-w-0 rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm px-4 py-2.5" value="{{ old('capacity') }}" placeholder="ឧទាហរណ៍: ៣០" required>
                             </div>
                             <div class="grid grid-cols-2 gap-3">
                                 <div>
                                     <label for="start_date" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('កាលបរិច្ឆេទចាប់ផ្តើម') }} <span class="text-red-500">*</span></label>
-                                    <input type="date" name="start_date" id="start_date" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" value="{{ old('start_date') }}" required>
+                                    <input type="date" name="start_date" id="start_date" class="w-full min-w-0 rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm px-4 py-2.5" value="{{ old('start_date') }}" required>
                                 </div>
                                 <div>
                                     <label for="end_date" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('កាលបរិច្ឆេទបញ្ចប់') }} <span class="text-red-500">*</span></label>
-                                    <input type="date" name="end_date" id="end_date" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" value="{{ old('end_date') }}" required>
+                                    <input type="date" name="end_date" id="end_date" class="w-full min-w-0 rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm px-4 py-2.5" value="{{ old('end_date') }}" required>
                                 </div>
                             </div>
                             <label class="flex items-center gap-3 cursor-pointer">
@@ -207,12 +202,165 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+
+            // ──────────────────────────────────────────────
+            //  1. Build data structures from Blade
+            // ──────────────────────────────────────────────
+            //
+            //  courseDetails:  { courseId: { programs: [...], generation: N } }
+            //  programGenGroups: { "programId-generation": { label, programId, generation, courses: [] } }
+            //
+            const courseDetails = {};
+            const programGenGroups = {};
+            const coursesRaw = {!! json_encode($courses->map(fn($c) => [
+                'id' => $c->id,
+                'title_km' => $c->title_km,
+                'title_en' => $c->title_en,
+                'generation' => $c->generation,
+                'programs' => $c->programs->map(fn($p) => ['id' => $p->id, 'name_km' => $p->name_km, 'name_en' => $p->name_en]),
+            ])) !!};
+
+            coursesRaw.forEach(function(course) {
+                // Store course details for later lookup
+                courseDetails[course.id] = {
+                    programs: course.programs,
+                    generation: course.generation
+                };
+
+                // Group by each program this course belongs to + its generation
+                course.programs.forEach(function(prog) {
+                    const key = prog.id + '-' + course.generation;
+                    if (!programGenGroups[key]) {
+                        programGenGroups[key] = {
+                            label: (prog.name_km || prog.name_en) + ' — ជំនាន់ទី ' + course.generation,
+                            programId: prog.id,
+                            programName: prog.name_km || prog.name_en,
+                            generation: course.generation,
+                            courses: []
+                        };
+                    }
+                    programGenGroups[key].courses.push({
+                        id: course.id,
+                        title_km: course.title_km,
+                        title_en: course.title_en
+                    });
+                });
+            });
+
+            // ──────────────────────────────────────────────
+            //  2. Populate Dropdown 1 (Program + Generation)
+            // ──────────────────────────────────────────────
+            const programGenSelect = document.getElementById('program_gen_select');
             const courseSelect = document.getElementById('course_id');
             const programsContainer = document.getElementById('programs-container');
+
+            // Sort groups by program name then generation
+            const sortedKeys = Object.keys(programGenGroups).sort(function(a, b) {
+                const ga = programGenGroups[a], gb = programGenGroups[b];
+                if (ga.programName === gb.programName) return gb.generation - ga.generation;
+                return ga.programName.localeCompare(gb.programName);
+            });
+
+            sortedKeys.forEach(function(key) {
+                const group = programGenGroups[key];
+                const opt = document.createElement('option');
+                opt.value = key;
+                opt.textContent = group.label + ' (' + group.courses.length + ' ' + '{{ __("មុខវិជ្ជា") }}' + ')';
+                programGenSelect.appendChild(opt);
+            });
+
+            // ──────────────────────────────────────────────
+            //  3. Dropdown 1 → Dropdown 2 (chained)
+            // ──────────────────────────────────────────────
+            programGenSelect.addEventListener('change', function() {
+                const key = this.value;
+
+                // Reset course dropdown
+                courseSelect.innerHTML = '<option value="">{{ __("ជ្រើសរើសមុខវិជ្ជា") }}</option>';
+                courseSelect.value = '';
+
+                // Reset programs container
+                programsContainer.innerHTML =
+                    '<div id="program-placeholder" class="text-center py-8 text-gray-400 rounded-xl border-2 border-dashed border-gray-200">' +
+                    '<i class="fas fa-graduation-cap text-3xl mb-3 block text-gray-300"></i>' +
+                    '<p class="text-sm italic">{{ __("សូមជ្រើសរើសមុខវិជ្ជាដើម្បីបង្ហាញកម្មវិធីសិក្សា និងជំនាន់ដោយស្វ័យប្រវត្តិ") }}</p>' +
+                    '</div>';
+
+                if (!key) {
+                    // Disable course select
+                    courseSelect.disabled = true;
+                    courseSelect.classList.add('bg-gray-100', 'text-gray-400', 'cursor-not-allowed');
+                    courseSelect.classList.remove('bg-white');
+                    courseSelect.querySelector('option').textContent = '{{ __("សូមជ្រើសរើសកម្មវិធីសិក្សាមុន") }}';
+                    return;
+                }
+
+                // Enable course select
+                courseSelect.disabled = false;
+                courseSelect.classList.remove('bg-gray-100', 'text-gray-400', 'cursor-not-allowed');
+                courseSelect.classList.add('bg-white');
+
+                // Populate courses for this program+generation
+                const group = programGenGroups[key];
+                group.courses.forEach(function(c) {
+                    const opt = document.createElement('option');
+                    opt.value = c.id;
+                    opt.textContent = (c.title_km || c.title_en);
+                    courseSelect.appendChild(opt);
+                });
+            });
+
+            // ──────────────────────────────────────────────
+            //  4. Dropdown 2 → Target Programs section
+            // ──────────────────────────────────────────────
+            courseSelect.addEventListener('change', function() {
+                if (!this.value) {
+                    programsContainer.innerHTML =
+                        '<div id="program-placeholder" class="text-center py-8 text-gray-400 rounded-xl border-2 border-dashed border-gray-200">' +
+                        '<i class="fas fa-graduation-cap text-3xl mb-3 block text-gray-300"></i>' +
+                        '<p class="text-sm italic">{{ __("សូមជ្រើសរើសមុខវិជ្ជាដើម្បីបង្ហាញកម្មវិធីសិក្សា និងជំនាន់ដោយស្វ័យប្រវត្តិ") }}</p>' +
+                        '</div>';
+                    return;
+                }
+
+                const course = courseDetails[this.value];
+                const programsData = course.programs || [];
+                const courseGen = course.generation || '';
+
+                if (programsData.length === 0) {
+                    programsContainer.innerHTML =
+                        '<div class="text-center py-6 text-gray-400 rounded-xl border-2 border-dashed border-gray-200">' +
+                        '<p class="text-sm">{{ __("មិនមានកម្មវិធីសិក្សាសម្រាប់មុខវិជ្ជានេះទេ") }}</p></div>';
+                    return;
+                }
+
+                programsContainer.innerHTML = '';
+                programsData.forEach(function(prog, index) {
+                    const row = document.createElement('div');
+                    row.className = 'flex items-center gap-3 bg-gray-50 p-4 rounded-xl border border-gray-200';
+                    row.innerHTML =
+                        '<div class="flex-grow grid grid-cols-2 gap-3">' +
+                            '<div>' +
+                                '<label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __("កម្មវិធីសិក្សា") }}</label>' +
+                                '<div class="w-full py-2 px-3 bg-white rounded-xl text-sm font-semibold text-gray-700 border border-gray-200">' + (prog.name_km || prog.name_en) + '</div>' +
+                                '<input type="hidden" name="target_programs[' + index + '][program_id]" value="' + prog.id + '">' +
+                            '</div>' +
+                            '<div>' +
+                                '<label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __("ជំនាន់") }}</label>' +
+                                '<div class="w-full py-2 px-3 bg-emerald-50 rounded-xl text-sm font-bold text-emerald-700 border border-emerald-100">' + (courseGen ? 'ជំនាន់ទី ' + courseGen : '{{ __("មិនទាន់កំណត់") }}') + '</div>' +
+                                '<input type="hidden" name="target_programs[' + index + '][generation]" value="' + courseGen + '">' +
+                            '</div>' +
+                        '</div>';
+                    programsContainer.appendChild(row);
+                });
+            });
+
+            // ──────────────────────────────────────────────
+            //  5. Academic year auto-fill dates
+            // ──────────────────────────────────────────────
             const academicYearSelect = document.getElementById('academic_year');
             const startDateInput = document.getElementById('start_date');
             const endDateInput = document.getElementById('end_date');
-
             academicYearSelect.addEventListener('change', function() {
                 const selectedOption = this.options[this.selectedIndex];
                 const startDate = selectedOption.getAttribute('data-start');
@@ -224,45 +372,9 @@
             });
             if (academicYearSelect.value) academicYearSelect.dispatchEvent(new Event('change'));
 
-            courseSelect.addEventListener('change', function() {
-                const selectedOption = this.options[this.selectedIndex];
-                if (!this.value) {
-                    programsContainer.innerHTML = `<div id="program-placeholder" class="text-center py-8 text-gray-400 rounded-xl border-2 border-dashed border-gray-200"><i class="fas fa-graduation-cap text-3xl mb-3 block text-gray-300"></i><p class="text-sm italic">{{ __('សូមជ្រើសរើសមុខវិជ្ជាដើម្បីបង្ហាញកម្មវិធីសិក្សា និងជំនាន់ដោយស្វ័យប្រវត្តិ') }}</p></div>`;
-                    return;
-                }
-                try {
-                    const programsData = JSON.parse(selectedOption.getAttribute('data-programs') || '[]');
-                    const courseGen = selectedOption.getAttribute('data-generation') || '';
-                    programsContainer.innerHTML = '';
-                    if (programsData.length === 0) {
-                        programsContainer.innerHTML = `<div class="text-center py-6 text-gray-400 rounded-xl border-2 border-dashed border-gray-200"><p class="text-sm">{{ __('មិនមានកម្មវិធីសិក្សាសម្រាប់មុខវិជ្ជានេះទេ') }}</p></div>`;
-                        return;
-                    }
-                    programsData.forEach((prog, index) => {
-                        const row = document.createElement('div');
-                        row.className = 'flex items-center gap-3 bg-gray-50 p-4 rounded-xl border border-gray-200';
-                        row.innerHTML = `
-                            <div class="flex-grow grid grid-cols-2 gap-3">
-                                <div>
-                                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('កម្មវិធីសិក្សា') }}</label>
-                                    <div class="w-full py-2 px-3 bg-white rounded-xl text-sm font-semibold text-gray-700 border border-gray-200">${prog.name_km || prog.name}</div>
-                                    <input type="hidden" name="target_programs[${index}][program_id]" value="${prog.id}">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('ជំនាន់') }}</label>
-                                    <div class="w-full py-2 px-3 bg-emerald-50 rounded-xl text-sm font-bold text-emerald-700 border border-emerald-100">${courseGen ? 'ជំនាន់ទី ' + courseGen : '{{ __("មិនទាន់កំណត់") }}'}</div>
-                                    <input type="hidden" name="target_programs[${index}][generation]" value="${courseGen}">
-                                </div>
-                            </div>
-                        `;
-                        programsContainer.appendChild(row);
-                    });
-                } catch (e) {
-                    programsContainer.innerHTML = `<div class="text-center py-6 text-red-400"><i class="fas fa-exclamation-triangle mb-2 block"></i><p class="text-sm">{{ __('មានបញ្ហាក្នុងការទាញយកទិន្នន័យ') }}</p></div>`;
-                }
-            });
-            if (courseSelect.value) courseSelect.dispatchEvent(new Event('change'));
-
+            // ──────────────────────────────────────────────
+            //  6. Schedules
+            // ──────────────────────────────────────────────
             const scheduleContainer = document.getElementById('schedules-container');
             const addScheduleBtn = document.getElementById('add-schedule');
             const rooms = {!! json_encode($rooms) !!};
@@ -272,67 +384,130 @@
                 const scheduleDiv = document.createElement('div');
                 scheduleDiv.className = 'schedule-row group bg-gray-50 p-4 rounded-xl border border-gray-200';
                 const currentSessions = document.querySelectorAll('.schedule-row').length + 1;
-                const roomOptions = rooms.map(room => `<option value="${room.id}" ${initialData.room_id == room.id ? 'selected' : ''}>${room.room_number}</option>`).join('');
-                scheduleDiv.innerHTML = `
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="flex items-center gap-2 text-sm font-bold text-emerald-600">
-                            <i class="fas fa-clock text-xs"></i>
-                            <span>Session ${currentSessions}</span>
-                        </div>
-                        <button type="button" class="remove-schedule text-gray-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100">
-                            <i class="fas fa-times-circle text-sm"></i>
-                        </button>
-                    </div>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                        <div class="col-span-2 md:col-span-1">
-                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('ថ្ងៃ') }}</label>
-                            <select name="schedules[${scheduleIndex}][day_of_week]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>
-                                <option value="">{{ __('រើសថ្ងៃ') }}</option>
-                                <option value="Monday" ${initialData.day_of_week === 'Monday' ? 'selected' : ''}>{{ __('ច័ន្ទ') }}</option>
-                                <option value="Tuesday" ${initialData.day_of_week === 'Tuesday' ? 'selected' : ''}>{{ __('អង្គារ') }}</option>
-                                <option value="Wednesday" ${initialData.day_of_week === 'Wednesday' ? 'selected' : ''}>{{ __('ពុធ') }}</option>
-                                <option value="Thursday" ${initialData.day_of_week === 'Thursday' ? 'selected' : ''}>{{ __('ព្រហស្បតិ៍') }}</option>
-                                <option value="Friday" ${initialData.day_of_week === 'Friday' ? 'selected' : ''}>{{ __('សុក្រ') }}</option>
-                                <option value="Saturday" ${initialData.day_of_week === 'Saturday' ? 'selected' : ''}>{{ __('សៅរ៍') }}</option>
-                                <option value="Sunday" ${initialData.day_of_week === 'Sunday' ? 'selected' : ''}>{{ __('អាទិត្យ') }}</option>
-                            </select>
-                        </div>
-                        <div class="col-span-2 md:col-span-1">
-                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('បន្ទប់') }}</label>
-                            <select name="schedules[${scheduleIndex}][room_id]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>
-                                <option value="">{{ __('រើសបន្ទប់') }}</option>
-                                ${roomOptions}
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('ចាប់ផ្តើម') }}</label>
-                            <input type="time" name="schedules[${scheduleIndex}][start_time]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" value="${initialData.start_time || ''}" required>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('បញ្ចប់') }}</label>
-                            <input type="time" name="schedules[${scheduleIndex}][end_time]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" value="${initialData.end_time || ''}" required>
-                        </div>
-                    </div>
-                `;
+                const roomOptions = rooms.map(room => '<option value="' + room.id + '" ' + (initialData.room_id == room.id ? 'selected' : '') + '>' + room.room_number + '</option>').join('');
+                scheduleDiv.innerHTML =
+                    '<div class="flex items-center justify-between mb-3">' +
+                        '<div class="flex items-center gap-2 text-sm font-bold text-emerald-600">' +
+                            '<i class="fas fa-clock text-xs"></i><span>Session ' + currentSessions + '</span>' +
+                        '</div>' +
+                        '<button type="button" class="remove-schedule text-gray-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100">' +
+                            '<i class="fas fa-times-circle text-sm"></i>' +
+                        '</button>' +
+                    '</div>' +
+                    '<div class="grid grid-cols-2 md:grid-cols-4 gap-3">' +
+                        '<div class="col-span-2 md:col-span-1">' +
+                            '<label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __("ថ្ងៃ") }}</label>' +
+                            '<select name="schedules[' + scheduleIndex + '][day_of_week]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>' +
+                                '<option value="">{{ __("រើសថ្ងៃ") }}</option>' +
+                                '<option value="Monday" ' + (initialData.day_of_week === 'Monday' ? 'selected' : '') + '>{{ __("ច័ន្ទ") }}</option>' +
+                                '<option value="Tuesday" ' + (initialData.day_of_week === 'Tuesday' ? 'selected' : '') + '>{{ __("អង្គារ") }}</option>' +
+                                '<option value="Wednesday" ' + (initialData.day_of_week === 'Wednesday' ? 'selected' : '') + '>{{ __("ពុធ") }}</option>' +
+                                '<option value="Thursday" ' + (initialData.day_of_week === 'Thursday' ? 'selected' : '') + '>{{ __("ព្រហស្បតិ៍") }}</option>' +
+                                '<option value="Friday" ' + (initialData.day_of_week === 'Friday' ? 'selected' : '') + '>{{ __("សុក្រ") }}</option>' +
+                                '<option value="Saturday" ' + (initialData.day_of_week === 'Saturday' ? 'selected' : '') + '>{{ __("សៅរ៍") }}</option>' +
+                                '<option value="Sunday" ' + (initialData.day_of_week === 'Sunday' ? 'selected' : '') + '>{{ __("អាទិត្យ") }}</option>' +
+                            '</select>' +
+                        '</div>' +
+                        '<div class="col-span-2 md:col-span-1">' +
+                            '<label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __("បន្ទប់") }}</label>' +
+                            '<select name="schedules[' + scheduleIndex + '][room_id]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>' +
+                                '<option value="">{{ __("រើសបន្ទប់") }}</option>' + roomOptions +
+                            '</select>' +
+                        '</div>' +
+                        '<div>' +
+                            '<label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __("ចាប់ផ្តើម") }}</label>' +
+                            '<input type="time" name="schedules[' + scheduleIndex + '][start_time]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" value="' + (initialData.start_time || '') + '" required>' +
+                        '</div>' +
+                        '<div>' +
+                            '<label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __("បញ្ចប់") }}</label>' +
+                            '<input type="time" name="schedules[' + scheduleIndex + '][end_time]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" value="' + (initialData.end_time || '') + '" required>' +
+                        '</div>' +
+                    '</div>';
                 scheduleContainer.appendChild(scheduleDiv);
                 scheduleDiv.querySelector('.remove-schedule').addEventListener('click', function() { scheduleDiv.remove(); updateSessionNumbers(); });
                 scheduleIndex++;
             }
 
             function updateSessionNumbers() {
-                document.querySelectorAll('.schedule-row').forEach((row, i) => {
+                document.querySelectorAll('.schedule-row').forEach(function(row, i) {
                     const label = row.querySelector('.flex.items-center span');
-                    if (label) label.textContent = `Session ${i + 1}`;
+                    if (label) label.textContent = 'Session ' + (i + 1);
                 });
             }
 
-            addScheduleBtn.addEventListener('click', () => addScheduleRow());
-            const oldSchedules = {!! json_encode(old('schedules', [])) !!};
+            addScheduleBtn.addEventListener('click', function() { addScheduleRow(); });
+            var oldSchedules = {!! json_encode(old('schedules', [])) !!};
             if (Object.keys(oldSchedules).length > 0) {
-                Object.values(oldSchedules).forEach(s => addScheduleRow(s));
+                Object.values(oldSchedules).forEach(function(s) { addScheduleRow(s); });
             } else {
                 addScheduleRow();
             }
         });
     </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var lecturerEl = document.getElementById('lecturer_user_id');
+            if (lecturerEl) {
+                new TomSelect(lecturerEl, {
+                    maxItems: 1,
+                    placeholder: '{{ __("ជ្រើសរើសសាស្ត្រាចារ្យ") }}',
+                    searchField: ['text'],
+                    sortField: { field: 'text', direction: 'asc' },
+                    plugins: {
+                        clear_button: { title: 'Remove' }
+                    }
+                });
+            }
+        });
+    </script>
+
+    <style>
+        .ts-wrapper {
+            position: relative;
+            z-index: 50;
+        }
+        .ts-wrapper .ts-control {
+            border-radius: 0.75rem;
+            border: 1px solid #e5e7eb;
+            padding: 0.625rem 0.75rem;
+            font-size: 0.875rem;
+            background-color: #f9fafb;
+            min-height: 42px;
+        }
+        .ts-wrapper .ts-control:focus-within {
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.5);
+            border-color: #10b981;
+            background-color: #fff;
+        }
+        .ts-wrapper.has-focus .ts-control {
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.5);
+            border-color: #10b981;
+        }
+        .ts-wrapper .ts-dropdown {
+            border-radius: 0.75rem;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
+            font-size: 0.875rem;
+            z-index: 9999;
+            background-color: #fff;
+        }
+        .ts-wrapper .ts-dropdown .active {
+            background-color: #ecfdf5;
+            color: #065f46;
+        }
+        .ts-wrapper .ts-dropdown .option {
+            padding: 0.5rem 0.75rem;
+        }
+        .ts-wrapper .ts-control .item {
+            font-weight: 600;
+        }
+        .ts-wrapper .ts-control .clear-button {
+            opacity: 0.5;
+        }
+        .ts-wrapper .ts-control .clear-button:hover {
+            opacity: 1;
+        }
+    </style>
 </x-app-layout>

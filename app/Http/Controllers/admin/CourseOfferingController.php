@@ -101,7 +101,7 @@ class CourseOfferingController extends Controller
 
     public function create()
     {
-        $courses = Course::with('programs')->get();
+        $courses = Course::with('programs:id,name_km,name_en,degree_level')->get(['id','title_km','title_en','generation']);
         $professors = User::where('role', 'professor')->get();
         $programs = Program::all();
         $rooms = Room::all();

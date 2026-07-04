@@ -12,6 +12,7 @@ class StudentProgramEnrollment extends Model
     protected $fillable = [
         'student_user_id',
         'program_id',
+        'degree_level',
         'starting_year_level',
         'is_transition_eligible',
         'enrollment_date',

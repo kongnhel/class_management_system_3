@@ -41,6 +41,7 @@ class StudentRegistrationController extends Controller
             'program_id' => 'required|exists:programs,id',
             'password' => ['required', 'confirmed', 'min:8'],
             'generation' => 'required|string',
+            'degree_level' => 'required|string|max:50',
         ]);
 
 try {
@@ -53,13 +54,13 @@ try {
                         'program_id' => $request->program_id,
                         'generation' => $request->generation,
                         'password' => Hash::make($request->password),
-                        'is_verified' => false,
                     ])->save();
 
                     StudentProgramEnrollment::firstOrCreate([
                         'student_user_id' => $user->id,
                         'program_id' => $request->program_id,
                     ], [
+                        'degree_level' => $request->degree_level,
                         'enrollment_date' => now(),
                         'status' => 'active',
                     ]);
@@ -83,11 +84,10 @@ try {
                     Auth::login($user);
                 });
 
-                $otpService = app(OtpService::class);
-                $otpService->sendOtp(Auth::user(), 'email');
+                $user = Auth::user();
 
-                return redirect()->route('otp.show')
-                    ->with('success', 'ចុះឈ្មោះជោគជ័យ! សូមពិនិត្យអ៊ីមែលរបស់អ្នកសម្រាប់កូដផ្ទៀងផ្ទាត់។');
+                return redirect()->intended(route('dashboard', absolute: false))
+                    ->with('success', 'ចុះឈ្មោះជោគជ័យ!');
 
             } catch (\Exception $e) {
                 return back()->with('error', 'Error: '.$e->getMessage());
