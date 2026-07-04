@@ -56,7 +56,6 @@
         $failCount = 0;
         $highestScore = 0;
         $lowestScore = $totalStudents > 0 ? 999999 : 0;
-        $gradeDistribution = ['A' => 0, 'B+' => 0, 'B' => 0, 'C+' => 0, 'C' => 0, 'D+' => 0, 'D' => 0, 'F' => 0];
 
         foreach ($students as $student) {
             $attendanceScore = $student->getAttendanceScoreByCourse($courseOffering->id);
@@ -82,11 +81,15 @@
             } else {
                 $failCount++;
             }
-            if (isset($gradeDistribution[$grade])) $gradeDistribution[$grade]++;
         }
         $classAvg = $totalStudents > 0 ? $totalSum / $totalStudents : 0;
         $passRate = $totalStudents > 0 ? round(($passCount / $totalStudents) * 100) : 0;
         if ($lowestScore == 999999) $lowestScore = 0;
+        $maleCount = 0;
+        $femaleCount = 0;
+        foreach ($students as $student) {
+            if ($student->profile?->gender == 'male') { $maleCount++; } else { $femaleCount++; }
+        }
     @endphp
 
     <div class="py-8 bg-[#f8fafc] min-h-screen print:bg-white">
@@ -94,7 +97,7 @@
 
             {{-- Alert Messages --}}
             @if (session('success'))
-                <div class="bg-green-50 border-l-4 border-green-500 text-green-700 p-3 md:p-5 rounded-xl mb-6 shadow-sm flex items-center animate-bounce print:hidden" role="alert">
+                <div class="bg-green-50 border-l-4 border-green-500 text-green-700 p-3 md:p-5 rounded-xl mb-6 shadow-sm flex items-center animate-fade-in-down print:hidden" role="alert">
                     <i class="fas fa-check-circle mr-3 text-green-500 text-xl"></i>
                     <span class="font-bold text-sm md:text-lg">{{ session('success') }}</span>
                 </div>
@@ -122,44 +125,20 @@
             {{-- Summary Stats --}}
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6 print:hidden">
                 <div class="bg-white rounded-2xl border border-slate-200 p-4 text-center shadow-sm">
-                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ __('និស្សិតសរុប') }}</p>
+                    <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest">{{ __('និស្សិតសរុប') }}</p>
                     <p class="text-2xl font-black text-slate-700 mt-1">{{ $totalStudents }}</p>
                 </div>
                 <div class="bg-white rounded-2xl border border-emerald-200 p-4 text-center shadow-sm">
-                    <p class="text-[9px] font-black text-emerald-400 uppercase tracking-widest">{{ __('មធ្យមពិន្ទុ') }}</p>
+                    <p class="text-[11px] font-black text-emerald-400 uppercase tracking-widest">{{ __('មធ្យមពិន្ទុ') }}</p>
                     <p class="text-2xl font-black text-emerald-600 mt-1">{{ number_format($classAvg, 1) }}</p>
                 </div>
                 <div class="bg-white rounded-2xl border border-emerald-200 p-4 text-center shadow-sm">
-                    <p class="text-[9px] font-black text-emerald-500 uppercase tracking-widest">{{ __('អត្រាប្រឡងជាប់') }}</p>
+                    <p class="text-[11px] font-black text-emerald-500 uppercase tracking-widest">{{ __('អត្រាប្រឡងជាប់') }}</p>
                     <p class="text-2xl font-black text-emerald-600 mt-1">{{ $passRate }}%</p>
                 </div>
                 <div class="bg-white rounded-2xl border border-slate-200 p-4 text-center shadow-sm">
-                    <p class="text-[9px] font-black text-amber-500 uppercase tracking-widest">{{ __('ពិន្ទុខ្ពស់/ទាប') }}</p>
+                    <p class="text-[11px] font-black text-amber-500 uppercase tracking-widest">{{ __('ពិន្ទុខ្ពស់/ទាប') }}</p>
                     <p class="text-sm font-black text-slate-700 mt-1">{{ number_format($highestScore, 1) }} / {{ number_format($lowestScore, 1) }}</p>
-                </div>
-            </div>
-
-            {{-- Grade Distribution --}}
-            <div class="bg-white rounded-2xl border border-slate-200 p-5 mb-6 shadow-sm print:hidden">
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">{{ __('ចែកចាយនិទ្ទេស') }}</p>
-                <div class="flex items-end gap-2 h-20">
-                    @php
-                        $maxDist = max(array_values($gradeDistribution));
-                        if ($maxDist < 1) $maxDist = 1;
-                        $distColors = [
-                            'A' => 'bg-emerald-500', 'B+' => 'bg-emerald-400', 'B' => 'bg-emerald-500',
-                            'C+' => 'bg-emerald-400', 'C' => 'bg-amber-500', 'D+' => 'bg-amber-400',
-                            'D' => 'bg-orange-500', 'F' => 'bg-rose-500'
-                        ];
-                    @endphp
-                    @foreach($gradeDistribution as $g => $count)
-                        @php $h = $count > 0 ? max(($count / $maxDist) * 100, 8) : 0; @endphp
-                        <div class="flex-1 flex flex-col items-center gap-1">
-                            <span class="text-[9px] font-black text-slate-500">{{ $count }}</span>
-                            <div class="w-full {{ $distColors[$g] }} rounded-t-lg transition-all duration-500" style="height: {{ $h }}%"></div>
-                            <span class="text-[9px] font-black text-slate-400">{{ $g }}</span>
-                        </div>
-                    @endforeach
                 </div>
             </div>
 
@@ -222,7 +201,7 @@
                         $rowTotal = min($baseScore + $quizBonus, 100);
                         $grade = \App\Services\GradingService::getLetterGrade($rowTotal);
                     @endphp
-                    <div class="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden student-card"
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden student-card"
                          data-name="{{ mb_strtolower($student->profile->full_name_km ?? $student->name ?? '', 'UTF-8') }}"
                          data-id="{{ mb_strtolower($student->student_id_code ?? '', 'UTF-8') }}">
                         <div class="p-6">
@@ -230,7 +209,7 @@
                                 <div class="flex items-center gap-3">
                                     <div class="relative">
                                         <div class="h-12 w-12 rounded-2xl bg-emerald-600 text-white flex flex-col items-center justify-center shadow-lg shadow-emerald-100">
-                                            <span class="text-[9px] font-black uppercase leading-none mb-0.5 opacity-70">{{ __('ចំណាត់ថ្នាក់') }}</span>
+                                            <span class="text-[10px] font-black uppercase leading-none mb-0.5 opacity-70">{{ __('ចំណាត់ថ្នាក់') }}</span>
                                             <span class="text-sm font-black leading-none">{{ $loop->iteration }}</span>
                                         </div>
                                     </div>
@@ -240,7 +219,7 @@
                                     </div>
                                 </div>
                                 <div class="h-12 w-12 rounded-2xl flex flex-col items-center justify-center text-sm font-black {{ \App\Services\GradingService::isPassing($grade) ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-rose-50 text-rose-600 border border-rose-100' }}">
-                                     <span class="text-[8px] uppercase mb-0.5 opacity-70">{{ __('និទ្ទេស') }}</span>
+                                     <span class="text-[10px] uppercase mb-0.5 opacity-70">{{ __('និទ្ទេស') }}</span>
                                      {{ $grade }}
                                 </div>
                             </div>
@@ -263,12 +242,15 @@
                                     <a href="{{ route('professor.grades.edit', ['assessment_id' => $assessment->id, 'type' => $type]) }}"
                                        class="flex justify-between items-center p-4 bg-white hover:bg-emerald-50 border border-slate-100 rounded-2xl transition-all active:scale-95 group">
                                         <div class="flex items-center gap-2">
-                                            <div class="w-2 h-2 rounded-full {{ $type === 'exam' ? 'bg-rose-400' : 'bg-emerald-400' }}"></div>
+                                            <div class="w-2 h-2 rounded-full {{ $type === 'exam' ? 'bg-rose-400' : ($type === 'quiz' ? 'bg-amber-400' : 'bg-emerald-400') }}"></div>
                                             <span class="text-xs font-bold text-slate-600 group-hover:text-emerald-600">{{ $assessment->title_km }}</span>
+                                            @if ($type === 'quiz')
+                                                <span class="text-[9px] font-bold text-amber-500 uppercase">+ Bonus</span>
+                                            @endif
                                         </div>
                                         <div class="flex items-center gap-2">
-                                            <span class="text-xs font-black {{ $score < ($assessment->max_score/2) ? 'text-rose-500' : 'text-slate-800' }}">
-                                                {{ number_format($score, 1) }}
+                                            <span class="text-xs font-black {{ $score < ($assessment->max_score/2) ? 'text-rose-500' : ($type === 'quiz' ? 'text-amber-700' : 'text-slate-800') }}">
+                                                {{ $type === 'quiz' ? '+' : '' }}{{ number_format($score, 1) }}
                                             </span>
                                             <svg class="w-3 h-3 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
                                         </div>
@@ -283,14 +265,14 @@
                         </div>
                     </div>
                 @empty
-                    <div class="text-center py-20 bg-white rounded-[2.5rem] border-2 border-dashed border-slate-200">
+                    <div class="text-center py-20 bg-white rounded-2xl border-2 border-dashed border-slate-200">
                         <p class="text-slate-400 font-bold">{{ __('មិនទាន់មាននិស្សិត') }}</p>
                     </div>
                 @endforelse
             </div>
 
             {{-- Desktop Table View --}}
-            <div class="hidden lg:block bg-white shadow-sm border border-slate-200 rounded-[2.5rem] overflow-hidden">
+            <div class="hidden lg:block bg-white shadow-sm border border-slate-200 rounded-2xl overflow-hidden">
                 {{-- Print-only University Header --}}
                 <div class="hidden print:block" id="printHeader">
                     <div class="text-center mb-2">
@@ -309,7 +291,7 @@
                             ឈ្មោះសាខា <strong>សាខាស្វាយរៀង</strong> ឆមាសទី <strong>{{ $courseOffering->semester }}</strong> ឆ្នាំសិក្សា <strong>{{ $courseOffering->academic_year }}</strong> (សម័យប្រឡង)
                         </p>
                         <p class="text-[9px] text-slate-700">
-                            ចំនួនសិស្សសរុប <strong>{{ $totalStudents }}</strong> នាក់ និស្សិតប្រុស <strong>{{ $totalStudents }}</strong> នាក់
+                            ចំនួនសិស្សសរុប <strong>{{ $totalStudents }}</strong> នាក់ និស្សិតប្រុស <strong>{{ $maleCount }}</strong> នាក់ និស្សិតស្រី <strong>{{ $femaleCount }}</strong> នាក់
                         </p>
                     </div>
                 </div>
@@ -381,11 +363,10 @@
                                 </th>
 
                                 <th class="px-4 py-6 text-center w-32 border-r border-slate-50 bg-slate-50/30">
-                                    <a href="{{ route('grades.edit-attendance', ['student_id' => $students->first()?->id, 'course_id' => $courseOffering->id]) }}"
-                                       class="hover:text-emerald-600 transition-colors">
-                                        <span class="text-[11px] font-black text-slate-500 uppercase">{{ __('វត្តមាន') }}</span><br>
+                                    <div class="flex flex-col items-center gap-1">
+                                        <span class="text-[11px] font-black text-slate-500 uppercase">{{ __('វត្តមាន') }}</span>
                                         <span class="text-[10px] text-emerald-500 font-bold bg-emerald-50 px-2 py-0.5 rounded-full">15%</span>
-                                    </a>
+                                    </div>
                                 </th>
 
                                 @foreach($assessments as $assessment)
@@ -399,14 +380,17 @@
                                     @endphp
                                     <th class="px-4 py-6 text-center border-r border-slate-50 min-w-[175px] group relative bg-white transition-all">
                                         <div class="flex flex-col items-center gap-1.5">
-                                            <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase border {{ $colors[$type] }}">
+                                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase border {{ $colors[$type] }}">
                                                 {{ $type === 'assignment' ? __('កិច្ចការ') : ($type === 'quiz' ? 'Quiz' : __('ប្រឡង')) }}
                                             </span>
+                                            @if ($type === 'quiz')
+                                                <span class="text-[9px] font-bold text-amber-500 uppercase tracking-wide">+ Bonus</span>
+                                            @endif
                                             <a href="{{ route('professor.grades.edit', ['assessment_id' => $assessment->id, 'type' => $type]) }}"
                                                class="text-[13px] font-extrabold text-slate-700 hover:text-emerald-600 hover:scale-105 transform transition-all line-clamp-1">
                                                 {{ $assessment->title_km }}
                                             </a>
-                                            <span class="text-[9px] text-slate-400 font-bold uppercase tracking-tighter">
+                                            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">
                                                 {{ $assessment->max_score }} {{ __('ពិន្ទុ') }}
                                             </span>
 
@@ -415,7 +399,7 @@
                                                 <input type="hidden" name="assessment_id" value="{{ $assessment->id }}">
                                                 <input type="hidden" name="assessment_type" value="{{ $type }}">
                                                 <button type="submit" title="{{ __('ផ្ញើដំណឹងពិន្ទុ') }}"
-                                                        class="p-1.5 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-600 hover:text-white transition-all shadow-sm flex items-center gap-1 text-[9px] font-bold print:hidden">
+                                                        class="p-1.5 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-600 hover:text-white transition-all shadow-sm flex items-center gap-1 text-[10px] font-bold print:hidden">
                                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
                                                     {{ __('ផ្ញើដំណឹង') }}
                                                 </button>
@@ -457,12 +441,22 @@
                                     $attendanceScore = $student->getAttendanceScoreByCourse($courseOffering->id);
                                     $baseScore = $attendanceScore;
                                     $quizBonus = 0;
+                                    $studentScores = [];
+                                    foreach ($assessments as $assessment) {
+                                        $type = ($assessment instanceof \App\Models\Assignment) ? 'assignment' : (($assessment instanceof \App\Models\Quiz) ? 'quiz' : 'exam');
+                                        $score = $gradebook[$student->id][$type . '_' . $assessment->id] ?? 0;
+                                        $studentScores[$assessment->id] = ['type' => $type, 'score' => $score];
+                                        if ($type === 'quiz') { $quizBonus += $score; } else { $baseScore += $score; }
+                                    }
+                                    $rowTotal = min($baseScore + $quizBonus, 100);
+                                    $grade = \App\Services\GradingService::getLetterGrade($rowTotal);
+                                    $isPassing = \App\Services\GradingService::isPassing($grade);
                                 @endphp
                                 <tr class="hover:bg-slate-50/50 transition-colors duration-150 group student-row"
                                     data-name="{{ mb_strtolower($student->profile->full_name_km ?? $student->name ?? '', 'UTF-8') }}"
                                     data-id="{{ mb_strtolower($student->student_id_code ?? '', 'UTF-8') }}"
                                     data-total="{{ $rowTotal }}"
-                                    data-grade="">
+                                    data-grade="{{ $grade }}">
                                     <td class="px-4 py-5 text-center">
                                         <span class="text-xs font-bold text-slate-400 rank-number">{{ $loop->iteration }}</span>
                                     </td>
@@ -476,7 +470,7 @@
                                                 <div class="text-[13px] font-bold text-slate-800 leading-none group-hover:text-emerald-700 transition-colors">
                                                     {{ $student->profile->full_name_km ?? $student->name }}
                                                 </div>
-                                                <div class="text-[9px] text-slate-400 font-bold tracking-wider mt-1.5">{{ $student->student_id_code }}</div>
+                                                <div class="text-[10px] text-slate-400 font-bold tracking-wider mt-1.5">{{ $student->student_id_code }}</div>
                                             </div>
                                         </div>
                                     </td>
@@ -491,18 +485,16 @@
 
                                     @foreach ($assessments as $assessment)
                                         @php
-                                            $type = ($assessment instanceof \App\Models\Assignment) ? 'assignment' : (($assessment instanceof \App\Models\Quiz) ? 'quiz' : 'exam');
-                                            $score = $gradebook[$student->id][$type . '_' . $assessment->id] ?? 0;
-                                            if ($type === 'quiz') { $quizBonus += $score; } else { $baseScore += $score; }
+                                            $sData = $studentScores[$assessment->id];
+                                            $type = $sData['type'];
+                                            $score = $sData['score'];
                                         @endphp
-                                        <td class="px-4 py-5 text-center border-r border-slate-50">
-                                            <span class="text-xs font-black {{ $score < ($assessment->max_score/2) ? 'text-rose-500' : 'text-slate-700' }}">
-                                                {{ number_format($score, 1) }}
+                                        <td class="px-4 py-5 text-center border-r border-slate-50 {{ $type === 'quiz' ? 'bg-amber-50/20' : '' }}">
+                                            <span class="text-xs font-black {{ $score < ($assessment->max_score/2) ? 'text-rose-500' : ($type === 'quiz' ? 'text-amber-700' : 'text-slate-700') }}">
+                                                {{ $type === 'quiz' ? '+' : '' }}{{ number_format($score, 1) }}
                                             </span>
                                         </td>
                                     @endforeach
-
-                                    @php $rowTotal = min($baseScore + $quizBonus, 100); @endphp
 
                                     <td class="sticky right-24 bg-emerald-50/30 group-hover:bg-emerald-50/60 z-10 px-6 py-5 text-center border-l border-emerald-100/50">
                                         <span class="text-sm font-black text-emerald-700 total-score">
@@ -511,10 +503,6 @@
                                     </td>
 
                                     <td class="sticky right-0 bg-white group-hover:bg-slate-50 z-10 px-4 py-5 text-center border-l border-slate-100">
-                                        @php
-                                            $grade = \App\Services\GradingService::getLetterGrade($rowTotal);
-                                            $isPassing = \App\Services\GradingService::isPassing($grade);
-                                        @endphp
                                         <span class="inline-flex items-center justify-center w-9 h-9 rounded-xl text-xs font-black shadow-sm transition-transform group-hover:scale-110 {{ $isPassing ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-rose-50 text-rose-600 border border-rose-100' }}">
                                             {{ $grade }}
                                         </span>
@@ -584,7 +572,7 @@
                 x-transition:enter="transition ease-out duration-300"
                 x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                 @click.away="open = false"
-                class="relative transform overflow-hidden rounded-[2.5rem] bg-white px-4 pb-4 pt-5 text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-9 border border-slate-100">
+                class="relative transform overflow-hidden rounded-2xl bg-white px-4 pb-4 pt-5 text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-9 border border-slate-100">
                 <div class="sm:flex sm:items-start">
                     <div class="mx-auto flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-rose-50 sm:mx-0">
                         <svg class="h-8 w-8 text-rose-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -652,7 +640,7 @@
             th, td { padding: 4px 6px !important; border: 1px solid black !important; font-size: 9px !important; }
             thead tr { background-color: #e5e5e5 !important; }
 
-            .rounded-2xl, .rounded-3xl, .rounded-\[2\.5rem\] { border-radius: 0 !important; }
+            .rounded-2xl, .rounded-3xl { border-radius: 0 !important; }
 
             #printHeader { display: block !important; margin-bottom: 4px; }
             #printTable { display: block !important; margin-bottom: 8px; }

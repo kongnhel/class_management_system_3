@@ -129,11 +129,22 @@ class ProfessorGradeController extends Controller
         $titleEn = $request->input('title_en');
         $titleKm = $request->input('title_km');
 
-        // Auto-assign grading category by matching title_en to category name_en
-        $gradingCategory = GradingCategory::where('course_id', $courseOffering->course_id)
-            ->where('name_en', $titleEn)
-            ->first();
-        $gradingCategoryId = $gradingCategory?->id;
+        // Auto-assign grading category by matching assessment type to category name
+        $typeToCategory = match($type) {
+            'quiz' => 'Quiz',
+            'assignment' => 'Assignment',
+            'exam' => str_contains(strtolower($titleEn), 'final') ? 'Final Exam' :
+                      (str_contains(strtolower($titleEn), 'midterm') ? 'Midterm Exam' : null),
+            default => null,
+        };
+
+        $gradingCategoryId = null;
+        if ($typeToCategory) {
+            $gradingCategory = GradingCategory::where('course_id', $courseOffering->course_id)
+                ->where('name_en', $typeToCategory)
+                ->first();
+            $gradingCategoryId = $gradingCategory?->id;
+        }
 
         $existingAssessment = null;
         if ($type === 'exam') {
@@ -177,6 +188,7 @@ class ProfessorGradeController extends Controller
                 'max_score' => $request->max_score,
                 'exam_date' => $request->assessment_date,
                 'duration_minutes' => $request->input('duration_minutes'),
+                'grading_category_id' => $gradingCategoryId,
             ]);
         }
 
@@ -583,7 +595,7 @@ class ProfessorGradeController extends Controller
             'title_km' => 'required|string|max:255',
             'max_score' => 'required|numeric|min:1',
             'assessment_date' => 'required|date',
-            'grading_category_id' => 'required',
+            'grading_category_id' => 'nullable',
         ]);
 
         $modelClass = match ($type) {

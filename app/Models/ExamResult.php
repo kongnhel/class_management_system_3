@@ -94,4 +94,14 @@ class ExamResult extends Model
             default => 3,
         };
     }
+
+    public function getMaxScoreAttribute()
+    {
+        return match($this->assessment_type) {
+            'assignment' => $this->assignment?->max_score ?? 0,
+            'exam' => $this->exam?->max_score ?? 0,
+            'quiz' => $this->quiz?->max_score ?? 0,
+            default => 0,
+        };
+    }
 }

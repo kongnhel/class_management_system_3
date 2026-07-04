@@ -16,6 +16,7 @@ class Exam extends Model
         'exam_date',
         'duration_minutes',
         'max_score',
+        'grading_category_id',
     ];
 
     protected $casts = [

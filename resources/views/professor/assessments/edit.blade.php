@@ -94,12 +94,16 @@
                                 <div class="relative">
                                     <select name="grading_category_id" 
                                             class="w-full rounded-xl sm:rounded-2xl border-slate-200 bg-slate-50/50 py-3.5 sm:py-4 px-5 sm:px-6 focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 transition-all font-bold text-slate-700 appearance-none cursor-pointer">
+                                        <option value="">{{ __('មិនកំណត់') }}</option>
                                         @foreach($gradingCategories as $category)
-                                            <option value="{{ $category->id }}" {{ $assessment->grading_category_id == $category->id ? 'selected' : '' }}>
+                                            <option value="{{ $category->id }}" {{ ($assessment->grading_category_id ?? '') == $category->id ? 'selected' : '' }}>
                                                 {{ $category->name_km }} ({{ $category->weight_percentage }}%)
                                             </option>
                                         @endforeach
                                     </select>
+                                    @if($gradingCategories->isEmpty())
+                                        <p class="text-xs text-slate-400 mt-2 italic">{{ __('មិនមានប្រភេទពិន្ទុសម្រាប់មុខវិជ្ជានេះទេ។') }}</p>
+                                    @endif
                                     <div class="pointer-events-none absolute inset-y-0 right-5 sm:right-6 flex items-center text-slate-400">
                                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
                                     </div>

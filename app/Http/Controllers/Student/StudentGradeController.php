@@ -174,7 +174,8 @@ class StudentGradeController extends Controller
             ->orderByRaw("FIELD(day_of_week, 'Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday')")
             ->orderBy('start_time')
             ->get();
-        return view('student.my-schedule', compact('schedules'));
+        $studentProgram = $user->program;
+        return view('student.my-schedule', compact('schedules', 'studentProgram'));
     }
 
     public function enrolledCourses($studentId)
