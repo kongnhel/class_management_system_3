@@ -29,6 +29,26 @@ class GenerationController extends Controller
             ->with('success', 'ជំនាន់ថ្មីបានបង្កើតដោយជោគជ័យ!');
     }
 
+    public function update(Request $request, Generation $generation)
+    {
+        $studentCount = $generation->students()->count();
+
+        if ($studentCount > 0) {
+            return back()->with('error', "មិនអាចកែប្រែបានទេ ព្រោះជំនាន់នេះមានសិស្សចំនួន {$studentCount} នាក់។");
+        }
+
+        $request->validate([
+            'name' => 'required|integer|min:1|max:99|unique:generations,name,' . $generation->id,
+        ]);
+
+        $generation->update([
+            'name' => $request->name,
+        ]);
+
+        return redirect()->route('admin.generations.index')
+            ->with('success', 'ជំនាន់បានកែប្រែដោយជោគជ័យ!');
+    }
+
     public function destroy(Generation $generation)
     {
         $studentCount = $generation->students()->count();

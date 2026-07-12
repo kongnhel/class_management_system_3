@@ -15,30 +15,6 @@
     <div class="py-10 bg-gray-50 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            {{-- Toast --}}
-            @if (session('success') || session('error'))
-                <div x-data="{ show: true, progress: 100 }" x-init="let i=setInterval(()=>{progress-=1;if(progress<=0){show=false;clearInterval(i)}},30)" x-show="show" x-transition class="fixed top-6 right-6 z-[9999] w-full max-w-sm">
-                    <div class="relative overflow-hidden bg-white border border-gray-200 shadow-lg rounded-xl p-4">
-                        <div class="flex items-start gap-3">
-                            @if(session('success'))
-                                <div class="h-8 w-8 bg-emerald-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                                    <svg class="h-4 w-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
-                                </div>
-                            @else
-                                <div class="h-8 w-8 bg-red-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                                    <svg class="h-4 w-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                </div>
-                            @endif
-                            <div class="flex-1">
-                                <p class="text-sm font-semibold text-gray-900">{{ session('success') ? 'ជោគជ័យ' : 'កំហុស' }}</p>
-                                <p class="mt-0.5 text-sm text-gray-500">{{ session('success') ?? session('error') }}</p>
-                            </div>
-                        </div>
-                        <div class="absolute bottom-0 left-0 h-1 bg-emerald-500 rounded-b-xl transition-all duration-100" :style="{ width: progress + '%' }"></div>
-                    </div>
-                </div>
-            @endif
-
             {{-- Program Selector --}}
             <div class="bg-white border border-gray-200 rounded-2xl p-6">
                 <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">កម្មវិធីសិក្សា</h3>

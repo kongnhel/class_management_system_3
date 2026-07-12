@@ -1,0 +1,874 @@
+===============================================================================
+              COMPLETE DATABASE TABLES OVERVIEW - CLASS MANAGEMENT SYSTEM
+                           43 Tables Total
+===============================================================================
+
+This document describes every database table in the project, organized by
+operational flow: from foundational/reference tables → user/identity tables →
+academic structure tables → course management → assessments → attendance →
+communication → system infrastructure.
+
+===============================================================================
+PHASE 1: SYSTEM INFRASTRUCTURE TABLES (Operate First)
+===============================================================================
+
+1. cache
+   Purpose: Stores cached data for application performance.
+   ---------------------------------------------------------------
+   Column          | Type      | Constraints
+   ---------------------------------------------------------------
+   key             | string    | PRIMARY KEY
+   value           | mediumText|
+   expiration      | integer   |
+   ---------------------------------------------------------------
+
+2. cache_locks
+   Purpose: Prevents cache stampede by locking cache keys.
+   ---------------------------------------------------------------
+   Column          | Type      | Constraints
+   ---------------------------------------------------------------
+   key             | string    | PRIMARY KEY
+   owner           | string    |
+   expiration      | integer   |
+   ---------------------------------------------------------------
+
+3. jobs
+   Purpose: Stores queued jobs for background processing (Laravel Queue).
+   ---------------------------------------------------------------
+   Column          | Type      | Constraints
+   ---------------------------------------------------------------
+   id              | bigint    | PK, auto
+   queue           | string    | indexed
+   payload         | longText  |
+   attempts        | unsignedTinyInteger |
+   reserved_at     | unsignedInteger | nullable
+   available_at    | unsignedInteger |
+   created_at      | unsignedInteger |
+   ---------------------------------------------------------------
+
+4. job_batches
+   Purpose: Tracks batches of queued jobs for monitoring.
+   ---------------------------------------------------------------
+   Column          | Type      | Constraints
+   ---------------------------------------------------------------
+   id              | string    | PK
+   name            | string    |
+   total_jobs      | integer   |
+   pending_jobs    | integer   |
+   failed_jobs     | integer   |
+   failed_job_ids  | longText  |
+   options         | mediumText | nullable
+   cancelled_at    | integer   | nullable
+   created_at      | integer   |
+   finished_at     | integer   | nullable
+   ---------------------------------------------------------------
+
+5. failed_jobs
+   Purpose: Stores jobs that failed during processing.
+   ---------------------------------------------------------------
+   Column          | Type      | Constraints
+   ---------------------------------------------------------------
+   id              | bigint    | PK, auto
+   uuid            | string    | UNIQUE
+   connection      | text      |
+   queue           | text      |
+   payload         | longText  |
+   exception       | longText  |
+   failed_at       | timestamp | useCurrent
+   ---------------------------------------------------------------
+
+6. system_settings
+   Purpose: Global system configuration key-value pairs.
+   ---------------------------------------------------------------
+   Column          | Type      | Constraints
+   ---------------------------------------------------------------
+   id              | bigint    | PK, auto
+   key             | string    | UNIQUE
+   value           | text      | nullable
+   type            | string    | default 'text'
+   group           | string    | default 'general'
+   created_at      | timestamp |
+   updated_at      | timestamp |
+   ---------------------------------------------------------------
+
+7. academic_years
+   Purpose: Defines academic year/semester periods for the institution.
+   ---------------------------------------------------------------
+   Column          | Type      | Constraints
+   ---------------------------------------------------------------
+   id              | bigint    | PK, auto
+   name            | string    |
+   start_date      | string    |
+   end_date        | string    |
+   is_current      | boolean   | default false
+   description     | text      | nullable
+   created_at      | timestamp |
+   updated_at      | timestamp |
+   ---------------------------------------------------------------
+
+8. generations
+   Purpose: Tracks student intake cohorts/generation years.
+   ---------------------------------------------------------------
+   Column          | Type      | Constraints
+   ---------------------------------------------------------------
+   id              | bigint    | PK, auto
+   name            | string    | UNIQUE
+   join_year       | integer   |
+   created_at      | timestamp |
+   updated_at      | timestamp |
+   ---------------------------------------------------------------
+
+9. permissions
+   Purpose: Defines granular permission strings for RBAC.
+   ---------------------------------------------------------------
+   Column          | Type      | Constraints
+   ---------------------------------------------------------------
+   id              | bigint    | PK, auto
+   name            | string    | UNIQUE
+   description     | string    | nullable
+   group           | string    | default 'general'
+   created_at      | timestamp |
+   updated_at      | timestamp |
+   ---------------------------------------------------------------
+
+10. roles
+    Purpose: Defines user roles (admin, professor, student, etc.).
+    ---------------------------------------------------------------
+    Column          | Type      | Constraints
+    ---------------------------------------------------------------
+    id              | bigint    | PK, auto
+    name            | string    | UNIQUE
+    description     | string    | nullable
+    created_at      | timestamp |
+    updated_at      | timestamp |
+    ---------------------------------------------------------------
+
+11. role_permissions (Pivot)
+    Purpose: Maps permissions to roles (many-to-many).
+    ---------------------------------------------------------------
+    Column          | Type      | Constraints
+    ---------------------------------------------------------------
+    id              | bigint    | PK, auto
+    role_id         | bigint    | FK -> roles (CASCADE)
+    permission_id   | bigint    | FK -> permissions (CASCADE)
+    created_at      | timestamp |
+    updated_at      | timestamp |
+    UNIQUE: [role_id, permission_id]
+    ---------------------------------------------------------------
+
+
+===============================================================================
+PHASE 2: USER & AUTHENTICATION TABLES
+===============================================================================
+
+12. users
+    Purpose: Central user table storing all user accounts (admin, professor,
+            student). Holds authentication credentials, role, and foreign keys
+            to department/program.
+    ---------------------------------------------------------------
+    Column              | Type      | Constraints
+    ---------------------------------------------------------------
+    id                  | bigint    | PK, auto
+    name                | string    | nullable
+    email               | string    | nullable, UNIQUE
+    student_id_code     | string    | nullable, UNIQUE
+    phone               | string(20) | nullable
+    telegram_chat_id    | string    | nullable
+    google_id           | string    | nullable
+    phone_verified_at   | timestamp | nullable
+    otp_code            | string(6) | nullable
+    otp_expires_at      | timestamp | nullable
+    otp_attempts        | integer   | default 0
+    otp_last_sent_at    | timestamp | nullable
+    is_verified         | boolean   | default false
+    verification_method | string(20) | nullable, default 'email'
+    otp_purpose         | string(50) | nullable
+    email_verified_at   | timestamp | nullable
+    password            | string    | nullable
+    profile_picture_path | string   | nullable
+    face_descriptor     | longText  | nullable
+    avatar              | string    | nullable
+    generation          | string    | nullable
+    role                | string    | default 'student'
+    department_id       | bigint    | nullable, FK -> departments (NO ACTION)
+    program_id          | bigint    | nullable, FK -> programs (NO ACTION)
+    remember_token      | string    |
+    created_at          | timestamp |
+    updated_at          | timestamp |
+    deleted_at          | timestamp | nullable (soft deletes)
+    ---------------------------------------------------------------
+    Indexes: idx_user_role, idx_user_deleted
+
+13. password_reset_tokens
+    Purpose: Stores password reset tokens for email-based password recovery.
+    ---------------------------------------------------------------
+    Column          | Type      | Constraints
+    ---------------------------------------------------------------
+    email           | string    | PRIMARY KEY
+    token           | string    |
+    created_at      | timestamp | nullable
+    ---------------------------------------------------------------
+
+14. sessions
+    Purpose: Stores HTTP session data for authenticated users.
+    ---------------------------------------------------------------
+    Column          | Type      | Constraints
+    ---------------------------------------------------------------
+    id              | string    | PK
+    user_id         | bigint    | nullable, indexed
+    ip_address      | string(45) | nullable
+    user_agent      | text      | nullable
+    payload         | longText  |
+    last_activity   | integer   | indexed
+    ---------------------------------------------------------------
+
+15. personal_access_tokens
+    Purpose: API tokens for Sanctum-based authentication (mobile/SPA).
+    ---------------------------------------------------------------
+    Column          | Type      | Constraints
+    ---------------------------------------------------------------
+    id              | bigint    | PK, auto
+    tokenable_type  | string    | morph
+    tokenable_id    | unsignedBigInteger | morph
+    name            | text      |
+    token           | string(64) | UNIQUE
+    abilities       | text      | nullable
+    last_used_at    | timestamp | nullable
+    expires_at      | timestamp | nullable, indexed
+    created_at      | timestamp |
+    updated_at      | timestamp |
+    ---------------------------------------------------------------
+
+
+===============================================================================
+PHASE 3: USER PROFILE TABLES
+===============================================================================
+
+16. user_profiles
+    Purpose: Extended profile data for any user (name in Khmer/English,
+            gender, DOB, contact info, Telegram details).
+    ---------------------------------------------------------------
+    Column              | Type      | Constraints
+    ---------------------------------------------------------------
+    id                  | bigint    | PK, auto
+    user_id             | bigint    | UNIQUE, FK -> users (CASCADE)
+    full_name_km        | string    | nullable
+    full_name_en        | string    | nullable
+    gender              | string    | nullable
+    date_of_birth       | date      | nullable
+    phone_number        | string    | nullable
+    telegram_user       | string    | nullable
+    telegram_chat_id    | string    | nullable
+    address             | text      | nullable
+    profile_picture_url | string    | nullable
+    created_at          | timestamp |
+    updated_at          | timestamp |
+    ---------------------------------------------------------------
+
+17. professor_profiles
+    Purpose: Professor-specific profile data (staff ID, qualifications,
+            specializations, department assignment).
+    ---------------------------------------------------------------
+    Column              | Type      | Constraints
+    ---------------------------------------------------------------
+    id                  | bigint    | PK, auto
+    user_id             | bigint    | FK -> users (CASCADE)
+    staff_id            | string    | UNIQUE, nullable
+    full_name_km        | string    | nullable
+    full_name_en        | string    | nullable
+    date_of_birth       | date      | nullable
+    gender              | enum('male','female','other') | nullable
+    phone_number        | string    | nullable
+    department_id       | bigint    | nullable, FK -> departments (SET NULL)
+    position            | string    | nullable
+    qualifications      | text      | nullable
+    specializations     | text      | nullable
+    profile_picture_url | string    | nullable
+    created_at          | timestamp |
+    updated_at          | timestamp |
+    ---------------------------------------------------------------
+
+18. student_profiles
+    Purpose: Student-specific profile data (student code, generation,
+            personal info).
+    ---------------------------------------------------------------
+    Column              | Type      | Constraints
+    ---------------------------------------------------------------
+    id                  | bigint    | PK, auto
+    user_id             | bigint    | FK -> users (CASCADE)
+    student_code_id     | string    | UNIQUE, nullable
+    generation          | string    | nullable
+    full_name_km        | string    | nullable
+    full_name_en        | string    | nullable
+    date_of_birth       | date      | nullable
+    gender              | enum('male','female','other') | nullable
+    phone_number        | string    | nullable
+    address             | string    | nullable
+    profile_picture_url | string    | nullable
+    created_at          | timestamp |
+    updated_at          | timestamp |
+    ---------------------------------------------------------------
+
+
+===============================================================================
+PHASE 4: ACADEMIC STRUCTURE TABLES
+===============================================================================
+
+19. faculties
+    Purpose: Top-level academic organizational unit (e.g., Faculty of
+            Engineering). Has a dean (user).
+    ---------------------------------------------------------------
+    Column          | Type      | Constraints
+    ---------------------------------------------------------------
+    id              | bigint    | PK, auto
+    name_km         | string    |
+    name_en         | string    |
+    dean_user_id    | bigint    | nullable, FK -> users (SET NULL)
+    created_at      | timestamp |
+    updated_at      | timestamp |
+    deleted_at      | timestamp | nullable (soft deletes)
+    ---------------------------------------------------------------
+
+20. departments
+    Purpose: Subdivision within a faculty (e.g., Dept of Computer Science).
+            Has a head (user).
+    ---------------------------------------------------------------
+    Column          | Type      | Constraints
+    ---------------------------------------------------------------
+    id              | bigint    | PK, auto
+    faculty_id      | bigint    | FK -> faculties (CASCADE)
+    name_km         | string    |
+    name_en         | string    |
+    head_user_id    | bigint    | nullable, FK -> users (SET NULL)
+    created_at      | timestamp |
+    updated_at      | timestamp |
+    deleted_at      | timestamp | nullable (soft deletes)
+    ---------------------------------------------------------------
+
+21. programs
+    Purpose: Academic programs/degrees offered within a department
+            (e.g., Bachelor of Computer Science). Self-referencing
+            pathway_program_id for prerequisite pathways.
+    ---------------------------------------------------------------
+    Column              | Type      | Constraints
+    ---------------------------------------------------------------
+    id                  | bigint    | PK, auto
+    department_id       | bigint    | FK -> departments (NO ACTION)
+    name_km             | string    |
+    name_en             | string    |
+    degree_level        | string    | nullable
+    duration_years      | integer   |
+    pathway_program_id  | bigint    | nullable, FK -> programs (SET NULL)
+    created_at          | timestamp |
+    updated_at          | timestamp |
+    deleted_at          | timestamp | nullable (soft deletes)
+    ---------------------------------------------------------------
+
+
+===============================================================================
+PHASE 5: COURSE STRUCTURE TABLES
+===============================================================================
+
+22. courses
+    Purpose: Defines courses that can be offered (e.g., "Data Structures").
+            Linked to departments; programs linked via pivot table.
+    ---------------------------------------------------------------
+    Column          | Type      | Constraints
+    ---------------------------------------------------------------
+    id              | bigint    | PK, auto
+    department_id   | bigint    | FK -> departments (NO ACTION)
+    generation      | string    | nullable
+    title_km        | string    |
+    title_en        | string    |
+    credits         | integer   |
+    description     | text      | nullable
+    created_at      | timestamp |
+    updated_at      | timestamp |
+    deleted_at      | timestamp | nullable (soft deletes)
+    ---------------------------------------------------------------
+
+23. course_program (Pivot)
+    Purpose: Many-to-many relationship between courses and programs.
+    ---------------------------------------------------------------
+    Column          | Type      | Constraints
+    ---------------------------------------------------------------
+    id              | bigint    | PK, auto
+    course_id       | bigint    | FK -> courses (CASCADE)
+    program_id      | bigint    | FK -> programs (CASCADE)
+    created_at      | timestamp |
+    updated_at      | timestamp |
+    ---------------------------------------------------------------
+
+24. course_offerings
+    Purpose: A specific offering/section of a course for a given academic
+            year, semester, assigned to a lecturer. This is the core
+            operational entity linking courses to programs, lecturers,
+            and time periods.
+    ---------------------------------------------------------------
+    Column                      | Type      | Constraints
+    ---------------------------------------------------------------
+    id                          | bigint    | PK, auto
+    program_id                  | bigint    | nullable, FK -> programs (SET NULL)
+    course_id                   | bigint    | FK -> courses (CASCADE)
+    generation                  | string    | nullable
+    lecturer_user_id            | bigint    | FK -> users (NO ACTION)
+    academic_year               | string    |
+    semester                    | string    |
+    section                     | string    | nullable
+    capacity                    | integer   |
+    room_number                 | string    | nullable
+    is_open_for_self_enrollment | boolean   | default false
+    start_date                  | date      | nullable
+    end_date                    | date      | nullable
+    created_at                  | timestamp |
+    updated_at                  | timestamp |
+    deleted_at                  | timestamp | nullable (soft deletes)
+    ---------------------------------------------------------------
+    Indexes: idx_co_lecturer, idx_co_program, idx_co_year
+
+25. course_offering_program (Pivot)
+    Purpose: Many-to-many between course offerings and programs (for
+            cross-program offerings).
+    ---------------------------------------------------------------
+    Column              | Type      | Constraints
+    ---------------------------------------------------------------
+    id                  | bigint    | PK, auto
+    course_offering_id  | bigint    | FK -> course_offerings (CASCADE)
+    program_id          | bigint    | FK -> programs (CASCADE)
+    generation          | string    |
+    created_at          | timestamp |
+    updated_at          | timestamp |
+    ---------------------------------------------------------------
+
+26. rooms
+    Purpose: Physical classrooms with capacity and location data.
+    ---------------------------------------------------------------
+    Column          | Type      | Constraints
+    ---------------------------------------------------------------
+    id              | bigint    | PK, auto
+    room_number     | string    | UNIQUE
+    capacity        | integer   |
+    wifi_qr_code    | string    | nullable
+    location_of_room | string   | nullable
+    type_of_room    | string    | nullable
+    created_at      | timestamp |
+    updated_at      | timestamp |
+    ---------------------------------------------------------------
+
+27. schedules
+    Purpose: Weekly class schedules for course offerings in specific rooms.
+    ---------------------------------------------------------------
+    Column              | Type      | Constraints
+    ---------------------------------------------------------------
+    id                  | bigint    | PK, auto
+    course_offering_id  | bigint    | FK -> course_offerings (CASCADE)
+    day_of_week         | string    |
+    room_id             | bigint    | FK -> rooms (CASCADE)
+    start_time          | time      |
+    end_time            | time      | nullable
+    created_at          | timestamp |
+    updated_at          | timestamp |
+    ---------------------------------------------------------------
+    Indexes: idx_sched_course, idx_sched_room, idx_sched_day
+
+
+===============================================================================
+PHASE 6: STUDENT ENROLLMENT TABLES
+===============================================================================
+
+28. student_program_enrollments
+    Purpose: Enrolls students into academic programs. Tracks status,
+            degree level, starting year, and transition eligibility.
+    ---------------------------------------------------------------
+    Column              | Type      | Constraints
+    ---------------------------------------------------------------
+    id                  | bigint    | PK, auto
+    student_user_id     | bigint    | FK -> users (CASCADE)
+    program_id          | bigint    | FK -> programs (CASCADE)
+    degree_level        | string    | nullable
+    starting_year_level | integer   | default 1
+    is_transition_eligible | boolean | default false
+    enrollment_date     | date      |
+    graduation_date     | date      | nullable
+    status              | string    | default 'active'
+    created_at          | timestamp |
+    updated_at          | timestamp |
+    ---------------------------------------------------------------
+
+29. student_course_enrollments
+    Purpose: Enrolls students into specific course offerings. Tracks
+            attendance score, final grade, and class leader status.
+    ---------------------------------------------------------------
+    Column              | Type      | Constraints
+    ---------------------------------------------------------------
+    id                  | bigint    | PK, auto
+    student_id          | unsignedBigInteger |
+    student_user_id     | bigint    | FK -> users (CASCADE)
+    is_class_leader     | boolean   | default false
+    course_offering_id  | bigint    | FK -> course_offerings (CASCADE)
+    enrollment_date     | date      |
+    final_grade         | string    | nullable
+    status              | string    | default 'enrolled'
+    attendance_score_manual | decimal(5,2) | nullable
+    created_at          | timestamp |
+    updated_at          | timestamp |
+    ---------------------------------------------------------------
+    Indexes: idx_enroll_student, idx_enroll_course, idx_enroll_comp
+
+
+===============================================================================
+PHASE 7: GRADING & ASSESSMENT TABLES
+===============================================================================
+
+30. grading_categories
+    Purpose: Defines grading weight categories for a course
+            (e.g., "Assignment" 20%, "Midterm" 30%, "Final" 50%).
+    ---------------------------------------------------------------
+    Column              | Type      | Constraints
+    ---------------------------------------------------------------
+    id                  | bigint    | PK, auto
+    course_id           | bigint    | FK -> courses (CASCADE)
+    name_km             | string    |
+    name_en             | string    |
+    weight_percentage   | integer   |
+    created_at          | timestamp |
+    updated_at          | timestamp |
+    ---------------------------------------------------------------
+    Index: idx_grade_course
+
+31. assignments
+    Purpose: Assignment tasks for a course offering, linked to a grading
+            category for grade weight calculation.
+    ---------------------------------------------------------------
+    Column              | Type      | Constraints
+    ---------------------------------------------------------------
+    id                  | bigint    | PK, auto
+    course_offering_id  | bigint    | FK -> course_offerings (CASCADE)
+    grading_category_id | bigint    | nullable, FK -> grading_categories (SET NULL)
+    title_km            | string    |
+    title_en            | string    |
+    description         | text      | nullable
+    due_date            | dateTime  |
+    max_score           | integer   |
+    created_at          | timestamp |
+    updated_at          | timestamp |
+    ---------------------------------------------------------------
+
+32. exams
+    Purpose: Exam/test records for a course offering.
+    ---------------------------------------------------------------
+    Column              | Type      | Constraints
+    ---------------------------------------------------------------
+    id                  | bigint    | PK, auto
+    course_offering_id  | bigint    | FK -> course_offerings (CASCADE)
+    title_km            | string    |
+    title_en            | string    |
+    exam_date           | dateTime  |
+    duration_minutes    | integer   | nullable
+    max_score           | integer   |
+    grading_category_id | bigint    | nullable, FK -> grading_categories (SET NULL)
+    created_at          | timestamp |
+    updated_at          | timestamp |
+    ---------------------------------------------------------------
+
+33. quizzes
+    Purpose: Quiz records for a course offering.
+    ---------------------------------------------------------------
+    Column              | Type      | Constraints
+    ---------------------------------------------------------------
+    id                  | bigint    | PK, auto
+    course_offering_id  | bigint    | FK -> course_offerings (CASCADE)
+    grading_category_id | bigint    | nullable, FK -> grading_categories (SET NULL)
+    title_km            | string    |
+    title_en            | string    |
+    max_score           | decimal(8,2) | default 100.00
+    quiz_date           | date      |
+    created_at          | timestamp |
+    updated_at          | timestamp |
+    ---------------------------------------------------------------
+
+34. exam_results
+    Purpose: Stores scores for all assessment types (exams, assignments,
+            quizzes) using a polymorphic-like pattern (assessment_id +
+            assessment_type).
+    ---------------------------------------------------------------
+    Column              | Type      | Constraints
+    ---------------------------------------------------------------
+    id                  | bigint    | PK, auto
+    assessment_id       | unsignedBigInteger |
+    assessment_type     | string    |
+    student_user_id     | bigint    | FK -> users (CASCADE)
+    score_obtained      | integer   |
+    recorded_at         | dateTime  |
+    notes               | text      | nullable
+    created_at          | timestamp |
+    updated_at          | timestamp |
+    ---------------------------------------------------------------
+    Indexes: idx_exam_student, idx_exam_assess, idx_exam_type,
+             composite [assessment_id, assessment_type]
+
+35. submissions
+    Purpose: Student file submissions for assignments.
+    ---------------------------------------------------------------
+    Column              | Type      | Constraints
+    ---------------------------------------------------------------
+    id                  | bigint    | PK, auto
+    assignment_id       | bigint    | FK -> assignments (CASCADE)
+    student_user_id     | bigint    | FK -> users (CASCADE)
+    submission_date     | dateTime  | nullable
+    file_path           | string    | nullable
+    grade_received      | decimal(5,2) | nullable
+    feedback            | text      | nullable
+    created_at          | timestamp |
+    updated_at          | timestamp |
+    ---------------------------------------------------------------
+    UNIQUE: [assignment_id, student_user_id]
+    Indexes: idx_submit_student, idx_submit_assign
+
+
+===============================================================================
+PHASE 8: ATTENDANCE TABLES
+===============================================================================
+
+36. attendances
+    Purpose: Daily attendance records for students in course offerings.
+            Tracks present/absent/late/permission status with unique
+            constraint per student per course per day.
+    ---------------------------------------------------------------
+    Column              | Type      | Constraints
+    ---------------------------------------------------------------
+    id                  | bigint    | PK, auto
+    course_offering_id  | bigint    | FK -> course_offerings (CASCADE)
+    student_user_id     | unsignedBigInteger |
+    user_id             | bigint    | FK -> users (CASCADE)
+    date                | date      |
+    status              | enum('present','absent','late','permission')
+                        |           | default 'present'
+    remarks             | text      | nullable
+    created_at          | timestamp |
+    updated_at          | timestamp |
+    ---------------------------------------------------------------
+    UNIQUE: [course_offering_id, student_user_id, date]
+    Indexes: idx_attend_course, idx_attend_student, idx_attend_course_student
+
+37. attendance_qr_tokens
+    Purpose: QR tokens generated for attendance verification sessions.
+            Tokens expire after a set time.
+    ---------------------------------------------------------------
+    Column              | Type      | Constraints
+    ---------------------------------------------------------------
+    id                  | bigint    | PK, auto
+    course_offering_id  | bigint    | FK -> course_offerings (CASCADE)
+    token_code          | string    | UNIQUE
+    expires_at          | timestamp |
+    created_at          | timestamp |
+    updated_at          | timestamp |
+    ---------------------------------------------------------------
+
+38. attendance_professors
+    Purpose: Records professor GPS location verification when taking
+            attendance (latitude/longitude + verification timestamp).
+    ---------------------------------------------------------------
+    Column          | Type      | Constraints
+    ---------------------------------------------------------------
+    id              | bigint    | PK, auto
+    professor_id    | bigint    | FK -> users (CASCADE)
+    session_id      | unsignedBigInteger | nullable
+    lat             | decimal(10,8) |
+    lng             | decimal(11,8) |
+    verified_at     | timestamp |
+    verified_date   | date      | nullable
+    created_at      | timestamp |
+    updated_at      | timestamp |
+    ---------------------------------------------------------------
+
+
+===============================================================================
+PHASE 9: COMMUNICATION & NOTIFICATION TABLES
+===============================================================================
+
+39. notifications
+    Purpose: Stores notifications for users (polymorphic notifiable).
+    ---------------------------------------------------------------
+    Column          | Type      | Constraints
+    ---------------------------------------------------------------
+    id              | uuid      | PK
+    type            | string    |
+    notifiable_id   | unsignedBigInteger | morph
+    notifiable_type | string    | morph
+    data            | text      |
+    read_at         | timestamp | nullable
+    created_at      | timestamp |
+    updated_at      | timestamp |
+    ---------------------------------------------------------------
+    Indexes: idx_notif_type, idx_notif_id, idx_notif_read, idx_notif_created
+
+40. announcements
+    Purpose: Institutional or course-specific announcements posted by
+            users. Can target specific roles or course offerings.
+    ---------------------------------------------------------------
+    Column              | Type      | Constraints
+    ---------------------------------------------------------------
+    id                  | bigint    | PK, auto
+    poster_user_id      | bigint    | FK -> users (CASCADE)
+    title_km            | string    |
+    title_en            | string    |
+    content_km          | text      |
+    content_en          | text      |
+    target_role         | string    | nullable
+    course_offering_id  | bigint    | nullable, FK -> course_offerings (CASCADE)
+    created_at          | timestamp |
+    updated_at          | timestamp |
+    ---------------------------------------------------------------
+    Indexes: idx_announ_poster, idx_announ_role, idx_announ_created
+
+41. announcement_reads
+    Purpose: Tracks which users have read which announcements.
+    ---------------------------------------------------------------
+    Column          | Type      | Constraints
+    ---------------------------------------------------------------
+    id              | bigint    | PK, auto
+    announcement_id | bigint    | FK -> announcements (CASCADE)
+    user_id         | bigint    | FK -> users (NO ACTION)
+    created_at      | timestamp |
+    updated_at      | timestamp |
+    ---------------------------------------------------------------
+    UNIQUE: [announcement_id, user_id]
+
+42. chat_messages
+    Purpose: AI chatbot message history per user, with conversation threads.
+    ---------------------------------------------------------------
+    Column          | Type      | Constraints
+    ---------------------------------------------------------------
+    id              | bigint    | PK, auto
+    user_id         | bigint    | FK -> users (CASCADE)
+    message         | text      |
+    sender          | enum('user','ai') |
+    conversation_id | string    | nullable
+    created_at      | timestamp |
+    updated_at      | timestamp |
+    ---------------------------------------------------------------
+    Indexes: idx_chat_user, idx_chat_created
+
+
+===============================================================================
+PHASE 10: AUDIT & LOGGING TABLES
+===============================================================================
+
+43. audit_logs
+    Purpose: Tracks all data changes across the system for security
+            and accountability. Records old/new values for edits.
+    ---------------------------------------------------------------
+    Column          | Type      | Constraints
+    ---------------------------------------------------------------
+    id              | bigint    | PK, auto
+    user_id         | bigint    | nullable, FK -> users (SET NULL)
+    action          | string    |
+    auditable_type  | string    |
+    auditable_id    | unsignedBigInteger | nullable
+    old_values      | json      | nullable
+    new_values      | json      | nullable
+    description     | text      | nullable
+    ip_address      | string(45) | nullable
+    user_agent      | string    | nullable
+    created_at      | timestamp |
+    updated_at      | timestamp |
+    ---------------------------------------------------------------
+    Index: [auditable_type, auditable_id]
+
+
+===============================================================================
+COMPLETE FOREIGN KEY RELATIONSHIP MAP
+===============================================================================
+
+From Table                    | Column              | To Table                | On Delete
+------------------------------|---------------------|-------------------------|-----------
+users                         | department_id       | departments             | NO ACTION
+users                         | program_id          | programs                | NO ACTION
+user_profiles                 | user_id             | users                   | CASCADE
+faculties                     | dean_user_id        | users                   | SET NULL
+departments                   | faculty_id          | faculties               | CASCADE
+departments                   | head_user_id        | users                   | SET NULL
+programs                      | department_id       | departments             | NO ACTION
+programs                      | pathway_program_id  | programs (self)         | SET NULL
+courses                       | department_id       | departments             | NO ACTION
+course_program                | course_id           | courses                 | CASCADE
+course_program                | program_id          | programs                | CASCADE
+course_offerings              | program_id          | programs                | SET NULL
+course_offerings              | course_id           | courses                 | CASCADE
+course_offerings              | lecturer_user_id    | users                   | NO ACTION
+course_offering_program       | course_offering_id  | course_offerings        | CASCADE
+course_offering_program       | program_id          | programs                | CASCADE
+student_program_enrollments   | student_user_id     | users                   | CASCADE
+student_program_enrollments   | program_id          | programs                | CASCADE
+student_course_enrollments    | student_user_id     | users                   | CASCADE
+student_course_enrollments    | course_offering_id  | course_offerings        | CASCADE
+grading_categories            | course_id           | courses                 | CASCADE
+exams                         | course_offering_id  | course_offerings        | CASCADE
+exams                         | grading_category_id | grading_categories      | SET NULL
+exam_results                  | student_user_id     | users                   | CASCADE
+assignments                   | course_offering_id  | course_offerings        | CASCADE
+assignments                   | grading_category_id | grading_categories      | SET NULL
+quizzes                       | course_offering_id  | course_offerings        | CASCADE
+quizzes                       | grading_category_id | grading_categories      | SET NULL
+submissions                   | assignment_id       | assignments             | CASCADE
+submissions                   | student_user_id     | users                   | CASCADE
+schedules                     | course_offering_id  | course_offerings        | CASCADE
+schedules                     | room_id             | rooms                   | CASCADE
+attendances                   | course_offering_id  | course_offerings        | CASCADE
+attendances                   | user_id             | users                   | CASCADE
+attendance_qr_tokens          | course_offering_id  | course_offerings        | CASCADE
+attendance_professors         | professor_id        | users                   | CASCADE
+announcements                 | poster_user_id      | users                   | CASCADE
+announcements                 | course_offering_id  | course_offerings        | CASCADE
+announcement_reads            | announcement_id     | announcements           | CASCADE
+announcement_reads            | user_id             | users                   | NO ACTION
+professor_profiles            | user_id             | users                   | CASCADE
+professor_profiles            | department_id       | departments             | SET NULL
+student_profiles              | user_id             | users                   | CASCADE
+chat_messages                 | user_id             | users                   | CASCADE
+audit_logs                    | user_id             | users                   | SET NULL
+role_permissions              | role_id             | roles                   | CASCADE
+role_permissions              | permission_id       | permissions             | CASCADE
+personal_access_tokens        | tokenable_type/id   | (morph)                 | -
+
+
+===============================================================================
+OPERATIONAL FLOW SUMMARY
+===============================================================================
+
+1. FIRST: System infrastructure is initialized (cache, jobs, settings,
+   academic_years, generations, roles, permissions).
+
+2. SECOND: Users are created and authenticated (users, sessions,
+   personal_access_tokens). Profiles are attached (user_profiles,
+   professor_profiles, student_profiles).
+
+3. THIRD: Academic structure is built top-down:
+   faculties -> departments -> programs -> courses.
+   Pivot tables link courses to programs.
+
+4. FOURTH: Course offerings are created for specific semesters, linking
+   courses to programs and assigning lecturers. Rooms and schedules
+   are defined.
+
+5. FIFTH: Students enroll in programs (student_program_enrollments) and
+   then into specific course offerings (student_course_enrollments).
+
+6. SIXTH: Grading categories are defined for courses. Assessments
+   (assignments, exams, quizzes) are created within course offerings.
+
+7. SEVENTH: Students submit assignments, take exams/quizzes. Results
+   are recorded in exam_results and submissions.
+
+8. EIGHTH: Attendance is tracked daily via QR tokens or manual marking.
+   Professor location is verified. Scores auto-calculate (15% weight).
+
+9. NINTH: Communication flows through notifications, announcements,
+   announcement_reads, and chat_messages.
+
+10. TENTH: All actions are logged in audit_logs for accountability.
+
+===============================================================================
+END OF DOCUMENT - 43 TABLES DOCUMENTED
+===============================================================================

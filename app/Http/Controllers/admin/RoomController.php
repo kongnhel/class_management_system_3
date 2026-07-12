@@ -5,13 +5,10 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use App\Models\Room;
 use App\Services\ImageKitService;
-use App\Traits\FirebaseSyncTrait;
 use Illuminate\Http\Request;
 
 class RoomController extends Controller
 {
-    use FirebaseSyncTrait;
-
     protected $imageKitService;
 
     public function __construct(ImageKitService $imageKitService)
@@ -63,18 +60,7 @@ class RoomController extends Controller
             }
         }
 
-        $room = Room::create($data);
-
-        try {
-            $this->syncFirebaseNode('rooms/'.$room->id, [
-                'room_number' => $room->room_number,
-                'capacity' => $room->capacity,
-                'updated_at' => now()->toDateTimeString(),
-            ]);
-            $this->syncWithFirebase('rooms_sync', 'បន្ទប់លេខ '.$room->room_number.' ត្រូវបានបង្កើតថ្មី!');
-        } catch (\Exception $e) {
-            \Log::error('Firebase Store Error: '.$e->getMessage());
-        }
+        Room::create($data);
 
         return redirect()->route('admin.rooms.index')->with('success', 'បន្ទប់ត្រូវបានបង្កើតដោយជោគជ័យ!');
     }
@@ -107,33 +93,12 @@ class RoomController extends Controller
 
         $room->update($data);
 
-        try {
-            $this->updateFirebaseNode('rooms/'.$room->id, [
-                'room_number' => $room->room_number,
-                'capacity' => $room->capacity,
-                'updated_at' => now()->toDateTimeString(),
-            ]);
-            $this->syncWithFirebase('rooms_sync', 'ទិន្នន័យបន្ទប់លេខ '.$room->room_number.' ត្រូវបានកែប្រែ!');
-        } catch (\Exception $e) {
-            \Log::error('Firebase Update Error: '.$e->getMessage());
-        }
-
         return redirect()->route('admin.rooms.index')->with('success', 'បន្ទប់ត្រូវបានកែប្រែដោយជោគជ័យ!');
     }
 
     public function destroy(Room $room)
     {
-        $roomNumber = $room->room_number;
-        $roomId = $room->id;
-
         $room->delete();
-
-        try {
-            $this->removeFirebaseNode('rooms/'.$roomId);
-            $this->syncWithFirebase('rooms_sync', 'បន្ទប់លេខ '.$roomNumber.' ត្រូវបានលុបចេញពីប្រព័ន្ធ!');
-        } catch (\Exception $e) {
-            \Log::error('Firebase Delete Error: '.$e->getMessage());
-        }
 
         return redirect()->route('admin.rooms.index')->with('success', 'បន្ទប់ត្រូវបានលុបដោយជោគជ័យ!');
     }

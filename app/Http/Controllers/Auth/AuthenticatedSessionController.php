@@ -19,30 +19,6 @@ class AuthenticatedSessionController extends Controller
 
     public function store(LoginRequest $request): RedirectResponse
     {
-        $identifier = trim($request->login_identifier);
-
-        // Phone number login
-        if (preg_match('/^\+?[0-9]{6,15}$/', $identifier)) {
-            $user = User::where('phone', $identifier)->first();
-
-            if (! $user) {
-                return back()->withErrors([
-                    'login_identifier' => 'រកមិនឃើញគណនីនេះក្នុងប្រព័ន្ធ។',
-                ])->onlyInput('login_identifier');
-            }
-
-            if (! Auth::attempt(['email' => $user->email, 'password' => $request->password], $request->boolean('remember'))) {
-                return back()->withErrors([
-                    'login_identifier' => 'ពាក្យសម្ងាត់មិនត្រឹមត្រូវ។',
-                ])->onlyInput('login_identifier');
-            }
-
-            $request->session()->regenerate();
-
-            return redirect()->intended(route('dashboard', absolute: false));
-        }
-
-        // Email/Student ID + Password flow
         $request->authenticate();
 
         $request->session()->regenerate();

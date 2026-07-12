@@ -14,7 +14,6 @@ use App\Http\Controllers\admin\GenerationController;
 use App\Http\Controllers\admin\ProgramController;
 use App\Http\Controllers\admin\RoomController;
 use App\Http\Controllers\admin\StudentProgressionController;
-use App\Http\Controllers\admin\SystemSettingController;
 use App\Http\Controllers\admin\TransitionController;
 use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\AttendanceController;
@@ -148,6 +147,7 @@ Route::middleware(['auth', 'role:admin', 'throttle:120,1'])->prefix('admin')->na
     // Generations
     Route::get('/generations', [GenerationController::class, 'index'])->name('generations.index');
     Route::post('/generations', [GenerationController::class, 'store'])->name('generations.store');
+    Route::put('/generations/{generation}', [GenerationController::class, 'update'])->name('generations.update');
     Route::delete('/generations/{generation}', [GenerationController::class, 'destroy'])->name('generations.destroy');
 
     Route::get('/courses', [CourseController::class, 'index'])->name('manage-courses');
@@ -197,10 +197,6 @@ Route::middleware(['auth', 'role:admin', 'throttle:120,1'])->prefix('admin')->na
     Route::delete('/academic-years/{academicYear}', [AcademicYearController::class, 'destroy'])->name('academic-years.destroy');
     Route::post('/academic-years/{academicYear}/set-current', [AcademicYearController::class, 'setCurrent'])->name('academic-years.set-current');
 
-    // System Settings
-    Route::get('/settings', [SystemSettingController::class, 'index'])->name('settings.index');
-    Route::put('/settings', [SystemSettingController::class, 'update'])->name('settings.update');
-
     // Grade Management
     Route::get('/grades', [AdminGradeController::class, 'index'])->name('grades.index');
     Route::get('/grades/{courseOffering}', [AdminGradeController::class, 'show'])->name('grades.show');
@@ -210,10 +206,10 @@ Route::middleware(['auth', 'role:admin', 'throttle:120,1'])->prefix('admin')->na
     Route::get('/attendance', [AdminAttendanceController::class, 'index'])->name('attendance.index');
     Route::get('/attendance/{courseOffering}', [AdminAttendanceController::class, 'show'])->name('attendance.show');
 
-    // // Bulk Import (hidden)
-    // Route::get('/import', [BulkImportController::class, 'index'])->name('import.index');
-    // Route::post('/import/users', [BulkImportController::class, 'importUsers'])->name('import.users');
-    // Route::get('/import/template', [BulkImportController::class, 'downloadTemplate'])->name('import.template');
+    // Bulk Import
+    Route::get('/import', [BulkImportController::class, 'index'])->name('import.index');
+    Route::post('/import/execute', [BulkImportController::class, 'importUsers'])->name('import.users');
+    Route::get('/import/template', [BulkImportController::class, 'downloadTemplate'])->name('import.template');
 
     // // Audit Logs (hidden)
     // Route::get('/audit-logs', [\App\Http\Controllers\admin\AuditLogController::class, 'index'])->name('audit-logs.index');

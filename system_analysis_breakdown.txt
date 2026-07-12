@@ -1,0 +1,773 @@
+================================================================================
+      CLASS MANAGEMENT SYSTEM – COMPREHENSIVE SYSTEMS ANALYSIS
+      A Senior Analyst's Guide to the Entire Platform
+================================================================================
+
+TABLE OF CONTENTS
+─────────────────
+  1. Core Purpose & Value Proposition
+  2. Key Components & Functions
+  3. Step-by-Step Process (End-to-End)
+  4. Practical Usage (Day-to-Day Interaction)
+  5. Limitations & Alternatives
+  6. Quick Reference Cheat Sheet
+
+================================================================================
+1. CORE PURPOSE & VALUE PROPOSITION
+================================================================================
+
+WHAT IS IT?
+───────────
+The Class Management System is a web-based academic administration platform
+built with the Laravel framework. It digitizes the full lifecycle of an
+educational institution — from structuring faculties and programs, to
+scheduling classes, managing enrollments, tracking attendance via QR codes
+and GPS, recording grades, and broadcasting notifications to students.
+
+Think of it as a "digital campus in a box."
+
+┌─────────────────────────────────────────────────────────────────────┐
+│  SIMPLE ANALOGY                                                    │
+│  ────────────────                                                   │
+│  Imagine a university as a large office building:                   │
+│    • The ADMIN is the building manager — sets up floors, rooms,    │
+│      hires staff, and oversees everything.                         │
+│    • The PROFESSOR is a department head — runs classes, takes     │
+│      attendance, gives grades, and posts notices.                   │
+│    • The STUDENT is an employee — shows up, checks their schedule,  │
+│      submits work, and receives their performance reports.         │
+│  This software is the digital version of that building.            │
+└─────────────────────────────────────────────────────────────────────┘
+
+WHY DOES IT EXIST?
+──────────────────
+Educational institutions, especially in Cambodia (note bilingual Khmer/
+English support throughout the system), face several pain points:
+
+  • Paper-based processes        → prone to loss, slow to retrieve
+  • Manual attendance taking     → time-consuming, easily faked
+  • Scattered grade records      → Excel files across professors' laptops
+  • Poor communication           → no centralized channel for announcements
+  • No real-time data visibility → admin can't see who's enrolled, who's failing
+  • Difficult scheduling         → room conflicts, no central timetable
+
+This system solves ALL of these by providing:
+
+  ┌──────────────────────────────────────────────────────────────┐
+  │ VALUE PROPOSITION                                            │
+  │                                                              │
+  │ ✓ Single source of truth for all academic data              │
+  │ ✓ Role-based dashboards (Admin, Professor, Student)          │
+  │ ✓ QR code + GPS-verified attendance (anti-proxy)            │
+  │ ✓ Automated attendance scoring (15% of total grade)         │
+  │ ✓ Weighted grading categories (configurable per course)     │
+  │ ✓ Real-time notifications (in-app + Telegram bot)            │
+  │ ✓ Bilingual (Khmer / English) for local institutions         │
+  │ ✓ Export capabilities (CSV, DOCX, Excel, PDF)               │
+  │ ✓ AI smart assistant for student help                       │
+  │ ✓ Face descriptor + Google OAuth login options               │
+  │ ✓ Soft deletes on critical tables (data recovery)            │
+  │ ✓ Audit logging for accountability                          │
+  └──────────────────────────────────────────────────────────────┘
+
+KEY METRICS
+───────────
+  • 43 database tables
+  • 47+ controllers (organized by role)
+  • 3 primary user roles (admin, professor, student)
+  • 75+ database migrations
+  • External integrations: Firebase, Pusher, Telegram, Cloudinary,
+    DomPDF, PhpWord, Excel
+
+
+================================================================================
+2. KEY COMPONENTS & FUNCTIONS
+================================================================================
+
+The system is composed of 6 major subsystems. Each has a clear role.
+
+┌─────────────────────────────────────────────────────────────────────┐
+│                    SYSTEM ARCHITECTURE MAP                         │
+│                                                                     │
+│  ┌─────────────┐   ┌─────────────┐   ┌─────────────┐              │
+│  │  ADMIN      │   │  PROFESSOR  │   │  STUDENT    │              │
+│  │  MODULE     │   │  MODULE     │   │  MODULE     │              │
+│  └──────┬──────┘   └──────┬──────┘   └──────┬──────┘              │
+│         │                 │                 │                      │
+│  ┌──────┴─────────────────┴─────────────────┴──────┐              │
+│  │              SHARED CORE (Auth, AI, Notifications)│              │
+│  └──────┬─────────────────┬─────────────────┬──────┘              │
+│         │                 │                 │                      │
+│  ┌──────┴──────┐  ┌──────┴──────┐  ┌──────┴──────┐               │
+│  │  DATABASE    │  │ EXTERNAL API│  │  MIDDLEWARE │               │
+│  │  (43 tables) │  │ INTEGRATIONS│  │  (RBAC)     │               │
+│  └─────────────┘  └─────────────┘  └─────────────┘               │
+└─────────────────────────────────────────────────────────────────────┘
+
+--------------------------------------------------------------------------------
+2.1  IDENTITY & ACCESS MANAGEMENT SUBSYSTEM
+--------------------------------------------------------------------------------
+
+  Component               | What It Does
+  ─────────────────────── | ──────────────────────────────────────────
+  users table             | Central identity store. Stores email, phone,
+                          | password, role (admin/professor/student), OTP
+                          | codes, Google ID, face descriptor, Telegram
+                          | chat ID, generation, etc.
+  password_reset_tokens   | Email-based password recovery tokens.
+  sessions                | HTTP session storage for active logins.
+  personal_access_tokens  | Sanctum API tokens for mobile app / SPA auth.
+  Role middleware         | Route-level guard: role:admin, role:professor,
+                          | role:student. Enforced in routes/web.php.
+  OTP verification        | Phone-based OTP login flow (6-digit code,
+                          | expiry, attempt limiting).
+  Google OAuth            | GoogleAuthController — login with Google ID.
+  QR Login                | QrLoginController — desktop displays QR,
+                          | mobile scans to authorize login.
+  Face Descriptor         | Biometric face data stored as longText in
+                          | users table for face recognition auth.
+
+  ANALOGY: This is the "ID card office" of the digital campus.
+  Everyone must check in here before going to their respective building.
+
+--------------------------------------------------------------------------------
+2.2  ACADEMIC STRUCTURE SUBSYSTEM
+--------------------------------------------------------------------------------
+
+  Component               | What It Does
+  ─────────────────────── | ──────────────────────────────────────────
+  faculties               | Top-level academic unit (e.g., "Faculty of
+                          | Engineering"). Has a dean (FK → users).
+  departments             | Subdivision of a faculty (e.g., "Dept of
+                          | Computer Science"). Has a department head.
+  programs                | Degree programs within a department (e.g.,
+                          | "Bachelor of CS"). Supports pathway programs
+                          | (self-referencing FK for prerequisites).
+  courses                 | Course catalog (e.g., "Data Structures").
+                          | Linked to departments; linked to programs
+                          | via the course_program pivot table.
+  course_program          | Many-to-many pivot between courses and
+  (pivot)                 | programs — a course can belong to multiple
+                          | programs.
+  generations             | Tracks student intake cohorts (e.g.,
+                          | "Generation 2025"). Used for filtering.
+  academic_years          | Defines academic year/semester periods.
+                          | Has is_current flag for active year.
+  rooms                   | Physical classrooms with capacity, WiFi QR
+                          | code, location, and room type.
+  schedules               | Weekly timetable — links a course offering
+                          | to a room and a day/time slot.
+
+  RELATIONSHIP CHAIN:
+  Faculty → Department → Program → Course → Course Offering
+                                                     ↓
+                                                  Schedule → Room
+
+  ANALOGY: This is the "blueprint" of the campus — floors, rooms,
+  departments, and course catalogs. Nothing happens until this is built.
+
+--------------------------------------------------------------------------------
+2.3  COURSE OFFERING & ENROLLMENT SUBSYSTEM
+--------------------------------------------------------------------------------
+
+  Component               | What It Does
+  ─────────────────────── | ──────────────────────────────────────────
+  course_offerings        | A SPECIFIC offering of a course for a given
+                          | academic year + semester + section, assigned
+                          | to a lecturer. This is the central
+                          | operational entity of the system.
+  course_offering_program | Pivot for cross-program offerings (a single
+  (pivot)                 | course offering can serve multiple programs).
+  student_program_        | Enrolls a student into an academic program
+  enrollments             | (degree track). Tracks status (active/
+                          | graduated), degree level, starting year
+                          | level, transition eligibility.
+  student_course_         | Enrolls a student into a specific course
+  enrollments             | offering. Tracks final grade, status, manual
+                          | attendance score override, class leader
+                          | flag.
+
+  ANALOGY: If the academic structure is the "menu", course offerings are
+  the "this semester's specials" — specific classes running right now.
+  Enrollments are the "reservations" that seat students at the table.
+
+--------------------------------------------------------------------------------
+2.4  ASSESSMENT & GRADING SUBSYSTEM
+--------------------------------------------------------------------------------
+
+  Component               | What It Does
+  ─────────────────────── | ──────────────────────────────────────────
+  grading_categories      | Defines grade weight categories per course
+                          | (e.g., "Assignment" = 20%, "Midterm" = 30%,
+                          | "Final" = 50%). Sum of weights = 100%.
+  assignments             | Assignment tasks within a course offering.
+                          | Linked to a grading category for weight.
+  exams                   | Exam records within a course offering.
+                          | Has date, duration, max score, category.
+  quizzes                 | Quiz records within a course offering.
+                          | Has quiz date, max score, category.
+  submissions             | Student file submissions for assignments.
+                          | Tracks grade received + feedback. Unique
+                          | per [assignment_id, student_user_id].
+  exam_results            | POLYMORPHIC results store — uses
+                          | assessment_id + assessment_type to record
+                          | scores for ANY assessment (exam, assignment,
+                          | quiz). This replaced the old quiz_results
+                          | table (now dropped).
+
+  GRADING FLOW:
+  ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
+  │  Professor   │────→│  Assessment  │────→│  exam_results│
+  │  creates     │     │  (assignment/│     │  (score per  │
+  │  grading     │     │   exam/quiz) │     │   student)   │
+  │  categories  │     └──────────────┘     └──────────────┘
+  └──────────────┘                                    ↓
+                                         ┌──────────────────────┐
+                                         │ Auto-calculated final │
+                                         │ grade (weighted sum)  │
+                                         │ + attendance score 15%│
+                                         └──────────────────────┘
+
+  ATTENDANCE SCORE FORMULA (15% of total grade):
+  • 2 absences    = -1 point
+  • 4 permissions = -1 point
+  • Formula: max(0, 15 - floor(absent/2) - floor(permission/4))
+  • Manual override available via attendance_score_manual field
+
+  ANALOGY: This is the "report card factory" — different assessment
+  types feed into weighted categories, which produce a final grade.
+  It's like a recipe where each ingredient (assignment, exam, quiz,
+  attendance) has a specific proportion in the final dish.
+
+--------------------------------------------------------------------------------
+2.5  ATTENDANCE SUBSYSTEM
+--------------------------------------------------------------------------------
+
+  Component               | What It Does
+  ─────────────────────── | ──────────────────────────────────────────
+  attendances             | Daily attendance per student per course
+                          | offering. Status: present / absent / late /
+                          | permission. Unique constraint prevents
+                          | duplicate records per day.
+  attendance_qr_tokens    | Time-limited QR token generated by
+                          | professor for attendance sessions. Students
+                          | scan to mark themselves present.
+  attendance_professors   | Records professor GPS location (lat/lng)
+                          | when taking attendance, with verification
+                          | timestamp. Prevents remote fake attendance.
+  Class Leader system     | Designated student (is_class_leader flag)
+                          | can take attendance on behalf of professor
+                          | via /student/class-leader/... routes.
+
+  ATTENDANCE FLOW:
+  1. Professor opens class → generates QR token (expires in X minutes)
+  2. Professor's GPS location recorded (attendance_professors)
+  3. Students scan QR code via mobile (Student scan page)
+  4. System verifies token validity + student's location vs professor
+  5. Attendance record created with status = 'present'
+  6. OR: Professor/Class Leader manually marks attendance
+  7. System auto-calculates attendance score (15%)
+
+  ANALOGY: Like a time clock at a factory — workers scan their badge
+  when they arrive, and the system records who's in and who's absent.
+  GPS verification ensures the worker is actually at the factory, not
+  scanning from home.
+
+--------------------------------------------------------------------------------
+2.6  COMMUNICATION & NOTIFICATION SUBSYSTEM
+--------------------------------------------------------------------------------
+
+  Component               | What It Does
+  ─────────────────────── | ──────────────────────────────────────────
+  notifications           | Laravel notification system (polymorphic).
+                          | Stores in-app notifications per user.
+  announcements           | System-wide or course-specific posts by
+                          | admins/professors. Bilingual (km/en).
+                          | Targets specific roles or course offerings.
+  announcement_reads      | Tracks which users have read which
+                          | announcements (unread/read state).
+  chat_messages           | AI chatbot conversation history. Sender
+                          | can be 'user' or 'ai'. Grouped by
+                          | conversation_id for threading.
+  Telegram integration    | Professor can send grades to students via
+                          | Telegram bot. Requires telegram_chat_id
+                          | on user. Handles webhook via
+                          | TelegramController.
+  Real-time broadcasting  | Laravel Echo + Pusher for live updates
+                          | (e.g., new grade posted, attendance opened).
+  Smart Assistant         | AI-powered assistant available to all
+                          | authenticated users via /ai/send route.
+                          | Helps students with course questions.
+
+  ANALOGY: The "intercom system" of the campus — admins broadcast
+  announcements, professors send grade slips, and an AI assistant
+  answers questions at the front desk.
+
+
+================================================================================
+3. STEP-BY-STEP PROCESS (How It Works End-to-End)
+================================================================================
+
+Here's the complete lifecycle from system setup to a student graduating:
+
+┌─────────────────────────────────────────────────────────────────────┐
+│  PHASE 1: SYSTEM INITIALIZATION                                    │
+│  (One-time setup by administrator)                                 │
+└─────────────────────────────────────────────────────────────────────┘
+
+  Step 1: Admin configures system settings
+          → system_settings table (key-value pairs for global config)
+          → academic_years table (define current academic year)
+          → generations table (define student intake cohorts)
+
+  Step 2: Admin builds academic hierarchy
+          → Create Faculties (faculties table)
+          → Create Departments within faculties (departments table)
+          → Create Programs within departments (programs table)
+          → Create Courses and link to programs (courses + course_program)
+
+  Step 3: Admin creates user accounts
+          → users table (with role: admin/professor/student)
+          → user_profiles table (extended info)
+          → professor_profiles or student_profiles (role-specific data)
+          → Student auto-gets student_id_code (auto-generated format)
+
+  Step 4: Admin sets up physical resources
+          → rooms table (classroom numbers, capacity, WiFi QR, location)
+          → Faculty deans and department heads assigned
+
+┌─────────────────────────────────────────────────────────────────────┐
+│  PHASE 2: SEMESTER PREPARATION                                     │
+│  (Each academic term)                                              │
+└─────────────────────────────────────────────────────────────────────┘
+
+  Step 5: Admin creates course offerings
+          → course_offerings table
+          → Selects course + program + academic year + semester
+          → Assigns a lecturer (professor user)
+          → Sets capacity, room, section
+          → Optionally enables self-enrollment (is_open_for_self_enrollment)
+
+  Step 6: Admin/professor sets up grading categories
+          → grading_categories table (per course)
+          → E.g., Attendance 15%, Assignment 20%, Midterm 25%, Final 40%
+
+  Step 7: Professor creates weekly schedules
+          → schedules table (links course offering → room → day/time)
+
+  Step 8: Student program enrollment
+          → student_program_enrollments table
+          → Student enrolled in a degree program
+          → Degree level, starting year level, status set
+
+  Step 9: Student course enrollment
+          → student_course_enrollments table
+          → Student enrolled in specific course offerings
+          → Admin can bulk-enroll OR student self-enrolls
+          → Class leader can be designated (is_class_leader)
+
+┌─────────────────────────────────────────────────────────────────────┐
+│  PHASE 3: DAILY ACADEMIC OPERATIONS                               │
+└─────────────────────────────────────────────────────────────────────┘
+
+  Step 10: Professor opens class session
+           → Generates QR token (attendance_qr_tokens)
+           → GPS location recorded (attendance_professors)
+           → Token has expiry time
+
+  Step 11: Students take attendance
+           → Option A: Scan QR code (student/scan page → processScan)
+           → Option B: Professor/Class Leader marks manually
+           → attendances table (status: present/absent/late/permission)
+           → Unique constraint: one record per student per course per day
+
+  Step 12: Professor creates assessments
+           → assignments table (title, due date, max score, category)
+           → exams table (exam date, duration, max score, category)
+           → quizzes table (quiz date, max score, category)
+
+  Step 13: Students submit work
+           → submissions table (file upload for assignments)
+           → Unique per [assignment_id, student_user_id]
+
+  Step 14: Professor grades assessments
+           → exam_results table (polymorphic: assessment_id + type)
+           → OR submissions.grade_received for assignments
+           → Can import/export grades via CSV
+
+  Step 15: System calculates final grade
+           → Weighted sum of all assessment scores per category
+           → + Attendance score (auto-calculated: 15% weight)
+           → Manual override available (attendance_score_manual)
+           → Final grade stored in student_course_enrollments.final_grade
+
+  Step 16: Communication flows
+           → Admin posts announcements (announcements + target role)
+           → Professor sends notifications to enrolled students
+           → Grades sent via Telegram bot to students
+           → Students view notifications + announcements read tracking
+           → AI assistant answers student questions (chat_messages)
+
+┌─────────────────────────────────────────────────────────────────────┐
+│  PHASE 4: ADMINISTRATION & REPORTING                               │
+└─────────────────────────────────────────────────────────────────────┘
+
+  Step 17: Admin monitors attendance
+           → AdminAttendanceController → dashboard view
+           → Per course offering attendance reports
+
+  Step 18: Admin monitors grades
+           → AdminGradeController → overview of all course gradebooks
+           → Export to CSV/DOCX
+
+  Step 19: Student progression
+           → StudentProgressionController → advance students to next year
+           → Auto-graduate eligible students
+           → Transition students between programs
+
+  Step 20: Audit logging
+           → audit_logs table records all data changes
+           → old_values / new_values (JSON)
+           → Tracks user, IP, user agent, action, auditable entity
+
+  Step 21: End of semester
+           → Grades finalized
+           → Export gradebooks (DOCX, CSV)
+           → Student progression executed
+           → New academic year set as current
+           → Cycle repeats from Phase 2
+
+
+================================================================================
+4. PRACTICAL USAGE (Day-to-Day Interaction)
+================================================================================
+
+--------------------------------------------------------------------------------
+4.1  ADMIN DAILY ROUTINE
+--------------------------------------------------------------------------------
+
+  ☐ MORNING
+    • Log in → redirected to /admin/dashboard
+    • Check overall system statistics (user counts, active offerings)
+    • Review recent audit logs for suspicious activity
+
+  ☐ THROUGHOUT THE DAY
+    • Manage Users
+      → /admin/users — create, edit, delete, search users
+      → Export user list to Excel (UsersExport)
+    • Manage Academic Structure
+      → /admin/faculties — CRUD faculties
+      → /admin/departments — CRUD departments
+      → /admin/programs — CRUD programs
+      → /admin/courses — CRUD courses
+    • Manage Course Offerings
+      → /admin/course-offerings — create offerings, assign lecturers
+      → /admin/enroll-student — enroll students in courses
+    • Manage Rooms
+      → /admin/rooms — CRUD physical rooms
+    • Post Announcements
+      → /admin/announcements — create campus-wide or role-targeted posts
+    • Monitor Grades
+      → /admin/grades — view all gradebooks, export
+    • Monitor Attendance
+      → /admin/attendance — system-wide attendance dashboard
+    • Student Progression
+      → /admin/progression — advance students, auto-graduate
+
+  ☐ END OF SEMESTER
+    • Set new academic year as current (/admin/academic-years/set-current)
+    • Execute student progression for all eligible students
+    • Export final grade reports
+
+--------------------------------------------------------------------------------
+4.2  PROFESSOR DAILY ROUTINE
+--------------------------------------------------------------------------------
+
+  ☐ MORNING
+    • Log in → /professor/dashboard
+    • View assigned course offerings (/professor/my-course-offerings)
+    • Check today's schedule (/professor/my-schedule)
+
+  ☐ CLASS SESSION
+    • Open attendance for the course offering
+    → System generates QR token → students scan with mobile
+    → Professor location verified via GPS (verify-location route)
+    → Alternatively: manually mark attendance or class leader does it
+    → View attendance report (/professor/course-offerings/{id}/attendance-report)
+
+  ☐ AFTER CLASS
+    • Create/Manage Assignments
+      → /professor/course-offering/{id}/assignments
+      → Set title, description, due date, max score, grading category
+    • Create/Manage Exams
+      → /professor/course-offering/{id}/exams
+      → Set exam date, duration, max score, grading category
+    • Create Quizzes
+      → /professor/quizzes/{id}/questions — manage quiz questions
+    • Grade Submissions
+      → /professor/course-offerings/{id}/assignments/{id}/submissions
+      → Download submitted files, grade, give feedback, or grade via CSV import
+
+  ☐ GRADING
+    • Go to /professor/course-offering/{id}/grades
+    • Create assessment → enter scores per student
+    • System calculates weighted total + attendance score
+    • Export gradebook to DOCX (/professor/.../export-gradebook)
+    • Send grades to students via Telegram
+
+  ☐ COMMUNICATION
+    • Post notifications to enrolled students
+      → /professor/notifications/create
+    • View/manage notifications
+      → /professor/notifications
+
+  ☐ PROFILE
+    • Create/edit professor profile
+      → /professor/profile → /professor/profile/edit
+
+--------------------------------------------------------------------------------
+4.3  STUDENT DAILY ROUTINE
+--------------------------------------------------------------------------------
+
+  ☐ MORNING
+    • Log in (email, phone, student_id_code, Google, Face, or QR)
+    → Redirected to /student/dashboard
+    • Check schedule (/student/my-schedule or /student/my-timetable)
+    • Check notifications (/student/notifications)
+
+  ☐ ATTENDANCE
+    • Go to /student/scan — scan QR code displayed by professor
+    → POST /student/process-scan — system verifies token + location
+    → Attendance marked as 'present'
+    • View attendance history (/student/my-attendance)
+
+  ☐ ACADEMICS
+    • View enrolled courses (/student/my-enrolled-courses)
+    • View grades (/student/my-grades)
+    • View assessments (/student/my-assessments)
+    • View available programs for self-enrollment (/student/available-programs)
+    • Self-enroll in open course offerings (/student/enroll-self)
+
+  ☐ COMMUNICATION
+    • View announcements (with read tracking)
+    • Read notifications, mark as read
+    • Chat with AI assistant (/ai/send — available to all auth users)
+
+  ☐ PROFILE
+    • View/edit profile (/student/profile → /student/profile/edit)
+    • Update Telegram ID for grade notifications
+
+  ☐ CLASS LEADER (if designated)
+    • Take attendance for class
+      → /student/class-leader/course/{id}/attendance
+    • View attendance report
+      → /student/leader/attendance-report/{id}
+
+--------------------------------------------------------------------------------
+4.4  COMMON COMMANDS (Developer/Operator)
+--------------------------------------------------------------------------------
+
+  Development:
+    composer run dev          # Start all services (server, queue, vite)
+    php artisan serve         # Start dev server
+    npm run dev               # Start Vite for hot reload
+
+  Database:
+    php artisan migrate              # Run pending migrations
+    php artisan migrate:fresh --seed # Fresh DB with seed data
+    php artisan make:migration ...   # Create new migration
+
+  Testing:
+    ./vendor/bin/pest                       # Run all tests
+    ./vendor/bin/pest tests/Feature/...     # Run specific test
+
+  Code Quality:
+    ./vendor/bin/pint          # Format code (Laravel Pint)
+    php artisan code:analyse   # Static analysis
+
+  Queue:
+    php artisan queue:listen --tries=1   # Process background jobs
+
+
+================================================================================
+5. LIMITATIONS & ALTERNATIVES
+================================================================================
+
+--------------------------------------------------------------------------------
+5.1  LIMITATIONS
+--------------------------------------------------------------------------------
+
+  ┌────────────────────────────┬───────────────────────────────────────┐
+  │ LIMITATION                 │ IMPACT                                │
+  ├────────────────────────────┼───────────────────────────────────────┤
+  │ SQLite default database    │ Not suitable for high-concurrency     │
+  │                            │ production. Should switch to MySQL/   │
+  │                            │ PostgreSQL for real deployment.       │
+  ├────────────────────────────┼───────────────────────────────────────┤
+  │ No API documentation       │ No Swagger/OpenAPI spec for the       │
+  │                            │ mobile app integration. Endpoints are  │
+  │                            │ scattered across routes/web.php.      │
+  ├────────────────────────────┼───────────────────────────────────────┤
+  │ Face descriptor stored      │ Long text in users table — could      │
+  │ as longText in DB          │ become a performance bottleneck with   │
+  │                            │ large user bases. No dedicated storage.│
+  ├────────────────────────────┼───────────────────────────────────────┤
+  │ Token-based QR attendance  │ Tokens can be shared/screenshotted.   │
+  │ has no per-user binding    │ GPS check helps, but is on professor  │
+  │                            │ side only, not student side.           │
+  ├────────────────────────────┼───────────────────────────────────────┤
+  │ exam_results uses a pseudo- │ No actual DB-level foreign key to     │
+  │ polymorphic pattern        │ assessment tables. Data integrity      │
+  │ (assessment_id + type)     │ relies on application logic.           │
+  ├────────────────────────────┼───────────────────────────────────────┤
+  │ No formal test suite depth │ Pest exists but limited test coverage │
+  │                            │ — risky for production changes.        │
+  ├────────────────────────────┼───────────────────────────────────────┤
+  │ Roles/Permissions tables   │ roles and permissions tables exist     │
+  │ exist but under-utilized   │ but the system primarily uses the     │
+  │                            │ simple role column on users table.     │
+  │                            │ RBAC system is scaffolded but not     │
+  │                            │ fully wired into middleware.           │
+  ├────────────────────────────┼───────────────────────────────────────┤
+  │ External service           │ Firebase, Pusher, Telegram, Cloudinary │
+  │ dependencies               │ each require API keys and external     │
+  │                            │ service availability. If any goes       │
+  │                            │ down, that feature breaks.             │
+  ├────────────────────────────┼───────────────────────────────────────┤
+  │ Bilingual data duplication  │ Every table has name_km AND name_en   │
+  │                            │ columns. Data consistency requires     │
+  │                            │ both to be entered. No auto-translation│
+  ├────────────────────────────┼───────────────────────────────────────┤
+  │ Chatbot/AI assistant has    │ chat_messages stores full conversation │
+  │ no context window limit     │ history with no pruning strategy.      │
+  │                            │ Could grow indefinitely per user.       │
+  ├────────────────────────────┼───────────────────────────────────────┤
+  │ Audit logs table exists    │ AuditLogController routes are         │
+  │ but routes are commented   │ commented out in web.php — feature    │
+  │ out                       │ is dormant.                           │
+  ├────────────────────────────┼───────────────────────────────────────┤
+  │ Bulk import routes         │ BulkImportController routes are       │
+  │ commented out             │ commented out — bulk user import       │
+  │                            │ currently unavailable via UI.          │
+  ├────────────────────────────┼───────────────────────────────────────┤
+  │ Old SQL backups contain    │ database_backup/ contains .sql dumps  │
+  │ dropped tables             │ with quiz_results and other stale      │
+  │                            │ schema. Could confuse new developers.  │
+  └────────────────────────────┴───────────────────────────────────────┘
+
+--------------------------------------------------------------------------------
+5.2  ALTERNATIVES
+--------------------------------------------------------------------------------
+
+  ALTERNATIVE       | COMPARISON TO THIS SYSTEM
+  ───────────────── | ──────────────────────────────────────────────────
+  Moodle            | • Open-source LMS, community-driven
+  (moodle.org)      | • Much larger plugin ecosystem (2000+ plugins)
+                    | • More mature (20+ years), battle-tested
+                    | • Heavier, harder to customize deeply
+                    | • This system: More lightweight, custom-tailored
+                    |   for Cambodian institutions, easier to modify
+                    |   the core schema, but far less feature-complete
+  ───────────────── | ──────────────────────────────────────────────────
+  Canvas LMS        | • Commercial (Instructure), polished UI/UX
+  (instructure.com) | • Excellent mobile app, strong API
+                    | • Cloud-hosted, subscription-based
+                    | • This system: Self-hosted (no licensing fees),
+                    |   but requires more dev effort to match Canvas's
+                    |   maturity and mobile experience
+  ───────────────── | ──────────────────────────────────────────────────
+  Google Classroom  | • Free, simple, integrates with Google Workspace
+  (classroom.google)| • Very basic — no attendance, no weighted grading,
+                    |   no room scheduling, no role hierarchy
+                    | • This system: Much more comprehensive for
+                    |   institutional management (faculties, departments,
+                    |   programs, attendance with GPS, etc.)
+  ───────────────── | ──────────────────────────────────────────────────
+  PowerSchool       | • Enterprise SIS (Student Information System)
+  (powerschool.com) | • K-12 focused, very feature-rich
+                    | • Expensive commercial license
+                    | • This system: Higher-ed focused, free/open,
+                    |   but far less mature and battle-tested
+  ───────────────── | ──────────────────────────────────────────────────
+  Open-source       | • Open source SIS
+  OpenSIS           | • Similar feature set (enrollment, grading,
+  (opensis.com)     |   attendance)
+                    | • Written in PHP (like this system)
+                    | • This system: More modern stack (Laravel 11,
+                    |   Tailwind, Vite, Livewire), bilingual support,
+                    |   QR/GPS attendance — but smaller community
+
+  WHEN TO USE THIS SYSTEM vs. ALTERNATIVES:
+  ✓ Use THIS system if:
+    • You're a Cambodian higher-ed institution needing Khmer language support
+    • You need GPS-verified QR attendance (anti-proxy attendance)
+    • You want self-hosted control with no licensing fees
+    • You need Telegram bot integration for grade delivery
+    • You have a development team comfortable with Laravel
+
+  ✗ Consider ALTERNATIVES if:
+    • You need a mature, plugin-rich ecosystem (→ Moodle, Canvas)
+    • You're K-12 (→ PowerSchool)
+    • You have thousands of concurrent users (→ enterprise SIS)
+    • You want minimal setup/maintenance (→ Google Classroom)
+
+
+================================================================================
+6. QUICK REFERENCE CHEAT SHEET
+================================================================================
+
+ROLES & KEY ROUTES:
+  Admin      → /admin/*       (role:admin middleware)
+  Professor  → /professor/*   (role:professor middleware)
+  Student    → /student/*     (role:student middleware)
+
+DATABASE TABLE COUNT BY SUBSYSTEM:
+  Infrastructure         :  7 tables (cache, cache_locks, jobs, job_batches,
+                                        failed_jobs, system_settings,
+                                        academic_years, generations)
+  Identity & Access      :  4 tables (users, password_reset_tokens, sessions,
+                                        personal_access_tokens)
+  User Profiles          :  3 tables (user_profiles, professor_profiles,
+                                       student_profiles)
+  Academic Structure     :  6 tables (faculties, departments, programs,
+                                        courses, course_program, generations)
+  Course Offerings       :  3 tables (course_offerings, course_offering_program,
+                                        rooms)
+  Scheduling             :  1 table  (schedules)
+  Enrollments            :  2 tables (student_program_enrollments,
+                                        student_course_enrollments)
+  Grading                :  6 tables (grading_categories, exams, assignments,
+                                        quizzes, exam_results, submissions)
+  Attendance             :  3 tables (attendances, attendance_qr_tokens,
+                                        attendance_professors)
+  Communication          :  4 tables (notifications, announcements,
+                                        announcement_reads, chat_messages)
+  Access Control (RBAC)  :  3 tables (roles, permissions, role_permissions)
+  Audit                  :  1 table  (audit_logs)
+
+  TOTAL: 43 active tables
+
+ATTENDANCE SCORING FORMULA:
+  max(0, 15 - floor(absent_count / 2) - floor(permission_count / 4))
+
+  • Max score: 15 points
+  • Every 2 absences:   -1 point
+  • Every 4 permissions: -1 point
+  • Manual override: attendance_score_manual on student_course_enrollments
+
+TECH STACK:
+  Backend   : Laravel 11 (PHP 8.2+)
+  Frontend  : Blade + Tailwind CSS + Alpine.js + Vite
+  Real-time : Laravel Echo + Pusher
+  Auth      : Laravel Breeze + Sanctum + Google OAuth + OTP + Face + QR
+  Storage   : Cloudinary (images), Laravel filesystem
+  PDF       : DomPDF
+  Word      : PhpWord (DOCX export)
+  Excel     : Laravel Excel (maatwebsite)
+  AI        : Smart assistant (custom controller)
+  Messaging : Telegram Bot API
+  DB        : SQLite (default) / MySQL / PostgreSQL (recommended for prod)
+
+================================================================================
+                           END OF DOCUMENT
+================================================================================

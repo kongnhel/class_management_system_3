@@ -19,33 +19,6 @@
                 </a>
             </div>
 
-            {{-- Toast --}}
-            @if (session('success') || session('error'))
-                <div x-data="{ show: true, progress: 100 }" x-init="let i=setInterval(()=>{progress-=1;if(progress<=0){show=false;clearInterval(i)}},30)" x-show="show" x-transition class="fixed top-6 right-6 z-[9999] w-full max-w-sm">
-                    <div class="relative overflow-hidden bg-white/80 backdrop-blur-xl border border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.1)] rounded-2xl p-4 ring-1 ring-black/5">
-                        <div class="flex items-start gap-4">
-                            <div class="flex-shrink-0">
-                                @if(session('success'))
-                                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-green-500/10 text-green-600">
-                                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
-                                    </div>
-                                @else
-                                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-red-500/10 text-red-600">
-                                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                    </div>
-                                @endif
-                            </div>
-                            <div class="flex-1 pt-0.5">
-                                <p class="text-sm font-bold text-gray-900 leading-tight">{{ session('success') ? 'ជោគជ័យ' : 'កំហុស' }}</p>
-                                <p class="mt-1 text-sm text-gray-600 leading-relaxed">{{ session('success') ?? session('error') }}</p>
-                            </div>
-                            <button @click="show = false" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
-                        </div>
-                        <div class="absolute bottom-0 left-0 h-1 bg-green-500 rounded-b-2xl transition-all duration-100" :style="{ width: progress + '%' }"></div>
-                    </div>
-                </div>
-            @endif
-
             {{-- Search & Filters --}}
             <form method="GET" action="{{ route('admin.manage-programs') }}" id="filterForm" class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 mb-6">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">

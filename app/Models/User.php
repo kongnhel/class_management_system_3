@@ -20,7 +20,6 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'phone',
         'password',
         'role',
         'student_id_code',
@@ -30,9 +29,7 @@ class User extends Authenticatable
         'google_id',
         'avatar',
         'telegram_chat_id',
-        'profile_picture_path',
         'last_login_at',
-        'face_descriptor',
     ];
 
     /**
@@ -66,11 +63,6 @@ class User extends Authenticatable
 
         if (filter_var($trimmed, FILTER_VALIDATE_EMAIL)) {
             return static::where('email', $trimmed)->first();
-        }
-
-        if (preg_match('/^\+?[0-9]{6,15}$/', $trimmed)) {
-            $phoneUser = static::where('phone', $trimmed)->first();
-            if ($phoneUser) return $phoneUser;
         }
 
         return static::where('student_id_code', $trimmed)->first();

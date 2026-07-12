@@ -424,15 +424,16 @@ class UserController extends Controller
     public function deleteUser(User $user)
     {
         if ($user->id === auth()->id()) {
+            if (request()->ajax()) {
+                return response()->json(['success' => false, 'message' => 'អ្នកមិនអាចលុបគណនីផ្ទាល់ខ្លួនបានទេ។']);
+            }
             return redirect()->route('admin.manage-users')
                 ->with('error', 'អ្នកមិនអាចលុបគណនីផ្ទាល់ខ្លួនបានទេ។');
         }
 
         try {
-            $oldAttributes = $user->attributesToArray();
-
             \DB::transaction(function () use ($user) {
-                \App\Models\CourseOffering::where('lecturer_user_id', $user->id)->delete();
+                \App\Models\CourseOffering::where('lecturer_user_id', $user->id)->update(['lecturer_user_id' => null]);
                 \App\Models\StudentCourseEnrollment::where('student_user_id', $user->id)->delete();
                 $user->load(['profile', 'studentProfile']);
 
@@ -447,10 +448,18 @@ class UserController extends Controller
                 $user->forceDelete();
             });
 
+            if (request()->ajax()) {
+                return response()->json(['success' => true, 'message' => 'អ្នកប្រើប្រាស់ និងទិន្នន័យពាក់ព័ន្ធត្រូវបានលុបដោយជោគជ័យ។']);
+            }
+
             return redirect()->route('admin.manage-users')
                 ->with('success', 'អ្នកប្រើប្រាស់ និងទិន្នន័យពាក់ព័ន្ធត្រូវបានលុបដោយជោគជ័យ។');
 
         } catch (\Exception $e) {
+            if (request()->ajax()) {
+                return response()->json(['success' => false, 'message' => 'មានបញ្ហាបច្ចេកទេស៖ '.$e->getMessage()]);
+            }
+
             return redirect()->route('admin.manage-users')
                 ->with('error', 'មានបញ្ហាបច្ចេកទេស៖ '.$e->getMessage());
         }

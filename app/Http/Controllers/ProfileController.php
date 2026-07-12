@@ -3,16 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\UserProfile;
+use App\Services\ImageKitService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
+    public function __construct(
+        private ImageKitService $imageKitService
+    ) {}
+
     public function edit(Request $request): View
     {
         $user = Auth::user();
@@ -33,10 +37,9 @@ class ProfileController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
-            'phone' => ['nullable', 'string', 'max:20', Rule::unique('users')->ignore($user->id)],
         ]);
 
-        $user->update($request->only('name', 'email', 'phone'));
+        $user->update($request->only('name', 'email'));
 
         Session::flash('success', 'ព័ត៌មានប្រវត្តិរូបត្រូវបានអាប់ដេតដោយជោគជ័យ!');
 
@@ -57,22 +60,19 @@ class ProfileController extends Controller
 
         if ($request->hasFile('profile_picture')) {
             try {
-                $image = $request->file('profile_picture');
+                $imageUrl = $this->imageKitService->uploadProfilePicture(
+                    $request->file('profile_picture')
+                );
 
-                $response = Http::asMultipart()->post('https://api.imgbb.com/1/upload', [
-                    'key' => env('IMGBB_API_KEY'),
-                    'image' => base64_encode(file_get_contents($image->getRealPath())),
-                ]);
-
-                if ($response->successful()) {
-                    $imageUrl = $response->json()['data']['url'];
-
+                if ($imageUrl) {
                     UserProfile::updateOrCreate(
                         ['user_id' => $user->id],
                         ['profile_picture_url' => $imageUrl]
                     );
 
                     Session::flash('success', 'រូបភាព Profile ត្រូវបានអាប់ដេតដោយជោគជ័យ!');
+                } else {
+                    return redirect()->back()->withErrors(['profile_picture' => 'មានបញ្ហាក្នុងការ upload រូបភាព។']);
                 }
             } catch (\Exception $e) {
                 return redirect()->back()->withErrors(['profile_picture' => 'មានបញ្ហាបច្ចេកទេស៖ '.$e->getMessage()]);

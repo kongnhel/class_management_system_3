@@ -2,42 +2,6 @@
     <div class="bg-gray-50 min-h-screen py-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-            {{-- Toast --}}
-            @if (session('success') || session('error'))
-            <div
-                x-data="{ show: false, progress: 100, startTimer() { this.show = true; let i = setInterval(() => { this.progress -= 1; if(this.progress <= 0){ this.show=false; clearInterval(i); } }, 50); } }"
-                x-init="startTimer()"
-                x-show="show"
-                x-cloak
-                class="fixed top-6 right-6 z-[9999] w-full max-w-sm">
-                <div class="relative overflow-hidden bg-white rounded-2xl shadow-2xl border border-gray-100 p-4">
-                    <div class="flex items-start gap-4">
-                        <div class="flex-shrink-0">
-                            @if(session('success'))
-                                <div class="h-10 w-10 rounded-xl bg-green-50 flex items-center justify-center">
-                                    <svg class="h-5 w-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
-                                </div>
-                            @else
-                                <div class="h-10 w-10 rounded-xl bg-red-50 flex items-center justify-center">
-                                    <svg class="h-5 w-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
-                                </div>
-                            @endif
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <p class="font-bold text-gray-900">{{ session('success') ? 'ជោគជ័យ!' : 'បរាជ័យ!' }}</p>
-                            <p class="text-sm text-gray-500 mt-0.5 truncate">{{ session('success') ?? session('error') }}</p>
-                        </div>
-                        <button @click="show = false" class="text-gray-400 hover:text-gray-600 flex-shrink-0">
-                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                        </button>
-                    </div>
-                    <div class="absolute bottom-0 left-0 h-1 bg-gray-100 w-full">
-                        <div class="h-full {{ session('success') ? 'bg-green-500' : 'bg-red-500' }} transition-all duration-75" :style="`width: ${progress}%`"></div>
-                    </div>
-                </div>
-            </div>
-            @endif
-
             {{-- Header --}}
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                 <div class="flex items-center gap-4">

@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable(); // កំណត់ name ជា nullable ផងដែរ ព្រោះនិស្សិតអាចមិនមានឈ្មោះបង្ហាញដំបូង
-            $table->string('email')->nullable()->unique(); // <<<--- កែប្រែនៅទីនេះ: បន្ថែម nullable()
+            $table->string('email')->nullable()->unique();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password')->nullable(); // កំណត់ password ជា nullable ផងដែរ
+            $table->string('password')->nullable();
             $table->string('role')->default('student'); // Default role as student
             $table->rememberToken();
             $table->timestamps();

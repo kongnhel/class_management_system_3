@@ -6,90 +6,13 @@
     </x-slot>
 
     @php
-        // ទាញយក URL រូបភាពពី ImgBB ដោយផ្ទាល់ចេញពី userProfile
-        $profileUrl = $user->userProfile?->profile_picture_url;
+        $profileUrl = $studentProfile?->profile_picture_url ?? $user->userProfile?->profile_picture_url;
     @endphp
 
     <div class="py-12 bg-gray-50 min-h-screen">
         <div class="max-w-5xl mx-auto sm:px-6 lg:px-10">
             <div class="bg-white overflow-hidden shadow-2xl sm:rounded-3xl p-8 sm:p-12 border border-gray-100">
                 <h3 class="text-4xl font-extrabold text-emerald-700 mb-8 text-center">{{ __('កែប្រែព័ត៌មាន Profile របស់អ្នក') }}</h3>
-
- {{-- Modern Floating Toast --}}
-@if (session('success') || session('error'))
-<div 
-    x-data="{ 
-        show: false, 
-        progress: 100,
-        startTimer() {
-            this.show = true;
-            let interval = setInterval(() => {
-                this.progress -= 1;
-                if (this.progress <= 0) {
-                    this.show = false;
-                    clearInterval(interval);
-                }
-            }, 50); // 5 seconds total (50ms * 100)
-        }
-    }" 
-    x-init="startTimer()"
-    x-show="show" 
-    x-transition:enter="transition ease-out duration-500"
-    x-transition:enter-start="translate-y-12 opacity-0 sm:translate-y-0 sm:translate-x-12"
-    x-transition:enter-end="translate-y-0 opacity-100 sm:translate-x-0"
-    x-transition:leave="transition ease-in duration-300"
-    x-transition:leave-start="opacity-100"
-    x-transition:leave-end="opacity-0"
-    class="fixed top-6 right-6 z-[9999] w-full max-w-sm"
->
-    <div class="relative overflow-hidden bg-white/80 backdrop-blur-xl border border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.1)] rounded-2xl p-4 ring-1 ring-black/5">
-        <div class="flex items-start gap-4">
-            
-            {{-- Modern Icon Logic --}}
-            <div class="flex-shrink-0">
-                @if(session('success'))
-                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-green-500/10 text-green-600">
-                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
-                        </svg>
-                    </div>
-                @else
-                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-red-500/10 text-red-600">
-                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </div>
-                @endif
-            </div>
-
-            {{-- Text Content --}}
-            <div class="flex-1 pt-0.5">
-                <p class="text-sm font-bold text-gray-900 leading-tight">
-                    {{ session('success') ? __('ជោគជ័យ!') : __('បរាជ័យ!') }}
-                </p>
-                <p class="mt-1 text-sm text-gray-600 leading-relaxed">
-                    {{ session('success') ?? session('error') }}
-                </p>
-            </div>
-
-            {{-- Manual Close --}}
-            <button @click="show = false" class="text-gray-400 hover:text-gray-600 transition-colors">
-                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
-        </div>
-
-        {{-- Progress Bar (The "Modern" Touch) --}}
-        <div class="absolute bottom-0 left-0 h-1 bg-gray-100 w-full">
-            <div 
-                class="h-full transition-all duration-75 ease-linear {{ session('success') ? 'bg-green-500' : 'bg-red-500' }}"
-                :style="`width: ${progress}%`"
-            ></div>
-        </div>
-    </div>
-</div>
-@endif
 
                 <form method="POST" action="{{ route('student.profile.update') }}" enctype="multipart/form-data" class="space-y-8">
                     @csrf
@@ -148,7 +71,7 @@
                                             <path d="M2 12l10 5 10-5"></path>
                                         </svg> {{ __('ឈ្មោះពេញ (ខ្មែរ)') }}
                                     </x-input-label>
-                                    <x-text-input id="full_name_km" class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-emerald-600 focus:ring-emerald-600 py-3 px-4 transition duration-150 ease-in-out" type="text" name="full_name_km" :value="old('full_name_km', $userProfile->full_name_km ?? '')" />
+                                    <x-text-input id="full_name_km" class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-emerald-600 focus:ring-emerald-600 py-3 px-4 transition duration-150 ease-in-out" type="text" name="full_name_km" :value="old('full_name_km', $studentProfile->full_name_km ?? '')" />
                                     <x-input-error :messages="$errors->get('full_name_km')" class="mt-2" />
                                 </div>
                                 {{-- ឈ្មោះពេញ (អង់គ្លេស) --}}
@@ -160,7 +83,7 @@
                                             <path d="M2 12l10 5 10-5"></path>
                                         </svg> {{ __('ឈ្មោះពេញ (អង់គ្លេស)') }}
                                     </x-input-label>
-                                    <x-text-input id="full_name_en" class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-emerald-600 focus:ring-emerald-600 py-3 px-4 transition duration-150 ease-in-out" type="text" name="full_name_en" :value="old('full_name_en', $userProfile->full_name_en ?? '')" />
+                                    <x-text-input id="full_name_en" class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-emerald-600 focus:ring-emerald-600 py-3 px-4 transition duration-150 ease-in-out" type="text" name="full_name_en" :value="old('full_name_en', $studentProfile->full_name_en ?? '')" />
                                     <x-input-error :messages="$errors->get('full_name_en')" class="mt-2" />
                                 </div>
                                 {{-- ភេទ --}}
@@ -174,8 +97,8 @@
                                     </x-input-label>
                                     <select id="gender" name="gender" class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-emerald-600 focus:ring-emerald-600 py-3 px-4 transition duration-150 ease-in-out">
                                         <option value="">{{ __('ជ្រើសរើសភេទ') }}</option>
-                                        <option value="male" {{ old('gender', $userProfile->gender ?? '') == 'male' ? 'selected' : '' }}>{{ __('ប្រុស') }}</option>
-                                        <option value="female" {{ old('gender', $userProfile->gender ?? '') == 'female' ? 'selected' : '' }}>{{ __('ស្រី') }}</option>
+                                        <option value="male" {{ old('gender', $studentProfile->gender ?? '') == 'male' ? 'selected' : '' }}>{{ __('ប្រុស') }}</option>
+                                        <option value="female" {{ old('gender', $studentProfile->gender ?? '') == 'female' ? 'selected' : '' }}>{{ __('ស្រី') }}</option>
                                     </select>
                                     <x-input-error :messages="$errors->get('gender')" class="mt-2" />
                                 </div>
@@ -189,7 +112,7 @@
                                             <line x1="3" y1="10" x2="21" y2="10"></line>
                                         </svg> {{ __('ថ្ងៃខែឆ្នាំកំណើត') }}
                                     </x-input-label>
-                                    <x-text-input id="date_of_birth" class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-emerald-600 focus:ring-emerald-600 py-3 px-4 transition duration-150 ease-in-out" type="date" name="date_of_birth" :value="old('date_of_birth', optional($userProfile->date_of_birth)->format('Y-m-d') ?? '')" />
+                                    <x-text-input id="date_of_birth" class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-emerald-600 focus:ring-emerald-600 py-3 px-4 transition duration-150 ease-in-out" type="date" name="date_of_birth" :value="old('date_of_birth', optional($studentProfile->date_of_birth)->format('Y-m-d') ?? '')" />
                                     <x-input-error :messages="$errors->get('date_of_birth')" class="mt-2" />
                                 </div>
                                 {{-- លេខទូរស័ព្ទ --}}
@@ -199,7 +122,7 @@
                                             <path d="M22 16.92v3a2 2 0 0 1-2 2h-1c-1.85 0-3.66-.45-5.3-1.28a19.49 19.49 0 0 1-8.58-8.58C4.45 6.66 4 4.85 4 3V2c0-1.1.9-2 2-2h3a2 2 0 0 1 2 2.18c-.35 1.05-.55 2.16-.58 3.3a2 2 0 0 1 2.22 2.22c1.13-.03 2.25-.23 3.3-.58a2 2 0 0 1 2.18 2.18z"></path>
                                         </svg> {{ __('លេខទូរស័ព្ទ') }}
                                     </x-input-label>
-                                    <x-text-input id="phone_number" class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-emerald-600 focus:ring-emerald-600 py-3 px-4 transition duration-150 ease-in-out" type="text" name="phone_number" :value="old('phone_number', $userProfile->phone_number ?? '')" />
+                                    <x-text-input id="phone_number" class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-emerald-600 focus:ring-emerald-600 py-3 px-4 transition duration-150 ease-in-out" type="text" name="phone_number" :value="old('phone_number', $studentProfile->phone_number ?? '')" />
                                     <x-input-error :messages="$errors->get('phone_number')" class="mt-2" />
                                 </div>
                                 {{-- អាសយដ្ឋាន --}}
@@ -210,7 +133,7 @@
                                             <circle cx="12" cy="10" r="3"></circle>
                                         </svg> {{ __('អាសយដ្ឋាន') }}
                                     </x-input-label>
-                                    <x-text-input id="address" class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-emerald-600 focus:ring-emerald-600 py-3 px-4 transition duration-150 ease-in-out" type="text" name="address" :value="old('address', $userProfile->address ?? '')" />
+                                    <x-text-input id="address" class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-emerald-600 focus:ring-emerald-600 py-3 px-4 transition duration-150 ease-in-out" type="text" name="address" :value="old('address', $studentProfile->address ?? '')" />
                                     <x-input-error :messages="$errors->get('address')" class="mt-2" />
                                 </div>
                             </div>

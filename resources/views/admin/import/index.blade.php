@@ -18,53 +18,46 @@
 
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-20 pb-12 relative z-10">
 
-            {{-- Success Toast --}}
-            @if(session('success'))
-            <div id="success-toast" class="mb-6 bg-emerald-50 border border-emerald-200 rounded-2xl p-5 shadow-sm relative overflow-hidden">
-                <div class="absolute top-0 left-0 h-1 bg-emerald-500 animate-toast-progress w-full"></div>
+            {{-- Validation Errors --}}
+            @if($errors->any())
+            <div class="mb-6 bg-red-50 border border-red-200 rounded-2xl p-5 shadow-sm">
                 <div class="flex items-start gap-3">
-                    <div class="bg-emerald-100 text-emerald-600 p-2 rounded-xl flex-shrink-0">
-                        <i class="fas fa-check-circle"></i>
+                    <div class="bg-red-100 text-red-600 p-2 rounded-xl flex-shrink-0">
+                        <i class="fas fa-exclamation-circle"></i>
                     </div>
                     <div class="flex-1">
-                        <p class="font-bold text-emerald-800">{{ session('success') }}</p>
-                        @if(session('import_errors') && count(session('import_errors')) > 0)
-                        <div class="mt-3 bg-emerald-100/50 rounded-xl p-3">
-                            <p class="text-xs font-bold text-emerald-700 mb-1">
-                                <i class="fas fa-exclamation-triangle mr-1"></i> មានកំហុស {{ count(session('import_errors')) }} កន្លែង
-                            </p>
-                            <ul class="text-xs text-emerald-700 space-y-1 max-h-32 overflow-y-auto">
-                                @foreach(session('import_errors') as $error)
-                                <li class="flex items-start gap-1">
-                                    <span class="text-emerald-400 mt-0.5">•</span>
-                                    <span>{{ $error }}</span>
-                                </li>
-                                @endforeach
-                            </ul>
-                        </div>
-                        @endif
+                        <p class="font-bold text-red-800">មានកំហុសក្នុងការបំពេញទិន្នន័យ</p>
+                        <ul class="mt-2 text-sm text-red-700 space-y-1">
+                            @foreach($errors->all() as $error)
+                            <li class="flex items-start gap-1">
+                                <span class="text-red-400 mt-0.5">•</span>
+                                <span>{{ $error }}</span>
+                            </li>
+                            @endforeach
+                        </ul>
                     </div>
-                    <button onclick="document.getElementById('success-toast').remove()" class="text-emerald-400 hover:text-emerald-600 flex-shrink-0">
-                        <i class="fas fa-times"></i>
-                    </button>
                 </div>
             </div>
             @endif
 
-            {{-- Error Toast --}}
-            @if(session('error'))
-            <div id="error-toast" class="mb-6 bg-red-50 border border-red-200 rounded-2xl p-5 shadow-sm relative overflow-hidden">
-                <div class="absolute top-0 left-0 h-1 bg-red-500 w-full"></div>
+            {{-- Import Errors Detail (from successful import with skipped rows) --}}
+            @if(session('import_errors') && count(session('import_errors')) > 0)
+            <div class="mb-6 bg-amber-50 border border-amber-200 rounded-2xl p-5 shadow-sm">
                 <div class="flex items-start gap-3">
-                    <div class="bg-red-100 text-red-600 p-2 rounded-xl flex-shrink-0">
-                        <i class="fas fa-times-circle"></i>
+                    <div class="bg-amber-100 text-amber-600 p-2 rounded-xl flex-shrink-0">
+                        <i class="fas fa-exclamation-triangle"></i>
                     </div>
                     <div class="flex-1">
-                        <p class="font-bold text-red-800">{{ session('error') }}</p>
+                        <p class="font-bold text-amber-800">មានកំហុស {{ count(session('import_errors')) }} កន្លែង</p>
+                        <ul class="mt-2 text-xs text-amber-700 space-y-1 max-h-32 overflow-y-auto">
+                            @foreach(session('import_errors') as $error)
+                            <li class="flex items-start gap-1">
+                                <span class="text-amber-400 mt-0.5">•</span>
+                                <span>{{ $error }}</span>
+                            </li>
+                            @endforeach
+                        </ul>
                     </div>
-                    <button onclick="document.getElementById('error-toast').remove()" class="text-red-400 hover:text-red-600 flex-shrink-0">
-                        <i class="fas fa-times"></i>
-                    </button>
                 </div>
             </div>
             @endif
@@ -82,14 +75,14 @@
                         <div class="bg-emerald-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">1</div>
                         <div>
                             <p class="font-bold text-gray-900 text-sm">ទាញយក Template</p>
-                            <p class="text-xs text-gray-500 mt-1">ទាញយកម៉ាស៊ីនត្រជាក់ CSV សម្រាប់បំពេញទិន្នន័យ</p>
+                            <p class="text-xs text-gray-500 mt-1">ទាញយកម៉ាស៊ីនត្រជាក់ XLSX</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
                         <div class="bg-emerald-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">2</div>
                         <div>
-                            <p class="font-bold text-gray-900 text-sm">បំពេញទិន្នន័យ</p>
-                            <p class="text-xs text-gray-500 mt-1">បំពេញព័ត៌មានក្នុងម៉ាស៊ីនត្រជាក់ឱ្យបានត្រឹមត្រូវ</p>
+                            <p class="font-bold text-gray-900 text-sm">បំពេញឈ្មោះ</p>
+                            <p class="text-xs text-gray-500 mt-1">បំពេញឈ្មោះសិស្សក្នុងម៉ាស៊ីនត្រជាក់ (ត្រឹមឈ្មោះបានហើយ)</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
@@ -107,11 +100,12 @@
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-4">
                         <div class="bg-emerald-100 text-emerald-600 p-3 rounded-2xl">
-                            <i class="fas fa-file-csv text-xl"></i>
+                            <i class="fas fa-file-excel text-xl"></i>
                         </div>
                         <div>
                             <h3 class="font-bold text-gray-900">ទាញយក Template</h3>
-                            <p class="text-sm text-gray-500 mt-0.5">ទាញយកម៉ាស៊ីនត្រជាក់ CSV សម្រាប់បំពេញទិន្នន័យ</p>
+                            <p class="text-sm text-gray-500 mt-0.5">ទាញយកម៉ាស៊ីនត្រជាក់ XLSX សម្រាប់បំពេញឈ្មោះសិស្ស</p>
+                            <p class="text-xs text-emerald-600 mt-1"><i class="fas fa-info-circle mr-1"></i> ត្រឹមតែឈ្មោះ (Name) ត្រូវបានទាមទារ • អ៊ីម៉ែលនិងព័ត៌មានផ្សេងៗសូមបំពេញនៅពេលក្រោយ</p>
                         </div>
                     </div>
                     <a href="{{ route('admin.import.template') }}" class="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white px-5 py-2.5 rounded-xl font-bold shadow-md hover:shadow-lg transition-all duration-200">
@@ -138,8 +132,8 @@
                             ប្រភេទអ្នកប្រើប្រាស់ <span class="text-red-500">*</span>
                         </label>
                         <select name="role" required class="w-full rounded-xl border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 text-sm">
-                            <option value="student">សិស្ស</option>
-                            <option value="professor">សាស្ត្រាចារ្យ</option>
+                            <option value="student" @if(old('role','student')=='student') selected @endif>សិស្ស</option>
+                            <option value="professor" @if(old('role')=='professor') selected @endif>សាស្ត្រាចារ្យ</option>
                         </select>
                     </div>
 
@@ -150,16 +144,16 @@
                                 <label class="block text-sm font-bold text-gray-700 mb-2">
                                     កម្មវិធីសិក្សា <span class="text-red-500">*</span>
                                 </label>
-                                <select name="program_id" class="w-full rounded-xl border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 text-sm">
+                                <select name="program_id" id="program_id" required class="w-full rounded-xl border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 text-sm">
                                     <option value="">ជ្រើសរើសកម្មវិធីសិក្សា</option>
                                     @foreach($programs as $program)
-                                    <option value="{{ $program->id }}">{{ $program->name_km }}</option>
+                                    <option value="{{ $program->id }}" @if(old('program_id')==$program->id) selected @endif>{{ $program->name_km }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div>
                                 <label class="block text-sm font-bold text-gray-700 mb-2">ជំនាន់</label>
-                                <input type="text" name="generation" placeholder="ឧ. 17"
+                                <input type="text" name="generation" value="{{ old('generation') }}" placeholder="ឧ. 17"
                                     class="w-full rounded-xl border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 text-sm">
                             </div>
                         </div>
@@ -170,10 +164,10 @@
                         <label class="block text-sm font-bold text-gray-700 mb-2">
                             ដេប៉ាតឺម៉ង់ <span class="text-red-500">*</span>
                         </label>
-                        <select name="department_id" class="w-full rounded-xl border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 text-sm">
+                        <select name="department_id" id="department_id" class="w-full rounded-xl border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 text-sm">
                             <option value="">ជ្រើសរើសដេប៉ាតឺម៉ង់</option>
                             @foreach($departments as $department)
-                            <option value="{{ $department->id }}">{{ $department->name_km }}</option>
+                            <option value="{{ $department->id }}" @if(old('department_id')==$department->id) selected @endif>{{ $department->name_km }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -194,7 +188,7 @@
                                 </div>
                                 <p class="font-bold text-gray-700">អូសឯកសារមកទីនេះ</p>
                                 <p class="text-sm text-gray-500 mt-1">ឬចុចដើម្បីជ្រើសរើសឯកសារ</p>
-                                <p class="text-xs text-gray-400 mt-3">គាំទ្រ: CSV, XLS, XLSX • ទំហំអតិបរមា: 10MB</p>
+                                <p class="text-xs text-gray-400 mt-3">គាំទ្រ: CSV, XLS, XLSX • ទំហំអតិបរមា: 10MB • ឈ្មោះជាដាច់ខាត</p>
                             </div>
                             <div id="file-preview" class="hidden">
                                 <div class="flex items-center justify-center gap-3">
@@ -225,28 +219,29 @@
         </div>
     </div>
 
-    <style>
-        @keyframes toast-progress {
-            from { width: 100%; }
-            to { width: 0%; }
-        }
-        .animate-toast-progress {
-            animation: toast-progress 5s linear forwards;
-        }
-    </style>
-
     <script>
-        document.querySelector('select[name="role"]').addEventListener('change', function() {
-            const studentFields = document.getElementById('student-fields');
-            const professorFields = document.getElementById('professor-fields');
-            if (this.value === 'student') {
+        const roleSelect = document.querySelector('select[name="role"]');
+        const studentFields = document.getElementById('student-fields');
+        const professorFields = document.getElementById('professor-fields');
+        const programSelect = document.getElementById('program_id');
+        const deptSelect = document.getElementById('department_id');
+
+        function toggleFields() {
+            if (roleSelect.value === 'student') {
                 studentFields.style.display = 'block';
                 professorFields.style.display = 'none';
+                programSelect.required = true;
+                deptSelect.required = false;
             } else {
                 studentFields.style.display = 'none';
                 professorFields.style.display = 'block';
+                programSelect.required = false;
+                deptSelect.required = true;
             }
-        });
+        }
+
+        roleSelect.addEventListener('change', toggleFields);
+        toggleFields();
 
         const dropZone = document.getElementById('drop-zone');
         dropZone.addEventListener('dragover', function(e) {

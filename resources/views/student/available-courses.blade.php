@@ -2,65 +2,6 @@
     <div class="py-12 bg-gray-50 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-            {{-- Floating Toast --}}
-            @if (session('success') || session('error') || session('info'))
-                <div
-                    x-data="{
-                        show: false,
-                        progress: 100,
-                        startTimer() {
-                            this.show = true;
-                            let interval = setInterval(() => {
-                                this.progress -= 1;
-                                if (this.progress <= 0) {
-                                    this.show = false;
-                                    clearInterval(interval);
-                                }
-                            }, 50);
-                        }
-                    }"
-                    x-init="startTimer()"
-                    x-show="show"
-                    x-transition:enter="transition ease-out duration-500"
-                    x-transition:enter-start="translate-y-12 opacity-0"
-                    x-transition:enter-end="translate-y-0 opacity-100"
-                    x-transition:leave="transition ease-in duration-300"
-                    x-transition:leave-start="opacity-100"
-                    x-transition:leave-end="opacity-0"
-                    class="fixed top-6 right-6 z-[9999] w-full max-w-sm"
-                >
-                    <div class="relative overflow-hidden bg-white rounded-2xl shadow-xl border border-gray-200 p-4">
-                        <div class="flex items-start gap-3">
-                            <div class="flex-shrink-0">
-                                @if(session('success'))
-                                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-green-50 text-green-600">
-                                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
-                                    </div>
-                                @elseif(session('info'))
-                                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
-                                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                    </div>
-                                @else
-                                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 text-red-600">
-                                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-                                    </div>
-                                @endif
-                            </div>
-                            <div class="flex-1 pt-0.5">
-                                <p class="text-sm font-bold text-gray-900">{{ session('success') ? __('ជោគជ័យ!') : (session('info') ? __('ព័ត៌មាន!') : __('បរាជ័យ!')) }}</p>
-                                <p class="mt-1 text-sm text-gray-600">{{ session('success') ?? session('info') ?? session('error') }}</p>
-                            </div>
-                            <button @click="show = false" class="text-gray-400 hover:text-gray-600 transition-colors">
-                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-                            </button>
-                        </div>
-                        <div class="absolute bottom-0 left-0 h-1 bg-gray-100 w-full">
-                            <div class="h-full transition-all duration-75 ease-linear {{ session('success') ? 'bg-green-500' : (session('info') ? 'bg-emerald-500' : 'bg-red-500') }}" :style="`width: ${progress}%`"></div>
-                        </div>
-                    </div>
-                </div>
-            @endif
-
             {{-- Header --}}
             <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 lg:p-8 mb-6">
                 <div class="flex items-center gap-4">

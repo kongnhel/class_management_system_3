@@ -58,64 +58,6 @@
                     </div>
                 </div>
 
-                {{-- Toast Notification --}}
-                @if (session('success') || session('error'))
-                <div x-data="{
-                        show: true,
-                        progress: 100,
-                        init() {
-                            let duration = 5000;
-                            let step = 100 / (duration / 50);
-                            let timer = setInterval(() => {
-                                this.progress -= step;
-                                if (this.progress <= 0) {
-                                    clearInterval(timer);
-                                    this.show = false;
-                                }
-                            }, 50);
-                        }
-                    }"
-                     x-init="init()"
-                     x-show="show"
-                     x-transition:enter="transform ease-out duration-300 transition"
-                     x-transition:enter-start="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2"
-                     x-transition:enter-end="translate-y-0 opacity-100 sm:translate-x-0"
-                     x-transition:leave="transition ease-in duration-100"
-                     x-transition:leave-start="opacity-100"
-                     x-transition:leave-end="opacity-0"
-                     class="fixed top-6 right-6 z-[9999] w-full max-w-sm">
-                    <div class="bg-white border-l-4 {{ session('success') ? 'border-emerald-500' : 'border-red-500' }} shadow-2xl rounded-2xl overflow-hidden">
-                        <div class="p-4">
-                            <div class="flex items-center gap-3">
-                                <div class="flex-shrink-0">
-                                    @if(session('success'))
-                                        <div class="h-10 w-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                                        </div>
-                                    @else
-                                        <div class="h-10 w-10 rounded-full bg-red-50 text-red-600 flex items-center justify-center">
-                                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                        </div>
-                                    @endif
-                                </div>
-                                <div class="flex-1">
-                                    <p class="text-sm font-bold text-gray-900">{{ session('success') ? __('ប្រតិបត្តិការជោគជ័យ') : __('មានបញ្ហាអ្វីមួយ') }}</p>
-                                    <p class="text-xs text-gray-500 mt-0.5">{{ session('success') ?? session('error') }}</p>
-                                </div>
-                                <button @click="show = false" class="text-gray-400 hover:text-gray-600 flex-shrink-0">
-                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                                </button>
-                            </div>
-                        </div>
-                        {{-- Progress Bar --}}
-                        <div class="h-1 bg-gray-100">
-                            <div class="h-full {{ session('success') ? 'bg-emerald-500' : 'bg-red-500' }} transition-all duration-100"
-                                 :style="`width: ${progress}%`"></div>
-                        </div>
-                    </div>
-                </div>
-                @endif
-
                 {{-- Content --}}
                 <div class="p-6 lg:p-8">
                     <div class="space-y-12">

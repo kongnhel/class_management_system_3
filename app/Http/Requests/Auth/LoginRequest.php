@@ -31,13 +31,6 @@ class LoginRequest extends FormRequest
 
         $identifier = $this->login_identifier;
 
-        // Phone login is handled by PhoneLoginController, not here
-        if (preg_match('/^\+?[0-9]{6,15}$/', $identifier)) {
-            throw ValidationException::withMessages([
-                'login_identifier' => 'សូមប្រើវិធីភ្ជាប់ Telegram OTP សម្រាប់លេខទូរស័ព្ទ។',
-            ]);
-        }
-
         // Email/Student ID login requires password
         if (empty($this->password)) {
             throw ValidationException::withMessages([

@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Program;
+use App\Models\StudentProfile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\ImageKit;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 
@@ -21,11 +22,11 @@ class StudentProfileController extends Controller
             return redirect()->route('dashboard');
         }
 
-        $userProfile = $user->userProfile()->firstOrCreate([
+        $studentProfile = $user->studentProfile()->firstOrCreate([
             'user_id' => $user->id,
         ]);
 
-        return view('student.profile.show', compact('user', 'userProfile'));
+        return view('student.profile.show', compact('user', 'studentProfile'));
     }
 
     public function edit()
@@ -38,13 +39,13 @@ class StudentProfileController extends Controller
             return redirect()->route('dashboard');
         }
 
-        $userProfile = $user->userProfile()->firstOrCreate([
+        $studentProfile = $user->studentProfile()->firstOrCreate([
             'user_id' => $user->id,
         ]);
 
         $programs = Program::all();
 
-        return view('student.profile.edit', compact('user', 'userProfile', 'programs'));
+        return view('student.profile.edit', compact('user', 'studentProfile', 'programs'));
     }
 
     public function update(Request $request)
@@ -57,7 +58,7 @@ class StudentProfileController extends Controller
             return redirect()->route('dashboard');
         }
 
-        $userProfile = $user->userProfile()->firstOrCreate([
+        $studentProfile = $user->studentProfile()->firstOrCreate([
             'user_id' => $user->id,
         ]);
 
@@ -75,7 +76,7 @@ class StudentProfileController extends Controller
             try {
                 $image = $request->file('profile_picture');
 
-                $response = Http::withBasicAuth(env('IMAGEKIT_PRIVATE_KEY'), '')
+                $response = \Illuminate\Support\Facades\Http::withBasicAuth(env('IMAGEKIT_PRIVATE_KEY'), '')
                     ->attach(
                         'file',
                         file_get_contents($image->getRealPath()),
@@ -88,7 +89,7 @@ class StudentProfileController extends Controller
                     ]);
 
                 if ($response->successful()) {
-                    $userProfile->profile_picture_url = $response->json()['url'];
+                    $studentProfile->profile_picture_url = $response->json()['url'];
                 } else {
                     Log::error('ImageKit Upload Error: '.$response->body());
                 }
@@ -97,11 +98,11 @@ class StudentProfileController extends Controller
                 Log::error('Upload Error: '.$e->getMessage());
             }
         } elseif ($request->has('remove_profile_picture') && $request->input('remove_profile_picture') === '1') {
-            $userProfile->profile_picture_url = null;
+            $studentProfile->profile_picture_url = null;
         }
 
-        $userProfile->fill($validatedData);
-        $userProfile->save();
+        $studentProfile->fill($validatedData);
+        $studentProfile->save();
 
         Session::flash('success', 'ព័ត៌មាន Profile ត្រូវបានធ្វើបច្ចុប្បន្នភាពដោយជោគជ័យ!');
 

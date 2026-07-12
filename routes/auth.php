@@ -34,12 +34,10 @@ Route::middleware('guest')->group(function () {
     Route::post('reset-password', [NewPasswordController::class, 'store'])
         ->name('password.store');
 
-    Route::middleware('registration.open')->group(function () {
-        Route::get('register', [StudentRegistrationController::class, 'create'])
-            ->name('register');
+    Route::get('register', [StudentRegistrationController::class, 'create'])
+        ->name('register');
 
-        Route::post('register', [StudentRegistrationController::class, 'store']);
-    });
+    Route::post('register', [StudentRegistrationController::class, 'store']);
 });
 
 Route::middleware('auth')->group(function () {

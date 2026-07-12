@@ -177,51 +177,12 @@ class AdminGradeController extends Controller
 
         $students = $students->sortByDesc('temp_total')->values();
 
-        $fileName = 'grades_'.$courseOffering->course->title_en.'_'.$courseOffering->academic_year.'.csv';
+        $fileName = 'Gradebook_'.str_replace([' ', '/', '\\'], '_', $courseOffering->course->title_km).'.doc';
 
-        $headers = [
-            'Content-Type' => 'text/csv; charset=UTF-8',
-            'Content-Disposition' => "attachment; filename=\"{$fileName}\"",
-        ];
+        $html = view('professor.grades.export_word', compact('courseOffering', 'students', 'assessments', 'gradebook'))->render();
 
-        $callback = function () use ($courseOffering, $students, $assessments, $gradebook) {
-            // UTF-8 BOM for Excel to recognize Khmer characters
-            echo "\xEF\xBB\xBF";
-            $file = fopen('php://output', 'w');
-
-            // Header
-            $header = ['Rank', 'Student ID', 'Name', 'Email', 'Attendance'];
-            foreach ($assessments as $assessment) {
-                $typeLabel = $assessment instanceof Assignment ? 'Assign' : ($assessment instanceof Quiz ? 'Quiz' : 'Exam');
-                $header[] = $typeLabel.': '.$assessment->title_km;
-            }
-            $header = array_merge($header, ['Total', 'Letter Grade', 'Status']);
-            fputcsv($file, $header);
-
-            // Data
-            foreach ($students as $index => $student) {
-                $row = [
-                    $index + 1,
-                    $student->student_id_code ?? '',
-                    $student->studentProfile->full_name_km ?? $student->name,
-                    $student->email ?? '',
-                    $student->getAttendanceScoreByCourse($courseOffering->id) ?? 0,
-                ];
-                foreach ($assessments as $assessment) {
-                    $type = ($assessment instanceof Assignment) ? 'assignment' :
-                           (($assessment instanceof Quiz) ? 'quiz' : 'exam');
-                    $key = $type.'_'.$assessment->id;
-                    $row[] = $gradebook[$student->id][$key] ?? '';
-                }
-                $row[] = number_format($student->temp_total, 1);
-                $row[] = $student->letterGrade;
-                $row[] = $student->isPassing ? 'Pass' : 'Fail';
-                fputcsv($file, $row);
-            }
-
-            fclose($file);
-        };
-
-        return response()->stream($callback, 200, $headers);
+        return response($html)
+            ->header('Content-Type', 'application/msword; charset=utf-8')
+            ->header('Content-Disposition', "attachment; filename*=UTF-8''".rawurlencode($fileName));
     }
 }

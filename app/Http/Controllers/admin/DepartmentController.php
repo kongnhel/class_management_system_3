@@ -7,14 +7,13 @@ use App\Models\Department;
 use App\Models\Faculty;
 use App\Models\User;
 use App\Traits\AuditableTrait;
-use App\Traits\FirebaseSyncTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 class DepartmentController extends Controller
 {
-    use AuditableTrait, FirebaseSyncTrait;
+    use AuditableTrait;
 
     public function index()
     {

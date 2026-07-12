@@ -52,95 +52,24 @@
                     </div>
                 </div>
 
-                {{-- Modern Floating Toast --}}
-                @if (session('success') || session('error'))
-                <div 
-                    x-data="{ 
-                        show: false, 
-                        progress: 100,
-                        startTimer() {
-                            this.show = true;
-                            let interval = setInterval(() => {
-                                this.progress -= 1;
-                                if (this.progress <= 0) {
-                                    this.show = false;
-                                    clearInterval(interval);
-                                }
-                            }, 50); // 5 seconds total
-                        }
-                    }" 
-                    x-init="startTimer()"
-                    x-show="show" 
-                    x-transition:enter="transition ease-out duration-500"
-                    x-transition:enter-start="translate-y-12 opacity-0 sm:translate-y-0 sm:translate-x-12"
-                    x-transition:enter-end="translate-y-0 opacity-100 sm:translate-x-0"
-                    x-transition:leave="transition ease-in duration-300"
-                    x-transition:leave-start="opacity-100"
-                    x-transition:leave-end="opacity-0"
-                    class="fixed top-6 right-6 z-[9999] w-full max-w-sm"
-                >
-                    <div class="relative overflow-hidden bg-white/80 backdrop-blur-xl border border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.1)] rounded-2xl p-4 ring-1 ring-black/5">
-                        <div class="flex items-start gap-4">
-                            <div class="flex-shrink-0">
-                                @if(session('success'))
-                                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-green-500/10 text-green-600">
-                                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
-                                        </svg>
-                                    </div>
-                                @else
-                                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-red-500/10 text-red-600">
-                                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
-                                        </svg>
-                                    </div>
-                                @endif
-                            </div>
-
-                            <div class="flex-1 pt-0.5">
-                                <p class="text-sm font-bold text-gray-900 leading-tight">
-                                    {{ session('success') ? __('ជោគជ័យ!') : __('បរាជ័យ!') }}
-                                </p>
-                                <p class="mt-1 text-sm text-gray-600 leading-relaxed">
-                                    {{ session('success') ?? session('error') }}
-                                </p>
-                            </div>
-
-                            <button @click="show = false" class="text-gray-400 hover:text-gray-600 transition-colors">
-                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                </svg>
-                            </button>
-                        </div>
-
-                        <div class="absolute bottom-0 left-0 h-1 bg-gray-100 w-full">
-                            <div 
-                                class="h-full transition-all duration-75 ease-linear {{ session('success') ? 'bg-green-500' : 'bg-red-500' }}"
-                                :style="`width: ${progress}%`"
-                            ></div>
-                        </div>
-                    </div>
-                </div>
-                @endif
-
-                <div x-data="{ 
+                <div id="user-manage-root" x-data="{ 
                     activeTab: $persist('admins').as('user_manage_tab'),
-                    
+                    showDeleteModal: false,
+                    deletingUserId: '',
+                    deletingUserType: '',
+                    deletingFormId: '',
+                    isDeleting: false,
+
                     init() {
                         const urlParams = new URLSearchParams(window.location.search);
                         const tabParam = urlParams.get('tab');
-                        if (tabParam) {
-                            this.activeTab = tabParam;
-                        }
+                        if (tabParam) { this.activeTab = tabParam; }
                     },
 
-                    showDeleteModal: false,
-                    deletingUserId: null,
-                    deletingUserType: '',
-
-                    confirmDelete(userId, userType) {
-                        this.deletingUserId = userId;
+                    confirmDelete(formId, userType) {
+                        this.deletingFormId = formId;
                         this.deletingUserType = userType;
+                        this.deletingUserId = formId;
                         this.showDeleteModal = true;
                     }
                 }" class="mt-8">
@@ -198,7 +127,7 @@
                                         </thead>
                                         <tbody class="bg-white divide-y divide-gray-100 text-sm">
                                             @foreach ($admins as $admin)
-                                                <tr class="hover:bg-gray-50 transition-colors">
+                                                <tr class="hover:bg-gray-50 transition-colors" data-user-id="{{ $admin->id }}">
                                                     <td class="px-6 py-3">
                                                         @if ($admin->profile && $admin->profile->profile_picture_url)
                                                             <img src="{{ $admin->profile->profile_picture_url }}" 
@@ -228,7 +157,7 @@
                                 {{-- 2. MOBILE VERSION --}}
                                 <div id="mobile-admins" class="md:hidden space-y-3">
                                     @foreach ($admins as $admin)
-                                        <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
+                                        <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm" data-user-id="{{ $admin->id }}">
                                             <div class="flex items-center justify-between mb-3 pb-2 border-b border-gray-50">
                                                 <div class="flex items-center space-x-3 min-w-0">
                                                     @if ($admin->profile && $admin->profile->profile_picture_url)
@@ -319,7 +248,7 @@
                                                         </thead>
                                                         <tbody class="bg-white divide-y divide-gray-100">
                                                             @foreach ($professorList as $professor)
-                                                                <tr class="hover:bg-gray-50 transition-colors">
+                                                                <tr class="hover:bg-gray-50 transition-colors" data-user-id="{{ $professor->id }}">
                                                                     <td class="px-6 py-3 whitespace-nowrap">
                                                                         @if ($professor->profile && $professor->profile->profile_picture_url)
                                                                             <img src="{{ $professor->profile->profile_picture_url }}?tr=w-100,h-100,fo-face" 
@@ -357,7 +286,7 @@
                                                 {{-- 2. MOBILE VERSION --}}
                                                 <div class="md:hidden space-y-3">
                                                     @foreach ($professorList as $professor)
-                                                        <div class="bg-gray-50/50 border border-gray-100 rounded-xl p-4 shadow-sm hover:border-emerald-200 transition-colors">
+                                                        <div class="bg-gray-50/50 border border-gray-100 rounded-xl p-4 shadow-sm hover:border-emerald-200 transition-colors" data-user-id="{{ $professor->id }}">
                                                             <div class="flex items-center justify-between mb-3">
                                                                 <div class="flex items-center space-x-3">
                                                                     @if ($professor->profile && $professor->profile->profile_picture_url)
@@ -492,7 +421,7 @@
                                                                 </thead>
                                                                 <tbody class="bg-white divide-y divide-gray-100">
                                                                     @foreach ($studentList as $student)
-                                                                        <tr class="hover:bg-gray-50 transition-colors">
+                                                                        <tr class="hover:bg-gray-50 transition-colors" data-user-id="{{ $student->id }}">
                                                                             <td class="px-6 py-3 whitespace-nowrap">
                                                                                 @if ($student->studentProfile && $student->studentProfile->profile_picture_url)
                                                                                     <img src="{{ $student->studentProfile->profile_picture_url }}?tr=w-100,h-100,fo-face" 
@@ -548,7 +477,7 @@
                                                         {{-- 2. MOBILE VERSION --}}
                                                         <div class="md:hidden space-y-3">
                                                             @foreach ($studentList as $student)
-                                                                <div class="bg-gray-50/50 border border-gray-100 rounded-xl p-4 shadow-sm hover:border-green-200 transition-colors">
+                                                                <div class="bg-gray-50/50 border border-gray-100 rounded-xl p-4 shadow-sm hover:border-green-200 transition-colors" data-user-id="{{ $student->id }}">
                                                                     <div class="flex items-center justify-between mb-3">
                                                                         <div class="flex items-center space-x-3">
                                                                             @if ($student->studentProfile && $student->studentProfile->profile_picture_url)
@@ -616,7 +545,10 @@
                                     </p>
                                     <div class="mt-6 flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
                                         <button type="button" @click="showDeleteModal = false" class="px-5 py-2 text-sm font-bold text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition-all">{{ __('បោះបង់') }}</button>
-                                        <button type="button" @click="document.getElementById(deletingUserId).submit()" class="px-5 py-2 text-sm font-bold text-white bg-red-600 rounded-xl hover:bg-red-700 shadow-lg shadow-red-200 transition-all">{{ __('លុបចេញ') }}</button>
+                                        <button type="button" @click="executeDeleteUser()" :disabled="isDeleting" class="px-5 py-2 text-sm font-bold text-white bg-red-600 rounded-xl hover:bg-red-700 shadow-lg shadow-red-200 transition-all disabled:opacity-50">
+                                            <span x-show="!isDeleting">{{ __('លុបចេញ') }}</span>
+                                            <span x-show="isDeleting"><i class="fas fa-spinner fa-spin mr-1"></i> កំពុងលុប...</span>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -627,4 +559,48 @@
             </div>
         </div>
     </div>
+
+    <script>
+    function executeDeleteUser() {
+        var el = document.getElementById('user-manage-root');
+        var scope = Alpine.$data(el);
+        if (!scope || scope.isDeleting) return;
+        scope.isDeleting = true;
+
+        var form = document.getElementById(scope.deletingFormId);
+        if (!form) { scope.isDeleting = false; return; }
+
+        var url = form.getAttribute('action');
+        var userId = url.split('/').pop();
+
+        fetch(url, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': form.querySelector('input[name="_token"]').value,
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            scope.showDeleteModal = false;
+            scope.isDeleting = false;
+
+            if (data.success) {
+                document.querySelectorAll('[data-user-id="' + userId + '"]').forEach(function(el) {
+                    el.style.transition = 'all 0.4s ease';
+                    el.style.opacity = '0';
+                    el.style.transform = 'translateX(40px)';
+                    setTimeout(function() { el.remove(); }, 400);
+                });
+                window.showToast && window.showToast(data.message || 'អ្នកប្រើប្រាស់ត្រូវបានលុបដោយជោគជ័យ។', 'success');
+            } else {
+                window.showToast && window.showToast(data.message || 'មានបញ្ហា។', 'error');
+            }
+        })
+        .catch(function() {
+            form.submit();
+        });
+    }
+    </script>
 </x-app-layout>

@@ -68,10 +68,17 @@
                 
                 {{-- Academic Section --}}
                 @php
-                    $academicRoutes = ['admin.academic-years.*', 'admin.manage-courses', 'admin.manage-course-offerings', 'admin.manage-programs', 'admin.manage-faculties', 'admin.manage-departments', 'admin.rooms.*'];
+                    $academicRoutes = ['admin.academic-years.*', 'admin.manage-courses', 'admin.manage-course-offerings', 'admin.manage-programs', 'admin.manage-faculties', 'admin.manage-departments', 'admin.rooms.*', 'admin.generations.*'];
                     $isAcademicOpen = in_array(request()->route()->getName() ?? '', $academicRoutes);
                 @endphp
-                <div x-data="{ open: {{ $isAcademicOpen ? 'true' : 'false' }} }" class="mt-4">
+                <div x-data="{
+                    open: $persist(false).as('nav_academic_open'),
+                    init() {
+                        if (localStorage.getItem('nav_academic_open') === null) {
+                            this.open = @json($isAcademicOpen);
+                        }
+                    }
+                }" class="mt-4">
                     <button @click="open = !open" 
                             class="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200 {{ $isAcademicOpen ? 'bg-green-500/10 text-green-400' : 'text-slate-400 hover:bg-slate-700/40 hover:text-slate-300' }}">
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
@@ -109,25 +116,32 @@
                             <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.206 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.794 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.794 5 16.5 5c1.706 0 3.332.477 4.5 1.253v13C19.832 18.477 18.206 18 16.5 18c-1.706 0-3.332.477-4.5 1.253"/></svg>
                             <span>{{ __('nav_course_management') }}</span>
                         </a>
-                        <a href="{{ route('admin.manage-course-offerings') }}" 
-                           class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all {{ request()->routeIs('admin.manage-course-offerings') ? 'bg-green-600 text-white shadow-md shadow-green-600/20' : 'text-gray-400 hover:bg-slate-700/50 hover:text-white' }}">
-                            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                            <span>{{ __('nav_course_offering_management') }}</span>
-                        </a>
                         <a href="{{ route('admin.rooms.index') }}" 
                            class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all {{ request()->routeIs('admin.rooms.*') ? 'bg-green-600 text-white shadow-md shadow-green-600/20' : 'text-gray-400 hover:bg-slate-700/50 hover:text-white' }}">
                             <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/></svg>
                             <span>{{ __('nav_room_management') }}</span>
+                        </a>
+                        <a href="{{ route('admin.manage-course-offerings') }}" 
+                           class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all {{ request()->routeIs('admin.manage-course-offerings') ? 'bg-green-600 text-white shadow-md shadow-green-600/20' : 'text-gray-400 hover:bg-slate-700/50 hover:text-white' }}">
+                            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            <span>{{ __('nav_course_offering_management') }}</span>
                         </a>
                     </div>
                 </div>
 
                 {{-- User Management Section --}}
                 @php
-                    $userRoutes = ['admin.manage-users', 'admin.create-user', 'admin.show-user'];
+                    $userRoutes = ['admin.manage-users', 'admin.create-user', 'admin.show-user', 'admin.edit-user', 'admin.import.*', 'admin.users.export'];
                     $isUserMgmtOpen = in_array(request()->route()->getName() ?? '', $userRoutes);
                 @endphp
-                <div x-data="{ open: {{ $isUserMgmtOpen ? 'true' : 'false' }} }" class="mt-2">
+                <div x-data="{
+                    open: $persist(false).as('nav_user_mgmt_open'),
+                    init() {
+                        if (localStorage.getItem('nav_user_mgmt_open') === null) {
+                            this.open = @json($isUserMgmtOpen);
+                        }
+                    }
+                }" class="mt-2">
                     <button @click="open = !open" 
                             class="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200 {{ $isUserMgmtOpen ? 'bg-green-500/10 text-green-400' : 'text-slate-400 hover:bg-slate-700/40 hover:text-slate-300' }}">
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
@@ -159,6 +173,11 @@
                            class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all {{ request()->routeIs('admin.create-user') ? 'bg-green-600 text-white shadow-md shadow-green-600/20' : 'text-gray-400 hover:bg-slate-700/50 hover:text-white' }}">
                             <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                             <span>{{ __('nav_create_user') }}</span>
+                        </a>
+                        <a href="{{ route('admin.import.index') }}" 
+                           class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all {{ request()->routeIs('admin.import.*') ? 'bg-green-600 text-white shadow-md shadow-green-600/20' : 'text-gray-400 hover:bg-slate-700/50 hover:text-white' }}">
+                            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                            <span>នាំចូលអ្នកប្រើប្រាស់</span>
                         </a>
                     </div>
                 </div>

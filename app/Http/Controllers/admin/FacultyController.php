@@ -6,14 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\Faculty;
 use App\Models\User;
 use App\Traits\AuditableTrait;
-use App\Traits\FirebaseSyncTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 class FacultyController extends Controller
 {
-    use AuditableTrait, FirebaseSyncTrait;
+    use AuditableTrait;
 
     public function index()
     {
@@ -48,7 +47,6 @@ class FacultyController extends Controller
         $faculty = Faculty::create($validated);
 
         try {
-            $this->syncWithFirebase('faculties_sync', 'មហាវិទ្យាល័យថ្មីត្រូវបានបន្ថែម');
             $this->logCreated($faculty);
         } catch (\Exception $e) {}
 
@@ -67,7 +65,6 @@ class FacultyController extends Controller
         $faculty->update($validated);
 
         try {
-            $this->syncWithFirebase('faculties_sync', "មហាវិទ្យាល័យ '{$faculty->name_km}' ត្រូវបានកែប្រែ");
             $this->logUpdated($faculty, $oldAttributes);
         } catch (\Exception $e) {}
 
@@ -92,10 +89,6 @@ class FacultyController extends Controller
             $faculty->delete();
 
             DB::commit();
-
-            try {
-                $this->syncWithFirebase('faculties_sync', 'មហាវិទ្យាល័យមួយត្រូវបានលុបចេញពីប្រព័ន្ធ');
-            } catch (\Exception $e) {}
 
             try {
                 $this->logAction('delete', null, $oldAttributes, null, "Deleted faculty: {$faculty->name_km}");
