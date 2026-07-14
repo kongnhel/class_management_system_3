@@ -22,17 +22,14 @@
 
                     <div class="flex flex-col md:flex-row items-center gap-4 w-full lg:w-auto">
                         
-                        <form action="{{ route('admin.manage-users') }}" method="GET" class="w-full md:w-80">
-                            {{-- រក្សាទុក Tab បច្ចុប្បន្នពេល Search --}}
-                            @if(request('tab'))
-                                <input type="hidden" name="tab" value="{{ request('tab') }}">
-                            @endif
+                        <form id="search-form" action="{{ route('admin.manage-users') }}" method="GET" class="w-full md:w-80">
+                            <input type="hidden" name="tab" value="{{ request('tab', 'admins') }}">
                             <div class="relative group">
                                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                     <i class="fas fa-search text-gray-400 group-focus-within:text-green-500 transition-colors"></i>
                                 </div>
                                 <input
-                                    id="search-input"
+                                    id="live-search"
                                     type="text"
                                     name="search"
                                     value="{{ request('search') }}"
@@ -59,6 +56,9 @@
                     deletingUserType: '',
                     deletingFormId: '',
                     isDeleting: false,
+                    showEditModal: false,
+                    editLoading: false,
+                    editSaving: false,
 
                     init() {
                         const urlParams = new URLSearchParams(window.location.search);
@@ -139,12 +139,12 @@
                                                             </div>
                                                         @endif
                                                     </td>
-                                                    <td class="px-6 py-3 font-semibold text-gray-900">{{ $admin->name }}</td>
-                                                    <td class="px-6 py-3 text-gray-600">{{ $admin->email }}</td>
-                                                    <td class="px-6 py-3 text-gray-600">{{ $admin->profile->full_name_km ?? 'N/A' }}</td>
+                                                    <td class="px-6 py-3 font-semibold text-gray-900 edit-user-name">{{ $admin->name }}</td>
+                                                    <td class="px-6 py-3 text-gray-600 edit-user-email">{{ $admin->email }}</td>
+                                                    <td class="px-6 py-3 text-gray-600 edit-user-fullname">{{ $admin->profile->full_name_km ?? 'N/A' }}</td>
                                                     <td class="px-6 py-3 text-right font-bold space-x-3">
                                                         <a href="{{ route('admin.show-user', $admin->id) }}" class="text-green-600 hover:underline">{{ __('មើល') }}</a>
-                                                        <a href="{{ route('admin.edit-user', $admin->id) }}" class="text-emerald-600 hover:underline">{{ __('កែប្រែ') }}</a>
+                                                        <button type="button" @click.stop="openEditModal({{ $admin->id }})" class="text-emerald-600 hover:underline">{{ __('កែប្រែ') }}</button>
                                                         <button type="button" @click.stop="confirmDelete('delete-admin-{{ $admin->id }}', '{{ __('អ្នកគ្រប់គ្រង') }}')" class="text-red-500 hover:underline">{{ __('លុប') }}</button>
                                                         <form id="delete-admin-{{ $admin->id }}" action="{{ route('admin.delete-user', $admin->id) }}" method="POST" class="hidden">@csrf @method('DELETE')</form>
                                                     </td>
@@ -185,11 +185,11 @@
                                                 </div>
                                                 <div class="flex space-x-4 text-xs font-bold">
                                                     <a href="{{ route('admin.show-user', $admin->id) }}" class="text-green-600 flex items-center">
-                                                        <i class="fas fa-eye mr-1 text-[10px]"></i> {{ __('មើល') }}
-                                                    </a>
-                                                    <a href="{{ route('admin.edit-user', $admin->id) }}" class="text-emerald-600 flex items-center">
-                                                        <i class="fas fa-edit mr-1 text-[10px]"></i> {{ __('កែ') }}
-                                                    </a>
+                                                         <i class="fas fa-eye mr-1 text-[10px]"></i> {{ __('មើល') }}
+                                                     </a>
+                                                     <button type="button" @click.stop="openEditModal({{ $admin->id }})" class="text-emerald-600 flex items-center">
+                                                         <i class="fas fa-edit mr-1 text-[10px]"></i> {{ __('កែ') }}
+                                                     </button>
                                                     <button @click.stop="confirmDelete('del-adm-mob-{{ $admin->id }}', 'Admin')" class="text-red-500 flex items-center">
                                                         <i class="fas fa-trash mr-1 text-[10px]"></i> {{ __('លុប') }}
                                                     </button>
@@ -261,17 +261,17 @@
                                                                         @endif
                                                                     </td>
                                                                     <td class="px-6 py-3">
-                                                                        <div class="text-sm font-bold text-gray-900 uppercase tracking-tighter">{{ $professor->name }}</div>
-                                                                        <div class="text-[11px] text-gray-500 font-medium">{{ $professor->profile->full_name_km ?? 'N/A' }}</div>
+                                                                        <div class="text-sm font-bold text-gray-900 uppercase tracking-tighter edit-user-name">{{ $professor->name }}</div>
+                                                                        <div class="text-[11px] text-gray-500 font-medium edit-user-fullname">{{ $professor->profile->full_name_km ?? 'N/A' }}</div>
                                                                     </td>
-                                                                    <td class="px-6 py-3 text-sm text-gray-600 font-medium">{{ $professor->email }}</td>
+                                                                    <td class="px-6 py-3 text-sm text-gray-600 font-medium edit-user-email">{{ $professor->email }}</td>
                                                                     <td class="px-6 py-3 text-right space-x-1">
                                                                         <a href="{{ route('admin.show-user', $professor->id) }}" class="inline-flex items-center justify-center p-2 text-green-600 hover:bg-green-50 rounded-lg transition-all">
                                                                             <i class="fas fa-eye text-sm"></i>
                                                                         </a>
-                                                                        <a href="{{ route('admin.edit-user', $professor->id) }}" class="inline-flex items-center justify-center p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all">
+                                                                        <button type="button" @click.stop="openEditModal({{ $professor->id }})" class="inline-flex items-center justify-center p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all">
                                                                             <i class="fas fa-edit text-sm"></i>
-                                                                        </a>
+                                                                        </button>
                                                                         <button type="button" @click.stop="confirmDelete('del-prof-{{ $professor->id }}', '{{ __('លោកគ្រូអ្នកគ្រូ') }}')" class="inline-flex items-center justify-center p-2 text-red-500 hover:bg-red-50 rounded-lg transition-all">
                                                                             <i class="fas fa-trash text-sm"></i>
                                                                         </button>
@@ -308,7 +308,7 @@
                                                                 <span class="text-[10px] font-bold text-gray-400 italic">{{ $professor->profile->full_name_km ?? 'N/A' }}</span>
                                                                 <div class="flex space-x-4">
                                                                     <a href="{{ route('admin.show-user', $professor->id) }}" class="text-green-600 text-xs font-bold uppercase tracking-widest">{{ __('មើល') }}</a>
-                                                                    <a href="{{ route('admin.edit-user', $professor->id) }}" class="text-emerald-600 text-xs font-bold uppercase tracking-widest">{{ __('កែ') }}</a>
+                                                                    <button type="button" @click.stop="openEditModal({{ $professor->id }})" class="text-emerald-600 text-xs font-bold uppercase tracking-widest">{{ __('កែ') }}</button>
                                                                     <button @click.stop="confirmDelete('del-mob-prof-{{ $professor->id }}', 'Professor')" class="text-red-500 text-xs font-bold uppercase tracking-widest">{{ __('លុប') }}</button>
                                                                 </div>
                                                             </div>
@@ -326,13 +326,13 @@
                         <div x-show="activeTab === 'students'" class="space-y-4">
                             
                             <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm mb-6">
-                                <form action="{{ route('admin.manage-users') }}" method="GET" class="flex flex-wrap items-end gap-4">
+                                <form id="student-filter-form" action="{{ route('admin.manage-users') }}" method="GET" class="flex flex-wrap items-end gap-4">
                                     <input type="hidden" name="tab" value="students">
                                     <input type="hidden" name="search" value="{{ request('search') }}">
                                     
                                     <div class="flex-1 min-w-[200px]">
                                         <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">{{ __('ជំនាន់') }}</label>
-                                        <select name="generation" class="w-full border-gray-200 rounded-xl text-sm focus:ring-green-500">
+                                        <select name="generation" onchange="this.form.submit()" class="w-full border-gray-200 rounded-xl text-sm focus:ring-green-500">
                                             <option value="">{{ __('គ្រប់ជំនាន់') }}</option>
                                             @foreach($generations as $gen)
                                                 <option value="{{ $gen }}" {{ request('generation') == $gen ? 'selected' : '' }}>
@@ -344,7 +344,7 @@
 
                                     <div class="flex-1 min-w-[200px]">
                                         <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">{{ __('កម្មវិធីសិក្សា') }}</label>
-                                        <select name="program_id" class="w-full border-gray-200 rounded-xl text-sm focus:ring-green-500">
+                                        <select name="program_id" onchange="this.form.submit()" class="w-full border-gray-200 rounded-xl text-sm focus:ring-green-500">
                                             <option value="">{{ __('គ្រប់កម្មវិធីសិក្សា') }}</option>
                                             @foreach($programs as $prog)
                                                 <option value="{{ $prog->id }}" {{ request('program_id') == $prog->id ? 'selected' : '' }}>
@@ -354,14 +354,9 @@
                                         </select>
                                     </div>
 
-                                    <div class="flex gap-2">
-                                        <button type="submit" class="px-6 py-2 bg-gray-800 text-white rounded-xl font-bold text-sm hover:bg-black transition-all shadow-md">
-                                            <i class="fas fa-filter mr-2"></i> {{ __('ចម្រាញ់') }}
-                                        </button>
-                                        <a href="{{ route('admin.manage-users', ['tab' => 'students']) }}" class="px-6 py-2 bg-gray-100 text-gray-600 rounded-xl font-bold text-sm hover:bg-gray-200 transition-all">
-                                            {{ __('Reset') }}
-                                        </a>
-                                    </div>
+                                    <a href="{{ route('admin.manage-users', ['tab' => 'students']) }}" class="px-6 py-2 bg-gray-100 text-gray-600 rounded-xl font-bold text-sm hover:bg-gray-200 transition-all">
+                                        {{ __('Reset') }}
+                                    </a>
                                 </form>
                             </div>
 
@@ -437,10 +432,10 @@
                                                                                 <span class="font-mono text-xs font-bold text-green-700 bg-green-50 px-2 py-1 rounded-md border border-green-100">{{ $student->student_id_code ?? 'N/A' }}</span>
                                                                             </td>
                                                                             <td class="px-6 py-3">
-                                                                                <div class="text-sm font-bold text-gray-900 uppercase tracking-tighter">{{ $student->name }}</div>
-                                                                                <div class="text-[11px] text-gray-500 font-medium">{{ $student->studentProfile->full_name_km ?? 'N/A' }}</div>
+                                                                                <div class="text-sm font-bold text-gray-900 uppercase tracking-tighter edit-user-name">{{ $student->name }}</div>
+                                                                                <div class="text-[11px] text-gray-500 font-medium edit-user-fullname">{{ $student->studentProfile->full_name_km ?? 'N/A' }}</div>
                                                                             </td>
-                                                                            <td class="px-6 py-3 text-sm text-gray-600 font-medium">{{ $student->email ?? 'មិនទាន់បង្កើតគណនី' }}</td>
+                                                                            <td class="px-6 py-3 text-sm text-gray-600 font-medium edit-user-email">{{ $student->email ?? 'មិនទាន់បង្កើតគណនី' }}</td>
                                                                             <td class="px-6 py-3 text-center">
                                                                                 @if($student->computed_year_level)
                                                                                     <span class="inline-flex items-center justify-center min-w-[2.5rem] px-2.5 py-1 rounded-lg text-xs font-bold
@@ -459,9 +454,9 @@
                                                                                 <a href="{{ route('admin.show-user', $student->id) }}" class="inline-flex items-center justify-center p-2 text-green-600 hover:bg-green-50 rounded-lg transition-all" title="{{ __('មើល') }}">
                                                                                     <i class="fas fa-eye text-sm"></i>
                                                                                 </a>
-                                                                                <a href="{{ route('admin.edit-user', $student->id) }}" class="inline-flex items-center justify-center p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all" title="{{ __('កែប្រែ') }}">
+                                                                                <button type="button" @click.stop="openEditModal({{ $student->id }})" class="inline-flex items-center justify-center p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all" title="{{ __('កែប្រែ') }}">
                                                                                     <i class="fas fa-edit text-sm"></i>
-                                                                                </a>
+                                                                                </button>
                                                                                 <button type="button" @click.stop="confirmDelete('del-std-{{ $student->id }}', '{{ __('និស្សិត') }}')" class="inline-flex items-center justify-center p-2 text-red-500 hover:bg-red-50 rounded-lg transition-all" title="{{ __('លុប') }}">
                                                                                     <i class="fas fa-trash text-sm"></i>
                                                                                 </button>
@@ -512,7 +507,7 @@
                                                                         <span class="text-[10px] font-bold text-gray-400 italic">{{ $student->studentProfile->full_name_km ?? 'N/A' }}</span>
                                                                         <div class="flex space-x-4">
                                                                             <a href="{{ route('admin.show-user', $student->id) }}" class="text-green-600 text-xs font-bold uppercase tracking-widest">{{ __('មើល') }}</a>
-                                                                            <a href="{{ route('admin.edit-user', $student->id) }}" class="text-emerald-600 text-xs font-bold uppercase tracking-widest">{{ __('កែ') }}</a>
+                                                                            <button type="button" @click.stop="openEditModal({{ $student->id }})" class="text-emerald-600 text-xs font-bold uppercase tracking-widest">{{ __('កែ') }}</button>
                                                                             <button @click="confirmDelete('del-mob-{{ $student->id }}', 'Student')" class="text-red-500 text-xs font-bold uppercase tracking-widest">{{ __('លុប') }}</button>
                                                                         </div>
                                                                     </div>
@@ -554,8 +549,164 @@
                             </div>
                         </div>
 
+                        </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Edit User Modal --}}
+    <div x-show="showEditModal" class="fixed inset-0 z-[9999] overflow-y-auto" x-cloak>
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div x-show="showEditModal" x-transition.opacity class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm" @click="showEditModal = false"></div>
+            <div x-show="showEditModal" @click.away="showEditModal = false" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                 class="relative w-full max-w-2xl bg-white rounded-2xl shadow-2xl z-50 max-h-[90vh] overflow-y-auto" id="edit-modal-content">
+
+                {{-- Header --}}
+                <div class="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between z-10 rounded-t-2xl">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center">
+                            <i class="fas fa-user-edit"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900">កែប្រែអ្នកប្រើប្រាស់</h3>
+                    </div>
+                    <button @click="showEditModal = false" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                        <i class="fas fa-times text-gray-400"></i>
+                    </button>
+                </div>
+
+                {{-- Loading --}}
+                <div x-show="editLoading" class="p-12 text-center">
+                    <i class="fas fa-spinner fa-spin text-2xl text-emerald-500"></i>
+                    <p class="text-gray-400 mt-2 text-sm">កំពុងទាញយកទិន្នន័យ...</p>
+                </div>
+
+                {{-- Form --}}
+                <form x-show="!editLoading" @submit.prevent="submitEditForm()" class="p-6 space-y-5">
+                    {{-- Name + Role --}}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1.5">ឈ្មោះអ្នកប្រើប្រាស់ <span class="text-red-500">*</span></label>
+                            <input type="text" x-model="editForm.name" required class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1.5">តួនាទី <span class="text-red-500">*</span></label>
+                            <select x-model="editForm.role" required class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
+                                <option value="admin">Admin</option>
+                                <option value="professor">Professor</option>
+                                <option value="student">Student</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    {{-- Email (non-student) --}}
+                    <div x-show="editForm.role !== 'student'">
+                        <label class="block text-xs font-bold text-gray-500 mb-1.5">អ៊ីម៉ែល</label>
+                        <input type="email" x-model="editForm.email" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
+                    </div>
+
+                    {{-- Password --}}
+                    <div x-show="editForm.role !== 'student'" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1.5">ពាក្យសម្ងាត់ថ្មី</label>
+                            <input type="password" x-model="editForm.password" placeholder="ទុកឱ្យនៅទទេប្រសិនបើមិនប្តូរ" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1.5">បញ្ជាក់ពាក្យសម្ងាត់</label>
+                            <input type="password" x-model="editForm.password_confirmation" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
+                        </div>
+                    </div>
+
+                    {{-- Student fields --}}
+                    <div x-show="editForm.role === 'student'" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1.5">កម្មវិធីសិក្សា</label>
+                            <select x-model="editForm.program_id" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
+                                <option value="">ជ្រើសរើស</option>
+                                <template x-for="p in (editForm.programs || [])" :key="p.id">
+                                    <option :value="p.id" x-text="p.name"></option>
+                                </template>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1.5">ជំនាន់</label>
+                            <select x-model="editForm.generation" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
+                                <option value="">ជ្រើសរើស</option>
+                                <template x-for="g in (editForm.generations || [])" :key="g.name">
+                                    <option :value="g.name" x-text="'ជំនាន់ទី' + g.name"></option>
+                                </template>
+                            </select>
+                        </div>
+                    </div>
+
+                    {{-- Professor fields --}}
+                    <div x-show="editForm.role === 'professor'" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1.5">មហាវិទ្យាល័យ</label>
+                            <select x-model="editForm.faculty_id" @change="filterEditDepartments($event.target.value)" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
+                                <option value="">ជ្រើសរើស</option>
+                                <template x-for="f in (editForm.faculties || [])" :key="f.id">
+                                    <option :value="f.id" x-text="f.name"></option>
+                                </template>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1.5">ដេប៉ាតឺម៉ង់</label>
+                            <select x-model="editForm.department_id" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
+                                <option value="">ជ្រើសរើស</option>
+                                <template x-for="d in editDepartments" :key="d.id">
+                                    <option :value="d.id" x-text="d.name"></option>
+                                </template>
+                            </select>
+                        </div>
+                    </div>
+
+                    {{-- Profile Info --}}
+                    <div class="border-t border-gray-100 pt-5">
+                        <h4 class="text-sm font-bold text-gray-700 mb-3"><i class="fas fa-id-card mr-1.5 text-orange-500"></i> ព័ត៌មានផ្ទាល់ខ្លួន</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-1.5">ឈ្មោះពេញ (ខ្មែរ)</label>
+                                <input type="text" x-model="editForm.full_name_km" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-1.5">ឈ្មោះពេញ (អង់គ្លេស)</label>
+                                <input type="text" x-model="editForm.full_name_en" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-1.5">ភេទ</label>
+                                <select x-model="editForm.gender" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
+                                    <option value="">ជ្រើសរើស</option>
+                                    <option value="male">ប្រុស</option>
+                                    <option value="female">ស្រី</option>
+                                    <option value="other">ផ្សេងទៀត</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-1.5">លេខទូរស័ព្ទ</label>
+                                <input type="text" x-model="editForm.phone_number" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-1.5">អាសយដ្ឋាន</label>
+                                <input type="text" x-model="editForm.address" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-1.5">ថ្ងៃខែឆ្នាំកំណើត</label>
+                                <input type="date" x-model="editForm.date_of_birth" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Actions --}}
+                    <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
+                        <button type="button" @click="showEditModal = false" class="px-5 py-2.5 text-sm font-bold text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition-all">បោះបង់</button>
+                        <button type="submit" :disabled="editSaving" class="px-6 py-2.5 text-sm font-bold text-white bg-emerald-600 rounded-xl hover:bg-emerald-700 shadow-lg shadow-emerald-200 transition-all disabled:opacity-50">
+                            <span x-show="!editSaving"><i class="fas fa-save mr-1.5"></i> រក្សាទុក</span>
+                            <span x-show="editSaving"><i class="fas fa-spinner fa-spin mr-1.5"></i> កំពុងរក្សាទុក...</span>
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -602,5 +753,19 @@
             form.submit();
         });
     }
+    </script>
+
+    <script>
+    (function() {
+        var searchInput = document.getElementById('live-search');
+        var searchForm = document.getElementById('search-form');
+        var timer = null;
+        if (searchInput && searchForm) {
+            searchInput.addEventListener('input', function() {
+                clearTimeout(timer);
+                timer = setTimeout(function() { searchForm.submit(); }, 400);
+            });
+        }
+    })();
     </script>
 </x-app-layout>

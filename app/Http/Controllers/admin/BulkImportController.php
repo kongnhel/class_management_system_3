@@ -27,8 +27,9 @@ class BulkImportController extends Controller
         $faculties = Faculty::all();
         $departments = Department::all();
         $programs = Program::all();
+        $generations = \App\Models\Generation::orderByDesc('name')->get();
 
-        return view('admin.import.index', compact('faculties', 'departments', 'programs'));
+        return view('admin.import.index', compact('faculties', 'departments', 'programs', 'generations'));
     }
 
     /**
@@ -134,6 +135,32 @@ class BulkImportController extends Controller
                         $studentId = $this->studentIdGenerator->generate((int) $request->program_id, $request->generation);
                         $user->student_id_code = $studentId;
                         $user->save();
+
+                        // Create student_program_enrollments record
+                        \App\Models\StudentProgramEnrollment::create([
+                            'student_user_id' => $user->id,
+                            'program_id' => $request->program_id,
+                            'starting_year_level' => 1,
+                            'enrollment_date' => now(),
+                            'status' => 'active',
+                        ]);
+
+                        // Auto-enroll in all matching course offerings for this program
+                        $matchingOfferings = \App\Models\CourseOffering::whereHas('targetPrograms', function ($q) use ($request) {
+                            $q->where('course_offering_program.program_id', $request->program_id)
+                              ->where('course_offering_program.generation', $request->generation);
+                        })->get();
+
+                        foreach ($matchingOfferings as $offering) {
+                            \App\Models\StudentCourseEnrollment::firstOrCreate([
+                                'student_user_id' => $user->id,
+                                'course_offering_id' => $offering->id,
+                            ], [
+                                'student_id' => $user->id,
+                                'enrollment_date' => now(),
+                                'status' => 'enrolled',
+                            ]);
+                        }
                     }
 
                     // Normalize gender

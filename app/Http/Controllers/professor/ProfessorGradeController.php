@@ -105,6 +105,62 @@ class ProfessorGradeController extends Controller
         return view('professor.grades.index', compact('courseOffering', 'students', 'assessments', 'gradebook'));
     }
 
+    public function exportExcel($offering_id)
+    {
+        $courseOffering = CourseOffering::with([
+            'course',
+            'course.department.faculty',
+            'lecturer',
+            'studentCourseEnrollments.student.studentProfile',
+        ])->findOrFail($offering_id);
+
+        $this->authorizeCourseOffering($courseOffering);
+
+        $enrollments = $courseOffering->studentCourseEnrollments;
+        $studentIds = $enrollments->pluck('student_user_id')->toArray();
+
+        $assignments = Assignment::where('course_offering_id', $offering_id)->get();
+        $exams = Exam::where('course_offering_id', $offering_id)->get();
+        $quizzes = Quiz::where('course_offering_id', $offering_id)->get();
+        $assessments = collect($assignments)->concat($exams)->concat($quizzes)->sortBy('created_at');
+
+        $allResults = ExamResult::whereIn('student_user_id', $studentIds)->get();
+
+        $gradebook = [];
+        foreach ($enrollments as $enrollment) {
+            $sid = $enrollment->student_user_id;
+            foreach ($assessments as $assessment) {
+                $type = ($assessment instanceof Assignment) ? 'assignment' : (($assessment instanceof Quiz) ? 'quiz' : 'exam');
+                $result = $allResults->where('assessment_id', $assessment->id)
+                    ->where('student_user_id', $sid)
+                    ->where('assessment_type', $type)->first();
+                $gradebook[$sid][$type.'_'.$assessment->id] = $result ? (float) $result->score_obtained : 0;
+            }
+        }
+
+        $students = $enrollments->map(function ($e) use ($gradebook, $assessments) {
+            $student = $e->student;
+            $attendanceScore = $student->getAttendanceScoreByCourse($e->course_offering_id);
+            $baseScore = $attendanceScore;
+            $quizBonus = 0;
+            foreach ($assessments as $a) {
+                $type = ($a instanceof Assignment) ? 'assignment' : (($a instanceof Quiz) ? 'quiz' : 'exam');
+                $score = $gradebook[$student->id][$type.'_'.$a->id] ?? 0;
+                if ($type === 'quiz') { $quizBonus += $score; } else { $baseScore += $score; }
+            }
+            $total = min($baseScore + $quizBonus, 100);
+            $student->temp_total = $total;
+            return $student;
+        })->sortByDesc('temp_total')->values();
+
+        $fileName = "grades_{$courseOffering->course->title_en}_{$courseOffering->academic_year}_sem{$courseOffering->semester}.xlsx";
+
+        return \Maatwebsite\Excel\Facades\Excel::download(
+            new \App\Exports\ProfessorGradeExcelExport($courseOffering, $students, $assessments, $gradebook),
+            $fileName
+        );
+    }
+
     public function createAssessmentForm($offering_id)
     {
         $courseOffering = CourseOffering::with('course')->findOrFail($offering_id);

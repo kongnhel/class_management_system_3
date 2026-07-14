@@ -136,10 +136,6 @@
                                     <input type="date" id="end_date" name="end_date" value="{{ \Carbon\Carbon::parse($courseOffering->end_date)->format('Y-m-d') }}" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>
                                 </div>
                             </div>
-                            <label class="flex items-center gap-3 cursor-pointer">
-                                <input type="checkbox" name="is_open_for_self_enrollment" value="1" class="w-4 h-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500" {{ $courseOffering->is_open_for_self_enrollment ? 'checked' : '' }}>
-                                <span class="text-sm font-medium text-gray-700">{{ __('អនុញ្ញាតឱ្យសិស្សចុះឈ្មោះដោយខ្លួនឯង') }}</span>
-                            </label>
                         </div>
                     </div>
 

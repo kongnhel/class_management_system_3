@@ -9,6 +9,7 @@ use App\Models\GradingCategory;
 use App\Models\Quiz;
 use App\Models\StudentCourseEnrollment;
 use App\Models\User;
+use App\Services\GradingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -195,33 +196,51 @@ class StudentGradeController extends Controller
             ->with(['course', 'lecturer', 'assignments', 'exams', 'quizzes'])
             ->get();
 
-        $assessmentsByCourse = $courseOfferings->map(function ($offering) use ($user) {
-            $assignments = $offering->assignments->map(function ($a) use ($user) {
-                $result = ExamResult::where('student_user_id', $user->id)
-                    ->where('assessment_id', $a->id)->where('assessment_type', 'assignment')->first();
-                return ['title' => $a->title_km ?? $a->title_en, 'type' => 'assignment', 'type_label' => 'កិច្ចការ', 'max_score' => $a->max_score, 'score' => $result?->score_obtained, 'date' => $a->due_date, 'notes' => $result?->notes];
-            });
-            $midterms = $offering->exams->where('title_en', 'like', '%Midterm%')->map(function ($e) use ($user) {
-                $result = ExamResult::where('student_user_id', $user->id)
-                    ->where('assessment_id', $e->id)->where('assessment_type', 'exam')->first();
-                return ['title' => $e->title_km ?? $e->title_en, 'type' => 'midterm', 'type_label' => 'ប្រឡងពាក់កណ្ដាល់', 'max_score' => $e->max_score, 'score' => $result?->score_obtained, 'date' => $e->exam_date, 'notes' => $result?->notes];
-            });
-            $finals = $offering->exams->where('title_en', 'like', '%Final%')->map(function ($e) use ($user) {
-                $result = ExamResult::where('student_user_id', $user->id)
-                    ->where('assessment_id', $e->id)->where('assessment_type', 'exam')->first();
-                return ['title' => $e->title_km ?? $e->title_en, 'type' => 'final', 'type_label' => 'ប្រឡងប្រចាំឆមាស', 'max_score' => $e->max_score, 'score' => $result?->score_obtained, 'date' => $e->exam_date, 'notes' => $result?->notes];
-            });
-            $quizzes = $offering->quizzes->map(function ($q) use ($user) {
-                $result = ExamResult::where('student_user_id', $user->id)
-                    ->where('assessment_id', $q->id)->where('assessment_type', 'quiz')->first();
-                return ['title' => $q->title_km ?? $q->title_en, 'type' => 'quiz', 'type_label' => 'Quiz (Bonus)', 'max_score' => $q->max_score, 'score' => $result?->score_obtained, 'date' => $q->quiz_date, 'notes' => $result?->notes];
-            });
-            $all = $assignments->concat($midterms)->concat($finals)->concat($quizzes)->filter(fn ($a) => $a['score'] !== null);
-            $att = $user->getAttendanceScoreByCourse($offering->id);
-            $nonQuiz = $all->where('type', '!=', 'quiz')->sum('score');
-            $quizBonus = $all->where('type', 'quiz')->sum('score');
-            return ['offering' => $offering, 'course_name' => $offering->course->title_km ?? $offering->course->title_en, 'assessments' => $all->values(), 'attendance_score' => $att, 'quiz_bonus' => $quizBonus, 'total_score' => min($att + $nonQuiz + $quizBonus, 100)];
-        })->filter(fn ($c) => $c['assessments']->isNotEmpty())->values();
+        $allResultIds = ExamResult::where('student_user_id', $user->id)->get()->keyBy(fn ($r) => $r->assessment_type.'_'.$r->assessment_id);
+
+        $assessmentsByCourse = $courseOfferings->map(function ($offering) use ($user, $allResultIds) {
+            $items = collect();
+
+            foreach ($offering->assignments as $a) {
+                $key = 'assignment_'.$a->id;
+                $result = $allResultIds->get($key);
+                $items->push(['title' => $a->title_km ?? $a->title_en, 'type' => 'assignment', 'type_label' => 'កិច្ចការ', 'max_score' => $a->max_score, 'score' => $result?->score_obtained, 'date' => $a->due_date, 'notes' => $result?->notes]);
+            }
+
+            foreach ($offering->exams as $e) {
+                $key = 'exam_'.$e->id;
+                $result = $allResultIds->get($key);
+                $titleEn = strtolower($e->title_en ?? '');
+                $isMidterm = str_contains($titleEn, 'midterm') || str_contains($titleEn, 'ពាក់កណ្ដាល់') || str_contains(strtolower($e->title_km ?? ''), 'ពាក់កណ្ដាល់');
+                $typeLabel = $isMidterm ? 'ប្រឡងពាក់កណ្ដាល់' : 'ប្រឡងប្រចាំឆមាស';
+                $type = $isMidterm ? 'midterm' : 'final';
+                $items->push(['title' => $e->title_km ?? $e->title_en, 'type' => $type, 'type_label' => $typeLabel, 'max_score' => $e->max_score, 'score' => $result?->score_obtained, 'date' => $e->exam_date, 'notes' => $result?->notes]);
+            }
+
+            foreach ($offering->quizzes as $q) {
+                $key = 'quiz_'.$q->id;
+                $result = $allResultIds->get($key);
+                $items->push(['title' => $q->title_km ?? $q->title_en, 'type' => 'quiz', 'type_label' => 'Quiz (Bonus)', 'max_score' => $q->max_score, 'score' => $result?->score_obtained, 'date' => $q->quiz_date, 'notes' => $result?->notes]);
+            }
+
+            $att = (float) ($user->getAttendanceScoreByCourse($offering->id) ?? 0);
+
+            $scored = $items->filter(fn ($a) => $a['score'] !== null);
+            $nonQuiz = $scored->where('type', '!=', 'quiz')->sum('score');
+            $quizBonus = $scored->where('type', 'quiz')->sum('score');
+            $totalScore = min($att + $nonQuiz + $quizBonus, 100);
+            $letterGrade = GradingService::getLetterGrade($totalScore);
+
+            return [
+                'offering' => $offering,
+                'course_name' => $offering->course->title_km ?? $offering->course->title_en,
+                'assessments' => $items->values(),
+                'attendance_score' => $att,
+                'quiz_bonus' => $quizBonus,
+                'total_score' => $totalScore,
+                'letter_grade' => $letterGrade,
+            ];
+        })->values();
 
         return view('student.my-assessments', compact('assessmentsByCourse'));
     }

@@ -430,7 +430,7 @@
                 .then(async (result) => {
                     const user = result.user;
                     const idToken = await user.getIdToken();
-                    fetch('{{ route("user.link-google") }}', {
+                    return fetch('{{ route("user.link-google") }}', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -439,25 +439,34 @@
                         body: JSON.stringify({
                             id_token: idToken
                         })
-                    })
-                    .then(res => res.json())
-                    .then(data => {
-                        if(data.status === 'linked') {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'ជោគជ័យ',
-                                text: 'គណនី Google ត្រូវបានភ្ជាប់!',
-                                timer: 2000,
-                                showConfirmButton: false
-                            }).then(() => window.location.reload());
-                        }
                     });
+                })
+                .then(async (res) => {
+                    const data = await res.json().catch(() => ({ status: 'error', message: 'មានបញ្ហាក្នុងការទាក់ទងនឹង server។' }));
+                    if (data.status === 'linked') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'ជោគជ័យ',
+                            text: 'គណនី Google ត្រូវបានភ្ជាប់!',
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(() => window.location.reload());
+                    } else {
+                        btn.innerHTML = originalHtml;
+                        btn.disabled = false;
+                        Swal.fire('បរាជ័យ', data.message || 'មិនអាចភ្ជាប់ Google បានទេ', 'error');
+                    }
                 })
                 .catch((error) => {
                     console.error("Firebase Error:", error.code);
                     btn.innerHTML = originalHtml;
                     btn.disabled = false;
-                    Swal.fire('បរាជ័យ', 'មិនអាចភ្ជាប់ Google បានទេ៖ ' + error.message, 'error');
+                    let msg = 'មិនអាចភ្ជាប់ Google បានទេ';
+                    if (error.code === 'auth/popup-closed-by-user') msg = 'បង្អួចបានបិទមុនពេលភ្ជាប់បានសម្រេច។';
+                    else if (error.code === 'auth/popup-blocked') msg = 'Popup ត្រូវបានបិទ។ សូមអនុញ្ញាត popup សម្រាប់ទំព័រនេះ។';
+                    else if (error.code === 'auth/unauthorized-domain') msg = 'Domain នេះមិនទាន់បានអនុញ្ញាតនៅក្នុង Firebase Console ទេ។';
+                    else if (error.message) msg = error.message;
+                    Swal.fire('បរាជ័យ', msg, 'error');
                 });
         };
     </script>

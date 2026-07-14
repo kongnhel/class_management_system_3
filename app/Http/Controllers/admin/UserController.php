@@ -288,6 +288,23 @@ class UserController extends Controller
                 'enrollment_date' => now(),
                 'status' => 'active',
             ]);
+
+            // Auto-enroll in all matching existing course offerings
+            $matchingOfferings = \App\Models\CourseOffering::whereHas('targetPrograms', function ($q) use ($request) {
+                $q->where('course_offering_program.program_id', $request->program_id)
+                  ->where('course_offering_program.generation', $request->generation);
+            })->get();
+
+            foreach ($matchingOfferings as $offering) {
+                \App\Models\StudentCourseEnrollment::firstOrCreate([
+                    'student_user_id' => $user->id,
+                    'course_offering_id' => $offering->id,
+                ], [
+                    'student_id' => $user->id,
+                    'enrollment_date' => now(),
+                    'status' => 'enrolled',
+                ]);
+            }
         }
 
         $profileData = $request->only(['full_name_km', 'full_name_en', 'gender', 'date_of_birth', 'phone_number', 'address']);
@@ -334,6 +351,34 @@ class UserController extends Controller
         $generations = \App\Models\Generation::orderByDesc('name')->pluck('name')->toArray();
 
         return view('admin.users.edit', compact('user', 'departments', 'programs', 'faculties', 'generations'));
+    }
+
+    public function ajaxEditUser(User $user)
+    {
+        $user->load('profile', 'studentProfile', 'department.faculty', 'program');
+
+        $profile = $user->role === 'student' ? $user->studentProfile : $user->profile;
+
+        return response()->json([
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'role' => $user->role,
+            'program_id' => $user->program_id,
+            'department_id' => $user->department_id,
+            'generation' => $user->generation,
+            'student_id_code' => $user->student_id_code,
+            'full_name_km' => $profile->full_name_km ?? '',
+            'full_name_en' => $profile->full_name_en ?? '',
+            'gender' => $profile->gender ?? '',
+            'phone_number' => $profile->phone_number ?? '',
+            'address' => $profile->address ?? '',
+            'date_of_birth' => $profile->date_of_birth ?? '',
+            'faculty_id' => $user->department?->faculty_id ?? '',
+            'programs' => Program::all()->map(fn($p) => ['id' => $p->id, 'name' => $p->name_km ?? $p->name_en]),
+            'departments' => Department::all()->map(fn($d) => ['id' => $d->id, 'name' => $d->name_km ?? $d->name_en, 'faculty_id' => $d->faculty_id]),
+            'generations' => \App\Models\Generation::orderByDesc('name')->get()->map(fn($g) => ['name' => $g->name, 'join_year' => $g->join_year ?? '']),
+        ]);
     }
 
     public function updateUser(Request $request, User $user)
@@ -416,6 +461,27 @@ class UserController extends Controller
             $user->studentProgramEnrollments()
                 ->where('status', 'active')
                 ->update(['degree_level' => $request->degree_level]);
+        }
+
+        $user->load('profile', 'studentProfile', 'department.faculty', 'program');
+        $profile = $user->role === 'student' ? $user->studentProfile : $user->profile;
+
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'ព័ត៌មានត្រូវបានធ្វើបច្ចុប្បន្នភាព។',
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'role' => $user->role,
+                    'full_name_km' => $profile->full_name_km ?? '',
+                    'full_name_en' => $profile->full_name_en ?? '',
+                    'student_id_code' => $user->student_id_code ?? '',
+                    'program_name' => $user->program?->name_km ?? '',
+                    'department_name' => $user->department?->name_km ?? '',
+                ],
+            ]);
         }
 
         return redirect()->route('admin.manage-users')->with('success', 'ព័ត៌មានត្រូវបានធ្វើបច្ចុប្បន្នភាព។');

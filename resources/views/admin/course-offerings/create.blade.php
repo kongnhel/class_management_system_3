@@ -155,10 +155,6 @@
                                     <input type="date" name="end_date" id="end_date" class="w-full min-w-0 rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm px-4 py-2.5" value="{{ old('end_date') }}" required>
                                 </div>
                             </div>
-                            <label class="flex items-center gap-3 cursor-pointer">
-                                <input type="checkbox" name="is_open_for_self_enrollment" value="1" class="w-4 h-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500" {{ old('is_open_for_self_enrollment') ? 'checked' : '' }}>
-                                <span class="text-sm font-medium text-gray-700">{{ __('អនុញ្ញាតឱ្យសិស្សចុះឈ្មោះដោយខ្លួនឯង') }}</span>
-                            </label>
                         </div>
                     </div>
 

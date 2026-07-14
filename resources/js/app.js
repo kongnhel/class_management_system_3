@@ -4,9 +4,12 @@ import "./bootstrap";
 import Alpine from "alpinejs";
 import persist from "@alpinejs/persist";
 import collapse from "@alpinejs/collapse";
+import { marked } from "marked";
+import "./ai-chat";
 
 Alpine.plugin(persist);
 Alpine.plugin(collapse);
 
 window.Alpine = Alpine;
+window.marked = marked;
 

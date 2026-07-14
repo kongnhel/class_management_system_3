@@ -75,14 +75,14 @@
                         <div class="bg-emerald-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">1</div>
                         <div>
                             <p class="font-bold text-gray-900 text-sm">ទាញយក Template</p>
-                            <p class="text-xs text-gray-500 mt-1">ទាញយកម៉ាស៊ីនត្រជាក់ XLSX</p>
+                            <p class="text-xs text-gray-500 mt-1">ទាញយក XLSX</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
                         <div class="bg-emerald-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">2</div>
                         <div>
                             <p class="font-bold text-gray-900 text-sm">បំពេញឈ្មោះ</p>
-                            <p class="text-xs text-gray-500 mt-1">បំពេញឈ្មោះសិស្សក្នុងម៉ាស៊ីនត្រជាក់ (ត្រឹមឈ្មោះបានហើយ)</p>
+                            <p class="text-xs text-gray-500 mt-1">បំពេញឈ្មោះសិស្ស (ត្រឹមឈ្មោះបានហើយ)</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
@@ -104,8 +104,8 @@
                         </div>
                         <div>
                             <h3 class="font-bold text-gray-900">ទាញយក Template</h3>
-                            <p class="text-sm text-gray-500 mt-0.5">ទាញយកម៉ាស៊ីនត្រជាក់ XLSX សម្រាប់បំពេញឈ្មោះសិស្ស</p>
-                            <p class="text-xs text-emerald-600 mt-1"><i class="fas fa-info-circle mr-1"></i> ត្រឹមតែឈ្មោះ (Name) ត្រូវបានទាមទារ • អ៊ីម៉ែលនិងព័ត៌មានផ្សេងៗសូមបំពេញនៅពេលក្រោយ</p>
+                            <p class="text-sm text-gray-500 mt-0.5">ទាញយក XLSX សម្រាប់បំពេញឈ្មោះសិស្ស</p>
+                            <p class="text-xs text-emerald-600 mt-1"><i class="fas fa-info-circle mr-1"></i> ត្រឹមតែឈ្មោះ (Name) ត្រូវបានទាមទារ • អ៊ីម៉ែលនិងព័ត៌មានផ្សេងៗសូមបំពេញនៅពេលក្រោយបាន</p>
                         </div>
                     </div>
                     <a href="{{ route('admin.import.template') }}" class="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white px-5 py-2.5 rounded-xl font-bold shadow-md hover:shadow-lg transition-all duration-200">
@@ -147,14 +147,18 @@
                                 <select name="program_id" id="program_id" required class="w-full rounded-xl border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 text-sm">
                                     <option value="">ជ្រើសរើសកម្មវិធីសិក្សា</option>
                                     @foreach($programs as $program)
-                                    <option value="{{ $program->id }}" @if(old('program_id')==$program->id) selected @endif>{{ $program->name_km }}</option>
+                                    <option value="{{ $program->id }}" data-name="{{ $program->name_km }}" @if(old('program_id') == $program->id) selected @endif>{{ $program->name_km }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div>
                                 <label class="block text-sm font-bold text-gray-700 mb-2">ជំនាន់</label>
-                                <input type="text" name="generation" value="{{ old('generation') }}" placeholder="ឧ. 17"
-                                    class="w-full rounded-xl border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 text-sm">
+                                <select name="generation" class="w-full rounded-xl border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 text-sm">
+                                    <option value="">ជ្រើសរើសជំនាន់</option>
+                                    @foreach($generations as $gen)
+                                    <option value="{{ $gen->name }}" @if(old('generation') == $gen->name) selected @endif>{{ $gen->name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -178,7 +182,7 @@
                             ឯកសារ <span class="text-red-500">*</span>
                         </label>
                         <div id="drop-zone"
-                            class="relative border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center cursor-pointer transition-all duration-200 hover:border-emerald-400 hover:bg-emerald-50/30">
+                            class="relative border-2 border-dashed border-gray-400 rounded-2xl p-8 text-center cursor-pointer transition-all duration-200 hover:border-emerald-400 hover:bg-emerald-50/30 bg-gray-50/50">
                             <input type="file" name="import_file" accept=".xlsx,.xls,.csv" required
                                 class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                                 onchange="handleFileSelect(this)">
@@ -291,5 +295,6 @@
             if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
             return (bytes / 1048576).toFixed(1) + ' MB';
         }
+
     </script>
 </x-app-layout>

@@ -120,8 +120,8 @@
 
         const firebaseConfig = {
             apiKey: "{{ config('services.firebase.api_key') }}",
-            authDomain: "{{ env('VITE_FIREBASE_AUTH_DOMAIN') }}",
-            projectId: "{{ env('VITE_FIREBASE_PROJECT_ID') }}",
+            authDomain: "{{ config('services.firebase.auth_domain') }}",
+            projectId: "{{ config('services.firebase.project_id') }}",
         };
 
         const app = initializeApp(firebaseConfig);
@@ -129,9 +129,12 @@
         const provider = new GoogleAuthProvider();
 
         window.loginWithGoogle = () => {
+            const btn = event?.currentTarget;
+            if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; }
+            
             signInWithPopup(auth, provider).then(async (result) => {
                 const idToken = await result.user.getIdToken();
-                fetch('{{ route("auth.google.callback") }}', {
+                return fetch('{{ route("auth.google.callback") }}', {
                     method: 'POST',
                     headers: { 
                         'Content-Type': 'application/json', 
@@ -140,14 +143,32 @@
                     body: JSON.stringify({ 
                         id_token: idToken
                     })
-                }).then(res => res.json()).then(data => {
-                    if(data.status === 'success') {
-                        window.location.href = "/dashboard";
-                    } else {
-                        showToast(data.message, 'error');
-                    }
                 });
-            }).catch(error => console.error(error));
+            }).then(async (res) => {
+                const data = await res.json().catch(() => ({ status: 'error', message: 'មានបញ្ហាក្នុងការទាក់ទងនឹង server។' }));
+                if (data.status === 'success') {
+                    window.location.href = "/dashboard";
+                } else {
+                    showToast(data.message || 'បរាជ័យក្នុងការចូល', 'error');
+                    if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+                }
+            }).catch(error => {
+                console.error('Google login error:', error);
+                let msg = 'មិនអាចចូលជាមួយ Google បានទេ។';
+                if (error.code === 'auth/popup-closed-by-user') {
+                    msg = 'បង្អួចបានបិទមុនពេលចូលបានសម្រេច។';
+                } else if (error.code === 'auth/popup-blocked') {
+                    msg = 'បង្អួចផុតត្រូវបានបិទ។ សូមអនុញ្ញាត popup សម្រាប់ទំព័រនេះ។';
+                } else if (error.code === 'auth/unauthorized-domain') {
+                    msg = 'Domain នេះមិនទាន់បានអនុញ្ញាតនៅក្នុង Firebase Console ទេ។';
+                } else if (error.code === 'auth/network-request-failed') {
+                    msg = 'មានបញ្ហាបណ្តាញអ៊ីនធឺណិត។ សូមព្យាយាមម្តងទៀត។';
+                } else if (error.message) {
+                    msg = error.message;
+                }
+                showToast(msg, 'error');
+                if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+            });
         };
     </script>
 </x-guest-layout>

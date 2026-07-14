@@ -119,7 +119,6 @@ class CourseOfferingController extends Controller
             'academic_year' => 'required|string|max:255',
             'semester' => 'required|string|max:255',
             'capacity' => 'required|integer|min:1',
-            'is_open_for_self_enrollment' => 'boolean',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
 
@@ -220,7 +219,6 @@ class CourseOfferingController extends Controller
                 'academic_year' => $validated['academic_year'],
                 'semester' => $validated['semester'],
                 'capacity' => $validated['capacity'],
-                'is_open_for_self_enrollment' => $request->boolean('is_open_for_self_enrollment'),
                 'start_date' => $validated['start_date'],
                 'end_date' => $validated['end_date'],
             ]);
@@ -300,7 +298,6 @@ class CourseOfferingController extends Controller
             'academic_year' => 'required|string|max:255',
             'semester' => 'required|string|max:255',
             'capacity' => 'required|integer|min:1',
-            'is_open_for_self_enrollment' => 'boolean',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
             'target_programs' => 'required|array|min:1',
@@ -401,7 +398,6 @@ class CourseOfferingController extends Controller
                 'academic_year' => $validated['academic_year'],
                 'semester' => $validated['semester'],
                 'capacity' => $validated['capacity'],
-                'is_open_for_self_enrollment' => $request->boolean('is_open_for_self_enrollment'),
                 'start_date' => $validated['start_date'],
                 'end_date' => $validated['end_date'],
             ]);
@@ -412,6 +408,25 @@ class CourseOfferingController extends Controller
                 $syncData[$prog['program_id']] = ['generation' => $prog['generation']];
             }
             $courseOffering->targetPrograms()->sync($syncData);
+
+            // 4b. Auto-enroll students for newly added programs
+            foreach ($validated['target_programs'] as $prog) {
+                $students = User::where('role', 'student')
+                    ->where('program_id', $prog['program_id'])
+                    ->where('generation', $prog['generation'])
+                    ->get();
+
+                foreach ($students as $student) {
+                    \App\Models\StudentCourseEnrollment::firstOrCreate([
+                        'student_user_id' => $student->id,
+                        'course_offering_id' => $courseOffering->id,
+                    ], [
+                        'student_id' => $student->id,
+                        'enrollment_date' => now(),
+                        'status' => 'enrolled',
+                    ]);
+                }
+            }
 
             // 5. Update Schedules (Delete & Re-create)
             $courseOffering->schedules()->delete();

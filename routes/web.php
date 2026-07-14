@@ -44,6 +44,7 @@ Route::middleware(['auth', 'throttle:60,1'])->group(function () {
     Route::post('/ai/send', [SmartAssistantController::class, 'generateResponse'])->name('ai.send');
     Route::get('/ai/history', [SmartAssistantController::class, 'getHistory'])->name('ai.history');
     Route::post('/ai/clear-history', [SmartAssistantController::class, 'clearHistory'])->name('ai.clear-history');
+    Route::post('/ai/feedback', [SmartAssistantController::class, 'feedback'])->name('ai.feedback');
 });
 
 Route::get('/locale/{locale}', function (string $locale) {
@@ -111,6 +112,7 @@ Route::middleware(['auth', 'role:admin', 'throttle:120,1'])->prefix('admin')->na
     Route::get('/users/preview-student-id', [UserController::class, 'previewStudentId'])->name('preview-student-id');
     Route::post('/users', [UserController::class, 'storeUser'])->name('store-user');
     Route::get('/users/{user}/edit', [UserController::class, 'editUser'])->name('edit-user');
+    Route::get('/users/{user}/ajax-edit', [UserController::class, 'ajaxEditUser'])->name('ajax-edit-user');
     Route::put('/users/{user}', [UserController::class, 'updateUser'])->name('update-user');
     Route::delete('/users/{user}', [UserController::class, 'deleteUser'])->name('delete-user');
     Route::get('/users/show/{user}', [UserController::class, 'showUser'])->name('show-user');
@@ -239,6 +241,7 @@ Route::middleware(['auth', 'role:professor'])->prefix('professor')->name('profes
     Route::get('/all-students', [ProfessorController::class, 'allStudents'])->name('all-students');
     Route::get('/my-course-offerings', [ProfessorCourseOfferingController::class, 'myCourseOfferings'])->name('my-course-offerings');
     Route::get('/course-offering/{offering_id}/grades', [ProfessorGradeController::class, 'manageGrades'])->name('manage-grades');
+    Route::get('/course-offering/{offering_id}/grades/export-excel', [ProfessorGradeController::class, 'exportExcel'])->name('grades.export-excel');
     Route::get('/course-offering/{offering_id}/attendance', [ProfessorController::class, 'manageAttendance'])->name('manage-attendance');
     Route::get('/course-offering/{offering_id}/assignments', [ProfessorController::class, 'manageAssignments'])->name('manage-assignments');
     Route::get('/course-offering/{offering_id}/exams', [ProfessorController::class, 'manageExams'])->name('manage-exams');

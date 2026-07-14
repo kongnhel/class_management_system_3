@@ -28,15 +28,21 @@
                                     <p class="text-xs text-gray-400">{{ $courseData['offering']->academic_year }} • ឆមាស {{ $courseData['offering']->semester }}</p>
                                 </div>
                             </div>
-                            <div class="text-right">
-                                <p class="text-2xl font-black text-emerald-600">{{ number_format($courseData['total_score'], 1) }}</p>
-                                <p class="text-[10px] font-bold text-gray-400 uppercase">សរុប</p>
+                            <div class="flex items-center gap-4">
+                                <div class="text-right">
+                                    <p class="text-2xl font-black text-emerald-600">{{ number_format($courseData['total_score'], 1) }}</p>
+                                    <p class="text-[10px] font-bold text-gray-400 uppercase">សរុប</p>
+                                </div>
+                                <div class="w-12 h-12 rounded-xl flex flex-col items-center justify-center text-sm font-black {{ \App\Services\GradingService::isPassing($courseData['letter_grade']) ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-rose-50 text-rose-600 border border-rose-100' }}">
+                                    <span class="text-[8px] uppercase opacity-60 leading-none mb-0.5">និទ្ទេស</span>
+                                    {{ $courseData['letter_grade'] }}
+                                </div>
                             </div>
                         </div>
                         {{-- Summary chips --}}
                         <div class="flex flex-wrap gap-2 mt-3">
                             <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 text-[10px] font-bold">
-                                <i class="fas fa-user-check"></i> វត្តមាន: {{ $courseData['attendance_score'] }}/15
+                                <i class="fas fa-user-check"></i> វត្តមាន: {{ number_format($courseData['attendance_score'], 1) }}/15
                             </span>
                             @if($courseData['quiz_bonus'] > 0)
                                 <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-50 text-amber-700 text-[10px] font-bold">
@@ -59,6 +65,19 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-50">
+                                {{-- Attendance row --}}
+                                <tr class="hover:bg-blue-50/30">
+                                    <td class="px-6 py-3">
+                                        <span class="inline-flex px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 text-blue-700">វត្តមាន</span>
+                                    </td>
+                                    <td class="px-6 py-3 font-semibold text-gray-700">ពិន្ទុវត្តមាន (15%)</td>
+                                    <td class="px-6 py-3 text-center">
+                                        <span class="font-black text-blue-600">{{ number_format($courseData['attendance_score'], 1) }}</span>
+                                    </td>
+                                    <td class="px-6 py-3 text-center text-gray-400 font-bold">15</td>
+                                    <td class="px-6 py-3 text-xs text-gray-400">—</td>
+                                </tr>
+
                                 @foreach($courseData['assessments'] as $assessment)
                                     @php
                                         $typeColors = [
@@ -68,6 +87,9 @@
                                             'quiz' => 'bg-amber-50 text-amber-700',
                                         ];
                                         $typeClass = $typeColors[$assessment['type']] ?? 'bg-gray-50 text-gray-700';
+                                        $hasScore = $assessment['score'] !== null;
+                                        $scoreVal = $hasScore ? (float) $assessment['score'] : 0;
+                                        $scoreClass = !$hasScore ? 'text-gray-300' : ($scoreVal >= ($assessment['max_score'] * 0.5) ? 'text-emerald-600' : 'text-rose-500');
                                     @endphp
                                     <tr class="hover:bg-slate-50/50">
                                         <td class="px-6 py-3">
@@ -75,15 +97,24 @@
                                         </td>
                                         <td class="px-6 py-3 font-semibold text-gray-700">{{ $assessment['title'] }}</td>
                                         <td class="px-6 py-3 text-center">
-                                            @php
-                                                $scoreClass = $assessment['score'] >= ($assessment['max_score'] * 0.5) ? 'text-emerald-600' : 'text-rose-500';
-                                            @endphp
-                                            <span class="font-black {{ $scoreClass }}">{{ number_format($assessment['score'], 1) }}</span>
+                                            <span class="font-black {{ $scoreClass }}">
+                                                {{ $hasScore ? number_format($scoreVal, 1) : '—' }}
+                                            </span>
                                         </td>
                                         <td class="px-6 py-3 text-center text-gray-400 font-bold">{{ $assessment['max_score'] }}</td>
                                         <td class="px-6 py-3 text-xs text-gray-400">{{ $assessment['notes'] ?? '—' }}</td>
                                     </tr>
                                 @endforeach
+
+                                {{-- Total row --}}
+                                <tr class="bg-emerald-50/30 border-t-2 border-emerald-100">
+                                    <td colspan="2" class="px-6 py-3 font-black text-gray-700 text-right">សរុបរួម</td>
+                                    <td class="px-6 py-3 text-center">
+                                        <span class="font-black text-emerald-600 text-base">{{ number_format($courseData['total_score'], 1) }}</span>
+                                    </td>
+                                    <td class="px-6 py-3 text-center text-gray-400 font-bold">100</td>
+                                    <td class="px-6 py-3"></td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -93,8 +124,8 @@
                     <div class="w-16 h-16 bg-gray-50 text-gray-300 rounded-2xl flex items-center justify-center mx-auto mb-4">
                         <i class="fas fa-clipboard-list text-2xl"></i>
                     </div>
-                    <p class="text-sm font-bold text-gray-400">{{ __('មិនមានពិន្ទុនៅឡើយទេ') }}</p>
-                    <p class="text-xs text-gray-300 mt-1">{{ __('សាស្ត្រាចារ្យនឹងបញ្ចូលពិន្ទុនៅពេលក្រោយ') }}</p>
+                    <p class="text-sm font-bold text-gray-400">{{ __('មិនទាន់មានមុខវិជ្ជាសិក្សា') }}</p>
+                    <p class="text-xs text-gray-300 mt-1">{{ __('អ្នកមិនទាន់បានចុះឈ្មោះក្នុងមុខវិជ្ជាណាមួយនៅឡើយ') }}</p>
                 </div>
             @endforelse
         </div>

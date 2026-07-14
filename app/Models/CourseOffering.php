@@ -22,7 +22,6 @@ class CourseOffering extends Model
         'capacity',
         'room_number',
         'generation', // 💡 បានបន្ថែម field នេះ
-        'is_open_for_self_enrollment', // 💡 បានបន្ថែម field នេះ
         'start_date', // 💡 បានបន្ថែម field នេះ
         'end_date', // 💡 បានបន្ថែម field នេះ
     ];

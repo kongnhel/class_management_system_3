@@ -27,6 +27,14 @@
                             {{ __('បង្កើតការវាយតម្លៃ') }}
                         </a>
 
+                        <a href="{{ route('professor.grades.export-excel', ['offering_id' => $courseOffering->id]) }}"
+                            class="group inline-flex items-center justify-center px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-2xl font-bold text-xs transition-all duration-200 shadow-sm hover:shadow-green-200">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            {{ __('ទាញយក Excel') }}
+                        </a>
+
                         <a href="{{ route('professor.grades.export-docx', ['offering_id' => $courseOffering->id]) }}"
                             class="group inline-flex items-center justify-center px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-bold text-xs transition-all duration-200 shadow-sm hover:shadow-emerald-200">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -445,7 +453,7 @@
                                     foreach ($assessments as $assessment) {
                                         $type = ($assessment instanceof \App\Models\Assignment) ? 'assignment' : (($assessment instanceof \App\Models\Quiz) ? 'quiz' : 'exam');
                                         $score = $gradebook[$student->id][$type . '_' . $assessment->id] ?? 0;
-                                        $studentScores[$assessment->id] = ['type' => $type, 'score' => $score];
+                                        $studentScores[$type . '_' . $assessment->id] = ['type' => $type, 'score' => $score];
                                         if ($type === 'quiz') { $quizBonus += $score; } else { $baseScore += $score; }
                                     }
                                     $rowTotal = min($baseScore + $quizBonus, 100);
@@ -485,8 +493,8 @@
 
                                     @foreach ($assessments as $assessment)
                                         @php
-                                            $sData = $studentScores[$assessment->id];
-                                            $type = $sData['type'];
+                                            $type = ($assessment instanceof \App\Models\Assignment) ? 'assignment' : (($assessment instanceof \App\Models\Quiz) ? 'quiz' : 'exam');
+                                            $sData = $studentScores[$type . '_' . $assessment->id];
                                             $score = $sData['score'];
                                         @endphp
                                         <td class="px-4 py-5 text-center border-r border-slate-50 {{ $type === 'quiz' ? 'bg-amber-50/20' : '' }}">
