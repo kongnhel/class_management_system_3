@@ -198,7 +198,7 @@
 
                                     {{-- Course Title --}}
                                     <h4 class="font-bold text-gray-900 text-lg mb-1 leading-tight">
-                                        {{ $offering->course->title_km ?? $offering->course->title_en }}
+                                        {{ $offering->course?->title_km ?? $offering->course?->title_en ?? 'N/A' }}
                                     </h4>
                                     <p class="text-xs text-gray-400 font-medium mb-3">
                                         {{ $offering->semester }} / {{ $offering->academic_year }}
@@ -209,7 +209,7 @@
                                         <div class="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500">
                                             <i class="fas fa-user-tie text-xs"></i>
                                         </div>
-                                        <span class="text-sm font-semibold text-slate-700">{{ $offering->lecturer->name ?? 'មិនទាន់កំណត់' }}</span>
+                                        <span class="text-sm font-semibold text-slate-700">{{ $offering->lecturer?->name ?? 'មិនទាន់កំណត់' }}</span>
                                     </div>
 
                                     {{-- Enrollment Count --}}
@@ -279,10 +279,10 @@
                                             @endphp
                                             <tr class="hover:bg-gray-50 transition-colors">
                                                 <td class="px-5 py-4">
-                                                    <div class="font-semibold text-gray-900 text-sm">{{ $offering->course->title_km ?? $offering->course->title_en }}</div>
+                                                    <div class="font-semibold text-gray-900 text-sm">{{ $offering->course?->title_km ?? $offering->course?->title_en ?? 'N/A' }}</div>
                                                 </td>
                                                 <td class="px-5 py-4">
-                                                    <span class="text-sm text-gray-700">{{ $offering->lecturer->name ?? 'មិនទាន់កំណត់' }}</span>
+                                                    <span class="text-sm text-gray-700">{{ $offering->lecturer?->name ?? 'មិនទាន់កំណត់' }}</span>
                                                 </td>
                                                 <td class="px-5 py-4">
                                                     <span class="text-sm text-gray-600">{{ $offering->semester }} / {{ $offering->academic_year }}</span>
