@@ -4,15 +4,15 @@
         $profileUrl = $user->userProfile?->profile_picture_url;
     @endphp
 
-    <div class="min-h-screen bg-[#f8fafc] dark:bg-gray-900 py-12 font-sans antialiased">
+    <div class="min-h-screen bg-[#f8fafc] py-12 font-sans antialiased">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
             {{-- Header Section --}}
             <div class="mb-10 text-center md:text-left">
-                <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">
                     {{ __('profile_title') }}
                 </h1>
-                <p class="mt-2 text-slate-500 dark:text-slate-400">
+                <p class="mt-2 text-slate-500">
                     {{ __('profile_subtitle') }}
                 </p>
             </div>
@@ -31,14 +31,14 @@
                 
                 {{-- Left Side: Profile Summary Card --}}
                 <div class="lg:col-span-4 space-y-6">
-                    <div class="bg-white dark:bg-gray-800 rounded-[2rem] shadow-sm border border-slate-200 dark:border-gray-700 overflow-hidden">
+                    <div class="bg-white rounded-[2rem] shadow-sm border border-slate-200 overflow-hidden">
                         <div class="h-32 bg-gradient-to-r from-slate-800 to-slate-900"></div>
                         <div class="px-6 pb-8">
                             <div class="relative flex justify-center -mt-16 mb-6">
                                 <form method="post" action="{{ route('profile.update-picture') }}" enctype="multipart/form-data" id="picture-form">
                                     @csrf
                                     <div class="relative group cursor-pointer" id="profile-picture-container">
-                                        <div class="w-32 h-32 rounded-full border-4 border-white dark:border-gray-800 shadow-lg overflow-hidden bg-slate-100">
+                                        <div class="w-32 h-32 rounded-full border-4 border-white shadow-lg overflow-hidden bg-slate-100">
                                             @if ($profileUrl)
                                                 <img src="{{ $profileUrl }}" id="profile-picture-preview" class="w-full h-full object-cover">
                                             @else
@@ -47,7 +47,6 @@
                                                 </div>
                                             @endif
                                         </div>
-                                        {{-- Camera Overlay --}}
                                         <div class="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                             <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                                         </div>
@@ -56,7 +55,7 @@
                                 </form>
                             </div>
                             <div class="text-center">
-                                <h3 class="text-xl font-bold text-slate-900 dark:text-white">{{ $user->name }}</h3>
+                                <h3 class="text-xl font-bold text-slate-900">{{ $user->name }}</h3>
                                 <p class="text-sm text-slate-500">{{ $user->email }}</p>
                                 <div class="mt-4 inline-flex items-center px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold uppercase tracking-wider">
                                     {{ Auth::user()->role ?? 'User Account' }}
@@ -70,13 +69,13 @@
                 <div class="lg:col-span-8 space-y-8">
                     
                     {{-- 1. Profile Information --}}
-                    <section class="bg-white dark:bg-gray-800 rounded-[2rem] shadow-sm border border-slate-200 dark:border-gray-700 p-8">
+                    <section class="bg-white rounded-[2rem] shadow-sm border border-slate-200 p-8">
                         <div class="flex items-center gap-4 mb-8">
-                            <div class="p-3 bg-emerald-50 dark:bg-emerald-900/30 rounded-2xl">
+                            <div class="p-3 bg-emerald-50 rounded-2xl">
                                 <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                             </div>
                             <div>
-                                <h2 class="text-xl font-bold text-slate-900 dark:text-white">{{ __('profile_basic_info') }}</h2>
+                                <h2 class="text-xl font-bold text-slate-900">{{ __('profile_basic_info') }}</h2>
                                 <p class="text-sm text-slate-500">{{ __('profile_basic_desc') }}</p>
                             </div>
                         </div>
@@ -103,7 +102,7 @@
                                 </div>
                             </div>
                             <div class="flex justify-end pt-4">
-                                <x-primary-button class="bg-slate-900 hover:bg-slate-800 text-white rounded-xl px-8 py-3 font-bold transition-all shadow-lg shadow-slate-200 dark:shadow-none">
+                                <x-primary-button class="bg-slate-900 hover:bg-slate-800 text-white rounded-xl px-8 py-3 font-bold transition-all shadow-lg shadow-slate-200">
                                     {{ __('profile_save') }}
                                 </x-primary-button>
                             </div>
@@ -111,13 +110,13 @@
                     </section>
 
                     {{-- 2. Password Security --}}
-                    <section class="bg-white dark:bg-gray-800 rounded-[2rem] shadow-sm border border-slate-200 dark:border-gray-700 p-8">
+                    <section class="bg-white rounded-[2rem] shadow-sm border border-slate-200 p-8">
                         <div class="flex items-center gap-4 mb-8">
-                            <div class="p-3 bg-amber-50 dark:bg-amber-900/30 rounded-2xl">
+                            <div class="p-3 bg-amber-50 rounded-2xl">
                                 <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                             </div>
                             <div>
-                                <h2 class="text-xl font-bold text-slate-900 dark:text-white">{{ __('profile_security') }}</h2>
+                                <h2 class="text-xl font-bold text-slate-900">{{ __('profile_security') }}</h2>
                                 <p class="text-sm text-slate-500">{{ __('profile_security_desc') }}</p>
                             </div>
                         </div>
@@ -143,7 +142,7 @@
                                 </div>
                             </div>
                             <div class="flex justify-end pt-4">
-                                <x-primary-button class="bg-amber-600 hover:bg-amber-700 text-white rounded-xl px-8 py-3 font-bold transition-all shadow-lg shadow-amber-200 dark:shadow-none">
+                                <x-primary-button class="bg-amber-600 hover:bg-amber-700 text-white rounded-xl px-8 py-3 font-bold transition-all shadow-lg shadow-amber-200">
                                     {{ __('profile_update_password') }}
                                 </x-primary-button>
                             </div>
@@ -151,14 +150,14 @@
                     </section>
 
                     {{-- 3. Danger Zone --}}
-                    <section class="bg-red-50/50 dark:bg-red-900/10 rounded-[2rem] border border-red-100 dark:border-red-900/30 p-8">
+                    <section class="bg-red-50/50 rounded-[2rem] border border-red-100 p-8">
                         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                             <div>
-                                <h2 class="text-lg font-bold text-red-700 dark:text-red-500">{{ __('profile_delete_account') }}</h2>
+                                <h2 class="text-lg font-bold text-red-700">{{ __('profile_delete_account') }}</h2>
                                 <p class="text-sm text-red-600/70">{{ __('profile_delete_warning') }}</p>
                             </div>
                             <button x-data="" x-on:click.prevent="$dispatch('open-modal', 'confirm-user-deletion')" 
-                                    class="inline-flex justify-center items-center px-6 py-3 bg-white dark:bg-red-600 border border-red-200 dark:border-transparent text-red-600 dark:text-white rounded-xl font-bold hover:bg-red-600 hover:text-white transition-all shadow-sm">
+                                    class="inline-flex justify-center items-center px-6 py-3 bg-white border border-red-200 text-red-600 rounded-xl font-bold hover:bg-red-600 hover:text-white transition-all shadow-sm">
                                 {{ __('profile_delete_btn') }}
                             </button>
                         </div>

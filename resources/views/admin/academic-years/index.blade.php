@@ -165,11 +165,12 @@
 
     {{-- Set Current Confirmation Modal --}}
     <div x-data="{ showSetCurrentModal: false, setCurrentId: null, setCurrentName: '' }" x-cloak>
-        <div x-show="showSetCurrentModal" class="fixed inset-0 z-[100] overflow-y-auto" style="display: none;">
+        <div x-show="showSetCurrentModal" class="fixed inset-0 z-[200] overflow-y-auto" style="display: none;">
             <div class="flex items-center justify-center min-h-screen px-4 pb-20 text-center sm:block sm:p-0">
-                <div x-show="showSetCurrentModal" @click="showSetCurrentModal = false" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity"></div>
+                <div x-show="showSetCurrentModal" @click="showSetCurrentModal = false" x-transition.opacity class="fixed inset-0 bg-black/30 transition-opacity"></div>
                 <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
-                <div x-show="showSetCurrentModal" x-transition class="inline-block align-middle bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-lg sm:w-full">
+                <div x-show="showSetCurrentModal" x-transition:enter="ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="ease-in duration-100" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+                     class="relative inline-block align-middle bg-white rounded-2xl text-left overflow-hidden shadow-2xl sm:my-8 sm:max-w-lg sm:w-full z-[210]">
                     <div class="bg-white px-8 pt-10 pb-6">
                         <div class="sm:flex sm:items-start flex-col items-center text-center">
                             <div class="mx-auto flex-shrink-0 flex items-center justify-center h-20 w-20 rounded-3xl bg-emerald-50 mb-6 border border-emerald-100">
@@ -181,7 +182,7 @@
                             </p>
                         </div>
                     </div>
-                    <div class="bg-gray-50/50 px-8 py-6 flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
+                    <div class="bg-gray-50 px-8 py-6 flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
                         <button type="button" @click="showSetCurrentModal = false" class="w-full sm:w-auto inline-flex justify-center rounded-xl border-2 border-gray-200 px-6 py-3 bg-white text-sm font-bold text-gray-500 hover:bg-gray-100 transition-all">បោះបង់</button>
                         <form :action="'/admin/academic-years/' + setCurrentId + '/set-current'" method="POST" class="w-full sm:w-auto">
                             @csrf
@@ -198,11 +199,12 @@
 
     {{-- Delete Confirmation Modal --}}
     <div x-data="{ showDeleteModal: false, deletingId: null, deletingName: '' }" x-cloak>
-        <div x-show="showDeleteModal" class="fixed inset-0 z-[100] overflow-y-auto" style="display: none;">
+        <div x-show="showDeleteModal" class="fixed inset-0 z-[200] overflow-y-auto" style="display: none;">
             <div class="flex items-center justify-center min-h-screen px-4 pb-20 text-center sm:block sm:p-0">
-                <div x-show="showDeleteModal" @click="showDeleteModal = false" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity"></div>
+                <div x-show="showDeleteModal" @click="showDeleteModal = false" x-transition.opacity class="fixed inset-0 bg-black/30 transition-opacity"></div>
                 <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
-                <div x-show="showDeleteModal" x-transition class="inline-block align-middle bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-lg sm:w-full">
+                <div x-show="showDeleteModal" x-transition:enter="ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="ease-in duration-100" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+                     class="relative inline-block align-middle bg-white rounded-2xl text-left overflow-hidden shadow-2xl sm:my-8 sm:max-w-lg sm:w-full z-[210]">
                     <div class="bg-white px-8 pt-10 pb-6">
                         <div class="sm:flex sm:items-start flex-col items-center text-center">
                             <div class="mx-auto flex-shrink-0 flex items-center justify-center h-20 w-20 rounded-3xl bg-rose-50 mb-6 border border-rose-100">
@@ -214,7 +216,7 @@
                             </p>
                         </div>
                     </div>
-                    <div class="bg-gray-50/50 px-8 py-6 flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
+                    <div class="bg-gray-50 px-8 py-6 flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
                         <button type="button" @click="showDeleteModal = false" class="w-full sm:w-auto inline-flex justify-center rounded-xl border-2 border-gray-200 px-6 py-3 bg-white text-sm font-bold text-gray-500 hover:bg-gray-100 transition-all">បោះបង់</button>
                         <form :action="'/admin/academic-years/' + deletingId" method="POST" class="w-full sm:w-auto">
                             @csrf @method('DELETE')
@@ -231,14 +233,16 @@
 
     <script>
         function confirmSetCurrent(id, name) {
-            const scope = document.querySelector('[x-data*="showSetCurrentModal"]').__x.$data;
+            var el = document.querySelector('[x-data*="showSetCurrentModal"]');
+            var scope = Alpine.$data(el);
             scope.setCurrentId = id;
             scope.setCurrentName = name;
             scope.showSetCurrentModal = true;
         }
 
         function confirmDelete(id, name) {
-            const scope = document.querySelector('[x-data*="showDeleteModal"]').__x.$data;
+            var el = document.querySelector('[x-data*="showDeleteModal"]');
+            var scope = Alpine.$data(el);
             scope.deletingId = id;
             scope.deletingName = name;
             scope.showDeleteModal = true;
