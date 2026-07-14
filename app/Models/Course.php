@@ -34,12 +34,10 @@ class Course extends Model
     {
         parent::boot();
 
-        // This static method runs when a new Course model is CREATED in the database
         static::created(function (Course $course) {
             $defaultComponents = GradingCategory::DEFAULT_COMPONENTS;
             $categoriesToCreate = [];
 
-            // Prepare data array for efficient batch insertion
             foreach ($defaultComponents as $component) {
                 $categoriesToCreate[] = array_merge($component, [
                     'course_id' => $course->id,
@@ -48,8 +46,15 @@ class Course extends Model
                 ]);
             }
 
-            // Insert the 4 new components in one query linked to the new course
             $course->gradingCategories()->insert($categoriesToCreate);
+        });
+
+        static::deleting(function (Course $course) {
+            $course->courseOfferings()->delete();
+        });
+
+        static::restoring(function (Course $course) {
+            $course->courseOfferings()->restore();
         });
     }
 
