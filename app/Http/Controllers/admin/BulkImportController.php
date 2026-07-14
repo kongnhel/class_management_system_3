@@ -109,7 +109,13 @@ class BulkImportController extends Controller
                         continue;
                     }
 
-                    // Use email from Excel, or leave empty
+                    // Generate student_id_code first (for students with generation)
+                    $studentIdCode = null;
+                    if ($request->role === 'student' && $request->generation) {
+                        $studentIdCode = $this->studentIdGenerator->generate((int) $request->program_id, $request->generation);
+                    }
+
+                    // Only use email from Excel — no auto-generation
                     $email = !empty($rowData['email']) ? $rowData['email'] : null;
 
                     // Check for duplicate email only if provided
@@ -119,23 +125,20 @@ class BulkImportController extends Controller
                         continue;
                     }
 
-                    // Create user
+                    // Create user — only data from Excel, no password
                     $user = User::create([
                         'name' => $rowData['name'],
                         'email' => $email,
                         'role' => $request->role,
-                        'password' => Hash::make('password123'),
+                        'password' => null,
+                        'student_id_code' => $studentIdCode,
                         'program_id' => $request->role === 'student' ? $request->program_id : null,
                         'department_id' => $request->role === 'professor' ? $request->department_id : null,
                         'generation' => $request->role === 'student' ? $request->generation : null,
                     ]);
 
-                    // Auto-generate student_id_code for students
+                    // Auto-enroll student in program and course offerings
                     if ($request->role === 'student' && $request->generation) {
-                        $studentId = $this->studentIdGenerator->generate((int) $request->program_id, $request->generation);
-                        $user->student_id_code = $studentId;
-                        $user->save();
-
                         // Create student_program_enrollments record
                         \App\Models\StudentProgramEnrollment::create([
                             'student_user_id' => $user->id,
