@@ -31,6 +31,7 @@ class StudentController extends Controller
         $todayOfferingIds = Schedule::where('day_of_week', $todayName)->pluck('course_offering_id');
         $enrolledCourses = CourseOffering::whereIn('id', $todayOfferingIds)
             ->whereHas('students', fn ($q) => $q->where('student_user_id', $studentId))
+            ->whereHas('course')
             ->with(['course', 'lecturer', 'studentCourseEnrollments' => fn ($q) => $q->where('student_user_id', $studentId)])
             ->get();
 
@@ -43,6 +44,7 @@ class StudentController extends Controller
 
         // Today's schedule
         $upcomingSchedules = Schedule::whereHas('courseOffering.studentCourseEnrollments', fn ($q) => $q->where('student_user_id', $studentId))
+            ->whereHas('courseOffering.course')
             ->with(['room', 'courseOffering.course', 'courseOffering.lecturer'])
             ->where('day_of_week', $todayName)
             ->orderBy('start_time', 'asc')

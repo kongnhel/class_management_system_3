@@ -47,8 +47,10 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
                             @foreach ($enrollments as $enrollment)
                                 @php
-                                    $lecturer = $enrollment->courseOffering->lecturer;
-                                    $lecturerProfile = $lecturer ? $lecturer->userProfile : null;
+                                    $courseOffering = $enrollment->courseOffering;
+                                    $course = $courseOffering?->course;
+                                    $lecturer = $courseOffering?->lecturer;
+                                    $lecturerProfile = $lecturer?->userProfile;
                                 @endphp
                                 
                                 <div class="bg-white rounded-2xl md:rounded-3xl shadow-lg border border-gray-100 p-5 md:p-8 flex flex-col justify-between hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.01] md:hover:scale-[1.02]">
@@ -60,10 +62,10 @@
                                             </div>
                                             <div>
                                                 <h4 class="text-lg md:text-xl font-bold text-gray-900 leading-tight">
-                                                    {{ $enrollment->courseOffering->course->title_en ?? $enrollment->courseOffering->course->course_name }}
+                                                    {{ $course?->title_en ?? $course?->title_km ?? 'N/A' }}
                                                 </h4>
                                                 <p class="text-[10px] md:text-xs text-gray-400 mt-1 uppercase tracking-wider font-semibold">
-                                                    {{ $enrollment->courseOffering->course->course_code }}
+                                                    {{ $course?->code ?? '' }}
                                                 </p>
                                             </div>
                                         </div>
@@ -128,7 +130,7 @@
                                                 <i class="far fa-calendar-alt mr-2 text-green-500"></i> {{ __('កាលវិភាគសិក្សា') }}
                                             </p>
                                             <div class="space-y-2 md:space-y-3">
-                                                @forelse ($enrollment->courseOffering->schedules as $schedule)
+                                                @forelse (($enrollment->courseOffering?->schedules ?? collect()) as $schedule)
                                                     <div class="text-[11px] md:text-[12px] bg-gray-50 p-2 md:p-3 rounded-xl border border-gray-100 hover:bg-white hover:border-green-200 transition-all">
                                                         <div class="flex justify-between items-center">
                                                             <span class="font-black text-green-700">{{ __($schedule->day_of_week) }}</span>

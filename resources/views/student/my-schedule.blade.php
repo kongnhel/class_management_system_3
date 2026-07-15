@@ -224,9 +224,9 @@
                                             @php $class = $slots->where('day_of_week', $dayKey)->first(); @endphp
                                             @if($class)
                                                 <div class="cell-content">
-                                                    <span class="cell-subject">{{ $class->courseOffering->course->title_km ?? $class->courseOffering->course->title_en }}</span>
-                                                    <span class="cell-lecturer">លោក {{ $class->courseOffering->lecturer->name ?? 'N/A' }}</span>
-                                                    <span class="cell-room">បន្ទប់ {{ $class->room->room_number ?? '-' }}</span>
+                                                    <span class="cell-subject">{{ $class->courseOffering?->course?->title_km ?? $class->courseOffering?->course?->title_en ?? 'N/A' }}</span>
+                                                    <span class="cell-lecturer">លោក {{ $class->courseOffering?->lecturer?->name ?? 'N/A' }}</span>
+                                                    <span class="cell-room">បន្ទប់ {{ $class->room?->room_number ?? '-' }}</span>
                                                 </div>
                                             @endif
                                         </td>
@@ -262,9 +262,9 @@
                                             @endphp
                                             @if($class)
                                                 <div class="cell-content">
-                                                    <span class="cell-subject">{{ $class->courseOffering->course->title_km ?? $class->courseOffering->course->title_en }}</span>
-                                                    <span class="cell-lecturer">លោក {{ $class->courseOffering->lecturer->name ?? 'N/A' }}</span>
-                                                    <span class="cell-room">បន្ទប់ {{ $class->room->room_number ?? '-' }}</span>
+                                                    <span class="cell-subject">{{ $class->courseOffering?->course?->title_km ?? $class->courseOffering?->course?->title_en ?? 'N/A' }}</span>
+                                                    <span class="cell-lecturer">លោក {{ $class->courseOffering?->lecturer?->name ?? 'N/A' }}</span>
+                                                    <span class="cell-room">បន្ទប់ {{ $class->room?->room_number ?? '-' }}</span>
                                                 </div>
                                             @endif
                                         </td>

@@ -171,6 +171,7 @@ class StudentGradeController extends Controller
         $user = Auth::user();
         $enrolledOfferingIds = StudentCourseEnrollment::where('student_user_id', $user->id)->pluck('course_offering_id');
         $schedules = \App\Models\Schedule::whereIn('course_offering_id', $enrolledOfferingIds)
+            ->whereHas('courseOffering.course')
             ->with(['room', 'courseOffering.course', 'courseOffering.lecturer'])
             ->orderByRaw("FIELD(day_of_week, 'Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday')")
             ->orderBy('start_time')
@@ -183,6 +184,7 @@ class StudentGradeController extends Controller
     {
         $student = User::findOrFail($studentId);
         $enrollments = StudentCourseEnrollment::where('student_user_id', $student->id)
+            ->whereHas('courseOffering.course')
             ->with(['courseOffering.course', 'courseOffering.lecturer'])
             ->get();
         return view('student.my-enrolled-courses', compact('student', 'enrollments'));
@@ -293,6 +295,7 @@ class StudentGradeController extends Controller
     {
         $user = Auth::user();
         $enrollments = StudentCourseEnrollment::where('student_user_id', $user->id)
+            ->whereHas('courseOffering.course')
             ->with(['courseOffering.course', 'courseOffering.lecturer'])->paginate(10);
         $studentProgram = $user->program;
         return view('student.my-enrolled-courses', compact('enrollments', 'studentProgram'));
