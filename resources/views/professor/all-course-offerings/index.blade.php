@@ -67,16 +67,16 @@
                                             </svg>
                                         </div>
                                         <div>
-                                            <h4 class="text-xl font-bold text-gray-900 leading-tight">{{ $offering->course->title_km ?? 'N/A' }}</h4>
-                                            <p class="text-base text-gray-500 mt-1">{{ $offering->course->title_en ?? 'N/A' }}</p>
+                                            <h4 class="text-xl font-bold text-gray-900 leading-tight">{{ $offering->course?->title_km ?? 'N/A' }}</h4>
+                                            <p class="text-base text-gray-500 mt-1">{{ $offering->course?->title_en ?? 'N/A' }}</p>
                                         </div>
                                     </div>
                                     <div class="space-y-2 mb-6">
-                                        <p class="text-gray-700 font-medium"><span class="font-bold text-gray-800">{{ __('លេខកូដមុខវិជ្ជា') }}</span>: <span class="text-gray-600">{{ $offering->course->code ?? 'N/A' }}</span></p>
+                                        <p class="text-gray-700 font-medium"><span class="font-bold text-gray-800">{{ __('លេខកូដមុខវិជ្ជា') }}</span>: <span class="text-gray-600">{{ $offering->course?->code ?? 'N/A' }}</span></p>
                                         <p class="text-gray-700 font-medium"><span class="font-bold text-gray-800">{{ __('ឆ្នាំសិក្សា') }}</span>: <span class="text-gray-600">{{ $offering->academic_year ?? 'N/A' }}</span></p>
                                         <p class="text-gray-700 font-medium"><span class="font-bold text-gray-800">{{ __('ឆមាស') }}</span>: <span class="text-gray-600">{{ $offering->semester ?? 'N/A' }}</span></p>
                                         <p class="text-gray-700 font-medium"><span class="font-bold text-gray-800">{{ __('ផ្នែក') }}</span>: <span class="text-gray-600">{{ $offering->section ?? 'N/A' }}</span></p>
-                                        <p class="text-gray-700 font-medium"><span class="font-bold text-gray-800">{{ __('គ្រូបង្រៀន') }}</span>: <span class="text-gray-600">{{ $offering->lecturer->name ?? 'N/A' }}</span></p>
+                                        <p class="text-gray-700 font-medium"><span class="font-bold text-gray-800">{{ __('គ្រូបង្រៀន') }}</span>: <span class="text-gray-600">{{ $offering->lecturer?->name ?? 'N/A' }}</span></p>
                                     </div>
                                     {{-- <div class="flex justify-end space-x-3 mt-auto">
                                         <a href="{{ route('professor.view-all-course-offerings', $offering->id) }}" class="p-3 bg-gray-100 rounded-full text-emerald-600 hover:bg-gray-200 transition duration-150 ease-in-out" title="{{ __('មើល') }}">

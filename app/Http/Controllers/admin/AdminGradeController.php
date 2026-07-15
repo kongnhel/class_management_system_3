@@ -17,7 +17,9 @@ class AdminGradeController extends Controller
     public function index(Request $request)
     {
         $query = CourseOffering::with(['course', 'lecturer', 'targetPrograms'])
-            ->withCount('studentCourseEnrollments');
+            ->withCount('studentCourseEnrollments')
+            ->whereHas('course')
+            ->whereHas('lecturer');
 
         if ($request->filled('search')) {
             $search = $request->input('search');

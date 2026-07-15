@@ -21,7 +21,7 @@ class ProfessorNotificationController extends Controller
     public function createNotificationForm()
     {
         $user = Auth::user();
-        $courseOfferings = CourseOffering::where('lecturer_user_id', $user->id)->with('course')->get();
+        $courseOfferings = CourseOffering::where('lecturer_user_id', $user->id)->with('course')->whereHas('course')->get();
 
         $allStudentsByCourse = [];
         foreach ($courseOfferings as $offering) {

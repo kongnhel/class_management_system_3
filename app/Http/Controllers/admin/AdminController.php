@@ -26,7 +26,7 @@ class AdminController extends Controller
         $totalDepartments = Department::count();
         $totalPrograms = Program::count();
         $totalCourses = Course::count();
-        $totalCourseOfferings = CourseOffering::count();
+        $totalCourseOfferings = CourseOffering::whereHas('course')->count();
 
         $todayAttendanceCount = AttendanceRecord::where('date', $todayDate)->count();
         $todayPresentCount = AttendanceRecord::where('date', $todayDate)->where('status', 'present')->count();
@@ -34,6 +34,7 @@ class AdminController extends Controller
 
         $activeCourseOfferings = CourseOffering::whereNull('deleted_at')
             ->where('end_date', '>=', now())
+            ->whereHas('course')
             ->count();
 
         $recentUsers = User::latest()->limit(5)->get(['id', 'name', 'role', 'created_at']);

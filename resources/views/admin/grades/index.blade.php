@@ -87,8 +87,8 @@
                                             <i class="fas fa-book text-white text-sm"></i>
                                         </div>
                                         <div>
-                                            <div class="font-semibold text-gray-900">{{ $offering->course->title_km ?? $offering->course->title_en }}</div>
-                                            <div class="text-xs text-gray-400">{{ $offering->course->title_en }}</div>
+                                            <div class="font-semibold text-gray-900">{{ $offering->course?->title_km ?? $offering->course?->title_en ?? 'N/A' }}</div>
+                                            <div class="text-xs text-gray-400">{{ $offering->course?->title_en ?? '' }}</div>
                                         </div>
                                     </div>
                                 </td>

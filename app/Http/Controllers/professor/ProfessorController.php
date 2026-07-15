@@ -96,6 +96,7 @@ class ProfessorController extends Controller
         // 8. Professor's course offerings
         $myCourseOfferings = \App\Models\CourseOffering::where('lecturer_user_id', $user->id)
             ->with('course')
+            ->whereHas('course')
             ->get();
 
         // 9. At-risk students (attendance < 75% or low grades)

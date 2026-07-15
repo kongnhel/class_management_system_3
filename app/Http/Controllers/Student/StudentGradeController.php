@@ -257,6 +257,7 @@ class StudentGradeController extends Controller
         $enrolledIds = StudentCourseEnrollment::where('student_user_id', $user->id)->pluck('course_offering_id');
         $courses = CourseOffering::with(['course', 'lecturer'])->withCount('studentCourseEnrollments')
             ->whereHas('targetPrograms', fn ($q) => $q->where('program_id', $user->program_id)->where('generation', $user->generation))
+            ->whereHas('course')
             ->where('end_date', '>=', now())->whereNotIn('id', $enrolledIds)->get();
         return view('student.available-courses', compact('courses'));
     }

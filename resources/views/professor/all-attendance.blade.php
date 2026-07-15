@@ -32,7 +32,7 @@
                                     <option value="">{{ __('ជ្រើសរើសវគ្គសិក្សា') }}</option>
                                     @isset($professorCourseOfferings)
                                         @foreach ($professorCourseOfferings as $offering)
-                                            <option value="{{ $offering->id }}">{{ $offering->course->title_km ?? $offering->course->title_en }} ({{ $offering->academic_year }} - {{ $offering->semester }})</option>
+                                            <option value="{{ $offering->id }}">{{ $offering->course?->title_km ?? $offering->course?->title_en ?? 'N/A' }} ({{ $offering->academic_year }} - {{ $offering->semester }})</option>
                                         @endforeach
                                     @endisset
                                 </select>

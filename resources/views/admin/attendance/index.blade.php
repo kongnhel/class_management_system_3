@@ -87,13 +87,13 @@
                                             <i class="fas fa-book text-white text-sm"></i>
                                         </div>
                                         <div>
-                                            <div class="font-semibold text-gray-900">{{ $offering->course->title_km ?? $offering->course->title_en }}</div>
-                                            <div class="text-xs text-gray-400">{{ $offering->course->title_en }}</div>
+                                            <div class="font-semibold text-gray-900">{{ $offering->course?->title_km ?? $offering->course?->title_en ?? 'N/A' }}</div>
+                                            <div class="text-xs text-gray-400">{{ $offering->course?->title_en ?? '' }}</div>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <span class="text-sm text-gray-700">{{ $offering->lecturer->name ?? 'មិនទាន់កំណត់' }}</span>
+                                    <span class="text-sm text-gray-700">{{ $offering->lecturer?->name ?? 'មិនទាន់កំណត់' }}</span>
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-2">

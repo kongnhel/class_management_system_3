@@ -24,7 +24,9 @@ class CourseOfferingController extends Controller
     {
         $query = CourseOffering::query()
             ->with(['course', 'targetPrograms', 'lecturer', 'schedules.room'])
-            ->withCount('studentCourseEnrollments');
+            ->withCount('studentCourseEnrollments')
+            ->whereHas('course')
+            ->whereHas('lecturer');
 
         if ($request->filled('search')) {
             $search = $request->input('search');
@@ -495,6 +497,8 @@ class CourseOfferingController extends Controller
 
         $courseOfferings = CourseOffering::with('course', 'lecturer')
             ->where('end_date', '>=', now())
+            ->whereHas('course')
+            ->whereHas('lecturer')
             ->orderBy('academic_year', 'desc')
             ->orderBy('semester', 'desc')
             ->get();

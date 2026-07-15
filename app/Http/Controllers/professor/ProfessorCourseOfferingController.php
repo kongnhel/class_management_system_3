@@ -16,6 +16,7 @@ class ProfessorCourseOfferingController extends Controller
         $user = Auth::user();
         $courseOfferings = CourseOffering::where('lecturer_user_id', $user->id)
             ->with('course.department', 'lecturer')
+            ->whereHas('course')
             ->paginate(10);
 
         return view('professor.my-course-offerings', compact('courseOfferings'));
@@ -58,7 +59,7 @@ class ProfessorCourseOfferingController extends Controller
      */
     public function viewAllCourseOfferings()
     {
-        $courseOfferings = CourseOffering::with('course', 'lecturer')->paginate(10);
+        $courseOfferings = CourseOffering::with('course', 'lecturer')->whereHas('course')->whereHas('lecturer')->paginate(10);
 
         return view('professor.all-course-offerings.index', compact('courseOfferings'));
     }

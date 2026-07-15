@@ -33,7 +33,7 @@ class AnnouncementController extends Controller
 
     public function create()
     {
-        $courseOfferings = CourseOffering::with('course', 'program')->get();
+        $courseOfferings = CourseOffering::with('course', 'program')->whereHas('course')->get();
         $role = ['all', 'student', 'professor', 'admin'];
 
         return view('admin.announcements.create', compact('courseOfferings', 'role'));
@@ -75,7 +75,7 @@ class AnnouncementController extends Controller
 
     public function edit(Announcement $announcement)
     {
-        $courseOfferings = CourseOffering::with('course', 'program')->get();
+        $courseOfferings = CourseOffering::with('course', 'program')->whereHas('course')->get();
         $role = ['all', 'student', 'professor', 'admin'];
 
         return view('admin.announcements.edit', compact('announcement', 'courseOfferings', 'role'));

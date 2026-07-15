@@ -63,10 +63,16 @@ class SmartAssistantController extends Controller
             // Build the system prompt based on option
             $systemPrompt = $this->buildSystemPrompt($request->option, $user);
 
+            // Get user gender for Dify inputs
+            $user->load('profile', 'studentProfile');
+            $profile = $user->role === 'student' ? $user->studentProfile : $user->profile;
+            $userGender = $profile->gender ?? 'unknown';
+
             $payload = [
                 'inputs' => [
                     'user_name' => $user->name,
                     'user_role' => $user->role,
+                    'user_gender' => $userGender,
                     'chat_option' => $request->option,
                     'db_context' => $dbContext,
                     'system_prompt' => $systemPrompt,
@@ -185,7 +191,21 @@ class SmartAssistantController extends Controller
             default => 'User',
         };
 
+        // Get user gender from profile
+        $user->load('profile', 'studentProfile');
+        $profile = $role === 'student' ? $user->studentProfile : $user->profile;
+        $userGender = $profile->gender ?? '';
+
         $basePrompt = "You are NMU Smart Assistant, an AI helper for National Meanchey University (សាកលវិទ្យាល័យជាតិមានជ័យ). You speak Khmer and English. You have access to the university's database and website data.";
+
+        $pronounRule = <<<EOD
+
+--- ការប្រើសព្វនាម (ផ្អែកលើ តួនាទី និង ភេទ) ---
+សូមប្រើសព្វនាមឱ្យបានត្រឹមត្រូវទៅតាមតួនាទី និងភេទរបស់អ្នកប្រើប្រាស់៖
+• សិស្ស (Student) → ប្រើពាក្យ "ប្អូន" ឬ "ប្អូនប្រុស" (បើភេទប្រុស) និង "ប្អូនស្រី" (បើភេទស្រី)។
+• សាស្ត្រាចារ្យ/គ្រូ (Professor/Teacher) → ប្រើពាក្យ "លោកគ្រូ" (បើភេទប្រុស) និង "អ្នកគ្រូ" (បើភេទស្រី)។ បើមិនច្បាស់ ប្រើរួមថា "លោកគ្រូ/អ្នកគ្រូ"។
+• អ្នកគ្រប់គ្រង (Admin) → ប្រើពាក្យ "លោក" (បើភេទប្រុស) និង "លោកស្រី" (បើភេទស្រី)។
+EOD;
 
         $optionPrompt = match ($option) {
             'info' => "You provide information about students, professors, courses, grades, attendance, schedules, and university data. Answer questions using the database context provided. Be helpful and accurate. Use data from the context to answer questions.",
@@ -194,7 +214,7 @@ class SmartAssistantController extends Controller
             default => "You are a helpful assistant for NMU Class Management System.",
         };
 
-        return "{$basePrompt}\n\nRole: {$roleName}\n\n{$optionPrompt}";
+        return "{$basePrompt}\n\nRole: {$roleName}\nUser Gender: {$userGender}\n{$pronounRule}\n\n{$optionPrompt}";
     }
 
     private function getConversationId($userId)

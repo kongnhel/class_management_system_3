@@ -44,6 +44,17 @@ class AIContextService
             $context .= "Active Academic Year: {$currentYear->name}\n";
         }
 
+        // Add user gender info for pronoun usage
+        $user->load('profile', 'studentProfile');
+        $profile = $user->role === 'student' ? $user->studentProfile : $user->profile;
+        $gender = $profile->gender ?? '';
+        $genderLabel = match ($gender) {
+            'male' => 'Male (ប្រុស)',
+            'female' => 'Female (ស្រី)',
+            default => 'Unknown',
+        };
+        $context .= "Current User: {$user->name} (Role: {$user->role}, Gender: {$genderLabel})\n";
+
         $context .= "\n";
 
         try {

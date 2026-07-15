@@ -113,7 +113,7 @@
                                         <i class="fas fa-book"></i>
                                     </span>
                                     <div>
-                                        <p class="font-bold text-gray-800">{{ $offering->course->title_km ?? 'N/A' }}</p>
+                                        <p class="font-bold text-gray-800">{{ $offering->course?->title_km ?? 'N/A' }}</p>
                                         <p class="text-sm text-gray-500">{{ $offering->program->name_km ?? 'N/A' }} ({{ $offering->academic_year }})</p>
                                     </div>
                                 </div>

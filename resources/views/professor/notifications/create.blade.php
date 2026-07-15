@@ -48,7 +48,7 @@
                         <option value="">-- {{ __('ជ្រើសរើសមុខវិជ្ជា') }} --</option>
                         @foreach($courseOfferings as $offering)
                             <option value="{{ $offering->id }}">
-                                {{ $offering->course->title_km ?? 'N/A' }}
+                                {{ $offering->course?->title_km ?? 'N/A' }}
                             </option>
                         @endforeach
                     </select>

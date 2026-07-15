@@ -180,10 +180,10 @@
 
                         <div class="flex-1 mb-8">
                             <h3 class="khmer text-xl font-semibold text-slate-900 leading-tight mb-2">
-                                {{ $offering->course->title_km ?? 'N/A' }}
+                                {{ $offering->course?->title_km ?? 'N/A' }}
                             </h3>
                             <p class="text-sm text-slate-500 line-clamp-2">
-                                {{ $offering->course->title_en ?? 'N/A' }}
+                                {{ $offering->course?->title_en ?? 'N/A' }}
                             </p>
                         </div>
 

@@ -44,7 +44,7 @@
                             <option value="" class="text-gray-400">-- {{ __('ជ្រើសរើសវគ្គសិក្សា') }} --</option>
                             @foreach($courseOfferings as $offering)
                                 <option value="{{ $offering->id }}" class="text-gray-800" {{ old('course_offering_id') == $offering->id ? 'selected' : '' }}>
-                                    {{ $offering->course->title_km ?? $offering->course->title_en }} ({{ $offering->academic_year }} - {{ $offering->semester }}) - {{ $offering->lecturer->name ?? 'N/A' }}
+                                    {{ $offering->course?->title_km ?? $offering->course?->title_en ?? 'N/A' }} ({{ $offering->academic_year }} - {{ $offering->semester }}) - {{ $offering->lecturer?->name ?? 'N/A' }}
                                 </option>
                             @endforeach
                         </select>

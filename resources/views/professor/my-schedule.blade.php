@@ -54,11 +54,11 @@
                                 <div class="p-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50/30">
                                     <div class="flex items-center gap-4">
                                         <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-lg font-bold shadow-sm">
-                                            {{ substr($offering->course->title_en, 0, 1) }}
+                                            {{ substr($offering->course?->title_en ?? '', 0, 1) }}
                                         </div>
                                         <div>
-                                            <h3 class="text-lg font-bold text-slate-900 leading-tight">{{ $offering->course->title_en }}</h3>
-                                            <p class="text-sm text-slate-500 font-medium">{{ $offering->course->title_km }}</p>
+                                            <h3 class="text-lg font-bold text-slate-900 leading-tight">{{ $offering->course?->title_en ?? 'N/A' }}</h3>
+                                            <p class="text-sm text-slate-500 font-medium">{{ $offering->course?->title_km ?? '' }}</p>
                                         </div>
                                     </div>
                                     <div class="flex flex-wrap gap-2">
@@ -131,7 +131,7 @@
                         @foreach ($courseOfferings as $offering)
                             @if ($offering->schedules->isEmpty())
                                 <tr>
-                                    <td class="border border-gray-300 px-3 py-2 font-bold">{{ $offering->course->title_en }}</td>
+                                    <td class="border border-gray-300 px-3 py-2 font-bold">{{ $offering->course?->title_en ?? 'N/A' }}</td>
                                     <td class="border border-gray-300 px-3 py-2 text-center">Y{{ $offering->academic_year }} / S{{ $offering->semester }}</td>
                                     <td colspan="3" class="border border-gray-300 px-3 py-2 text-center italic text-gray-500">{{ __('មិនមានកាលវិភាគ') }}</td>
                                 </tr>
@@ -140,8 +140,8 @@
                                     <tr>
                                         @if ($index === 0)
                                             <td class="border border-gray-300 px-3 py-2 font-bold align-top" rowspan="{{ $offering->schedules->count() }}">
-                                                {{ $offering->course->title_en }}
-                                                <div class="text-xs font-normal text-gray-500 mt-1">{{ $offering->course->title_km }}</div>
+                                                {{ $offering->course?->title_en ?? 'N/A' }}
+                                                <div class="text-xs font-normal text-gray-500 mt-1">{{ $offering->course?->title_km ?? '' }}</div>
                                             </td>
                                             <td class="border border-gray-300 px-3 py-2 text-center align-top" rowspan="{{ $offering->schedules->count() }}">
                                                 Y{{ $offering->academic_year }} / S{{ $offering->semester }}
