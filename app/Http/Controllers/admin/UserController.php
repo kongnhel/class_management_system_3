@@ -375,8 +375,10 @@ class UserController extends Controller
             'address' => $profile->address ?? '',
             'date_of_birth' => $profile->date_of_birth ?? '',
             'faculty_id' => $user->department?->faculty_id ?? '',
+            'profile_picture_url' => $profile->profile_picture_url ?? '',
             'programs' => Program::all()->map(fn($p) => ['id' => $p->id, 'name' => $p->name_km ?? $p->name_en]),
             'departments' => Department::all()->map(fn($d) => ['id' => $d->id, 'name' => $d->name_km ?? $d->name_en, 'faculty_id' => $d->faculty_id]),
+            'faculties' => \App\Models\Faculty::all()->map(fn($f) => ['id' => $f->id, 'name' => $f->name_km ?? $f->name_en]),
             'generations' => \App\Models\Generation::orderByDesc('name')->get()->map(fn($g) => ['name' => $g->name, 'join_year' => $g->join_year ?? '']),
         ]);
     }
@@ -450,6 +452,8 @@ class UserController extends Controller
             if ($url) {
                 $profile->profile_picture_url = $url;
             }
+        } elseif ($request->input('remove_picture')) {
+            $profile->profile_picture_url = null;
         }
 
         $profile->save();
@@ -480,6 +484,7 @@ class UserController extends Controller
                     'student_id_code' => $user->student_id_code ?? '',
                     'program_name' => $user->program?->name_km ?? '',
                     'department_name' => $user->department?->name_km ?? '',
+                    'profile_picture_url' => $profile->profile_picture_url ?? '',
                 ],
             ]);
         }
