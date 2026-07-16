@@ -112,7 +112,7 @@ class CourseOfferingController extends Controller
         return view('admin.course-offerings.create', compact('courses', 'professors', 'programs', 'rooms', 'academicYears'));
     }
 
-    public function store(Request $request)
+public function store(Request $request)
     {
         // 1. Define Validation Rules
         $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
@@ -125,14 +125,26 @@ class CourseOfferingController extends Controller
             'end_date' => 'required|date|after_or_equal:start_date',
 
             'target_programs' => 'required|array|min:1',
-            'target_programs.*.program_id' => 'required|exists:programs,id|distinct', // បន្ថែម distinct
+            'target_programs.*.program_id' => 'required|exists:programs,id|distinct',
             'target_programs.*.generation' => 'required|string|max:255',
 
-            'schedules' => 'required|array|min:1',
-            'schedules.*.day_of_week' => 'required|string|in:Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday',
-            'schedules.*.room_id' => 'required|exists:rooms,id',
-            'schedules.*.start_time' => 'required|date_format:H:i',
-            'schedules.*.end_time' => 'required|date_format:H:i|after:schedules.*.start_time',
+            'schedule_type' => 'required|in:custom,weekday,weekend',
+
+            'weekday_sessions' => 'required_if:schedule_type,weekday|array|min:1',
+            'weekday_sessions.*.start_time' => 'required|date_format:H:i',
+            'weekday_sessions.*.end_time' => 'required|date_format:H:i|after:weekday_sessions.*.start_time',
+            'weekday_sessions.*.room_id' => 'required|exists:rooms,id',
+
+            'weekend_sessions' => 'required_if:schedule_type,weekend|array|min:1',
+            'weekend_sessions.*.start_time' => 'required|date_format:H:i',
+            'weekend_sessions.*.end_time' => 'required|date_format:H:i|after:weekend_sessions.*.start_time',
+            'weekend_sessions.*.room_id' => 'required|exists:rooms,id',
+
+            'schedules' => 'required_if:schedule_type,custom|array|min:1',
+            'schedules.*.day_of_week' => 'required_if:schedule_type,custom|string|in:Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday',
+            'schedules.*.room_id' => 'required_if:schedule_type,custom|exists:rooms,id',
+            'schedules.*.start_time' => 'required_if:schedule_type,custom|date_format:H:i',
+            'schedules.*.end_time' => 'required_if:schedule_type,custom|date_format:H:i|after:schedules.*.start_time',
         ], [
             'target_programs.required' => 'សូមជ្រើសរើសជំនាញ និងជំនាន់យ៉ាងហោចណាស់មួយ។',
         ]);
@@ -205,6 +217,89 @@ class CourseOfferingController extends Controller
             }
         });
 
+        // 3. Pattern-based Conflict Checks
+        $validator->after(function ($validator) use ($request) {
+            $scheduleType = $request->input('schedule_type');
+
+            if (! in_array($scheduleType, ['weekday', 'weekend'])) {
+                return;
+            }
+
+            $sessions = $request->input("{$scheduleType}_sessions", []);
+            $lecturerId = $request->input('lecturer_user_id');
+            $academicYear = $request->input('academic_year');
+            $semester = $request->input('semester');
+
+            if (! is_array($sessions) || empty($sessions)) {
+                return;
+            }
+
+            // Sort sessions by start_time for internal overlap check
+            usort($sessions, fn($a, $b) => strcmp($a['start_time'], $b['start_time']));
+
+            // Check internal overlaps within the same day template
+            for ($i = 0; $i < count($sessions) - 1; $i++) {
+                if ($sessions[$i]['end_time'] > $sessions[$i + 1]['start_time']) {
+                    $validator->errors()->add(
+                        "{$scheduleType}_sessions.$i.end_time",
+                        "វេនទី " . ($i + 1) . " និងវេនទី " . ($i + 2) . " មានការជាន់គ្នាឯង។"
+                    );
+                }
+            }
+
+            $days = $scheduleType === 'weekday'
+                ? ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+                : ['Saturday', 'Sunday'];
+
+            foreach ($days as $day) {
+                foreach ($sessions as $sessionIndex => $session) {
+                    $start = $session['start_time'];
+                    $end = $session['end_time'];
+                    $roomId = $session['room_id'];
+
+                    // Room conflict check for this day
+                    $roomConflict = \App\Models\Schedule::where('day_of_week', $day)
+                        ->where('room_id', $roomId)
+                        ->whereHas('courseOffering', function ($q) use ($academicYear, $semester) {
+                            $q->where('academic_year', $academicYear)
+                                ->where('semester', $semester);
+                        })
+                        ->where(function ($q) use ($start, $end) {
+                            $q->where('start_time', '<', $end)
+                                ->where('end_time', '>', $start);
+                        })
+                        ->exists();
+
+                    if ($roomConflict) {
+                        $validator->errors()->add(
+                            "{$scheduleType}_sessions.$sessionIndex.room_id",
+                            "បន្ទប់នេះជាប់រវល់ហើយ នៅថ្ងៃ $day ចន្លោះម៉ោង $start - $end"
+                        );
+                    }
+
+                    // Lecturer conflict check for this day
+                    $lecturerConflict = \App\Models\Schedule::where('day_of_week', $day)
+                        ->whereHas('courseOffering', function ($q) use ($lecturerId, $academicYear, $semester) {
+                            $q->where('lecturer_user_id', $lecturerId)
+                                ->where('academic_year', $academicYear)
+                                ->where('semester', $semester);
+                        })
+                        ->where(function ($q) use ($start, $end) {
+                            $q->where('start_time', '<', $end)
+                                ->where('end_time', '>', $start);
+                        })
+                        ->exists();
+
+                    if ($lecturerConflict) {
+                        $validator->errors()->add(
+                            'lecturer_user_id',
+                            "សាស្ត្រាចារ្យនេះជាប់បង្រៀនថ្នាក់ផ្សេងហើយ នៅថ្ងៃ {$day} ម៉ោង {$start} - {$end}។"
+                        );
+                    }
+                }
+            }
+        });
+
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
@@ -249,9 +344,7 @@ class CourseOfferingController extends Controller
             }
 
             // 5. Create Schedules
-            foreach ($validated['schedules'] as $scheduleData) {
-                $courseOffering->schedules()->create($scheduleData);
-            }
+            $this->generateSchedulesFromPattern($courseOffering, $validated);
 
             \Illuminate\Support\Facades\DB::commit();
 
@@ -305,11 +398,24 @@ class CourseOfferingController extends Controller
             'target_programs' => 'required|array|min:1',
             'target_programs.*.program_id' => 'required|exists:programs,id|distinct',
             'target_programs.*.generation' => 'required|string|max:255',
-            'schedules' => 'required|array|min:1',
-            'schedules.*.day_of_week' => 'required|string|in:Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday',
-            'schedules.*.room_id' => 'required|exists:rooms,id',
-            'schedules.*.start_time' => 'required|date_format:H:i',
-            'schedules.*.end_time' => 'required|date_format:H:i|after:schedules.*.start_time',
+
+            'schedule_type' => 'required|in:custom,weekday,weekend',
+
+            'weekday_sessions' => 'required_if:schedule_type,weekday|array|min:1',
+            'weekday_sessions.*.start_time' => 'required|date_format:H:i',
+            'weekday_sessions.*.end_time' => 'required|date_format:H:i|after:weekday_sessions.*.start_time',
+            'weekday_sessions.*.room_id' => 'required|exists:rooms,id',
+
+            'weekend_sessions' => 'required_if:schedule_type,weekend|array|min:1',
+            'weekend_sessions.*.start_time' => 'required|date_format:H:i',
+            'weekend_sessions.*.end_time' => 'required|date_format:H:i|after:weekend_sessions.*.start_time',
+            'weekend_sessions.*.room_id' => 'required|exists:rooms,id',
+
+            'schedules' => 'required_if:schedule_type,custom|array|min:1',
+            'schedules.*.day_of_week' => 'required_if:schedule_type,custom|string|in:Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday',
+            'schedules.*.room_id' => 'required_if:schedule_type,custom|exists:rooms,id',
+            'schedules.*.start_time' => 'required_if:schedule_type,custom|date_format:H:i',
+            'schedules.*.end_time' => 'required_if:schedule_type,custom|date_format:H:i|after:schedules.*.start_time',
         ]);
 
         $validator->after(function ($validator) use ($request, $courseOffering) {
@@ -432,9 +538,7 @@ class CourseOfferingController extends Controller
 
             // 5. Update Schedules (Delete & Re-create)
             $courseOffering->schedules()->delete();
-            foreach ($validated['schedules'] as $scheduleData) {
-                $courseOffering->schedules()->create($scheduleData);
-            }
+            $this->generateSchedulesFromPattern($courseOffering, $validated);
 
             \Illuminate\Support\Facades\DB::commit();
 
@@ -558,5 +662,37 @@ class CourseOfferingController extends Controller
     public function exportStudents($offering_id)
     {
         return Excel::download(new CourseStudentsExport($offering_id), 'students_list_course_'.$offering_id.'.xlsx');
+    }
+
+    private function generateSchedulesFromPattern(CourseOffering $offering, array $data)
+    {
+        $scheduleType = $data['schedule_type'];
+
+        if ($scheduleType === 'custom') {
+            // Custom schedules - create from individual schedule entries
+            foreach ($data['schedules'] as $scheduleData) {
+                $offering->schedules()->create($scheduleData);
+            }
+            return;
+        }
+
+        $offering->schedules()->delete(); // Clear existing
+
+        $days = $scheduleType === 'weekday'
+            ? ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+            : ['Saturday', 'Sunday'];
+
+        $sessions = $data["{$scheduleType}_sessions"] ?? [];
+
+        foreach ($days as $day) {
+            foreach ($sessions as $session) {
+                $offering->schedules()->create([
+                    'day_of_week' => $day,
+                    'room_id' => $session['room_id'],
+                    'start_time' => $session['start_time'],
+                    'end_time' => $session['end_time'],
+                ]);
+            }
+        }
     }
 }

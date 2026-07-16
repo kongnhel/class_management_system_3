@@ -158,25 +158,94 @@
                         </div>
                     </div>
 
-                    {{-- Schedules --}}
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                        <div class="flex items-center gap-3 mb-6">
-                            <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center">
-                                <span class="text-amber-600 font-bold text-sm">4</span>
-                            </div>
-                            <div>
-                                <h3 class="text-lg font-bold text-gray-900">{{ __('កាលវិភាគសិក្សា') }}</h3>
-                                <p class="text-xs text-gray-500">{{ __('កំណត់ថ្ងៃ ម៉ោង និងបន្ទប់សិក្សា') }}</p>
-                            </div>
-                        </div>
-                        <div id="schedules-container" class="space-y-3 flex-grow min-h-[120px]"></div>
-                        <div class="mt-4 pt-4 border-t border-gray-100">
-                            <button type="button" id="add-schedule" class="flex items-center gap-2 text-emerald-600 font-bold text-sm hover:text-emerald-700 transition-colors">
-                                <div class="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center">
-                                    <i class="fas fa-plus text-xs"></i>
+                    {{-- Schedule Type Selector --}}
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
+                        <h3 class="text-lg font-bold text-gray-900 mb-4">{{ __('ជ្រើសរើសបែងប្រាក់វិភាគ') }}</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <label class="schedule-type-card p-4 border-2 rounded-xl cursor-pointer transition-all
+                                {{ old('schedule_type', 'custom') === 'custom' ? 'border-emerald-500 bg-emerald-50' : 'border-gray-200 hover:border-gray-300' }}"
+                                for="schedule_type_custom">
+                                <input type="radio" name="schedule_type" value="custom" id="schedule_type_custom" class="sr-only"
+                                    {{ old('schedule_type', 'custom') === 'custom' ? 'checked' : '' }}>
+                                <div class="text-center">
+                                    <i class="fas fa-calendar-alt text-3xl text-gray-400 mb-2"></i>
+                                    <p class="font-bold text-gray-900">{{ __('កំណត់ថ្ងៃខ្លី (Custom)') }}</p>
+                                    <p class="text-xs text-gray-500 mt-1">{{ __('ជ្រើសរើសថ្ងៃមួយចំនួន') }}</p>
                                 </div>
-                                <span>{{ __('បន្ថែមម៉ោងសិក្សាថ្មី') }}</span>
+                            </label>
+
+                            <label class="schedule-type-card p-4 border-2 rounded-xl cursor-pointer transition-all
+                                {{ old('schedule_type') === 'weekday' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300' }}"
+                                for="schedule_type_weekday">
+                                <input type="radio" name="schedule_type" value="weekday" id="schedule_type_weekday" class="sr-only"
+                                    {{ old('schedule_type') === 'weekday' ? 'checked' : '' }}>
+                                <div class="text-center">
+                                    <i class="fas fa-calendar-week text-3xl text-blue-500 mb-2"></i>
+                                    <p class="font-bold text-gray-900">{{ __('ចន្ទ-សុក្រ (Mon-Fri)') }}</p>
+                                    <p class="text-xs text-gray-500 mt-1">{{ __('បែងប្រាក់វេនប្រចាំថ្ងៃ') }}</p>
+                                </div>
+                            </label>
+
+                            <label class="schedule-type-card p-4 border-2 rounded-xl cursor-pointer transition-all
+                                {{ old('schedule_type') === 'weekend' ? 'border-amber-500 bg-amber-50' : 'border-gray-200 hover:border-gray-300' }}"
+                                for="schedule_type_weekend">
+                                <input type="radio" name="schedule_type" value="weekend" id="schedule_type_weekend" class="sr-only"
+                                    {{ old('schedule_type') === 'weekend' ? 'checked' : '' }}>
+                                <div class="text-center">
+                                    <i class="fas fa-calendar-day text-3xl text-amber-500 mb-2"></i>
+                                    <p class="font-bold text-gray-900">{{ __('សៅរ៍-អាទិត្យ (Sat-Sun)') }}</p>
+                                    <p class="text-xs text-gray-500 mt-1">{{ __('បែងប្រាក់វេនប្រចាំថ្ងៃ') }}</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    {{-- Weekday Pattern Form --}}
+                    <div id="weekday-pattern-form" class="hidden bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="text-lg font-bold text-gray-900">{{ __('កំណត់វេនសិក្សាប្រចាំថ្ងៃចន្ទ-សុក្រ') }}</h4>
+                            <button type="button" id="add-weekday-session" class="flex items-center gap-2 text-emerald-600 font-bold text-sm hover:text-emerald-700">
+                                <i class="fas fa-plus text-xs"></i> {{ __('បន្ថែមវេនសិក្សា') }}
                             </button>
+                        </div>
+                        <div id="weekday-sessions-container" class="space-y-3"></div>
+                        <p class="text-xs text-gray-500 mt-2">{{ __('បែងប្រាក់វេនសិក្សាដែលត្រូវបានបញ្ចូលនេះនឹងត្រូវបានអនុវត្តដោយស្វ័យប្រវត្តិលើថ្ងៃចន្ទ ទី២ ពុធ ព្រហស្បតិ៍ សុក្រ') }}</p>
+                    </div>
+
+                    {{-- Weekend Pattern Form --}}
+                    <div id="weekend-pattern-form" class="hidden bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="text-lg font-bold text-gray-900">{{ __('កំណត់វេនសិក្សាប្រចាំថ្ងៃសៅរ៍-អាទិត្យ') }}</h4>
+                            <button type="button" id="add-weekend-session" class="flex items-center gap-2 text-emerald-600 font-bold text-sm hover:text-emerald-700">
+                                <i class="fas fa-plus text-xs"></i> {{ __('បន្ថែមវេនសិក្សា') }}
+                            </button>
+                        </div>
+                        <div id="weekend-sessions-container" class="space-y-3"></div>
+                        <p class="text-xs text-gray-500 mt-2">{{ __('បែងប្រាក់វេនសិក្សាដែលត្រូវបានបញ្ចូលនេះនឹងត្រូវបានអនុវត្តដោយស្វ័យប្រវត្តិលើថ្ងៃសៅរ៍ និងអាទិត្យ') }}</p>
+                    </div>
+
+                    {{-- Custom Schedule Form (existing) --}}
+                    <div id="custom-schedule-form">
+                        {{-- Schedules --}}
+                        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center">
+                                    <span class="text-amber-600 font-bold text-sm">4</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-gray-900">{{ __('កាលវិភាគសិក្សា') }}</h3>
+                                    <p class="text-xs text-gray-500">{{ __('កំណត់ថ្ងៃ ម៉ោង និងបន្ទប់សិក្សា') }}</p>
+                                </div>
+                            </div>
+                            <div id="schedules-container" class="space-y-3 flex-grow min-h-[120px]"></div>
+                            <div class="mt-4 pt-4 border-t border-gray-100">
+                                <button type="button" id="add-schedule" class="flex items-center gap-2 text-emerald-600 font-bold text-sm hover:text-emerald-700 transition-colors">
+                                    <div class="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center">
+                                        <i class="fas fa-plus text-xs"></i>
+                                    </div>
+                                    <span>{{ __('បន្ថែមម៉ោងសិក្សាថ្មី') }}</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -369,11 +438,119 @@
             if (academicYearSelect.value) academicYearSelect.dispatchEvent(new Event('change'));
 
             // ──────────────────────────────────────────────
-            //  6. Schedules
+            //  6. Schedule Pattern Selection & Session Builder
             // ──────────────────────────────────────────────
+            const scheduleTypeRadios = document.querySelectorAll('input[name="schedule_type"]');
+            const weekdayForm = document.getElementById('weekday-pattern-form');
+            const weekendForm = document.getElementById('weekend-pattern-form');
+            const customForm = document.getElementById('custom-schedule-form');
+            const rooms = {!! json_encode($rooms->map(fn($r) => ['id' => $r->id, 'room_number' => $r->room_number])) !!};
+
+            function toggleForms() {
+                const type = document.querySelector('input[name="schedule_type"]:checked').value;
+
+                weekdayForm.classList.toggle('hidden', type !== 'weekday');
+                weekendForm.classList.toggle('hidden', type !== 'weekend');
+                customForm.classList.toggle('hidden', type !== 'custom');
+
+                // Disable inputs in hidden forms so they don't submit
+                [weekdayForm, weekendForm, customForm].forEach(form => {
+                    const inputs = form.querySelectorAll('input, select');
+                    inputs.forEach(input => input.disabled = form.classList.contains('hidden'));
+                });
+            }
+
+            scheduleTypeRadios.forEach(radio => radio.addEventListener('change', toggleForms));
+            toggleForms(); // Initial
+
+            // Session row builder
+            function createSessionRow(containerId, prefix, rooms, initialData = {}) {
+                const container = document.getElementById(containerId);
+                const idx = Date.now() + Math.random();
+                const sessionCount = container.querySelectorAll('.session-row').length + 1;
+
+                const roomOptions = rooms.map(r =>
+                    '<option value="' + r.id + '" ' + (initialData.room_id == r.id ? 'selected' : '') + '>' + r.room_number + '</option>'
+                ).join('');
+
+                const row = document.createElement('div');
+                row.className = 'session-row group bg-gray-50 p-4 rounded-xl border border-gray-200';
+                row.innerHTML =
+                    '<div class="flex items-center justify-between mb-3">' +
+                        '<div class="flex items-center gap-2 text-sm font-bold text-emerald-600">' +
+                            '<i class="fas fa-clock text-xs"></i><span>{{ __('វេន') }} ' + sessionCount + '</span>' +
+                        '</div>' +
+                        '<button type="button" class="remove-session text-gray-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100">' +
+                            '<i class="fas fa-times-circle text-sm"></i>' +
+                        '</button>' +
+                    '</div>' +
+                    '<div class="grid grid-cols-1 md:grid-cols-4 gap-3">' +
+                        '<div>' +
+                            '<label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('ចាប់ផ្តើម') }} *</label>' +
+                            '<input type="time" name="' + prefix + '[' + idx + '][start_time]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" value="' + (initialData.start_time || '') + '" required>' +
+                        '</div>' +
+                        '<div>' +
+                            '<label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('បញ្ចប់') }} *</label>' +
+                            '<input type="time" name="' + prefix + '[' + idx + '][end_time]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" value="' + (initialData.end_time || '') + '" required>' +
+                        '</div>' +
+                        '<div>' +
+                            '<label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('បន្ទប់') }} *</label>' +
+                            '<select name="' + prefix + '[' + idx + '][room_id]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>' +
+                                '<option value="">{{ __('ជ្រើសរើសបន្ទប់') }}</option>' + roomOptions +
+                            '</select>' +
+                        '</div>' +
+                        '<div class="flex items-end">' +
+                            '<button type="button" class="remove-session text-red-500 hover:text-red-700 text-sm p-2">' +
+                                '<i class="fas fa-trash"></i>' +
+                            '</button>' +
+                        '</div>' +
+                    '</div>';
+
+                container.appendChild(row);
+
+                row.querySelector('.remove-session').addEventListener('click', function() {
+                    row.remove();
+                    updateSessionLabels(containerId);
+                });
+
+                return row;
+            }
+
+            function updateSessionLabels(containerId) {
+                const container = document.getElementById(containerId);
+                container.querySelectorAll('.session-row').forEach((row, i) => {
+                    const label = row.querySelector('.flex.items-center span');
+                    if (label) label.textContent = '{{ __('វេន') }} ' + (i + 1);
+                });
+            }
+
+            // Add session buttons
+            document.getElementById('add-weekday-session').addEventListener('click', function() {
+                createSessionRow('weekday-sessions-container', 'weekday_sessions', rooms);
+            });
+            document.getElementById('add-weekend-session').addEventListener('click', function() {
+                createSessionRow('weekend-sessions-container', 'weekend_sessions', rooms);
+            });
+
+            // Load old input for pattern forms
+            const oldWeekday = {!! json_encode(old('weekday_sessions', [])) !!};
+            const oldWeekend = {!! json_encode(old('weekend_sessions', [])) !!};
+
+            if (Object.keys(oldWeekday).length > 0) {
+                Object.values(oldWeekday).forEach(s => createSessionRow('weekday-sessions-container', 'weekday_sessions', rooms, s));
+            } else {
+                createSessionRow('weekday-sessions-container', 'weekday_sessions', rooms);
+            }
+
+            if (Object.keys(oldWeekend).length > 0) {
+                Object.values(oldWeekend).forEach(s => createSessionRow('weekend-sessions-container', 'weekend_sessions', rooms, s));
+            } else {
+                createSessionRow('weekend-sessions-container', 'weekend_sessions', rooms);
+            }
+
+            // Custom schedule form (existing)
             const scheduleContainer = document.getElementById('schedules-container');
             const addScheduleBtn = document.getElementById('add-schedule');
-            const rooms = {!! json_encode($rooms) !!};
             let scheduleIndex = 0;
 
             function addScheduleRow(initialData = {}) {
