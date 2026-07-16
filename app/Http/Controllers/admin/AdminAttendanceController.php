@@ -5,6 +5,7 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use App\Models\AttendanceRecord;
 use App\Models\CourseOffering;
+use App\Models\Generation;
 use App\Models\Program;
 use Illuminate\Http\Request;
 
@@ -43,14 +44,21 @@ class AdminAttendanceController extends Controller
             $query->where('academic_year', $request->input('academic_year'));
         }
 
+        if ($request->filled('generation')) {
+            $query->whereHas('targetPrograms', function ($q) use ($request) {
+                $q->where('generation', $request->input('generation'));
+            });
+        }
+
         $courseOfferings = $query->orderBy('academic_year', 'desc')
             ->orderBy('semester', 'desc')
             ->paginate(20)
             ->appends($request->query());
 
         $programs = Program::orderBy('name_km')->get();
+        $generations = Generation::orderByDesc('name')->get();
 
-        return view('admin.attendance.index', compact('courseOfferings', 'programs'));
+        return view('admin.attendance.index', compact('courseOfferings', 'programs', 'generations'));
     }
 
     public function show(CourseOffering $courseOffering)

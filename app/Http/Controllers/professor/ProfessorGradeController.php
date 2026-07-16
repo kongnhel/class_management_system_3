@@ -16,6 +16,8 @@ use App\Services\GradingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProfessorGradeController extends Controller
 {
@@ -159,6 +161,145 @@ class ProfessorGradeController extends Controller
             new \App\Exports\ProfessorGradeExcelExport($courseOffering, $students, $assessments, $gradebook),
             $fileName
         );
+    }
+
+    public function importGradesExcel(Request $request, $offering_id)
+    {
+        $request->validate([
+            'excel_file' => 'required|mimes:xlsx,xls|max:10240',
+        ]);
+
+        $courseOffering = CourseOffering::with(['course', 'lecturer'])->findOrFail($offering_id);
+        $this->authorizeCourseOffering($courseOffering);
+
+        try {
+            $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReaderForFile($request->file('excel_file'));
+            $reader->setReadDataOnly(true);
+            $spreadsheet = $reader->load($request->file('excel_file'));
+            $sheet = $spreadsheet->getActiveSheet();
+            $highestRow = $sheet->getHighestRow();
+            $highestColumn = $sheet->getHighestColumn();
+
+            // Parse row 8 headers to find assessment columns
+            $assignments = Assignment::where('course_offering_id', $offering_id)->get();
+            $exams = Exam::where('course_offering_id', $offering_id)->get();
+            $quizzes = Quiz::where('course_offering_id', $offering_id)->get();
+
+            $headerMap = [];
+            for ($col = 'D'; $col <= $highestColumn; $col++) {
+                $cellValue = trim($sheet->getCell($col . '8')->getValue() ?? '');
+                if ($cellValue === '' || $cellValue === 'វត្តមាន' || $cellValue === 'ពិន្ទុសរុប' || $cellValue === 'ចំណាត់ថ្នាក់') {
+                    $headerMap[$col] = $cellValue;
+                    continue;
+                }
+                // Match header to assessment
+                foreach ($assignments as $a) {
+                    if (str_contains($cellValue, $a->title_km ?? '') || str_contains($cellValue, $a->title_en ?? '')) {
+                        $headerMap[$col] = ['type' => 'assignment', 'id' => $a->id];
+                        break;
+                    }
+                }
+                if (! isset($headerMap[$col])) {
+                    foreach ($exams as $e) {
+                        if (str_contains($cellValue, $e->title_km ?? '') || str_contains($cellValue, $e->title_en ?? '')) {
+                            $headerMap[$col] = ['type' => 'exam', 'id' => $e->id];
+                            break;
+                        }
+                    }
+                }
+                if (! isset($headerMap[$col])) {
+                    foreach ($quizzes as $q) {
+                        if (str_contains($cellValue, $q->title_km ?? '') || str_contains($cellValue, $q->title_en ?? '')) {
+                            $headerMap[$col] = ['type' => 'quiz', 'id' => $q->id];
+                            break;
+                        }
+                    }
+                }
+                if (! isset($headerMap[$col])) {
+                    $headerMap[$col] = null; // unknown column, skip
+                }
+            }
+
+            // Find attendance column (វត្តមាន)
+            $attendanceCol = null;
+            foreach ($headerMap as $col => $val) {
+                if ($val === 'វត្តមាន') {
+                    $attendanceCol = $col;
+                    break;
+                }
+            }
+
+            // Get enrolled students for name matching
+            $enrolledStudents = StudentCourseEnrollment::where('course_offering_id', $offering_id)
+                ->with('student.studentProfile')
+                ->get()
+                ->mapWithKeys(fn ($e) => [
+                    trim($e->student->studentProfile->full_name_km ?? $e->student->name) => $e->student_user_id,
+                ]);
+
+            $imported = 0;
+            $skipped = 0;
+
+            DB::beginTransaction();
+
+            // Read data rows starting from row 10
+            for ($row = 10; $row <= $highestRow; $row++) {
+                $nameCell = trim($sheet->getCell('B' . $row)->getValue() ?? '');
+                if ($nameCell === '' || $nameCell === 'មធ្យមភាគរួម' || $nameCell === 'អ្នកប្រឡងជាប់ / ធ្លាក់') {
+                    continue;
+                }
+
+                // Match student by name
+                $studentId = $enrolledStudents->get($nameCell);
+                if (! $studentId) {
+                    $skipped++;
+                    continue;
+                }
+
+                // Import assessment scores
+                foreach ($headerMap as $col => $mapping) {
+                    if (is_string($mapping)) {
+                        continue; // skip non-assessment columns
+                    }
+                    if (! $mapping) {
+                        continue;
+                    }
+
+                    $score = $sheet->getCell($col . $row)->getValue();
+                    if ($score === null || $score === '' || ! is_numeric($score)) {
+                        continue;
+                    }
+
+                    ExamResult::updateOrCreate(
+                        [
+                            'assessment_id' => $mapping['id'],
+                            'student_user_id' => $studentId,
+                            'assessment_type' => $mapping['type'],
+                        ],
+                        [
+                            'score_obtained' => (float) $score,
+                            'recorded_at' => now(),
+                        ]
+                    );
+                }
+
+                // Attendance column exists in Excel but attendance is auto-calculated in system — skip
+
+                $imported++;
+            }
+
+            DB::commit();
+
+            return redirect()->route('professor.manage-grades', ['offering_id' => $offering_id])
+                ->with('success', "បញ្ចូលពិន្ទុជោគជ័យ! ({$imported} សិស្សបានអាប់ឌីត, {$skipped} រំលង)");
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Import grades error: '.$e->getMessage()."\n".$e->getTraceAsString());
+
+            return redirect()->route('professor.manage-grades', ['offering_id' => $offering_id])
+                ->with('error', 'មានបញ្ហាក្នុងការបញ្ចូលទិន្នន័យ។ សូមពិនិត្យមើលឯកសាររបស់អ្នក។');
+        }
     }
 
     public function createAssessmentForm($offering_id)
@@ -484,137 +625,86 @@ class ProfessorGradeController extends Controller
 
         $courseName = str_replace([' ', '/', '\\'], '_', $courseOffering->course->title_en ?? 'Subject');
 
-        $fileName = "Grades_{$courseName}_{$type}_ID{$id}.csv";
+        $fileName = "Grades_{$courseName}_{$type}_ID{$id}.xlsx";
 
-        $headers = [
-            'Content-type' => 'text/csv; charset=UTF-8',
-            'Content-Disposition' => "attachment; filename=$fileName",
-        ];
-
-        $callback = function () use ($students, $results) {
-            $file = fopen('php://output', 'w');
-            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
-
-            fputcsv($file, ['ID', 'Student Code', 'Name', 'Score', 'Notes']);
-
-            foreach ($students as $student) {
-                $scoreRecord = $results->get($student->id);
-                $score = $scoreRecord ? $scoreRecord->score_obtained : '';
-                $notes = $scoreRecord ? $scoreRecord->notes : '';
-
-                fputcsv($file, [
-                    $student->id,
-                    $student->student_id_code,
-                    $student->userProfile?->full_name_km ?? $student->name,
-                    $score,
-                    $notes,
-                ]);
-            }
-            fclose($file);
-        };
-
-        return response()->stream($callback, 200, $headers);
+        return Excel::download(
+            new \App\Exports\AssessmentGradesExport($assessment, $type, $students, $results),
+            $fileName
+        );
     }
 
     public function importCSV(Request $request, $id)
     {
         $request->validate([
-            'excel_file' => 'required|mimes:csv,txt',
+            'excel_file' => 'required|mimes:xlsx,xls,csv,txt',
             'type' => 'required',
             'offering_id' => 'required',
         ]);
 
         $type = $request->input('type');
         $offering_id = $request->input('offering_id');
+        $file = $request->file('excel_file');
+        $extension = strtolower($file->getClientOriginalExtension());
 
-        if (($handle = fopen($request->file('excel_file')->getRealPath(), 'r')) !== false) {
+        if (in_array($extension, ['xlsx', 'xls'])) {
+            $importData = Excel::toArray([], $file)[0] ?? [];
+            $headerRow = $importData[0] ?? [];
+            $rows = array_slice($importData, 1);
+        } else {
+            $handle = fopen($file->getRealPath(), 'r');
+            if (!$handle) {
+                return back()->with('error', 'មិនអាចបើកឯកសារបាន។');
+            }
+
             $bom = fread($handle, 3);
             if ($bom !== "\xEF\xBB\xBF") {
                 rewind($handle);
             }
 
-            fgetcsv($handle);
-
-            DB::beginTransaction();
-            try {
-                while (($data = fgetcsv($handle, 1000, ',')) !== false) {
-                    if (empty($data[0])) {
-                        continue;
-                    }
-
-                    $studentUserId = trim($data[0]);
-                    $score = trim($data[3]);
-                    $notes = trim($data[4] ?? '');
-
-                    if ($score !== '') {
-                        \App\Models\ExamResult::updateOrCreate(
-                            [
-                                'assessment_id' => $id,
-                                'student_user_id' => $studentUserId,
-                                'assessment_type' => $type,
-                            ],
-                            [
-                                'score_obtained' => $score,
-                                'notes' => $notes,
-                                'recorded_at' => now(),
-                            ]
-                        );
-                    }
-                }
-                DB::commit();
-            } catch (\Exception $e) {
-                DB::rollBack();
-
-                return back()->with('error', 'មានបញ្ហាក្នុងការបញ្ចូលទិន្នន័យ។ សូមពិនិត្យមើលឯកសាររបស់អ្នក។');
+            $headerRow = fgetcsv($handle);
+            $rows = [];
+            while (($data = fgetcsv($handle, 1000, ',')) !== false) {
+                $rows[] = $data;
             }
             fclose($handle);
         }
 
-        return redirect()->route('professor.manage-grades', ['offering_id' => $offering_id])
-            ->with('success', 'បញ្ចូលពិន្ទុ '.ucfirst($type).' ជោគជ័យ!');
-    }
+        DB::beginTransaction();
+        try {
+            foreach ($rows as $data) {
+                if (empty($data[0])) {
+                    continue;
+                }
 
-    public function editAttendance($student_id, $course_id)
-    {
-        $student = User::findOrFail($student_id);
-        $courseOffering = CourseOffering::findOrFail($course_id);
+                $studentUserId = trim($data[0]);
+                $score = trim($data[3]);
+                $notes = trim($data[4] ?? '');
 
-        $this->authorizeCourseOffering($courseOffering);
+                if ($score !== '') {
+                    \App\Models\ExamResult::updateOrCreate(
+                        [
+                            'assessment_id' => $id,
+                            'student_user_id' => $studentUserId,
+                            'assessment_type' => $type,
+                        ],
+                        [
+                            'score_obtained' => $score,
+                            'notes' => $notes,
+                            'recorded_at' => now(),
+                        ]
+                    );
+                }
+            }
 
-        $autoScore = $student->getAttendanceScoreByCourse($course_id);
+            DB::commit();
 
-        $enrollment = StudentCourseEnrollment::where('student_user_id', $student_id)
-            ->where('course_offering_id', $course_id)
-            ->firstOrFail();
+            return back()->with('success', 'បញ្ចូលពិន្ទុជោគជ័យ!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Import grades error: ' . $e->getMessage());
 
-        return view('professor.grades.edit_attendance', compact('student', 'courseOffering', 'autoScore', 'enrollment'));
-    }
-
-    public function updateAttendanceScore(Request $request)
-    {
-        $request->validate([
-            'student_id' => 'required',
-            'course_id' => 'required',
-            'score' => 'nullable|numeric|min:0|max:15',
-        ]);
-
-        $courseOffering = CourseOffering::findOrFail($request->course_id);
-        $this->authorizeCourseOffering($courseOffering);
-
-        $enrollment = \App\Models\StudentCourseEnrollment::where('student_user_id', $request->student_id)
-            ->where('course_offering_id', $request->course_id)
-            ->firstOrFail();
-
-        $enrollment->attendance_score_manual = $request->score;
-        $enrollment->save();
-
-        if ($request->score >= 15) {
-            \App\Models\AttendanceRecord::where('student_user_id', $request->student_id)
-                ->where('course_offering_id', $request->course_id)
-                ->update(['status' => 'present']);
+            return back()->with('error', 'មានបញ្ហាក្នុងការបញ្ចូលទិន្នន័យ។');
         }
-
-        return redirect()->back()->with('success', 'បានធ្វើបច្ចុប្បន្នភាពពិន្ទុវត្តមានរួចរាល់');
     }
 
     public function assessmentEdit($id, $type)

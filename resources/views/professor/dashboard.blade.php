@@ -128,9 +128,9 @@
                             </p>
                         </div>
                     </div>
-                    <a href="{{ route('professor.grades.all') }}" class="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-xl font-bold text-xs transition-all self-start sm:self-auto">
+                    {{-- <a href="{{ route('professor.grades.all') }}" class="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-xl font-bold text-xs transition-all self-start sm:self-auto">
                         {{ __('វាយតម្លៃឥឡូវ') }} <i class="fas fa-arrow-right text-[10px]"></i>
-                    </a>
+                    </a> --}}
                 </div>
             @endif
 

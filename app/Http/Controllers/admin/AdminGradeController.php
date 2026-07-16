@@ -7,6 +7,7 @@ use App\Models\Assignment;
 use App\Models\CourseOffering;
 use App\Models\Exam;
 use App\Models\ExamResult;
+use App\Models\Generation;
 use App\Models\Program;
 use App\Models\Quiz;
 use App\Services\GradingService;
@@ -47,14 +48,21 @@ class AdminGradeController extends Controller
             $query->where('academic_year', $request->input('academic_year'));
         }
 
+        if ($request->filled('generation')) {
+            $query->whereHas('targetPrograms', function ($q) use ($request) {
+                $q->where('generation', $request->input('generation'));
+            });
+        }
+
         $courseOfferings = $query->orderBy('academic_year', 'desc')
             ->orderBy('semester', 'desc')
             ->paginate(20)
             ->appends($request->query());
 
         $programs = Program::orderBy('name_km')->get();
+        $generations = Generation::orderByDesc('name')->get();
 
-        return view('admin.grades.index', compact('courseOfferings', 'programs'));
+        return view('admin.grades.index', compact('courseOfferings', 'programs', 'generations'));
     }
 
     public function show(CourseOffering $courseOffering)

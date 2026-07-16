@@ -44,6 +44,16 @@ class AIContextService
             $context .= "Active Academic Year: {$currentYear->name}\n";
         }
 
+        // All academic years
+        $allYears = DB::table('academic_years')->orderByDesc('name')->get();
+        if ($allYears->isNotEmpty()) {
+            $context .= "\n=== ACADEMIC YEARS ===\n";
+            foreach ($allYears as $y) {
+                $current = $y->is_current ? ' (CURRENT)' : '';
+                $context .= "- {$y->name} | Start: ".($y->start_date ?: 'N/A')." | End: ".($y->end_date ?: 'N/A')."{$current}\n";
+            }
+        }
+
         // Add user gender info for pronoun usage
         $user->load('profile', 'studentProfile');
         $profile = $user->role === 'student' ? $user->studentProfile : $user->profile;
@@ -131,6 +141,16 @@ class AIContextService
             $faculty = DB::table('faculties')->where('id', $dept->faculty_id ?? null)->first();
             if ($faculty) {
                 $context .= "Faculty: {$faculty->name_km} ({$faculty->name_en})\n";
+            }
+        }
+
+        // All courses in system
+        $allCourses = DB::table('courses')->get();
+        if ($allCourses->isNotEmpty()) {
+            $context .= "\n=== ALL COURSES IN SYSTEM ({$allCourses->count()}) ===\n";
+            foreach ($allCourses as $c) {
+                $dept = DB::table('departments')->where('id', $c->department_id)->first();
+                $context .= "- [ID:{$c->id}] {$c->title_km} ({$c->title_en}) | Credits: ".($c->credits ?: '?')." | Code: ".($c->code ?? 'N/A')." | Dept: ".($dept->name_km ?? 'N/A')."\n";
             }
         }
 
@@ -302,6 +322,43 @@ class AIContextService
                 $context .= "- [{$q->course_name}] ".($q->title_km ?: $q->title)." | Date: {$q->quiz_date} | Max Score: ".($q->max_score ?: '?')."\n";
             }
         }
+
+        // Student program enrollments
+        $programEnrollments = DB::table('student_program_enrollments')
+            ->join('programs', 'student_program_enrollments.program_id', '=', 'programs.id')
+            ->where('student_program_enrollments.student_user_id', $user->id)
+            ->get(['programs.name_km as program_name', 'student_program_enrollments.starting_year_level', 'student_program_enrollments.enrollment_date', 'student_program_enrollments.status']);
+
+        if ($programEnrollments->isNotEmpty()) {
+            $context .= "\n=== PROGRAM ENROLLMENTS ===\n";
+            foreach ($programEnrollments as $pe) {
+                $context .= "- {$pe->program_name} | Year Level: {$pe->starting_year_level} | Enrolled: {$pe->enrollment_date} | Status: {$pe->status}\n";
+            }
+        }
+
+        // Assignment submissions
+        $submissions = DB::table('submissions')
+            ->join('assignments', 'submissions.assignment_id', '=', 'assignments.id')
+            ->join('course_offerings', 'assignments.course_offering_id', '=', 'course_offerings.id')
+            ->join('courses', 'course_offerings.course_id', '=', 'courses.id')
+            ->where('submissions.student_user_id', $user->id)
+            ->orderBy('submissions.submitted_at', 'desc')
+            ->limit(20)
+            ->get([
+                'courses.title_km as course_name',
+                'assignments.title_km as assignment_title',
+                'submissions.score',
+                'submissions.status',
+                'submissions.submitted_at'
+            ]);
+
+        if ($submissions->isNotEmpty()) {
+            $context .= "\n=== ASSIGNMENT SUBMISSIONS ===\n";
+            foreach ($submissions as $s) {
+                $score = $s->score !== null ? $s->score : 'Not graded';
+                $context .= "- [{$s->course_name}] {$s->assignment_title} | Score: {$score} | Status: {$s->status} | Submitted: {$s->submitted_at}\n";
+            }
+        }
     }
 
     // ========================================================================
@@ -328,6 +385,16 @@ class AIContextService
             $faculty = DB::table('faculties')->where('id', $dept->faculty_id)->first();
             if ($faculty) {
                 $context .= "Faculty: {$faculty->name_km} ({$faculty->name_en})\n";
+            }
+        }
+
+        // All courses in system
+        $courses = DB::table('courses')->get();
+        if ($courses->isNotEmpty()) {
+            $context .= "\n=== ALL COURSES IN SYSTEM ({$courses->count()}) ===\n";
+            foreach ($courses as $c) {
+                $dept = DB::table('departments')->where('id', $c->department_id)->first();
+                $context .= "- [ID:{$c->id}] {$c->title_km} ({$c->title_en}) | Credits: ".($c->credits ?: '?')." | Code: ".($c->code ?? 'N/A')." | Dept: ".($dept->name_km ?? 'N/A')."\n";
             }
         }
 
@@ -476,6 +543,32 @@ class AIContextService
             $context .= "\n=== ALL STUDENTS IN SYSTEM ({$allStudents->count()}) ===\n";
             foreach ($allStudents as $s) {
                 $context .= "- {$s->name} ({$s->full_name_km}) [{$s->student_id_code}] - ".($s->program ?: 'N/A')."\n";
+            }
+        }
+
+        // Recent submissions for professor's courses
+        $submissions = DB::table('submissions')
+            ->join('assignments', 'submissions.assignment_id', '=', 'assignments.id')
+            ->join('course_offerings', 'assignments.course_offering_id', '=', 'course_offerings.id')
+            ->join('courses', 'course_offerings.course_id', '=', 'courses.id')
+            ->join('users', 'submissions.student_user_id', '=', 'users.id')
+            ->where('course_offerings.lecturer_user_id', $user->id)
+            ->orderBy('submissions.submitted_at', 'desc')
+            ->limit(30)
+            ->get([
+                'users.name as student_name',
+                'courses.title_km as course_name',
+                'assignments.title_km as assignment_title',
+                'submissions.score',
+                'submissions.status',
+                'submissions.submitted_at'
+            ]);
+
+        if ($submissions->isNotEmpty()) {
+            $context .= "\n=== RECENT STUDENT SUBMISSIONS ({$submissions->count()}) ===\n";
+            foreach ($submissions as $s) {
+                $score = $s->score !== null ? $s->score : 'Not graded';
+                $context .= "- {$s->student_name} | [{$s->course_name}] {$s->assignment_title} | Score: {$score} | Status: {$s->status} | Submitted: {$s->submitted_at}\n";
             }
         }
     }

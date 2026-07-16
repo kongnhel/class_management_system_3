@@ -19,27 +19,6 @@
                         if ($assessment instanceof \App\Models\Quiz) $type = 'quiz';
                     @endphp
 
-                    <a href="{{ route('grades.export', ['id' => $assessment->id, 'type' => $type]) }}"
-                       class="flex-1 md:flex-none inline-flex justify-center items-center px-3 py-2 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-xl text-[11px] font-bold hover:bg-emerald-100 transition-all shadow-sm">
-                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        {{ __('ទាញយក CSV') }}
-                    </a>
-                    <form id="importForm" action="{{ route('grades.import', ['id' => $assessment->id]) }}" method="POST" enctype="multipart/form-data" class="flex-1 md:flex-none">
-                        @csrf
-                        <input type="hidden" name="type" value="{{ $type }}">
-                        <input type="hidden" name="offering_id" value="{{ $assessment->course_offering_id }}">
-                        <input type="file" id="csvFileInput" name="excel_file" class="hidden" accept=".csv" onchange="document.getElementById('importForm').submit();">
-                        <button type="button" onclick="document.getElementById('csvFileInput').click();"
-                                class="w-full inline-flex justify-center items-center px-3 py-2 bg-amber-50 text-amber-700 border border-amber-100 rounded-xl text-[11px] font-bold hover:bg-amber-100 transition-all shadow-sm">
-                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                            </svg>
-                            {{ __('បញ្ចូលតាម Excel') }}
-                        </button>
-                    </form>
-
                     <div class="w-full lg:w-auto flex items-center gap-4 bg-slate-50 lg:bg-white p-2 md:p-2.5 rounded-2xl border border-slate-100 shadow-sm mt-2 lg:mt-0">
                         <div class="flex-1 lg:text-right lg:pr-4 lg:border-r border-slate-200">
                             <p class="text-[9px] text-slate-400 uppercase font-black tracking-widest leading-none">{{ __('ការវាយតម្លៃ') }}</p>
@@ -89,21 +68,85 @@
                 </div>
             </div>
 
-            {{-- Toolbar: Search + Filters + Batch --}}
-            <div class="flex flex-col md:flex-row gap-3 mb-6">
-                {{-- Search --}}
-                <form action="{{ url()->current() }}" method="GET" class="relative flex-1 md:max-w-sm">
-                    <input type="hidden" name="type" value="{{ $type }}">
-                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                        <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                    </div>
-                    <input type="text" name="search" value="{{ $search }}"
-                           placeholder="{{ __('ស្វែងរកឈ្មោះ ឬ អត្តលេខ...') }}"
-                           class="block w-full pl-11 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all shadow-sm">
-                </form>
+            {{-- Toolbar: Search + Excel + Filters + Batch --}}
+            <div class="mb-6">
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="flex flex-col lg:flex-row items-stretch">
+                        {{-- Search --}}
+                        <div class="flex-1 p-3 border-b lg:border-b-0 lg:border-r border-slate-100">
+                            <form action="{{ url()->current() }}" method="GET" class="relative">
+                                <input type="hidden" name="type" value="{{ $type }}">
+                                <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                </svg>
+                                <input type="text" name="search" value="{{ $search }}"
+                                    placeholder="{{ __('ស្វែងរកឈ្មោះ ឬ អត្តលេខ...') }}"
+                                    class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border-0 rounded-xl text-sm font-medium text-slate-700 placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500/20 focus:bg-white transition-all">
+                            </form>
+                        </div>
 
+                        {{-- Excel Actions --}}
+                        @php
+                            $type = 'exam';
+                            if ($assessment instanceof \App\Models\Assignment) $type = 'assignment';
+                            if ($assessment instanceof \App\Models\Quiz) $type = 'quiz';
+                        @endphp
+                        <div class="flex items-center gap-2 p-3 bg-slate-50/50">
+                            {{-- Export --}}
+                            <a href="{{ route('grades.export', ['id' => $assessment->id, 'type' => $type]) }}"
+                                class="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs transition-all shadow-sm hover:shadow-md hover:shadow-emerald-200">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                </svg>
+                                {{ __('ទាញយក') }}
+                            </a>
+
+                            <div class="w-px h-8 bg-slate-200"></div>
+
+                            {{-- Import --}}
+                            <form id="importForm" action="{{ route('grades.import', ['id' => $assessment->id]) }}" method="POST" enctype="multipart/form-data" class="flex items-center gap-2">
+                                @csrf
+                                <input type="hidden" name="type" value="{{ $type }}">
+                                <input type="hidden" name="offering_id" value="{{ $assessment->course_offering_id }}">
+                                <input type="file" id="csvFileInput" name="excel_file" class="hidden" accept=".xlsx,.xls,.csv" onchange="handleFileSelect(this)">
+                                <button type="button" onclick="document.getElementById('csvFileInput').click()"
+                                    id="importBtnSelect"
+                                    class="inline-flex items-center gap-1.5 px-4 py-2 bg-white border border-slate-200 hover:border-amber-300 hover:bg-amber-50 text-slate-700 hover:text-amber-700 rounded-xl font-bold text-xs transition-all">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                                    </svg>
+                                    {{ __('បញ្ចូល') }}
+                                </button>
+
+                                {{-- File Selected State --}}
+                                <div id="fileSelectedState" class="hidden items-center gap-2">
+                                    <div class="flex items-center gap-2 px-3 py-1.5 bg-amber-50 border border-amber-200 rounded-lg">
+                                        <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                        </svg>
+                                        <span id="importFileName" class="text-xs font-medium text-amber-800 max-w-[200px] truncate"></span>
+                                        <button type="button" onclick="clearFileSelection()" class="text-amber-500 hover:text-amber-700">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <button type="submit" id="importBtn"
+                                        class="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs transition-all shadow-sm">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                        </svg>
+                                        {{ __('អាប់ដែត') }}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Filters + Batch --}}
+            <div class="flex flex-col md:flex-row gap-3 mb-6">
                 {{-- Filter Tabs --}}
                 <div class="flex bg-white rounded-xl border border-slate-200 p-1 shadow-sm">
                     <button type="button" onclick="setFilter('all')" data-filter="all"
@@ -293,6 +336,25 @@
         const totalStudents = {{ count($students) }};
         let hasUnsavedChanges = false;
         let currentFilter = 'all';
+        let isInitialized = false;
+
+        // --- File Selection ---
+        function handleFileSelect(input) {
+            if (input.files.length > 0) {
+                const file = input.files[0];
+                document.getElementById('importFileName').textContent = file.name;
+                document.getElementById('fileSelectedState').classList.remove('hidden');
+                document.getElementById('fileSelectedState').classList.add('flex');
+                document.getElementById('importBtnSelect').classList.add('hidden');
+            }
+        }
+
+        function clearFileSelection() {
+            document.getElementById('csvFileInput').value = '';
+            document.getElementById('fileSelectedState').classList.add('hidden');
+            document.getElementById('fileSelectedState').classList.remove('flex');
+            document.getElementById('importBtnSelect').classList.remove('hidden');
+        }
 
         // --- Score Validation ---
         function validateScore(input) {
@@ -307,7 +369,7 @@
         }
 
         // --- Stats ---
-        function updateStats() {
+        function updateStats(markDirty = true) {
             const inputs = document.querySelectorAll('.score-input');
             let graded = 0, total = 0, sum = 0;
             inputs.forEach(input => {
@@ -327,16 +389,10 @@
             document.getElementById('progressText').textContent = `${graded}/${totalStudents}`;
             document.getElementById('progressBar').style.width = `${pct}%`;
 
-            if (pct === 100) {
-                document.getElementById('progressBar').classList.remove('bg-emerald-500');
-                document.getElementById('progressBar').classList.add('bg-emerald-500');
-            } else {
-                document.getElementById('progressBar').classList.remove('bg-emerald-500');
-                document.getElementById('progressBar').classList.add('bg-emerald-500');
+            if (markDirty && isInitialized) {
+                hasUnsavedChanges = true;
+                document.getElementById('unsavedIndicator').style.display = 'inline';
             }
-
-            hasUnsavedChanges = true;
-            document.getElementById('unsavedIndicator').style.display = 'inline';
         }
 
         // --- Filter ---
@@ -392,6 +448,8 @@
                 }
             });
             closeBatchFillModal();
+            hasUnsavedChanges = true;
+            document.getElementById('unsavedIndicator').style.display = 'inline';
             updateStats();
         }
 
@@ -421,7 +479,8 @@
             document.querySelectorAll('.score-input').forEach(input => {
                 validateScore(input);
             });
-            updateStats();
+            updateStats(false);
+            isInitialized = true;
         });
     </script>
 </x-app-layout>

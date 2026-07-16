@@ -242,6 +242,7 @@ Route::middleware(['auth', 'role:professor'])->prefix('professor')->name('profes
     Route::get('/my-course-offerings', [ProfessorCourseOfferingController::class, 'myCourseOfferings'])->name('my-course-offerings');
     Route::get('/course-offering/{offering_id}/grades', [ProfessorGradeController::class, 'manageGrades'])->name('manage-grades');
     Route::get('/course-offering/{offering_id}/grades/export-excel', [ProfessorGradeController::class, 'exportExcel'])->name('grades.export-excel');
+    Route::post('/course-offering/{offering_id}/grades/import-excel', [ProfessorGradeController::class, 'importGradesExcel'])->name('grades.import-excel');
     Route::get('/course-offering/{offering_id}/attendance', [ProfessorController::class, 'manageAttendance'])->name('manage-attendance');
     Route::get('/course-offering/{offering_id}/assignments', [ProfessorController::class, 'manageAssignments'])->name('manage-assignments');
     Route::get('/course-offering/{offering_id}/exams', [ProfessorController::class, 'manageExams'])->name('manage-exams');
@@ -342,13 +343,6 @@ Route::middleware(['auth', 'role:professor'])->prefix('professor')->name('profes
     Route::get('/course-offerings/{offering_id}/assignments/{assignment_id}/submissions/{submission_id}/download', [App\Http\Controllers\professor\ProfessorSubmissionController::class, 'download'])
         ->name('submissions.download');
 
-});
-
-Route::prefix('grades')->name('grades.')->middleware(['auth', 'role:professor'])->group(function () {
-    Route::get('/edit/{student_id}/{course_id}', [ProfessorGradeController::class, 'editAttendance'])
-        ->name('edit-attendance');
-    Route::post('/attendance/update', [ProfessorGradeController::class, 'updateAttendanceScore'])
-        ->name('update-attendance');
 });
 
 Route::get('/professor/course-offering/{offering_id}/export', [CourseOfferingController::class, 'exportStudents'])

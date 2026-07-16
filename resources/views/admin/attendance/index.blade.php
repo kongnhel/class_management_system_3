@@ -44,9 +44,13 @@
                             </select>
                         </div>
                         <div class="md:col-span-2">
-                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">ឆ្នាំសិក្សា</label>
-                            <input type="text" name="academic_year" value="{{ request('academic_year') }}" placeholder="ឧ. 2024-2025"
-                                class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
+                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">ជំនាន់</label>
+                            <select name="generation" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
+                                <option value="">ទាំងអស់</option>
+                                @foreach($generations as $gen)
+                                    <option value="{{ $gen->name }}" {{ request('generation') == $gen->name ? 'selected' : '' }}>ជំនាន់ទី{{ $gen->name }}</option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="md:col-span-2 flex gap-2">
                             <a href="{{ route('admin.attendance.index') }}" class="px-3 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl transition-colors font-bold text-xs whitespace-nowrap">
