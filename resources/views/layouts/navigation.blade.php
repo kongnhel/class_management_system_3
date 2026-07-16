@@ -1,5 +1,5 @@
 <nav 
-    class="fixed top-0 left-0 h-screen lg:w-72 w-72 lg:m-1 bg-slate-900 text-gray-300 border-r border-slate-700/50 shadow-xl transform -translate-x-full lg:translate-x-0 transition-all duration-300 ease-in-out z-50 font-['Battambang']"
+    class="fixed top-0 left-0 h-screen lg:w-72 w-72 bg-slate-900 text-gray-300 border-r border-slate-700/50 shadow-xl transform -translate-x-full lg:translate-x-0 transition-all duration-300 ease-in-out z-50 font-['Battambang']"
     :class="{ 'translate-x-0': open, '-translate-x-full': !open }"
 >
 @auth

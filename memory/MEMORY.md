@@ -1,0 +1,1 @@
+- [Security audit session 2026-05-15](security-audit-session-2026-05-15.md) — Laravel audit: fixed api/index.php, routes/api.php, QrLoginController, Handler, CourseStudentsExport, StudentsGradeExport
