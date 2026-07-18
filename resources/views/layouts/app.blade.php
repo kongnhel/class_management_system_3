@@ -79,7 +79,6 @@
             }
         </style>
     </head>
-    @livewireScripts
 
     <body class="font-sans antialiased text-gray-900">
         <script>
@@ -200,3 +199,7 @@
     };
 </script>
 @endauth
+
+    @livewireScripts
+</body>
+</html>
