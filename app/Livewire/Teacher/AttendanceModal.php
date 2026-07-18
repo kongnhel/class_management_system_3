@@ -102,8 +102,7 @@ class AttendanceModal extends Component
         // បងអាចប្រើ Session flash ឬ Dispatch event ដើម្បីប្រាប់ថាជោគជ័យ
         session()->flash('success', "ការស្រង់វត្តមានត្រូវបានបញ្ចប់! សិស្ស $absentCount នាក់ត្រូវបានដាក់ថាអវត្តមាន។");
 
-        // បើបងប្រើ SweetAlert ឬចង់ Reload
-        return redirect()->route('professor.dashboard');
+        $this->dispatch('attendanceClosed');
     }
 
     public function render()
