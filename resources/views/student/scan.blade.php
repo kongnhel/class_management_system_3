@@ -86,7 +86,6 @@
         </div>
     </div>
 
-    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <script>
         // Check HTTPS
         if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
