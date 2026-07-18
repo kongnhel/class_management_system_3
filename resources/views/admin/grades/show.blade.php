@@ -113,11 +113,11 @@
                                             @if($profilePic)
                                                 <img src="{{ $profilePic }}?tr=w-64,h-64,fo-face" class="w-full h-full object-cover" alt="">
                                             @else
-                                                <span class="text-white font-bold text-xs">{{ mb_substr($student->studentProfile->full_name_km ?? $student->name, 0, 1) }}</span>
+                                                <span class="text-white font-bold text-xs">{{ mb_substr($student->studentProfile?->full_name_km ?? $student->name, 0, 1) }}</span>
                                             @endif
                                         </div>
                                         <div>
-                                            <div class="font-semibold text-sm text-gray-900">{{ $student->studentProfile->full_name_km ?? $student->name }}</div>
+                                            <div class="font-semibold text-sm text-gray-900">{{ $student->studentProfile?->full_name_km ?? $student->name }}</div>
                                             <div class="text-[11px] text-gray-400">{{ $student->student_id_code ?? '' }}</div>
                                         </div>
                                     </div>

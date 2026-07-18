@@ -18,7 +18,7 @@ class AdminGradeController extends Controller
     public function index(Request $request)
     {
         $query = CourseOffering::with(['course', 'lecturer', 'targetPrograms'])
-            ->withCount('studentCourseEnrollments')
+            ->selectRaw('course_offerings.*, (SELECT COUNT(DISTINCT student_user_id) FROM student_course_enrollments WHERE student_course_enrollments.course_offering_id = course_offerings.id) as student_course_enrollments_count')
             ->whereHas('course')
             ->whereHas('lecturer');
 
@@ -74,6 +74,11 @@ class AdminGradeController extends Controller
             'studentCourseEnrollments.student.studentProfile',
         ]);
 
+        // Deduplicate enrollments by student_user_id
+        $enrollments = $courseOffering->studentCourseEnrollments
+            ->unique('student_user_id')
+            ->values();
+
         // Load all assessments for this course offering
         $assignments = Assignment::where('course_offering_id', $courseOffering->id)->get();
         $exams = Exam::where('course_offering_id', $courseOffering->id)->get();
@@ -82,17 +87,19 @@ class AdminGradeController extends Controller
         $assessments = collect($assignments)->concat($exams)->concat($quizzes)->sortBy('created_at');
 
         // Load all exam results for enrolled students
-        $allResults = ExamResult::whereIn('student_user_id', $courseOffering->studentCourseEnrollments->pluck('student_user_id'))
+        $allResults = ExamResult::whereIn('student_user_id', $enrollments->pluck('student_user_id'))
             ->get();
 
-        // Build gradebook and compute totals
+        // Build gradebook and compute totals (matching student flow)
         $gradebook = [];
-        $students = $courseOffering->studentCourseEnrollments->map(function ($enrollment) use ($assessments, $allResults, &$gradebook, $courseOffering) {
+        $students = $enrollments->map(function ($enrollment) use ($assessments, $allResults, &$gradebook, $courseOffering) {
             $student = $enrollment->student;
 
             // Attendance score (15% weight)
             $attendanceScore = (float) ($student->getAttendanceScoreByCourse($courseOffering->id) ?? 0);
-            $totalScore = $attendanceScore;
+
+            $nonQuizScore = 0;
+            $quizBonus = 0;
 
             foreach ($assessments as $assessment) {
                 $type = ($assessment instanceof Assignment) ? 'assignment' :
@@ -106,12 +113,39 @@ class AdminGradeController extends Controller
                 $score = $scoreRecord ? (float) $scoreRecord->score_obtained : 0;
                 $gradebook[$student->id][$type.'_'.$assessment->id] = $score;
 
-                $totalScore += $score;
+                if ($type === 'quiz') {
+                    $quizBonus += $score;
+                } else {
+                    $nonQuizScore += $score;
+                }
             }
 
+            // Cap total at 100 (matching student flow)
+            $totalScore = min($attendanceScore + $nonQuizScore + $quizBonus, 100);
+
+            // Failing logic (matching student flow)
+            $finalExamScore = $exams->sum(function ($e) use ($allResults, $student) {
+                $r = $allResults->where('assessment_id', $e->id)->where('student_user_id', $student->id)->where('assessment_type', 'exam')->first();
+                return $r ? (float) $r->score_obtained : 0;
+            });
+            $midtermScore = $exams->sum(function ($e) use ($allResults, $student) {
+                $r = $allResults->where('assessment_id', $e->id)->where('student_user_id', $student->id)->where('assessment_type', 'exam')->first();
+                $titleEn = strtolower($e->title_en ?? '');
+                $titleKm = strtolower($e->title_km ?? '');
+                $isMidterm = str_contains($titleEn, 'midterm') || str_contains($titleEn, 'ពាក់កណ្ដាល់') || str_contains($titleKm, 'ពាក់កណ្ដាល់');
+                return $isMidterm ? ($r ? (float) $r->score_obtained : 0) : 0;
+            });
+            $assignmentScore = $assignments->sum(function ($a) use ($allResults, $student) {
+                $r = $allResults->where('assessment_id', $a->id)->where('student_user_id', $student->id)->where('assessment_type', 'assignment')->first();
+                return $r ? (float) $r->score_obtained : 0;
+            });
+
+            $isFailed = ($finalExamScore < 24 || $midtermScore < 9 || $assignmentScore < 9 || $attendanceScore < 9);
+            $letterGrade = $isFailed ? 'F' : GradingService::getLetterGrade($totalScore);
+
             $student->temp_total = (float) $totalScore;
-            $student->letterGrade = GradingService::getLetterGrade($totalScore);
-            $student->isPassing = GradingService::isPassing($student->letterGrade);
+            $student->letterGrade = $letterGrade;
+            $student->isPassing = !$isFailed;
 
             return $student;
         });
@@ -152,20 +186,25 @@ class AdminGradeController extends Controller
             'studentCourseEnrollments.student.studentProfile',
         ]);
 
+        $enrollments = $courseOffering->studentCourseEnrollments
+            ->unique('student_user_id')
+            ->values();
+
         // Re-use the same grade computation logic
         $assignments = Assignment::where('course_offering_id', $courseOffering->id)->get();
         $exams = Exam::where('course_offering_id', $courseOffering->id)->get();
         $quizzes = Quiz::where('course_offering_id', $courseOffering->id)->get();
         $assessments = collect($assignments)->concat($exams)->concat($quizzes)->sortBy('created_at');
 
-        $allResults = ExamResult::whereIn('student_user_id', $courseOffering->studentCourseEnrollments->pluck('student_user_id'))
+        $allResults = ExamResult::whereIn('student_user_id', $enrollments->pluck('student_user_id'))
             ->get();
 
         $gradebook = [];
-        $students = $courseOffering->studentCourseEnrollments->map(function ($enrollment) use ($assessments, $allResults, &$gradebook, $courseOffering) {
+        $students = $enrollments->map(function ($enrollment) use ($assessments, $allResults, &$gradebook, $courseOffering, $exams, $assignments) {
             $student = $enrollment->student;
             $attendanceScore = (float) ($student->getAttendanceScoreByCourse($courseOffering->id) ?? 0);
-            $totalScore = $attendanceScore;
+            $nonQuizScore = 0;
+            $quizBonus = 0;
 
             foreach ($assessments as $assessment) {
                 $type = ($assessment instanceof Assignment) ? 'assignment' :
@@ -176,11 +215,36 @@ class AdminGradeController extends Controller
                     ->first();
                 $score = $scoreRecord ? (float) $scoreRecord->score_obtained : 0;
                 $gradebook[$student->id][$type.'_'.$assessment->id] = $score;
-                $totalScore += $score;
+                if ($type === 'quiz') {
+                    $quizBonus += $score;
+                } else {
+                    $nonQuizScore += $score;
+                }
             }
+            $totalScore = min($attendanceScore + $nonQuizScore + $quizBonus, 100);
+
+            $finalExamScore = $exams->sum(function ($e) use ($allResults, $student) {
+                $r = $allResults->where('assessment_id', $e->id)->where('student_user_id', $student->id)->where('assessment_type', 'exam')->first();
+                return $r ? (float) $r->score_obtained : 0;
+            });
+            $midtermScore = $exams->sum(function ($e) use ($allResults, $student) {
+                $r = $allResults->where('assessment_id', $e->id)->where('student_user_id', $student->id)->where('assessment_type', 'exam')->first();
+                $titleEn = strtolower($e->title_en ?? '');
+                $titleKm = strtolower($e->title_km ?? '');
+                $isMidterm = str_contains($titleEn, 'midterm') || str_contains($titleEn, 'ពាក់កណ្ដាល់') || str_contains($titleKm, 'ពាក់កណ្ដាល់');
+                return $isMidterm ? ($r ? (float) $r->score_obtained : 0) : 0;
+            });
+            $assignmentScore = $assignments->sum(function ($a) use ($allResults, $student) {
+                $r = $allResults->where('assessment_id', $a->id)->where('student_user_id', $student->id)->where('assessment_type', 'assignment')->first();
+                return $r ? (float) $r->score_obtained : 0;
+            });
+
+            $isFailed = ($finalExamScore < 24 || $midtermScore < 9 || $assignmentScore < 9 || $attendanceScore < 9);
+            $letterGrade = $isFailed ? 'F' : GradingService::getLetterGrade($totalScore);
+
             $student->temp_total = (float) $totalScore;
-            $student->letterGrade = GradingService::getLetterGrade($totalScore);
-            $student->isPassing = GradingService::isPassing($student->letterGrade);
+            $student->letterGrade = $letterGrade;
+            $student->isPassing = !$isFailed;
 
             return $student;
         });
