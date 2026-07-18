@@ -388,14 +388,14 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')
         ->name('leader.attendance.store');
     Route::get('/leader/attendance-report/{courseOffering}', [StudentAttendanceController::class, 'leaderAttendanceReport'])
         ->name('leader.report');
-    Route::post('/student/update-telegram', [StudentController::class, 'updateTelegram'])
+    Route::post('/update-telegram', [StudentController::class, 'updateTelegram'])
         ->name('update_telegram');
-    Route::get('/student/scan', function () {
+    Route::get('/scan', function () {
         return view('student.scan');
     })->name('scan');
 
     // API សម្រាប់ទទួលទិន្នន័យស្កែន
-    Route::post('/student/process-scan', [AttendanceController::class, 'processScan'])
+    Route::post('/process-scan', [AttendanceController::class, 'processScan'])
         ->name('process-scan');
 
 });
