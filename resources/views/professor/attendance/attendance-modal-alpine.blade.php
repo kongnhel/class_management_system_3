@@ -42,7 +42,7 @@
                     <div class="relative group mx-auto">
                         <div class="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-purple-500 rounded-2xl blur opacity-30"></div>
                         <div class="relative bg-white p-2 lg:p-4 rounded-xl lg:rounded-2xl shadow-2xl">
-                            <div class="relative overflow-hidden rounded-lg w-[140px] h-[140px] lg:w-[240px] lg:h-[240px] bg-white flex items-center justify-center">
+                            <div class="relative rounded-lg w-[140px] h-[140px] lg:w-[240px] lg:h-[240px] bg-white flex items-center justify-center [&_svg]:w-full [&_svg]:h-full">
                                 <div x-html="qrSvg"></div>
                                 <div class="scan-line"></div>
                             </div>
