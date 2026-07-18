@@ -396,8 +396,8 @@
         </div>
     </div>
 
-    {{-- Livewire Modal --}}
-    @livewire('teacher.attendance-modal')
+    {{-- Attendance Modal (Alpine.js) --}}
+    @include('professor.attendance.attendance-modal-alpine')
 
     {{-- Scripts --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -482,13 +482,7 @@
       }
 
       async function openAttendanceList(courseOfferingId) {
-        if (window.Livewire?.dispatch) {
-          Livewire.dispatch('openAttendanceModal', { courseOfferingId });
-        } else if (window.livewire?.emit) {
-          window.livewire.emit('openAttendanceModal', courseOfferingId);
-        } else {
-          Swal.fire('កំហុស', 'Livewire មិនបាន Load ទេ!', 'error');
-        }
+        window.dispatchEvent(new CustomEvent('open-attendance', { detail: { courseOfferingId } }));
       }
 
       async function postJson(url, payload) {

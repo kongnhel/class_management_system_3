@@ -334,6 +334,15 @@ Route::middleware(['auth', 'role:professor'])->prefix('professor')->name('profes
     Route::post('/attendance/precheck', [App\Http\Controllers\professor\ProfessorAttendanceController::class, 'precheck'])
         ->name('attendance.precheck');
 
+    Route::post('/attendance/start', [App\Http\Controllers\professor\AttendanceApiController::class, 'startSession'])
+        ->name('attendance.api.start');
+    Route::post('/attendance/refresh-qr', [App\Http\Controllers\professor\AttendanceApiController::class, 'refreshQr'])
+        ->name('attendance.api.refresh-qr');
+    Route::get('/attendance/students/{courseOfferingId}', [App\Http\Controllers\professor\AttendanceApiController::class, 'getStudents'])
+        ->name('attendance.api.students');
+    Route::post('/attendance/close', [App\Http\Controllers\professor\AttendanceApiController::class, 'closeSession'])
+        ->name('attendance.api.close');
+
     Route::get('/course-offerings/{offering_id}/assignments/{assignment_id}/submissions', [App\Http\Controllers\professor\ProfessorSubmissionController::class, 'index'])
         ->name('submissions.index');
     Route::get('/course-offerings/{offering_id}/assignments/{assignment_id}/submissions/{submission_id}', [App\Http\Controllers\professor\ProfessorSubmissionController::class, 'show'])
