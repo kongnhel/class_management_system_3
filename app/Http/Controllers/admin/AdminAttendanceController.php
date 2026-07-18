@@ -75,8 +75,13 @@ class AdminAttendanceController extends Controller
             ->with('student')
             ->get();
 
+        // Deduplicate enrollments by student_user_id (remove duplicate entries)
+        $enrollments = $courseOffering->studentCourseEnrollments
+            ->unique('student_user_id')
+            ->values();
+
         // Group by student
-        $studentAttendance = $courseOffering->studentCourseEnrollments->map(function ($enrollment) use ($attendanceRecords) {
+        $studentAttendance = $enrollments->map(function ($enrollment) use ($attendanceRecords) {
             $studentRecords = $attendanceRecords->where('student_user_id', $enrollment->student_user_id);
             $totalDays = $studentRecords->count();
             $presentDays = $studentRecords->where('status', 'present')->count();
@@ -99,7 +104,7 @@ class AdminAttendanceController extends Controller
 
         // Calculate overall stats
         $stats = [
-            'total_students' => $courseOffering->studentCourseEnrollments->count(),
+            'total_students' => $enrollments->count(),
             'total_records' => $attendanceRecords->count(),
             'present_total' => $attendanceRecords->where('status', 'present')->count(),
             'absent_total' => $attendanceRecords->where('status', 'absent')->count(),
