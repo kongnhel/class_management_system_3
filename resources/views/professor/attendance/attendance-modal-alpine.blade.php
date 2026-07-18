@@ -50,25 +50,14 @@
                     </div>
 
                     {{-- Countdown Timer --}}
-                    <div class="mt-4 lg:mt-8 w-48 lg:w-full" x-data="{ timeLeft: 10 }" x-init="
-                        $watch('$root.timeLeft', (val) => { timeLeft = val });
-                        $watch('isOpen', (val) => {
-                            if (val) {
-                                timeLeft = 10;
-                                let interval = setInterval(() => {
-                                    if (!isOpen) { clearInterval(interval); return; }
-                                    if (timeLeft > 1) { timeLeft--; } else { timeLeft = 10; refreshQr(); }
-                                }, 1000);
-                            }
-                        });
-                    ">
+                    <div class="mt-4 lg:mt-8 w-48 lg:w-full">
                         <div class="flex items-center justify-between text-slate-400 text-[10px] lg:text-sm font-medium mb-1.5 px-1">
                             <span>QR ប្តូរថ្មី</span>
-                            <span class="font-mono text-white font-bold"><span x-text="timeLeft">10</span>s</span>
+                            <span class="font-mono text-white font-bold"><span x-text="qrTimeLeft">10</span>s</span>
                         </div>
                         <div class="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
                             <div class="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 transition-all duration-1000 ease-linear"
-                                 :style="'width: ' + (timeLeft / 10 * 100) + '%'"></div>
+                                 :style="'width: ' + (qrTimeLeft / 10 * 100) + '%'"></div>
                         </div>
                     </div>
                 </div>
@@ -272,6 +261,7 @@ function attendanceModal() {
         counts: { present: 0, late: 0, permission: 0 },
         pollInterval: null,
         qrInterval: null,
+        qrTimeLeft: 10,
 
         async open(courseOfferingId) {
             this.courseOfferingId = courseOfferingId;
@@ -300,6 +290,7 @@ function attendanceModal() {
 
             this.fetchStudents();
             this.startPolling();
+            this.startQrCountdown();
         },
 
         async refreshQr() {
@@ -349,10 +340,28 @@ function attendanceModal() {
             }, 5000);
         },
 
+        startQrCountdown() {
+            if (this.qrInterval) clearInterval(this.qrInterval);
+            this.qrTimeLeft = 10;
+            this.qrInterval = setInterval(() => {
+                if (!this.isOpen) { clearInterval(this.qrInterval); return; }
+                if (this.qrTimeLeft > 1) {
+                    this.qrTimeLeft--;
+                } else {
+                    this.qrTimeLeft = 10;
+                    this.refreshQr();
+                }
+            }, 1000);
+        },
+
         stopPolling() {
             if (this.pollInterval) {
                 clearInterval(this.pollInterval);
                 this.pollInterval = null;
+            }
+            if (this.qrInterval) {
+                clearInterval(this.qrInterval);
+                this.qrInterval = null;
             }
         },
 
