@@ -14,7 +14,7 @@ class AdminAttendanceController extends Controller
     public function index(Request $request)
     {
         $query = CourseOffering::with(['course', 'lecturer', 'targetPrograms'])
-            ->withCount('studentCourseEnrollments')
+            ->selectRaw('course_offerings.*, (SELECT COUNT(DISTINCT student_user_id) FROM student_course_enrollments WHERE student_course_enrollments.course_offering_id = course_offerings.id) as student_course_enrollments_count')
             ->whereHas('course')
             ->whereHas('lecturer');
 
