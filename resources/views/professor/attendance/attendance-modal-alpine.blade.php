@@ -1,4 +1,4 @@
-<div x-data="attendanceModal()" x-on:open-attendance.window="open($event.detail.courseOfferingId)"
+<div x-data="attendanceModal()" x-on:open-attendance.window="open($event.detail.courseOfferingId, $event.detail.readOnly || false)"
      x-show="isOpen" x-cloak
      class="fixed inset-0 z-[60]" style="display: none;">
 
@@ -21,7 +21,7 @@
             </button>
 
             {{-- === LEFT PANEL: QR Presenter === --}}
-            <div class="w-full lg:w-5/12 bg-slate-900 relative overflow-hidden flex flex-col items-center justify-center p-4 lg:p-10 shrink-0">
+            <div x-show="!isReadOnly" class="w-full lg:w-5/12 bg-slate-900 relative overflow-hidden flex flex-col items-center justify-center p-4 lg:p-10 shrink-0">
                 <div class="absolute inset-0 bg-gradient-to-br from-emerald-900 via-slate-900 to-slate-950"></div>
                 <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full opacity-10" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/%3E%3C/svg%3E');"></div>
 
@@ -68,8 +68,8 @@
                 
                 <div class="px-6 py-4 border-b border-slate-200 bg-white sticky top-0 z-30 flex justify-between items-center shrink-0">
                     <div>
-                        <h3 class="text-lg lg:text-xl font-bold text-slate-800">បញ្ជីឈ្មោះសិស្ស</h3>
-                        <p class="text-[10px] text-slate-500 font-medium uppercase tracking-wider">កំពុងរង់ចាំសិស្សស្កែន...</p>
+                        <h3 class="text-lg lg:text-xl font-bold text-slate-800" x-text="isReadOnly ? 'ប្រវត្តិវត្តមាន' : 'បញ្ជីឈ្មោះសិស្ស'"></h3>
+                        <p class="text-[10px] text-slate-500 font-medium uppercase tracking-wider" x-text="isReadOnly ? 'មើលប្រវត្តិវត្តមានសិស្ស' : 'កំពុងរង់ចាំសិស្សស្កែន...'"></p>
                     </div>
                     <div class="flex items-center gap-3">
                         <template x-if="students.length > 0">
@@ -188,7 +188,7 @@
                 </div>
 
                 {{-- Action Bar --}}
-                <div class="p-4 lg:p-6 border-t border-slate-200 bg-white flex flex-row gap-3 shrink-0 z-30 pb-10 lg:pb-6">
+                <div x-show="!isReadOnly" class="p-4 lg:p-6 border-t border-slate-200 bg-white flex flex-row gap-3 shrink-0 z-30 pb-10 lg:pb-6">
                     <button @click="closeModal()" class="flex-1 px-4 py-3 rounded-xl font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors text-sm">
                         បិទផ្ទាំង
                     </button>
@@ -253,6 +253,7 @@ function attendanceModal() {
         isOpen: false,
         showConfirm: false,
         closing: false,
+        isReadOnly: false,
         courseOfferingId: null,
         courseName: '...',
         qrSvg: '',
@@ -263,34 +264,40 @@ function attendanceModal() {
         qrInterval: null,
         qrTimeLeft: 10,
 
-        async open(courseOfferingId) {
+        async open(courseOfferingId, readOnly = false) {
             this.courseOfferingId = courseOfferingId;
             this.isOpen = true;
             this.showConfirm = false;
+            this.isReadOnly = readOnly;
 
-            try {
-                const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                const res = await fetch("{{ route('professor.attendance.api.start') }}", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': token,
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({ course_offering_id: courseOfferingId })
-                });
-                const data = await res.json();
-                if (data.success) {
-                    this.qrSvg = data.qr_svg;
-                    this.courseName = data.course_name;
+            if (!readOnly) {
+                try {
+                    const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                    const res = await fetch("{{ route('professor.attendance.api.start') }}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': token,
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ course_offering_id: courseOfferingId })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        this.qrSvg = data.qr_svg;
+                        this.courseName = data.course_name;
+                    }
+                } catch (e) {
+                    console.error('Failed to start session:', e);
                 }
-            } catch (e) {
-                console.error('Failed to start session:', e);
+                this.startQrCountdown();
+            } else {
+                this.courseName = 'ប្រវត្តិវត្តមាន';
+                this.stopPolling();
             }
 
             this.fetchStudents();
             this.startPolling();
-            this.startQrCountdown();
         },
 
         async refreshQr() {

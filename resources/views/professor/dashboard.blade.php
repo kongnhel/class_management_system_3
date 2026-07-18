@@ -478,11 +478,11 @@
       }
 
       async function openAttendanceListOnly(courseOfferingId) {
-        await openAttendanceList(courseOfferingId);
+        window.dispatchEvent(new CustomEvent('open-attendance', { detail: { courseOfferingId, readOnly: true } }));
       }
 
       async function openAttendanceList(courseOfferingId) {
-        window.dispatchEvent(new CustomEvent('open-attendance', { detail: { courseOfferingId } }));
+        window.dispatchEvent(new CustomEvent('open-attendance', { detail: { courseOfferingId, readOnly: false } }));
       }
 
       async function postJson(url, payload) {
