@@ -92,7 +92,7 @@ class AdminGradeController extends Controller
 
         // Build gradebook and compute totals (matching student flow)
         $gradebook = [];
-        $students = $enrollments->map(function ($enrollment) use ($assessments, $allResults, &$gradebook, $courseOffering) {
+        $students = $enrollments->map(function ($enrollment) use ($assessments, $allResults, &$gradebook, $courseOffering, $exams, $assignments) {
             $student = $enrollment->student;
 
             // Attendance score (15% weight)
