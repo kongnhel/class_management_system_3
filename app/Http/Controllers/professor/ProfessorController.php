@@ -40,10 +40,18 @@ class ProfessorController extends Controller
             ->get();
 
         $todayOfferingIds = $todaySchedules->pluck('course_offering_id')->unique()->toArray();
-        $completedOfferingIds = AttendanceRecord::whereIn('course_offering_id', $todayOfferingIds)
-            ->where('date', $todayDate)
-            ->pluck('course_offering_id')
-            ->toArray();
+
+        // Only mark as completed if ALL enrolled students have attendance records (session was closed)
+        $completedOfferingIds = [];
+        foreach ($todayOfferingIds as $offeringId) {
+            $enrolledCount = StudentCourseEnrollment::where('course_offering_id', $offeringId)->count();
+            $attendedCount = AttendanceRecord::where('course_offering_id', $offeringId)
+                ->where('date', $todayDate)
+                ->count();
+            if ($enrolledCount > 0 && $attendedCount >= $enrolledCount) {
+                $completedOfferingIds[] = $offeringId;
+            }
+        }
 
         $todaySchedules->each(function ($schedule) use ($completedOfferingIds) {
             $schedule->is_completed_today = in_array($schedule->course_offering_id, $completedOfferingIds);
