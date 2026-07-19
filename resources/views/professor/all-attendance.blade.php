@@ -1,138 +1,147 @@
 ﻿<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-bold text-3xl text-gray-800 leading-tight">
-            {{ __('គ្រប់គ្រងវត្តមាន') }}
-        </h2>
-        <p class="mt-1 text-lg text-gray-500">{{ __('ពិនិត្យ និងកត់ត្រាវត្តមានសម្រាប់មុខវិជ្ជារបស់អ្នក') }}</p>
-    </x-slot>
+    <div class="bg-gray-50 min-h-screen">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
 
-    <div class="py-12 bg-gray-50 min-h-screen">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-2xl sm:rounded-3xl p-8 lg:p-12 border border-gray-100 transition-all duration-500 ease-in-out">
-
-                <div class="mb-10 text-center">
-                    <h3 class="text-4xl font-extrabold text-emerald-700 mb-2">{{ __('កំណត់ត្រាវត្តមានទាំងអស់') }}</h3>
-                    <p class="text-gray-600">{{ __('គ្រប់គ្រង និងកត់ត្រាវត្តមានរបស់និស្សិតសម្រាប់វគ្គសិក្សារបស់អ្នក។') }}</p>
+            {{-- Header --}}
+            <div class="flex items-center gap-4 mb-8">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center shadow-lg">
+                    <i class="fas fa-clipboard-check text-white text-lg"></i>
                 </div>
-                
-                <hr class="mb-10 border-gray-200">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">វត្តមានទាំងអស់</h1>
+                    <p class="text-sm text-gray-500 mt-0.5">ពិនិត្យ និងកត់ត្រាវត្តមានសម្រាប់មុខវិជ្ជារបស់អ្នក</p>
+                </div>
+            </div>
 
-                <h4 class="text-2xl font-bold text-gray-700 mb-6 flex items-center">
-                    <svg class="w-6 h-6 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    {{ __('បន្ថែមកំណត់ត្រាវត្តមានថ្មី') }}
-                </h4>
-                <div class="bg-emerald-50 p-6 md:p-8 rounded-2xl shadow-inner mb-12 border border-emerald-200 transition-all duration-300 transform hover:scale-[1.005]">
-                    <form action="{{ route('professor.attendances.store') }}" method="POST" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        @csrf
-                        {{-- Course Offering and Student Selection --}}
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 col-span-1 lg:col-span-2">
-                            <div>
-                                <label for="course_offering_id" class="block text-sm font-medium text-gray-700 mb-1">{{ __('វគ្គសិក្សា') }}</label>
-                                <select id="course_offering_id" name="course_offering_id" required class="mt-1 block w-full p-3 text-base border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all duration-300">
-                                    <option value="">{{ __('ជ្រើសរើសវគ្គសិក្សា') }}</option>
-                                    @isset($professorCourseOfferings)
-                                        @foreach ($professorCourseOfferings as $offering)
-                                            <option value="{{ $offering->id }}">{{ $offering->course?->title_km ?? $offering->course?->title_en ?? 'N/A' }} ({{ $offering->academic_year }} - {{ $offering->semester }})</option>
-                                        @endforeach
-                                    @endisset
-                                </select>
-                                @error('course_offering_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                            </div>
-                            <div>
-                                <label for="student_user_id" class="block text-sm font-medium text-gray-700 mb-1">{{ __('និស្សិត') }}</label>
-                                <select id="student_user_id" name="student_user_id" required class="mt-1 block w-full p-3 text-base border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all duration-300">
-                                    <option value="">{{ __('ជ្រើសរើសនិស្សិត') }}</option>
-                                    @isset($students)
-                                        @foreach ($students as $student)
-                                            <option value="{{ $student->id }}">{{ $student->profile->full_name_km ?? $student->name }}</option>
-                                        @endforeach
-                                    @endisset
-                                </select>
-                                @error('student_user_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                            </div>
-                        </div>
+            {{-- Alerts --}}
+            @if(session('success'))
+                <div class="mb-6 flex items-center gap-3 p-4 bg-green-50 border border-green-200 text-green-700 rounded-2xl text-sm font-medium">
+                    <i class="fas fa-check-circle text-green-500"></i>
+                    {{ session('success') }}
+                </div>
+            @endif
+            @if(session('error'))
+                <div class="mb-6 flex items-center gap-3 p-4 bg-red-50 border border-red-200 text-red-700 rounded-2xl text-sm font-medium">
+                    <i class="fas fa-exclamation-circle text-red-500"></i>
+                    {{ session('error') }}
+                </div>
+            @endif
 
-                        {{-- Date, Status, and Note --}}
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label for="date" class="block text-sm font-medium text-gray-700 mb-1">{{ __('កាលបរិច្ឆេទ') }}</label>
-                                <input type="date" id="date" name="date" required value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-emerald-500 transition-all duration-300">
-                                @error('date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                            </div>
-                            <div>
-                                <label for="status" class="block text-sm font-medium text-gray-700 mb-1">{{ __('ស្ថានភាព') }}</label>
-                                <select id="status" name="status" required class="mt-1 block w-full p-3 text-base border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all duration-300">
-                                    <option value="present">{{ __('មានវត្តមាន') }}</option>
-                                    <option value="absent">{{ __('អវត្តមាន') }}</option>
-                                    <option value="late">{{ __('មកយឺត') }}</option>
-                                    <option value="permission">{{ __('មានច្បាប់') }}</option>
-                                </select>
-                                @error('status') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                            </div>
+            {{-- Add Form --}}
+            <div class="bg-white rounded-2xl border border-gray-200 p-5 mb-6">
+                <h3 class="font-bold text-gray-800 text-sm mb-4 flex items-center gap-2">
+                    <i class="fas fa-plus-circle text-emerald-500"></i> បន្ថែមកំណត់ត្រាថ្មី
+                </h3>
+                <form action="{{ route('professor.attendances.store') }}" method="POST">
+                    @csrf
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">វគ្គសិក្សា</label>
+                            <select name="course_offering_id" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
+                                <option value="">ជ្រើសរើសវគ្គសិក្សា</option>
+                                @foreach($professorCourseOfferings as $offering)
+                                    <option value="{{ $offering->id }}">{{ $offering->course?->title_km ?? $offering->course?->title_en ?? 'N/A' }} ({{ $offering->academic_year }})</option>
+                                @endforeach
+                            </select>
                         </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">និស្សិត</label>
+                            <select name="student_user_id" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
+                                <option value="">ជ្រើសរើសនិស្សិត</option>
+                                @foreach($students as $student)
+                                    <option value="{{ $student->id }}">{{ $student->profile?->full_name_km ?? $student->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">កាលបរិច្ឆេទ</label>
+                            <input type="date" name="date" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">ស្ថានភាព</label>
+                            <select name="status" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
+                                <option value="present">មានវត្តមាន</option>
+                                <option value="absent">អវត្តមាន</option>
+                                <option value="late">មកយឺត</option>
+                                <option value="permission">មានច្បាប់</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white rounded-xl font-bold text-sm shadow-md transition-all active:scale-95">
+                            <i class="fas fa-save"></i> រក្សាទុក
+                        </button>
+                    </div>
+                </form>
+            </div>
 
-                        <div class="col-span-1 lg:col-span-2">
-                            <label for="remarks" class="block text-sm font-medium text-gray-700 mb-1">{{ __('កំណត់ចំណាំ (ស្រេចចិត្ត)') }}</label>
-                            <textarea id="remarks" name="remarks" rows="3" class="mt-1 block w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-emerald-500 transition-all duration-300"></textarea>
-                            @error('remarks') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                        </div>
-
-                        <div class="col-span-1 lg:col-span-2 flex justify-end">
-                            <button type="submit" class="w-full md:w-auto mt-4 px-8 py-4 text-white font-extrabold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out transform hover:scale-[1.01] bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800">
-                                <span class="flex items-center justify-center space-x-2">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4a2 2 0 11-4 0m4 0a2 2 0 10-4 0m-9 8h10M4 16h10"></path></svg>
-                                    <span>{{ __('រក្សាទុកវត្តមាន') }}</span>
-                                </span>
-                            </button>
-                        </div>
-                    </form>
+            {{-- Records Table --}}
+            <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                <div class="px-5 py-4 border-b border-gray-200 flex items-center justify-between">
+                    <h3 class="font-bold text-gray-800 text-sm">កំណត់ត្រាវត្តមាន</h3>
+                    <span class="px-3 py-1 rounded-full bg-gray-100 text-xs font-bold text-gray-500">{{ $attendances->total() }} កំណត់ត្រា</span>
                 </div>
 
-                <h4 class="text-2xl font-bold text-gray-700 mb-6 flex items-center">
-                    <svg class="w-6 h-6 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    {{ __('កំណត់ត្រាវត្តមាន') }}
-                </h4>
-                <div class="overflow-x-auto bg-gray-50 rounded-2xl shadow-xl">
-                    <table class="min-w-full leading-normal">
-                        <thead class="bg-gradient-to-r from-emerald-700 to-emerald-700">
-                            <tr>
-                                <th class="py-4 px-6 text-left text-sm font-bold text-white uppercase tracking-wider rounded-tl-2xl">{{ __('ឈ្មោះនិស្សិត') }}</th>
-                                <th class="py-4 px-6 text-left text-sm font-bold text-white uppercase tracking-wider">{{ __('មុខវិជ្ជា') }}</th>
-                                <th class="py-4 px-6 text-left text-sm font-bold text-white uppercase tracking-wider">{{ __('កាលបរិច្ឆេទ') }}</th>
-                                <th class="py-4 px-6 text-left text-sm font-bold text-white uppercase tracking-wider">{{ __('ស្ថានភាព') }}</th>
-                                <th class="py-4 px-6 text-left text-sm font-bold text-white uppercase tracking-wider rounded-tr-2xl">{{ __('កំណត់ចំណាំ') }}</th>
+                @if($attendances->count() > 0)
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-100">
+                        <thead>
+                            <tr class="bg-gray-50">
+                                <th class="px-5 py-3 text-left text-[10px] font-bold text-gray-500 uppercase">និស្សិត</th>
+                                <th class="px-5 py-3 text-left text-[10px] font-bold text-gray-500 uppercase">មុខវិជ្ជា</th>
+                                <th class="px-5 py-3 text-left text-[10px] font-bold text-gray-500 uppercase">កាលបរិច្ឆេទ</th>
+                                <th class="px-5 py-3 text-left text-[10px] font-bold text-gray-500 uppercase">ស្ថានភាព</th>
+                                <th class="px-5 py-3 text-left text-[10px] font-bold text-gray-500 uppercase">កំណត់ចំណាំ</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-100">
-                            @forelse ($attendances as $record)
-                                <tr class="hover:bg-emerald-50 transition-colors duration-200">
-                                    <td class="py-4 px-6 text-gray-800 font-medium">{{ $record->student->profile->full_name_km ?? $record->student->name ?? 'N/A' }}</td>
-                                    <td class="py-4 px-6 text-gray-600">{{ $record->courseOffering->course->title_km ?? 'N/A' }}</td>
-                                    <td class="py-4 px-6 text-gray-600">{{ \Carbon\Carbon::parse($record->date)->format('Y-m-d') }}</td>
-                                    <td class="py-4 px-6 text-{{ $record->status === 'present' ? 'green' : ($record->status === 'absent' ? 'red' : ($record->status === 'late' ? 'yellow' : ($record->status === 'permission' ? 'blue' : 'gray'))) }}-600 font-bold uppercase">
-                                        {{ $record->status_km }}
+                        <tbody class="divide-y divide-gray-100">
+                            @forelse($attendances as $record)
+                                @php
+                                    $colors = ['present' => 'green', 'absent' => 'red', 'late' => 'yellow', 'permission' => 'blue'];
+                                    $color = $colors[$record->status] ?? 'gray';
+                                @endphp
+                                <tr class="hover:bg-gray-50 transition-colors">
+                                    <td class="px-5 py-3">
+                                        <div class="flex items-center gap-3">
+                                            @php $profilePic = $record->student?->studentProfile?->profile_picture_url ?? $record->student?->profile?->profile_picture_url ?? null; @endphp
+                                            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-500 flex items-center justify-center text-white font-bold text-[10px] shadow-sm shrink-0">
+                                                @if($profilePic)
+                                                    <img src="{{ $profilePic }}" class="w-full h-full rounded-full object-cover" alt="">
+                                                @else
+                                                    {{ mb_substr($record->student?->studentProfile?->full_name_km ?? $record->student?->name ?? '?', 0, 1) }}
+                                                @endif
+                                            </div>
+                                            <span class="text-sm font-semibold text-gray-800">{{ $record->student?->studentProfile?->full_name_km ?? $record->student?->name ?? 'N/A' }}</span>
+                                        </div>
                                     </td>
-                                    <td class="py-4 px-6 text-gray-600">{{ $record->remarks ?? '' }}</td>
+                                    <td class="px-5 py-3 text-sm text-gray-600">{{ $record->courseOffering?->course?->title_km ?? 'N/A' }}</td>
+                                    <td class="px-5 py-3 text-xs text-gray-400">{{ \Carbon\Carbon::parse($record->date)->format('Y-m-d') }}</td>
+                                    <td class="px-5 py-3">
+                                        <span class="inline-flex px-2.5 py-1 rounded-lg text-xs font-bold bg-{{ $color }}-50 text-{{ $color }}-700 border border-{{ $color }}-100">
+                                            {{ $record->status_km }}
+                                        </span>
+                                    </td>
+                                    <td class="px-5 py-3 text-xs text-gray-400">{{ $record->remarks ?? '-' }}</td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="py-10 px-6 text-center text-gray-500 bg-gray-50">
-                                        <div class="flex flex-col items-center justify-center">
-                                            <svg class="w-16 h-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                            <p class="text-xl font-semibold mb-1">{{ __('មិនទាន់មានកំណត់ត្រាវត្តមានណាមួយត្រូវបានកត់ត្រាសម្រាប់មុខវិជ្ជារបស់អ្នកទេ។') }}</p>
-                                            <p class="text-sm text-gray-400">{{ __('សូមប្រើទម្រង់ខាងលើដើម្បីចាប់ផ្តើមកត់ត្រាវត្តមាន។') }}</p>
-                                        </div>
+                                    <td colspan="5" class="px-6 py-16 text-center">
+                                        <i class="fas fa-inbox text-gray-300 text-3xl mb-3"></i>
+                                        <p class="text-sm font-bold text-gray-400">មិនមានកំណត់ត្រា</p>
                                     </td>
                                 </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
-
-                {{-- Pagination Links --}}
-                <div class="mt-8">
-                    {{ $attendances->links('pagination::tailwind', ['pageName' => 'attendancePage']) }}
+                <div class="px-5 py-3 border-t border-gray-100">
+                    {{ $attendances->links('pagination::tailwind') }}
                 </div>
+                @else
+                <div class="px-6 py-16 text-center">
+                    <i class="fas fa-inbox text-gray-300 text-3xl mb-3"></i>
+                    <p class="text-sm font-bold text-gray-400">មិនមានកំណត់ត្រា</p>
+                    <p class="text-xs text-gray-300 mt-1">សូមប្រើទម្រង់ខាងលើដើម្បីបន្ថែម</p>
+                </div>
+                @endif
             </div>
         </div>
     </div>
