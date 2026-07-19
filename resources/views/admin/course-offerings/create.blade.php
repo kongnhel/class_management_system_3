@@ -548,6 +548,9 @@
                 createSessionRow('weekend-sessions-container', 'weekend_sessions', rooms);
             }
 
+            // Re-apply toggleForms to disable inputs in hidden forms after session rows are created
+            toggleForms();
+
             // Custom schedule form (existing)
             const scheduleContainer = document.getElementById('schedules-container');
             const addScheduleBtn = document.getElementById('add-schedule');
