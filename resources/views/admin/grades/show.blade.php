@@ -133,9 +133,12 @@
                                                (($assessment instanceof \App\Models\Quiz) ? 'quiz' : 'exam');
                                         $key = $type . '_' . $assessment->id;
                                         $score = $gradebook[$student->id][$key] ?? 0;
+                                        $maxScore = $assessment->max_score ?? 100;
+                                        $percent = $maxScore > 0 ? ($score / $maxScore) * 100 : 0;
+                                        $scoreClass = $score == 0 ? 'text-gray-300' : ($percent < 50 ? 'text-rose-600' : 'text-gray-700');
                                     @endphp
                                     <td class="px-3 py-3 text-center">
-                                        <span class="text-xs font-bold {{ $score > 0 ? 'text-gray-700' : 'text-gray-300' }}">
+                                        <span class="text-xs font-bold {{ $scoreClass }}">
                                             {{ $score > 0 ? number_format($score, 1) : '-' }}
                                         </span>
                                     </td>

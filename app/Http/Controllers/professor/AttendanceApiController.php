@@ -99,7 +99,7 @@ class AttendanceApiController extends Controller
                     'student_code' => $record->student->student_id_code ?? '',
                     'profile_pic' => $profilePic,
                     'initial' => mb_substr($profile->full_name_km ?? $record->student->name ?? 'N', 0, 1),
-                    'time' => $record->created_at->format('h:i:s A'),
+                    'time' => $record->created_at->format('H:i:s'),
                 ];
             });
 

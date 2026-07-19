@@ -145,7 +145,7 @@
                                         <a href="{{ route('admin.rooms.show', $room->id) }}"
                                            class="px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-lg transition">
                                             មើល
-                                        </a>
+                                        </a>w
                                         <a href="{{ route('admin.rooms.edit', $room->id) }}"
                                            class="px-3 py-1.5 text-sm font-medium text-emerald-600 hover:bg-emerald-50 rounded-lg transition">
                                             កែប្រែ

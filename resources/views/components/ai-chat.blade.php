@@ -14,12 +14,12 @@
     </div>
 
     <button onclick="toggleAIChat()" id="chatBtn"
-            class="relative bg-[#26D741] text-white p-4 rounded-full shadow-[0_8px_25px_-5px_rgba(38,215,65,0.5)] hover:scale-110 active:scale-90 transition-all duration-300 flex items-center justify-center cursor-move">
-        <div id="unread-badge" class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 border-2 border-white rounded-full items-center justify-center text-[9px] font-bold text-white hidden">0</div>
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 24 24" fill="currentColor">
+            class="relative bg-[#26D741] text-white p-3 rounded-full shadow-[0_6px_20px_-4px_rgba(38,215,65,0.5)] hover:scale-110 active:scale-90 transition-all duration-300 flex items-center justify-center cursor-move">
+        <div id="unread-badge" class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 border-2 border-white rounded-full items-center justify-center text-[8px] font-bold text-white hidden">0</div>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 2C6.477 2 2 6.145 2 11.258c0 2.91 1.453 5.503 3.735 7.153V22l3.418-1.875c.915.254 1.883.391 2.847.391 5.523 0 10-4.145 10-9.258C22 6.145 17.523 2 12 2zm1.142 12.358l-2.571-2.742-5.014 2.742 5.513-5.858 2.657 2.742 4.928-2.742-5.513 5.858z"/>
         </svg>
-        <div class="absolute bottom-0 right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
+        <div class="absolute bottom-0 right-1 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
     </button>
 </div>
 

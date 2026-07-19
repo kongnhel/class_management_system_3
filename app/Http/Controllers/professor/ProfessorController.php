@@ -14,6 +14,7 @@ use App\Models\ExamResult;
 use App\Models\Program;
 use App\Models\Quiz;
 use App\Models\Schedule;
+use App\Models\StudentCourseEnrollment;
 use App\Models\User;
 use App\Models\UserProfile;
 use Illuminate\Http\Request;
@@ -44,10 +45,11 @@ class ProfessorController extends Controller
         // Only mark as completed if ALL enrolled students have attendance records (session was closed)
         $completedOfferingIds = [];
         foreach ($todayOfferingIds as $offeringId) {
-            $enrolledCount = StudentCourseEnrollment::where('course_offering_id', $offeringId)->count();
+            $enrolledCount = StudentCourseEnrollment::where('course_offering_id', $offeringId)
+                ->distinct('student_user_id')->count('student_user_id');
             $attendedCount = AttendanceRecord::where('course_offering_id', $offeringId)
                 ->where('date', $todayDate)
-                ->count();
+                ->distinct('student_user_id')->count('student_user_id');
             if ($enrolledCount > 0 && $attendedCount >= $enrolledCount) {
                 $completedOfferingIds[] = $offeringId;
             }

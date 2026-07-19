@@ -341,7 +341,10 @@ function attendanceModal() {
         },
 
         startPolling() {
-            this.stopPolling();
+            if (this.pollInterval) {
+                clearInterval(this.pollInterval);
+                this.pollInterval = null;
+            }
             this.pollInterval = setInterval(() => {
                 if (this.isOpen) this.fetchStudents();
             }, 5000);
