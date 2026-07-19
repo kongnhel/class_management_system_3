@@ -73,14 +73,21 @@
                                     <tr class="group hover:bg-emerald-50/30 transition-colors">
                                         <td class="px-4 md:px-8 py-4 whitespace-nowrap">
                                             <div class="flex items-center gap-3 md:gap-4">
+                                                @php
+                                                    $profilePic = $student->studentProfile?->profile_picture_url ?? $student->profile?->profile_picture_url ?? $student->avatar ?? null;
+                                                @endphp
                                                 <div class="relative flex-shrink-0">
-                                                    <div class="w-10 h-10 md:w-11 md:h-11 rounded-xl md:rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white font-bold text-sm shadow-md">
-                                                        {{ Str::substr($student->name, 0, 1) }}
-                                                    </div>
+                                                    @if($profilePic)
+                                                        <img src="{{ $profilePic }}" alt="{{ $student->name }}" class="w-10 h-10 md:w-11 md:h-11 rounded-xl md:rounded-2xl object-cover border-2 border-white shadow-md">
+                                                    @else
+                                                        <div class="w-10 h-10 md:w-11 md:h-11 rounded-xl md:rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white font-bold text-sm shadow-md">
+                                                            {{ Str::substr($student->studentProfile?->full_name_km ?? $student->name, 0, 1) }}
+                                                        </div>
+                                                    @endif
                                                 </div>
                                                 <div class="min-w-0">
                                                     <div class="text-sm font-bold text-slate-700 truncate max-w-[120px] md:max-w-full">
-                                                        {{ $student->studentProfile->full_name_km ?? $student->name }}
+                                                        {{ $student->studentProfile?->full_name_km ?? $student->name }}
                                                     </div>
                                                     <div class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase mt-0.5">ID: #{{ $student->id }}</div>
                                                 </div>

@@ -42,7 +42,7 @@ class StudentAttendanceController extends Controller
             abort(403, 'អ្នកមិនមែនជាប្រធានថ្នាក់សម្រាប់មុខវិជ្ជានេះទេ។');
         }
 
-        $courseOffering = CourseOffering::with('students.studentProfile')->findOrFail($courseOfferingId);
+        $courseOffering = CourseOffering::with(['students.studentProfile', 'students.profile'])->findOrFail($courseOfferingId);
         $students = $courseOffering->students;
         $today = now()->format('Y-m-d');
         $leaderId = auth()->id();
@@ -72,19 +72,19 @@ class StudentAttendanceController extends Controller
         $enrolledStudentIds = DB::table('student_course_enrollments')
             ->where('course_offering_id', $courseOfferingId)
             ->pluck('student_user_id')
-            ->map(fn ($id) => (string) $id)
             ->toArray();
 
         DB::transaction(function () use ($courseOfferingId, $date, $request, $enrolledStudentIds) {
             foreach ($request->attendance as $studentUserId => $status) {
-                if (! in_array((string) $studentUserId, $enrolledStudentIds)) {
+                $studentUserId = (int) $studentUserId;
+                if (! in_array($studentUserId, $enrolledStudentIds)) {
                     continue;
                 }
                 if (! in_array($status, ['present', 'absent', 'late', 'permission'])) {
                     continue;
                 }
 
-                DB::table('attendances')->updateOrInsert(
+                AttendanceRecord::updateOrInsert(
                     [
                         'course_offering_id' => $courseOfferingId,
                         'student_user_id' => $studentUserId,
@@ -93,6 +93,7 @@ class StudentAttendanceController extends Controller
                     ],
                     [
                         'status' => $status,
+                        'remarks' => 'Class Leader',
                         'updated_at' => now(),
                         'created_at' => now(),
                     ]
@@ -123,6 +124,7 @@ class StudentAttendanceController extends Controller
             ->with(['enrolledCourses' => function ($q) use ($courseOfferingId) {
                 $q->where('course_offering_id', $courseOfferingId)->with('course');
             }])
+            ->with(['studentProfile', 'profile'])
             ->withCount([
                 'attendanceRecords as present_count' => function ($query) use ($courseOfferingId) {
                     $query->where('course_offering_id', $courseOfferingId)->where('status', 'present');
