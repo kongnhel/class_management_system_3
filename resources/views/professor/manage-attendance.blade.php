@@ -1,5 +1,24 @@
 ﻿<x-app-layout>
-    <div class="bg-gray-50 min-h-screen">
+    <div class="bg-gray-50 min-h-screen" x-data="{
+            open: false,
+            attendanceId: '',
+            studentUserId: '',
+            date: '',
+            status: '',
+            remarks: '',
+            updateRoute: '{{ route('professor.attendances.update', 0) }}',
+            showDelete: false,
+            deleteId: null,
+            deleteStudentName: ''
+        }"
+        @open-edit-modal.window="
+            open = true;
+            attendanceId = $event.detail.id;
+            studentUserId = $event.detail.studentUserId;
+            date = $event.detail.date;
+            status = $event.detail.status;
+            remarks = $event.detail.remarks;
+        ">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
 
             {{-- Header --}}
@@ -142,26 +161,6 @@
             </div>
 
             {{-- Modals --}}
-            <div x-data="{
-                    open: false,
-                    attendanceId: '',
-                    studentUserId: '',
-                    date: '',
-                    status: '',
-                    remarks: '',
-                    updateRoute: '{{ route('professor.attendances.update', 0) }}',
-                    showDelete: false,
-                    deleteId: null,
-                    deleteStudentName: ''
-                }"
-                @open-edit-modal.window="
-                    open = true;
-                    attendanceId = $event.detail.id;
-                    studentUserId = $event.detail.studentUserId;
-                    date = $event.detail.date;
-                    status = $event.detail.status;
-                    remarks = $event.detail.remarks;
-                " class="contents">
                 <div x-show="open" x-cloak style="display: none;"
                     class="fixed inset-0 z-50 flex items-center justify-center p-4">
                     <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="open = false"></div>
