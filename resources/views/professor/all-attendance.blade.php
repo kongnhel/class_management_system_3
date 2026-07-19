@@ -62,7 +62,6 @@
                             <select name="status" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
                                 <option value="present">មានវត្តមាន</option>
                                 <option value="absent">អវត្តមាន</option>
-                                <option value="late">មកយឺត</option>
                                 <option value="permission">មានច្បាប់</option>
                             </select>
                         </div>

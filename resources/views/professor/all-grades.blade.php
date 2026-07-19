@@ -51,7 +51,16 @@
                                 @endphp
                                 <tr class="hover:bg-gray-50 transition-colors">
                                     <td class="px-5 py-3">
-                                        <div class="text-sm font-semibold text-gray-800">{{ $grade->student_name }}</div>
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-500 flex items-center justify-center text-white font-bold text-[10px] shadow-sm shrink-0">
+                                                @if($grade->profile_pic)
+                                                    <img src="{{ $grade->profile_pic }}" class="w-full h-full rounded-full object-cover" alt="">
+                                                @else
+                                                    {{ mb_substr($grade->student_name ?? '?', 0, 1) }}
+                                                @endif
+                                            </div>
+                                            <span class="text-sm font-semibold text-gray-800">{{ $grade->student_name }}</span>
+                                        </div>
                                     </td>
                                     <td class="px-5 py-3 text-sm text-gray-600">{{ $grade->course_title_km }}</td>
                                     <td class="px-5 py-3">

@@ -12,6 +12,6 @@ class AttendanceProfessor extends Model
 
     public function courseOffering()
     {
-        return $this->belongsTo(CourseOffering::class, 'course_offering_id');
+        return $this->belongsTo(CourseOffering::class, 'course_offering_id')->withTrashed();
     }
 }

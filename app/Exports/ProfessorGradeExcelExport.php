@@ -56,7 +56,7 @@ class ProfessorGradeExcelExport implements FromCollection, WithStyles
         $sheet->getColumnDimension('C')->setWidth(19.66);
         $sheet->getColumnDimension('D')->setWidth(6);
         for ($i = 0; $i < $assessmentCount; $i++) {
-            $sheet->getColumnDimension($this->colLetter(4 + $i))->setWidth(10);
+            $sheet->getColumnDimension($this->colLetter(4 + $i))->setWidth(14);
         }
         $sheet->getColumnDimension($this->colLetter(4 + $assessmentCount))->setWidth(10);     // Attendance
         $sheet->getColumnDimension($this->colLetter(5 + $assessmentCount))->setWidth(10);     // Total
@@ -121,8 +121,9 @@ class ProfessorGradeExcelExport implements FromCollection, WithStyles
         $headers = ['ល.រ', 'គោត្តនាម និងនាម', 'ឈ្មោះអង់គ្លេស', 'ភេទ'];
         foreach ($this->assessments as $a) {
             $name = $a->title_km ?? $a->title_en ?? 'Assessment';
-            $type = ($a instanceof Assignment) ? 'អាស្សាញមិន' : (($a instanceof Quiz) ? 'ឃ្វីស' : 'ប្រឡង');
-            $headers[] = $name . "\n(" . $type . ")";
+            $type = ($a instanceof Assignment) ? 'កិច្ចការ' : (($a instanceof Quiz) ? 'ឃ្វីស' : 'ប្រឡង');
+            $maxScore = $a->max_score ?? $a->max_points ?? 100;
+            $headers[] = $name . "\n(" . $maxScore . " ពិន្ទុ)";
         }
         $headers[] = 'វត្តមាន';
         $headers[] = 'ពិន្ទុសរុប';

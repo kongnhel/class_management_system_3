@@ -51,6 +51,7 @@ class ProfessorGradeController extends Controller
         $courseOffering = CourseOffering::with([
             'course',
             'studentCourseEnrollments.student.studentProfile',
+            'studentCourseEnrollments.student.profile',
         ])->findOrFail($offering_id);
 
         $this->authorizeCourseOffering($courseOffering);
@@ -816,6 +817,7 @@ class ProfessorGradeController extends Controller
 
         $query = DB::table('exam_results as er')
             ->join('users as u', 'er.student_user_id', '=', 'u.id')
+            ->leftJoin('user_profiles as up', 'u.id', '=', 'up.user_id')
             ->leftJoin('exams as e', function ($join) {
                 $join->on('er.assessment_id', '=', 'e.id')
                      ->where('er.assessment_type', '=', 'exam');
@@ -834,6 +836,7 @@ class ProfessorGradeController extends Controller
             })
             ->select(
                 'u.name as student_name',
+                'up.profile_picture_url as profile_pic',
                 DB::raw("CASE WHEN er.assessment_type = 'exam' THEN c_exam.title_km ELSE c_assign.title_km END as course_title_km"),
                 'er.assessment_type',
                 'er.score_obtained as score',
@@ -847,6 +850,7 @@ class ProfessorGradeController extends Controller
         $grades = $paginator->getCollection()->map(function ($row) {
             return (object) [
                 'student_name' => $row->student_name ?? 'N/A',
+                'profile_pic' => $row->profile_pic ?? null,
                 'course_title_km' => $row->course_title_km ?? 'N/A',
                 'assessment_type' => $row->assessment_type,
                 'score' => $row->score,

@@ -525,8 +525,13 @@
 
                                     <td class="sticky left-0 bg-white group-hover:bg-slate-50 z-10 px-6 py-5 border-r border-slate-50 shadow-[4px_0_10px_-5px_rgba(0,0,0,0.05)]">
                                         <div class="flex items-center">
-                                            <div class="h-9 w-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 font-black text-xs group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300">
-                                                {{ mb_substr($student->profile->full_name_km ?? $student->name, 0, 1) }}
+                                            @php $profilePic = $student->studentProfile?->profile_picture_url ?? $student->profile?->profile_picture_url ?? null; @endphp
+                                            <div class="h-9 w-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 font-black text-xs group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300 overflow-hidden shrink-0">
+                                                @if($profilePic)
+                                                    <img src="{{ $profilePic }}" class="w-full h-full object-cover" alt="">
+                                                @else
+                                                    {{ mb_substr($student->profile->full_name_km ?? $student->name, 0, 1) }}
+                                                @endif
                                             </div>
                                             <div class="ml-3">
                                                 <div class="text-[13px] font-bold text-slate-800 leading-none group-hover:text-emerald-700 transition-colors">

@@ -101,8 +101,13 @@
                                 <td class="px-6 py-4 text-sm text-gray-400 font-bold">{{ $index + 1 }}</td>
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-3">
+                                        @php $profilePic = $data['student']?->studentProfile?->profile_picture_url ?? $data['student']?->profile?->profile_picture_url ?? null; @endphp
                                         <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-green-500 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                                            <span class="text-white font-bold text-xs">{{ mb_substr($data['student']->name ?? 'S', 0, 1) }}</span>
+                                            @if($profilePic)
+                                                <img src="{{ $profilePic }}" class="w-full h-full object-cover" alt="">
+                                            @else
+                                                <span class="text-white font-bold text-xs">{{ mb_substr($data['student']->name ?? 'S', 0, 1) }}</span>
+                                            @endif
                                         </div>
                                         <div>
                                             <div class="font-semibold text-sm text-gray-900">{{ $data['student']->name ?? '-' }}</div>

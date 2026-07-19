@@ -69,12 +69,12 @@
                             </div>
                             <div>
                                 <h4 class="font-bold text-slate-800 leading-tight">
-                                    {{ $att->courseOffering->course->title_km ?? $att->courseOffering->course->title_en }}
+                                    {{ $att->courseOffering?->course?->title_km ?? $att->courseOffering?->course?->title_en ?? 'N/A' }}
                                 </h4>
                                 <p class="text-xs text-slate-400 font-bold mt-1">
-                                     {{ __('ជំនាន់') }} {{ $att->courseOffering->generation ?? $att->courseOffering->targetPrograms->pluck('generation')->filter()->first() ?? '...' }}
-                                     • {{ __('បន្ទប់') }} {{ $att->courseOffering->room_number ?? 'Online' }}
-                                    • {{ $att->courseOffering->semester }}/{{ $att->courseOffering->academic_year }}
+                                     {{ __('ជំនាន់') }} {{ $att->courseOffering?->generation ?? $att->courseOffering?->targetPrograms->pluck('generation')->filter()->first() ?? '...' }}
+                                     • {{ __('បន្ទប់') }} {{ $att->courseOffering?->room_number ?? 'Online' }}
+                                    • {{ $att->courseOffering?->semester ?? '' }}/{{ $att->courseOffering?->academic_year ?? '' }}
                                 </p>
                             </div>
                         </div>

@@ -79,7 +79,6 @@
                         <select name="status" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
                             <option value="present">មានវត្តមាន</option>
                             <option value="absent">អវត្តមាន</option>
-                            <option value="late">មកយឺត</option>
                             <option value="permission">មានច្បាប់</option>
                         </select>
                     </div>
@@ -109,9 +108,19 @@
                         </thead>
                         <tbody class="divide-y divide-gray-100">
                             @foreach($attendanceRecords as $record)
+                            @php $profilePic = $record->student?->studentProfile?->profile_picture_url ?? $record->student?->profile?->profile_picture_url ?? null; @endphp
                             <tr class="hover:bg-gray-50 transition-colors">
                                 <td class="px-5 py-3">
-                                    <span class="text-sm font-semibold text-gray-800">{{ $record->student?->studentProfile?->full_name_km ?? $record->student?->name ?? 'N/A' }}</span>
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-500 flex items-center justify-center text-white font-bold text-[10px] shadow-sm shrink-0">
+                                            @if($profilePic)
+                                                <img src="{{ $profilePic }}" class="w-full h-full rounded-full object-cover" alt="">
+                                            @else
+                                                {{ mb_substr($record->student?->studentProfile?->full_name_km ?? $record->student?->name ?? '?', 0, 1) }}
+                                            @endif
+                                        </div>
+                                        <span class="text-sm font-semibold text-gray-800">{{ $record->student?->studentProfile?->full_name_km ?? $record->student?->name ?? 'N/A' }}</span>
+                                    </div>
                                 </td>
                                 <td class="px-5 py-3 text-sm text-gray-600">{{ \Carbon\Carbon::parse($record->date)->format('Y-m-d') }}</td>
                                 <td class="px-5 py-3">
@@ -192,7 +201,6 @@
                                 <select name="status" x-model="status" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500">
                                     <option value="present">មានវត្តមាន</option>
                                     <option value="absent">អវត្តមាន</option>
-                                    <option value="late">មកយឺត</option>
                                     <option value="permission">មានច្បាប់</option>
                                 </select>
                             </div>

@@ -209,8 +209,9 @@
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    {{-- Schedule Type Selector --}}
+                {{-- Schedule Section (Full Width) --}}
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
                         <h3 class="text-lg font-bold text-gray-900 mb-4">{{ __('ជ្រើសរើសបែងប្រាក់វិភាគ') }}</h3>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -570,6 +571,50 @@
             const addScheduleBtn = document.getElementById('add-schedule-btn');
             const schedulesContainer = document.getElementById('schedules-container');
             const khmerDays = {'Monday': 'ច័ន្ទ', 'Tuesday': 'អង្គារ', 'Wednesday': 'ពុធ', 'Thursday': 'ព្រហស្បតិ៍', 'Friday': 'សុក្រ', 'Saturday': 'សៅរ៍', 'Sunday': 'អាទិត្យ'};
+
+            // Load existing custom schedules
+            const existingSchedules = {!! json_encode($courseOffering->schedules) !!};
+            if (existingSchedules.length > 0 && detectedType === 'custom') {
+                existingSchedules.forEach(schedule => {
+                    const index = Date.now() + Math.random();
+                    const sessionCount = schedulesContainer.querySelectorAll('.schedule-item').length + 1;
+                    const row = document.createElement('div');
+                    row.className = 'schedule-item group bg-gray-50 p-4 rounded-xl border border-gray-200';
+                    let roomOptions = rooms.map(r => `<option value="${r.id}" ${r.id == schedule.room_id ? 'selected' : ''}>${r.room_number}</option>`).join('');
+                    let dayOptions = Object.keys(khmerDays).map(k => `<option value="${k}" ${k === schedule.day_of_week ? 'selected' : ''}>${khmerDays[k]}</option>`).join('');
+
+                    row.innerHTML = `
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-2 text-sm font-bold text-emerald-600 session-label">
+                                <i class="fas fa-clock text-xs"></i>
+                                <span>Session ${sessionCount}</span>
+                            </div>
+                            <button type="button" class="text-gray-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100" onclick="removeRow(this)">
+                                <i class="fas fa-times-circle text-sm"></i>
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <div class="col-span-2 md:col-span-1">
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('ថ្ងៃ') }}</label>
+                                <select name="schedules[${index}][day_of_week]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>${dayOptions}</select>
+                            </div>
+                            <div class="col-span-2 md:col-span-1">
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('បន្ទប់') }}</label>
+                                <select name="schedules[${index}][room_id]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>${roomOptions}</select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('ចាប់ផ្តើម') }}</label>
+                                <input type="time" name="schedules[${index}][start_time]" value="${schedule.start_time ? schedule.start_time.substring(0,5) : ''}" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('បញ្ចប់') }}</label>
+                                <input type="time" name="schedules[${index}][end_time]" value="${schedule.end_time ? schedule.end_time.substring(0,5) : ''}" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm">
+                            </div>
+                        </div>
+                    `;
+                    schedulesContainer.appendChild(row);
+                });
+            }
 
             addScheduleBtn.addEventListener('click', function() {
                 const index = Date.now();
