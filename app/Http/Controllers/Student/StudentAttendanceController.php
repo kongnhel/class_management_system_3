@@ -43,7 +43,7 @@ class StudentAttendanceController extends Controller
         }
 
         $courseOffering = CourseOffering::with(['students.studentProfile', 'students.profile'])->findOrFail($courseOfferingId);
-        $students = $courseOffering->students;
+        $students = $courseOffering->students->unique('id')->values();
         $today = now()->format('Y-m-d');
         $leaderId = auth()->id();
 

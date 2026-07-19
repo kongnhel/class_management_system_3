@@ -72,7 +72,6 @@
                                         </div>
                                     </div>
                                     <div class="space-y-2 mb-6">
-                                        <p class="text-gray-700 font-medium"><span class="font-bold text-gray-800">{{ __('លេខកូដមុខវិជ្ជា') }}</span>: <span class="text-gray-600">{{ $offering->course?->code ?? 'N/A' }}</span></p>
                                         <p class="text-gray-700 font-medium"><span class="font-bold text-gray-800">{{ __('ឆ្នាំសិក្សា') }}</span>: <span class="text-gray-600">{{ $offering->academic_year ?? 'N/A' }}</span></p>
                                         <p class="text-gray-700 font-medium"><span class="font-bold text-gray-800">{{ __('ឆមាស') }}</span>: <span class="text-gray-600">{{ $offering->semester ?? 'N/A' }}</span></p>
                                         <p class="text-gray-700 font-medium"><span class="font-bold text-gray-800">{{ __('ផ្នែក') }}</span>: <span class="text-gray-600">{{ $offering->section ?? 'N/A' }}</span></p>

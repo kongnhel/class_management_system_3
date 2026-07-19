@@ -1,54 +1,93 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('ពិន្ទុទាំងអស់') }}
-        </h2>
-    </x-slot>
+    <div class="bg-gray-50 min-h-screen">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6 md:p-8">
-                <h3 class="text-3xl font-bold text-gray-800 mb-8 flex items-center">
-                    <i class="fas fa-star mr-3 text-red-600"></i>{{ __('បញ្ជីពិន្ទុទាំងអស់ដែលខ្ញុំគ្រប់គ្រង') }}
-                </h3>
+            {{-- Header --}}
+            <div class="flex items-center gap-4 mb-8">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center shadow-lg">
+                    <i class="fas fa-star text-white text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">ពិន្ទុទាំងអស់</h1>
+                    <p class="text-sm text-gray-500 mt-0.5">បញ្ជីពិន្ទុដែលអ្នកគ្រប់គ្រង</p>
+                </div>
+            </div>
 
-                <div class="overflow-x-auto bg-gray-50 rounded-lg shadow-inner mb-6">
-                    <table class="min-w-full leading-normal">
+            {{-- Stats --}}
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div class="bg-white rounded-2xl border border-gray-200 p-4">
+                    <div class="text-xs font-bold text-gray-400 uppercase mb-1">សរុបកត់ត្រា</div>
+                    <div class="text-2xl font-black text-gray-800">{{ $grades->total() }}</div>
+                </div>
+            </div>
+
+            {{-- Table --}}
+            <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                <div class="px-5 py-4 border-b border-gray-200 flex items-center justify-between">
+                    <h3 class="font-bold text-gray-800 text-sm">បញ្ជីពិន្ទុ</h3>
+                    <span class="px-3 py-1 rounded-full bg-gray-100 text-xs font-bold text-gray-500">{{ $grades->total() }} កំណត់ត្រា</span>
+                </div>
+
+                @if($grades->count() > 0)
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-100">
                         <thead>
-                            <tr class="bg-gray-200 text-gray-700 uppercase text-sm font-semibold">
-                                <th class="py-3 px-4 text-left rounded-tl-lg">{{ __('ឈ្មោះសិស្ស') }}</th>
-                                <th class="py-3 px-4 text-left">{{ __('មុខវិជ្ជា') }}</th>
-                                <th class="py-3 px-4 text-left">{{ __('ប្រភេទវាយតម្លៃ') }}</th>
-                                <th class="py-3 px-4 text-left">{{ __('ពិន្ទុ') }}</th>
-                                <th class="py-3 px-4 text-left">{{ __('ពិន្ទុអតិបរមា') }}</th>
-                                <th class="py-3 px-4 text-left rounded-tr-lg">{{ __('កាលបរិច្ឆេទ') }}</th>
+                            <tr class="bg-gray-50">
+                                <th class="px-5 py-3 text-left text-[10px] font-bold text-gray-500 uppercase">សិស្ស</th>
+                                <th class="px-5 py-3 text-left text-[10px] font-bold text-gray-500 uppercase">មុខវិជ្ជា</th>
+                                <th class="px-5 py-3 text-left text-[10px] font-bold text-gray-500 uppercase">ប្រភេទ</th>
+                                <th class="px-5 py-3 text-center text-[10px] font-bold text-gray-500 uppercase">ពិន្ទុ</th>
+                                <th class="px-5 py-3 text-center text-[10px] font-bold text-gray-500 uppercase">អតិបរមា</th>
+                                <th class="px-5 py-3 text-left text-[10px] font-bold text-gray-500 uppercase">កាលបរិច្ឆេទ</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            @forelse ($grades as $grade)
-                                <tr class="border-b border-gray-200 hover:bg-gray-100">
-                                    <td class="py-3 px-4 text-gray-800">{{ $grade->student_name ?? 'N/A' }}</td>
-                                    <td class="py-3 px-4 text-gray-600">{{ $grade->course_title_km ?? 'N/A' }}</td>
-                                    <td class="py-3 px-4 text-gray-600">{{ $grade->assessment_type ?? 'N/A' }}</td>
-                                    <td class="py-3 px-4 text-gray-800">{{ $grade->score }}</td>
-                                    <td class="py-3 px-4 text-gray-600">{{ $grade->max_score }}</td>
-                                    <td class="py-3 px-4 text-gray-600">{{ \Carbon\Carbon::parse($grade->date)->format('Y-m-d') }}</td>
+                        <tbody class="divide-y divide-gray-100">
+                            @forelse($grades as $grade)
+                                @php
+                                    $percent = $grade->max_score > 0 ? round(($grade->score / $grade->max_score) * 100) : 0;
+                                    $typeLabels = ['exam' => 'ប្រឡង', 'assignment' => 'កិច្ចការ', 'quiz' => 'Quiz'];
+                                    $typeColors = ['exam' => 'purple', 'assignment' => 'emerald', 'quiz' => 'amber'];
+                                    $tColor = $typeColors[$grade->assessment_type] ?? 'gray';
+                                @endphp
+                                <tr class="hover:bg-gray-50 transition-colors">
+                                    <td class="px-5 py-3">
+                                        <div class="text-sm font-semibold text-gray-800">{{ $grade->student_name }}</div>
+                                    </td>
+                                    <td class="px-5 py-3 text-sm text-gray-600">{{ $grade->course_title_km }}</td>
+                                    <td class="px-5 py-3">
+                                        <span class="inline-flex px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-{{ $tColor }}-50 text-{{ $tColor }}-700 border border-{{ $tColor }}-100">
+                                            {{ $typeLabels[$grade->assessment_type] ?? $grade->assessment_type }}
+                                        </span>
+                                    </td>
+                                    <td class="px-5 py-3 text-center">
+                                        <span class="text-sm font-bold {{ $percent >= 50 ? 'text-emerald-600' : 'text-red-500' }}">
+                                            {{ $grade->score }}
+                                        </span>
+                                    </td>
+                                    <td class="px-5 py-3 text-center text-sm text-gray-500">{{ $grade->max_score }}</td>
+                                    <td class="px-5 py-3 text-xs text-gray-400">{{ \Carbon\Carbon::parse($grade->date)->format('Y-m-d') }}</td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="py-4 px-6 text-center text-gray-500">
-                                        {{ __('មិនទាន់មានពិន្ទុណាមួយត្រូវបានកត់ត្រាសម្រាប់មុខវិជ្ជារបស់អ្នកទេ។') }}
+                                    <td colspan="6" class="px-6 py-16 text-center">
+                                        <i class="fas fa-inbox text-gray-300 text-3xl mb-3"></i>
+                                        <p class="text-sm font-bold text-gray-400">មិនមានពិន្ទុ</p>
                                     </td>
                                 </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
-
-                {{-- Pagination Links --}}
-                <div class="mt-4">
+                <div class="px-5 py-3 border-t border-gray-100">
                     {{ $grades->links('pagination::tailwind', ['pageName' => 'gradesPage']) }}
                 </div>
+                @else
+                <div class="px-6 py-16 text-center">
+                    <i class="fas fa-inbox text-gray-300 text-3xl mb-3"></i>
+                    <p class="text-sm font-bold text-gray-400">មិនមានពិន្ទុ</p>
+                    <p class="text-xs text-gray-300 mt-1">ពិន្ទុនឹងបង្ហាញនៅទីនេះនៅពេលអ្នកបញ្ចូល</p>
+                </div>
+                @endif
             </div>
         </div>
     </div>

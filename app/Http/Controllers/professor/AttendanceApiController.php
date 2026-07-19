@@ -80,6 +80,8 @@ class AttendanceApiController extends Controller
         $attendances = AttendanceRecord::where('course_offering_id', $courseOfferingId)
             ->where('date', now()->toDateString())
             ->with('student')
+            ->with('student.studentProfile')
+            ->with('student.profile')
             ->orderBy('created_at', 'desc')
             ->get()
             ->filter(function ($record) {
@@ -87,18 +89,21 @@ class AttendanceApiController extends Controller
             })
             ->values()
             ->map(function ($record) {
-                $profile = $record->student->profile ?? null;
-                $pic = $profile?->profile_picture_url ?? null;
-                $av = $record->student->avatar ?? null;
-                $profilePic = (!empty($pic) && $pic !== 'null') ? $pic : ((!empty($av) && $av !== 'null') ? $av : null);
+                $studentProfilePic = $record->student->studentProfile?->profile_picture_url ?? null;
+                $userProfilePic = $record->student->profile?->profile_picture_url ?? null;
+                $avatarPic = $record->student->avatar ?? null;
+                $profilePic = null;
+                foreach ([$studentProfilePic, $userProfilePic, $avatarPic] as $pic) {
+                    if (!empty($pic) && $pic !== 'null') { $profilePic = $pic; break; }
+                }
 
                 return [
                     'id' => $record->id,
                     'status' => $record->status,
-                    'name' => $profile->full_name_km ?? $record->student->name ?? 'N/A',
+                    'name' => $record->student->studentProfile?->full_name_km ?? $record->student->profile?->full_name_km ?? $record->student->name ?? 'N/A',
                     'student_code' => $record->student->student_id_code ?? '',
                     'profile_pic' => $profilePic,
-                    'initial' => mb_substr($profile->full_name_km ?? $record->student->name ?? 'N', 0, 1),
+                    'initial' => mb_substr($record->student->studentProfile?->full_name_km ?? $record->student->profile?->full_name_km ?? $record->student->name ?? 'N', 0, 1),
                     'time' => $record->created_at->format('H:i:s'),
                 ];
             });

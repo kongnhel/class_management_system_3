@@ -35,13 +35,19 @@ class ProfessorAttendanceController extends Controller
             'status.required' => 'ស្ថានភាពវត្តមានតម្រូវឱ្យបញ្ចូល។',
         ]);
 
-        AttendanceRecord::create([
-            'course_offering_id' => $request->input('course_offering_id'),
-            'student_user_id' => $request->input('student_user_id'),
-            'date' => $request->input('date'),
-            'status' => $request->input('status'),
-            'remarks' => $request->input('remarks'),
-        ]);
+        AttendanceRecord::updateOrInsert(
+            [
+                'course_offering_id' => $request->input('course_offering_id'),
+                'student_user_id' => $request->input('student_user_id'),
+                'date' => $request->input('date'),
+            ],
+            [
+                'user_id' => $request->input('student_user_id'),
+                'status' => $request->input('status'),
+                'remarks' => $request->input('remarks'),
+                'updated_at' => now(),
+            ]
+        );
 
         return redirect()->route('professor.manage-attendance', ['offering_id' => $request->input('course_offering_id')])
             ->with('success', __('កំណត់ត្រាវត្តមានត្រូវបានបន្ថែមដោយជោគជ័យ។'));
