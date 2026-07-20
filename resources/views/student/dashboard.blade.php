@@ -226,7 +226,7 @@
                                     {{-- timeline connector --}}
                                     <div class="flex flex-col items-center">
                                         <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-xs font-black border border-purple-100 flex-shrink-0">
-                                            <span>{{ $schedule->start_time->format('H:i') }}</span>
+                                            <span>{{ \Carbon\Carbon::parse($schedule->start_time)->format('H:i') }}</span>
                                         </div>
                                         @if(!$loop->last)
                                             <div class="w-px flex-1 bg-slate-100 my-1"></div>
@@ -239,7 +239,7 @@
                                                 {{ $schedule->courseOffering->course->title_km ?? ($schedule->courseOffering->course->title_en ?? '') }}
                                             </h5>
                                             <div class="flex flex-wrap gap-x-4 gap-y-1 mt-1.5 text-xs text-gray-500">
-                                                <span class="inline-flex items-center gap-1.5"><i class="fas fa-clock text-gray-300"></i> {{ $schedule->start_time->format('H:i') }} - {{ $schedule->end_time->format('H:i') }}</span>
+                                                <span class="inline-flex items-center gap-1.5"><i class="fas fa-clock text-gray-300"></i> {{ \Carbon\Carbon::parse($schedule->start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($schedule->end_time)->format('H:i') }}</span>
                                                 <span class="inline-flex items-center gap-1.5"><i class="fas fa-door-open text-gray-300"></i> {{ $schedule->room->room_number ?? 'N/A' }}</span>
                                                 <span class="inline-flex items-center gap-1.5"><i class="fas fa-user-tie text-gray-300"></i> {{ $schedule->courseOffering->lecturer->name ?? 'N/A' }}</span>
                                             </div>

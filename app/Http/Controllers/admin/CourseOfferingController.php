@@ -490,6 +490,91 @@ public function store(Request $request)
             }
         });
 
+        // Pattern-based Conflict Checks (weekday/weekend)
+        $validator->after(function ($validator) use ($request, $courseOffering) {
+            $scheduleType = $request->input('schedule_type');
+
+            if (! in_array($scheduleType, ['weekday', 'weekend'])) {
+                return;
+            }
+
+            $sessions = $request->input("{$scheduleType}_sessions", []);
+            $lecturerId = $request->input('lecturer_user_id');
+            $academicYear = $request->input('academic_year');
+            $semester = $request->input('semester');
+
+            if (! is_array($sessions) || empty($sessions)) {
+                return;
+            }
+
+            // Sort sessions by start_time for internal overlap check
+            usort($sessions, fn($a, $b) => strcmp($a['start_time'], $b['start_time']));
+
+            // Check internal overlaps within the same day template
+            for ($i = 0; $i < count($sessions) - 1; $i++) {
+                if ($sessions[$i]['end_time'] > $sessions[$i + 1]['start_time']) {
+                    $validator->errors()->add(
+                        "{$scheduleType}_sessions.$i.end_time",
+                        "វេនទី " . ($i + 1) . " និងវេនទី " . ($i + 2) . " មានការជាន់គ្នាឯង។"
+                    );
+                }
+            }
+
+            $days = $scheduleType === 'weekday'
+                ? ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+                : ['Saturday', 'Sunday'];
+
+            foreach ($days as $day) {
+                foreach ($sessions as $sessionIndex => $session) {
+                    $start = $session['start_time'];
+                    $end = $session['end_time'];
+                    $roomId = $session['room_id'];
+
+                    // Room conflict check for this day
+                    $roomConflict = \App\Models\Schedule::where('day_of_week', $day)
+                        ->where('room_id', $roomId)
+                        ->where('course_offering_id', '!=', $courseOffering->id)
+                        ->whereHas('courseOffering', function ($q) use ($academicYear, $semester) {
+                            $q->where('academic_year', $academicYear)
+                                ->where('semester', $semester);
+                        })
+                        ->where(function ($q) use ($start, $end) {
+                            $q->where('start_time', '<', $end)
+                                ->where('end_time', '>', $start);
+                        })
+                        ->exists();
+
+                    if ($roomConflict) {
+                        $validator->errors()->add(
+                            "{$scheduleType}_sessions.$sessionIndex.room_id",
+                            "បន្ទប់នេះជាប់រវល់ហើយ នៅថ្ងៃ $day ចន្លោះម៉ោង $start - $end"
+                        );
+                    }
+
+                    // Lecturer conflict check for this day
+                    $lecturerConflict = \App\Models\Schedule::where('day_of_week', $day)
+                        ->whereHas('courseOffering', function ($q) use ($lecturerId, $academicYear, $semester, $courseOffering) {
+                            $q->where('lecturer_user_id', $lecturerId)
+                                ->where('academic_year', $academicYear)
+                                ->where('semester', $semester)
+                                ->where('id', '!=', $courseOffering->id);
+                        })
+                        ->where(function ($q) use ($start, $end) {
+                            $q->where('start_time', '<', $end)
+                                ->where('end_time', '>', $start);
+                        })
+                        ->exists();
+
+                    if ($lecturerConflict) {
+                        $validator->errors()->add(
+                            'lecturer_user_id',
+                            "សាស្ត្រាចារ្យនេះជាប់បង្រៀនថ្នាក់ផ្សេងហើយ នៅថ្ងៃ {$day} ម៉ោង {$start} - {$end}។"
+                        );
+                    }
+                }
+            }
+        });
+
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }

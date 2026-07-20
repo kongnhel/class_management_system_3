@@ -18,8 +18,8 @@ class Schedule extends Model
     ];
 
     protected $casts = [
-        'start_time' => 'datetime', // Cast to datetime for easier manipulation
-        'end_time' => 'datetime',   // Cast to datetime for easier manipulation
+        'start_time' => 'string',
+        'end_time' => 'string',
     ];
 
     /*

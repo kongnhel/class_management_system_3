@@ -317,7 +317,11 @@ class ProfessorController extends Controller
             ->with(['course', 'schedules'])
             ->get();
 
-        return view('professor.my-schedule', compact('user', 'courseOfferings'));
+        $semester = $courseOfferings->first()?->semester ?? 'ឆមាសទី១';
+        $semesterNum = str_replace('ឆមាសទី', '', $semester);
+        $academicYear = $courseOfferings->first()?->academic_year ?? date('Y') . '-' . (date('Y') + 1);
+
+        return view('professor.my-schedule', compact('user', 'courseOfferings', 'semester', 'semesterNum', 'academicYear'));
     }
 
     public function createAssessment($offering_id)

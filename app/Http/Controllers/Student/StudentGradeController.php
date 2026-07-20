@@ -172,12 +172,19 @@ class StudentGradeController extends Controller
         $enrolledOfferingIds = StudentCourseEnrollment::where('student_user_id', $user->id)->pluck('course_offering_id');
         $schedules = \App\Models\Schedule::whereIn('course_offering_id', $enrolledOfferingIds)
             ->whereHas('courseOffering.course')
-            ->with(['room', 'courseOffering.course', 'courseOffering.lecturer'])
+            ->with(['room', 'courseOffering.course', 'courseOffering.lecturer', 'courseOffering.targetPrograms'])
             ->orderByRaw("FIELD(day_of_week, 'Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday')")
             ->orderBy('start_time')
             ->get();
         $studentProgram = $user->program;
-        return view('student.my-schedule', compact('schedules', 'studentProgram'));
+
+        $semester = $schedules->first()?->courseOffering?->semester ?? '';
+        $semesterNum = str_replace('ឆមាសទី', '', $semester);
+
+        $generation = $schedules->first()?->courseOffering?->targetPrograms?->first()?->pivot?->generation ?? '';
+        $startDate = $schedules->first()?->courseOffering?->start_date ?? now();
+
+        return view('student.my-schedule', compact('schedules', 'studentProgram', 'semester', 'semesterNum', 'user', 'generation', 'startDate'));
     }
 
     public function enrolledCourses($studentId)

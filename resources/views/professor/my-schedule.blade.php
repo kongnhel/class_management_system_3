@@ -20,9 +20,9 @@
                     
                     <div class="flex items-center gap-3">
                         <div class="hidden md:flex items-center gap-3 bg-slate-50 px-4 py-2 rounded-xl border border-slate-100 mr-2">
-                            <span class="text-xs font-bold text-slate-400 uppercase">{{ __('ឆមាសទី ១') }}</span>
+                            <span class="text-xs font-bold text-slate-400 uppercase">{{ $semester }}</span>
                             <div class="h-4 w-px bg-slate-300"></div>
-                            <span class="text-sm font-bold text-emerald-600">ឆ្នាំសិក្សា ២០២៤-២០២៥</span>
+                            <span class="text-sm font-bold text-emerald-600">ឆ្នាំសិក្សា {{ $academicYear }}</span>
                         </div>
                         <button onclick="window.print()" class="group flex items-center justify-center gap-2 bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-700 px-4 py-2.5 rounded-xl font-bold shadow-sm transition-all text-sm">
                             <svg class="w-4 h-4 text-slate-400 group-hover:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2z"></path></svg>

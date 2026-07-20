@@ -295,48 +295,7 @@
                                     <i class="fas fa-plus text-xs"></i> <span>{{ __('បន្ថែម') }}</span>
                                 </button>
                             </div>
-                            <div id="schedules-container" class="space-y-3">
-                                @foreach ($courseOffering->schedules as $index => $schedule)
-                                    <div class="schedule-item group bg-gray-50 p-4 rounded-xl border border-gray-200">
-                                        <div class="flex items-center justify-between mb-3">
-                                            <div class="flex items-center gap-2 text-sm font-bold text-emerald-600 session-label">
-                                                <i class="fas fa-clock text-xs"></i>
-                                                <span>Session {{ $index + 1 }}</span>
-                                            </div>
-                                            <button type="button" class="text-gray-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100" onclick="removeRow(this)">
-                                                <i class="fas fa-times-circle text-sm"></i>
-                                            </button>
-                                        </div>
-                                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                                            <div class="col-span-2 md:col-span-1">
-                                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('ថ្ងៃ') }}</label>
-                                                <select name="schedules[{{ $index }}][day_of_week]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>
-                                                    @php $khmerDays = ['Monday' => 'ច័ន្ទ', 'Tuesday' => 'អង្គារ', 'Wednesday' => 'ពុធ', 'Thursday' => 'ព្រហស្បតិ៍', 'Friday' => 'សុក្រ', 'Saturday' => 'សៅរ៍', 'Sunday' => 'អាទិត្យ']; @endphp
-                                                    @foreach ($khmerDays as $en => $kh)
-                                                        <option value="{{ $en }}" {{ $schedule->day_of_week == $en ? 'selected' : '' }}>{{ $kh }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                            <div class="col-span-2 md:col-span-1">
-                                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('បន្ទប់') }}</label>
-                                                <select name="schedules[{{ $index }}][room_id]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>
-                                                    @foreach($rooms as $room)
-                                                        <option value="{{ $room->id }}" {{ $schedule->room_id == $room->id ? 'selected' : '' }}>{{ $room->room_number }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                            <div>
-                                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('ចាប់ផ្តើម') }}</label>
-                                                <input type="time" name="schedules[{{ $index }}][start_time]" value="{{ \Carbon\Carbon::parse($schedule->start_time)->format('H:i') }}" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>
-                                            </div>
-                                            <div>
-                                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('បញ្ចប់') }}</label>
-                                                <input type="time" name="schedules[{{ $index }}][end_time]" value="{{ \Carbon\Carbon::parse($schedule->end_time)->format('H:i') }}" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm">
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
+                            <div id="schedules-container" class="space-y-3"></div>
                         </div>
                     </div>
                 </div>
@@ -357,6 +316,24 @@
     </div>
 
 <script>
+        function removeRow(btn) {
+            const row = btn.closest('.schedule-item, .session-row, [id^="program-row-"]');
+            row.style.opacity = '0';
+            row.style.transform = 'scale(0.95)';
+            row.style.transition = 'all 0.2s ease';
+            setTimeout(() => {
+                row.remove();
+                updateSessionLabels();
+            }, 200);
+        }
+
+        function updateSessionLabels() {
+            document.querySelectorAll('.session-label, .session-row .flex.items-center span').forEach((el, i) => {
+                const span = el.tagName === 'SPAN' ? el : el.querySelector('span');
+                if (span) span.textContent = 'Session ' + (i + 1);
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
             const allPrograms = {!! json_encode($programs) !!};
             const existingPrograms = {!! json_encode($courseOffering->targetPrograms) !!};
@@ -574,6 +551,11 @@
 
             // Load existing custom schedules
             const existingSchedules = {!! json_encode($courseOffering->schedules) !!};
+            function extractTime(val) {
+                if (!val) return '';
+                var match = val.match(/(\d{2}):(\d{2})/);
+                return match ? match[0] : '';
+            }
             if (existingSchedules.length > 0 && detectedType === 'custom') {
                 existingSchedules.forEach(schedule => {
                     const index = Date.now() + Math.random();
@@ -604,11 +586,11 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('ចាប់ផ្តើម') }}</label>
-                                <input type="time" name="schedules[${index}][start_time]" value="${schedule.start_time ? schedule.start_time.substring(0,5) : ''}" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>
+                                <input type="time" name="schedules[${index}][start_time]" value="${extractTime(schedule.start_time)}" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('បញ្ចប់') }}</label>
-                                <input type="time" name="schedules[${index}][end_time]" value="${schedule.end_time ? schedule.end_time.substring(0,5) : ''}" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm">
+                                <input type="time" name="schedules[${index}][end_time]" value="${extractTime(schedule.end_time)}" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm">
                             </div>
                         </div>
                     `;
@@ -655,23 +637,6 @@
                 `;
                 schedulesContainer.appendChild(row);
             });
-
-            function removeRow(btn) {
-                const row = btn.closest('.schedule-item, [id^="program-row-"]');
-                row.style.opacity = '0';
-                row.style.transform = 'scale(0.95)';
-                row.style.transition = 'all 0.2s ease';
-                setTimeout(() => {
-                    row.remove();
-                    updateSessionLabels();
-                }, 200);
-            }
-
-            function updateSessionLabels() {
-                document.querySelectorAll('.session-label').forEach((label, i) => {
-                    label.querySelector('span').textContent = `Session ${i + 1}`;
-                });
-            }
         });
     </script>
 </x-app-layout>

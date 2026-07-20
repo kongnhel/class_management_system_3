@@ -183,13 +183,13 @@
             </div>
 
             <div class="schedule-info">
-                <h1 class="font-moul">តារាងវិភាគកម្មធម៌ឆមាសទី១ <span class="font-sans" style="font-family: var(--font-body)">/Timetable Semester 1</span></h1>
+                <h1 class="font-moul">តារាងវិភាគប្រចាំ{{ $semester }} <span class="font-sans" style="font-family: var(--font-body)">/Timetable Semester {{ $semesterNum }}</span></h1>
                 <p>
-                    ជំនាន់ទី {{ $user->generation ?? '...' }} 
+                    ជំនាន់ទី {{ $generation ?: '...' }} 
                     @if($studentProgram) | {{ $studentProgram->name_km ?? $studentProgram->name_en }} @endif
                     | ឆ្នាំសិក្សា {{ date('Y') }}-{{ date('Y')+1 }}
                 </p>
-                <p style="font-weight: normal; margin-top: 5px;">ចាប់ផ្តើមពីថ្ងៃចន្ទ ១២ កើត ខែអស្សុជ ឆ្នាំរោង ឆស័ក ព.ស ២៥៦៨ ត្រូវនឹងថ្ងៃទី១៤ ខែតុលា ឆ្នាំ២០២៤</p>
+                <p style="font-weight: normal; margin-top: 5px;">{{ __('ចាប់ផ្តើមពី') }} {{ \Carbon\Carbon::parse($startDate)->format('d/m/Y') }}</p>
             </div>
 
             {{-- 2. TABLES --}}
