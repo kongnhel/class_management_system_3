@@ -212,92 +212,22 @@
                 </div>
 
                 {{-- Schedule Section (Full Width) --}}
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
-                        <h3 class="text-lg font-bold text-gray-900 mb-4">{{ __('ជ្រើសរើសបែងប្រាក់វិភាគ') }}</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <label class="schedule-type-card p-4 border-2 rounded-xl cursor-pointer transition-all
-                                {{ old('schedule_type', $detectedType) === 'custom' ? 'border-emerald-500 bg-emerald-50' : 'border-gray-200 hover:border-gray-300' }}"
-                                for="schedule_type_custom">
-                                <input type="radio" name="schedule_type" value="custom" id="schedule_type_custom" class="sr-only"
-                                    {{ old('schedule_type', $detectedType) === 'custom' ? 'checked' : '' }}>
-                                <div class="text-center">
-                                    <i class="fas fa-calendar-alt text-3xl text-gray-400 mb-2"></i>
-                                    <p class="font-bold text-gray-900">{{ __('កំណត់ថ្ងៃខ្លី (Custom)') }}</p>
-                                    <p class="text-xs text-gray-500 mt-1">{{ __('ជ្រើសរើសថ្ងៃមួយចំនួន') }}</p>
-                                </div>
-                            </label>
-
-                            <label class="schedule-type-card p-4 border-2 rounded-xl cursor-pointer transition-all
-                                {{ old('schedule_type', $detectedType) === 'weekday' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300' }}"
-                                for="schedule_type_weekday">
-                                <input type="radio" name="schedule_type" value="weekday" id="schedule_type_weekday" class="sr-only"
-                                    {{ old('schedule_type', $detectedType) === 'weekday' ? 'checked' : '' }}>
-                                <div class="text-center">
-                                    <i class="fas fa-calendar-week text-3xl text-blue-500 mb-2"></i>
-                                    <p class="font-bold text-gray-900">{{ __('ចន្ទ-សុក្រ (Mon-Fri)') }}</p>
-                                    <p class="text-xs text-gray-500 mt-1">{{ __('បែងប្រាក់វេនប្រចាំថ្ងៃ') }}</p>
-                                </div>
-                            </label>
-
-                            <label class="schedule-type-card p-4 border-2 rounded-xl cursor-pointer transition-all
-                                {{ old('schedule_type', $detectedType) === 'weekend' ? 'border-amber-500 bg-amber-50' : 'border-gray-200 hover:border-gray-300' }}"
-                                for="schedule_type_weekend">
-                                <input type="radio" name="schedule_type" value="weekend" id="schedule_type_weekend" class="sr-only"
-                                    {{ old('schedule_type', $detectedType) === 'weekend' ? 'checked' : '' }}>
-                                <div class="text-center">
-                                    <i class="fas fa-calendar-day text-3xl text-amber-500 mb-2"></i>
-                                    <p class="font-bold text-gray-900">{{ __('សៅរ៍-អាទិត្យ (Sat-Sun)') }}</p>
-                                    <p class="text-xs text-gray-500 mt-1">{{ __('បែងប្រាក់វេនប្រចាំថ្ងៃ') }}</p>
-                                </div>
-                            </label>
-                        </div>
-                    </div>
-
-                    {{-- Weekday Pattern Form --}}
-                    <div id="weekday-pattern-form" class="hidden bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <h4 class="text-lg font-bold text-gray-900">{{ __('កំណត់វេនសិក្សាប្រចាំថ្ងៃចន្ទ-សុក្រ') }}</h4>
-                            <button type="button" id="add-weekday-session" class="flex items-center gap-2 text-emerald-600 font-bold text-sm hover:text-emerald-700">
-                                <i class="fas fa-plus text-xs"></i> {{ __('បន្ថែមវេនសិក្សា') }}
-                            </button>
-                        </div>
-                        <div id="weekday-sessions-container" class="space-y-3"></div>
-                        <p class="text-xs text-gray-500 mt-2">{{ __('បែងប្រាក់វេនសិក្សាដែលត្រូវបានបញ្ចូលនេះនឹងត្រូវបានអនុវត្តដោយស្វ័យប្រវត្តិលើថ្ងៃចន្ទ ទី២ ពុធ ព្រហស្បតិ៍ សុក្រ') }}</p>
-                    </div>
-
-                    {{-- Weekend Pattern Form --}}
-                    <div id="weekend-pattern-form" class="hidden bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <h4 class="text-lg font-bold text-gray-900">{{ __('កំណត់វេនសិក្សាប្រចាំថ្ងៃសៅរ៍-អាទិត្យ') }}</h4>
-                            <button type="button" id="add-weekend-session" class="flex items-center gap-2 text-emerald-600 font-bold text-sm hover:text-emerald-700">
-                                <i class="fas fa-plus text-xs"></i> {{ __('បន្ថែមវេនសិក្សា') }}
-                            </button>
-                        </div>
-                        <div id="weekend-sessions-container" class="space-y-3"></div>
-                        <p class="text-xs text-gray-500 mt-2">{{ __('បែងប្រាក់វេនសិក្សាដែលត្រូវបានបញ្ចូលនេះនឹងត្រូវបានអនុវត្តដោយស្វ័យប្រវត្តិលើថ្ងៃសៅរ៍ និងអាទិត្យ') }}</p>
-                    </div>
-
-                    {{-- Custom Schedule Form (existing) --}}
-                    <div id="custom-schedule-form">
-                        {{-- Schedules --}}
-                        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                            <div class="flex items-center justify-between mb-6">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center">
-                                        <span class="text-amber-600 font-bold text-sm">4</span>
-                                    </div>
-                                    <div>
-                                        <h3 class="text-lg font-bold text-gray-900">{{ __('កាលវិភាគសិក្សា') }}</h3>
-                                        <p class="text-xs text-gray-500">{{ __('កំណត់ថ្ងៃ ម៉ោង និងបន្ទប់សិក្សា') }}</p>
-                                    </div>
-                                </div>
-                                <button type="button" id="add-schedule-btn" class="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-600 rounded-xl text-sm font-bold hover:bg-emerald-100 transition-colors">
-                                    <i class="fas fa-plus text-xs"></i> <span>{{ __('បន្ថែម') }}</span>
-                                </button>
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
+                                <span class="text-emerald-600 font-bold text-sm" id="session-count-badge">{{ $courseOffering->schedules->count() }}</span>
                             </div>
-                            <div id="schedules-container" class="space-y-3"></div>
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-900">{{ __('កាលវិភាគសរុប') }}</h3>
+                                <p class="text-xs text-gray-500">{{ __('ការកំណត់ ពេល វេលាប្រចាំសប្តាហ៍') }}</p>
+                            </div>
                         </div>
+                        <button type="button" id="add-schedule-btn" class="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-600 rounded-xl text-sm font-bold hover:bg-emerald-100 transition-colors">
+                            <i class="fas fa-plus text-xs"></i> <span>{{ __('បន្ថែម') }}</span>
+                        </button>
                     </div>
+                    <div id="schedules-container" class="space-y-3"></div>
                 </div>
 
                 {{-- Actions --}}
@@ -324,6 +254,7 @@
             setTimeout(() => {
                 row.remove();
                 updateSessionLabels();
+                updateSessionBadge();
             }, 200);
         }
 
@@ -332,6 +263,12 @@
                 const span = el.tagName === 'SPAN' ? el : el.querySelector('span');
                 if (span) span.textContent = 'Session ' + (i + 1);
             });
+        }
+
+        function updateSessionBadge() {
+            const count = document.querySelectorAll('.schedule-item').length;
+            const badge = document.getElementById('session-count-badge');
+            if (badge) badge.textContent = count || 0;
         }
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -405,146 +342,8 @@
             }
 
             // ──────────────────────────────────────────────
-            // Schedule Pattern Selection & Session Builder
+            // Schedule
             // ──────────────────────────────────────────────
-            const scheduleTypeRadios = document.querySelectorAll('input[name="schedule_type"]');
-            const weekdayForm = document.getElementById('weekday-pattern-form');
-            const weekendForm = document.getElementById('weekend-pattern-form');
-            const customForm = document.getElementById('custom-schedule-form');
-
-            const detectedType = '{{ $detectedType }}';
-            const weekdayTemplate = {!! json_encode(isset($template) ? $template : []) !!};
-            const weekendTemplate = {!! json_encode(isset($weekendTemplate) ? $weekendTemplate : []) !!};
-
-            function toggleForms() {
-                const type = document.querySelector('input[name="schedule_type"]:checked').value;
-
-                weekdayForm.classList.toggle('hidden', type !== 'weekday');
-                weekendForm.classList.toggle('hidden', type !== 'weekend');
-                customForm.classList.toggle('hidden', type !== 'custom');
-
-                // Disable inputs in hidden forms so they don't submit
-                [weekdayForm, weekendForm, customForm].forEach(form => {
-                    const inputs = form.querySelectorAll('input, select');
-                    inputs.forEach(input => input.disabled = form.classList.contains('hidden'));
-                });
-            }
-
-            scheduleTypeRadios.forEach(radio => radio.addEventListener('change', toggleForms));
-            toggleForms(); // Initial
-
-            // Session row builder
-            function createSessionRow(containerId, prefix, rooms, initialData = {}) {
-                const container = document.getElementById(containerId);
-                const idx = Date.now() + Math.random();
-                const sessionCount = container.querySelectorAll('.session-row').length + 1;
-
-                const roomOptions = rooms.map(r =>
-                    '<option value="' + r.id + '" ' + (initialData.room_id == r.id ? 'selected' : '') + '>' + r.room_number + '</option>'
-                ).join('');
-
-                const row = document.createElement('div');
-                row.className = 'session-row group bg-gray-50 p-4 rounded-xl border border-gray-200';
-                row.innerHTML =
-                    '<div class="flex items-center justify-between mb-3">' +
-                        '<div class="flex items-center gap-2 text-sm font-bold text-emerald-600">' +
-                            '<i class="fas fa-clock text-xs"></i><span>{{ __('វេន') }} ' + sessionCount + '</span>' +
-                        '</div>' +
-                        '<button type="button" class="remove-session text-gray-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100">' +
-                            '<i class="fas fa-times-circle text-sm"></i>' +
-                        '</button>' +
-                    '</div>' +
-                    '<div class="grid grid-cols-1 md:grid-cols-4 gap-3">' +
-                        '<div>' +
-                            '<label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('ចាប់ផ្តើម') }} *</label>' +
-                            '<input type="time" name="' + prefix + '[' + idx + '][start_time]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" value="' + (initialData.start_time || '') + '" required>' +
-                        '</div>' +
-                        '<div>' +
-                            '<label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('បញ្ចប់') }} *</label>' +
-                            '<input type="time" name="' + prefix + '[' + idx + '][end_time]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" value="' + (initialData.end_time || '') + '" required>' +
-                        '</div>' +
-                        '<div>' +
-                            '<label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('បន្ទប់') }} *</label>' +
-                            '<select name="' + prefix + '[' + idx + '][room_id]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>' +
-                                '<option value="">{{ __('ជ្រើសរើសបន្ទប់') }}</option>' + roomOptions +
-                            '</select>' +
-                        '</div>' +
-                        '<div class="flex items-end">' +
-                            '<button type="button" class="remove-session text-red-500 hover:text-red-700 text-sm p-2">' +
-                                '<i class="fas fa-trash"></i>' +
-                            '</button>' +
-                        '</div>' +
-                    '</div>';
-
-                container.appendChild(row);
-
-                row.querySelector('.remove-session').addEventListener('click', function() {
-                    row.remove();
-                    updateSessionLabels(containerId);
-                });
-
-                return row;
-            }
-
-            function updateSessionLabels(containerId) {
-                const container = document.getElementById(containerId);
-                container.querySelectorAll('.session-row').forEach((row, i) => {
-                    const label = row.querySelector('.flex.items-center span');
-                    if (label) label.textContent = '{{ __('វេន') }} ' + (i + 1);
-                });
-            }
-
-            // Add session buttons
-            document.getElementById('add-weekday-session').addEventListener('click', function() {
-                createSessionRow('weekday-sessions-container', 'weekday_sessions', rooms);
-            });
-            document.getElementById('add-weekend-session').addEventListener('click', function() {
-                createSessionRow('weekend-sessions-container', 'weekend_sessions', rooms);
-            });
-
-            // Pre-fill forms based on detected pattern
-            if (detectedType === 'weekday' && weekdayTemplate.length > 0) {
-                document.querySelector('input[value="weekday"]').checked = true;
-                toggleForms();
-                weekdayTemplate.forEach((session, i) => {
-                    const row = createSessionRow('weekday-sessions-container', 'weekday_sessions', rooms);
-                    row.querySelector('[name$="[start_time]"]').value = session.start_time;
-                    row.querySelector('[name$="[end_time]"]').value = session.end_time;
-                    row.querySelector('[name$="[room_id]"]').value = session.room_id;
-                });
-            } else if (detectedType === 'weekend' && weekendTemplate.length > 0) {
-                document.querySelector('input[value="weekend"]').checked = true;
-                toggleForms();
-                weekendTemplate.forEach((session, i) => {
-                    const row = createSessionRow('weekend-sessions-container', 'weekend_sessions', rooms);
-                    row.querySelector('[name$="[start_time]"]').value = session.start_time;
-                    row.querySelector('[name$="[end_time]"]').value = session.end_time;
-                    row.querySelector('[name$="[room_id]"]').value = session.room_id;
-                });
-            } else {
-                // Custom - existing schedules already rendered in Blade
-            }
-
-            // Load old input for pattern forms
-            const oldWeekday = {!! json_encode(old('weekday_sessions', [])) !!};
-            const oldWeekend = {!! json_encode(old('weekend_sessions', [])) !!};
-
-            if (Object.keys(oldWeekday).length > 0) {
-                Object.values(oldWeekday).forEach(s => createSessionRow('weekday-sessions-container', 'weekday_sessions', rooms, s));
-            } else if (detectedType !== 'weekday' || weekdayTemplate.length === 0) {
-                createSessionRow('weekday-sessions-container', 'weekday_sessions', rooms);
-            }
-
-            if (Object.keys(oldWeekend).length > 0) {
-                Object.values(oldWeekend).forEach(s => createSessionRow('weekend-sessions-container', 'weekend_sessions', rooms, s));
-            } else if (detectedType !== 'weekend' || weekendTemplate.length === 0) {
-                createSessionRow('weekend-sessions-container', 'weekend_sessions', rooms);
-            }
-
-            // Re-apply toggleForms to disable inputs in hidden forms after session rows are created
-            toggleForms();
-
-            // Custom schedule form (existing)
             const addScheduleBtn = document.getElementById('add-schedule-btn');
             const schedulesContainer = document.getElementById('schedules-container');
             const khmerDays = {'Monday': 'ច័ន្ទ', 'Tuesday': 'អង្គារ', 'Wednesday': 'ពុធ', 'Thursday': 'ព្រហស្បតិ៍', 'Friday': 'សុក្រ', 'Saturday': 'សៅរ៍', 'Sunday': 'អាទិត្យ'};
@@ -556,7 +355,7 @@
                 var match = val.match(/(\d{2}):(\d{2})/);
                 return match ? match[0] : '';
             }
-            if (existingSchedules.length > 0 && detectedType === 'custom') {
+            if (existingSchedules.length > 0) {
                 existingSchedules.forEach(schedule => {
                     const index = Date.now() + Math.random();
                     const sessionCount = schedulesContainer.querySelectorAll('.schedule-item').length + 1;
@@ -571,7 +370,7 @@
                                 <i class="fas fa-clock text-xs"></i>
                                 <span>Session ${sessionCount}</span>
                             </div>
-                            <button type="button" class="text-gray-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100" onclick="removeRow(this)">
+                            <button type="button" class="text-gray-400 hover:text-red-500 transition-colors" onclick="removeRow(this)">
                                 <i class="fas fa-times-circle text-sm"></i>
                             </button>
                         </div>
@@ -585,17 +384,18 @@
                                 <select name="schedules[${index}][room_id]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>${roomOptions}</select>
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('ចាប់ផ្តើម') }}</label>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('ម៉ោងចាប់ផ្តើម') }}</label>
                                 <input type="time" name="schedules[${index}][start_time]" value="${extractTime(schedule.start_time)}" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('បញ្ចប់') }}</label>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('ម៉ោងបញ្ចប់') }}</label>
                                 <input type="time" name="schedules[${index}][end_time]" value="${extractTime(schedule.end_time)}" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm">
                             </div>
                         </div>
                     `;
                     schedulesContainer.appendChild(row);
                 });
+                updateSessionBadge();
             }
 
             addScheduleBtn.addEventListener('click', function() {
@@ -612,7 +412,7 @@
                             <i class="fas fa-clock text-xs"></i>
                             <span>Session ${sessionCount}</span>
                         </div>
-                        <button type="button" class="text-gray-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100" onclick="removeRow(this)">
+                        <button type="button" class="text-gray-400 hover:text-red-500 transition-colors" onclick="removeRow(this)">
                             <i class="fas fa-times-circle text-sm"></i>
                         </button>
                     </div>
@@ -626,16 +426,17 @@
                             <select name="schedules[${index}][room_id]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>${roomOptions}</select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('ចាប់ផ្តើម') }}</label>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('ម៉ោងចាប់ផ្តើម') }}</label>
                             <input type="time" name="schedules[${index}][start_time]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('បញ្ចប់') }}</label>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('ម៉ោងបញ្ចប់') }}</label>
                             <input type="time" name="schedules[${index}][end_time]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm">
                         </div>
                     </div>
                 `;
                 schedulesContainer.appendChild(row);
+                updateSessionBadge();
             });
         });
     </script>

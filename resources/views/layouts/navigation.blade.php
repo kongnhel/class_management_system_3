@@ -267,15 +267,7 @@
                         <span>{{ __('nav_for_students') }}</span>
                     </div>
 
-                    @if($isClassLeader)
-                        <a href="{{ route('student.my-enrolled-courses') }}" 
-                           class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg border border-yellow-500/20 bg-yellow-500/5 text-yellow-400 hover:bg-yellow-500/10 transition-all {{ request()->routeIs('student.leader.*') ? 'bg-yellow-600 text-white border-none' : '' }}">
-                            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                            <span class="font-bold">{{ __('nav_student_attendance') }}</span>
-                        </a>
-                    @endif
-
-                    <a href="{{ route('student.profile.show') }}" 
+                    <a href="{{ route('student.profile.show') }}"
                        class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all {{ request()->routeIs('student.profile.*') ? 'bg-green-600 text-white shadow-md shadow-green-600/20' : 'text-gray-400 hover:bg-slate-700/50 hover:text-white' }}">
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.93 1.327 6.379 3.804M15 9a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                         <span>{{ __('nav_profile') }}</span>

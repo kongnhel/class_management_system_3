@@ -1,0 +1,140 @@
+## PROFESSOR ROLE — COMPLETE PROCESS FLOW
+
+### 1. AUTHENTICATION & DASHBOARD
+- Professor logs in with email + password
+- Redirected to Professor Dashboard (/professor/dashboard)
+- Dashboard shows:
+  - Total course offerings assigned
+  - Total students enrolled
+  - Today's schedule (if any)
+  - Quick links to attendance, grades, assignments
+  - Upcoming announcements
+
+### 2. COURSE OFFERINGS (View Only)
+- My Course Offerings (/professor/my-course-offerings): Lists only course offerings where professor is the assigned lecturer
+  - Each offering shows: course name, semester, academic year, target programs, schedule, enrolled student count
+  - Click into a specific offering to manage it
+- View All Course Offerings (/professor/view-all-course-offerings): Browse all offerings in the system (read-only)
+
+### 3. ATTENDANCE MANAGEMENT
+
+3A. QR Code Attendance (Primary Method)
+1. Professor clicks "Start Attendance" on dashboard or manage-attendance page
+2. Precheck (POST /professor/attendance/precheck): System checks GPS location of professor's device to verify they are at the classroom location
+3. Start Session (POST /professor/attendance/start): Creates attendance session, generates QR code token with expiry
+4. QR Display: Professor's screen shows QR code with countdown timer
+5. Student Scan: Students scan QR with their phones -> POST /student/student/process-scan -> system verifies token, location, and records attendance
+6. Refresh QR (POST /professor/attendance/refresh-qr): Generate new QR if expired
+7. Get Students (GET /professor/attendance/students/{id}): AJAX poll to get real-time student attendance list
+8. Close Session (POST /professor/attendance/close): End attendance session
+9. Attendance statuses: present, absent, permission (late status removed)
+
+3B. Manual Attendance
+- Manage Attendance (/professor/course-offering/{id}/attendance): Table view of all students
+- Add attendance manually: select student, date, status, remarks -> POST /professor/attendances
+- Edit attendance record -> PUT /professor/attendances/{id}
+- Delete attendance record -> DELETE /professor/attendances/{id}
+
+3C. Attendance History
+- View past attendance sessions -> GET /professor/attendance/history
+- Shows date, status (open/closed), student count
+
+3D. Attendance Report
+- /professor/course-offerings/{id}/attendance-report: Per-student summary (present count, absent count, permission count, percentage)
+
+### 4. GRADE MANAGEMENT
+
+4A. View Grades
+- All Grades (/professor/all-grades): Overview of all course offerings with student counts
+- Manage Grades (/professor/course-offering/{id}/grades): Detailed per-student grades for one offering
+  - Shows: student name, attendance score, each assessment score, total, letter grade (A/B+/B/C+/C/D+/D/F)
+  - Grade calculation: attendance (15%) + assignments + midterm exam + final exam + quizzes
+  - Failing conditions: final <24, midterm <9, assignment <9, attendance <9, or total <50
+
+4B. Create Assessment
+- Create Assessment (/professor/course-offerings/{id}/assessments/create): Form to create new assessment
+  - Types: assignment, midterm (exam), final (exam), quiz
+  - Fields: title, description, max_score, due_date
+- Store Assessment (POST /professor/course-offerings/{id}/assessments)
+- Check Duplicate (GET /professor/api/check-duplicate): AJAX check if assessment name exists
+
+4C. Edit/Delete Assessment
+- Edit assessment -> GET /professor/assessments/{id}/edit/{type} -> PUT /professor/assessments/{id}/{type}
+- Delete assessment -> DELETE /professor/assessments/{id}
+
+4D. Enter Grades
+- Grade Entry Form (GET /professor/assessments/{id}/grades/edit): Shows all students with input fields
+- Store Grades (POST /professor/assessments/{id}/grades): Save scores for all students at once
+- Update Grades (POST /professor/grades/store/{assessment_id}): Alternative update endpoint
+
+4E. Export/Import Grades
+- Export Excel (/professor/course-offering/{id}/grades/export-excel): Download .xlsx with university template format (includes max score in header)
+- Import Excel (POST /professor/course-offering/{id}/grades/import-excel): Upload .xlsx to bulk import grades
+- Export CSV (GET /assessment/{id}/export-csv): Download CSV
+- Import CSV (POST /assessment/{id}/import-csv): Upload CSV
+- Export DOCX (/professor/course-offerings/{id}/export-docx): Download Word document of student list
+- Export Gradebook (/professor/course-offerings/{id}/export-gradebook): Download full gradebook as Word document
+
+4F. Grading Categories
+- Manage Categories (/professor/course/{id}/grading-categories): Configure grading weights per course
+- Store Category (POST /professor/course/{id}/grading-categories)
+- Delete Category (DELETE /professor/grading-categories/{id})
+
+### 5. ASSIGNMENTS
+- Manage Assignments (/professor/course-offering/{id}/assignments): List all assignments for a course offering
+- Create Assignment (POST /professor/course-offering/{id}/assignments): Title, description, max_score, due_date
+- Edit Assignment (GET /professor/course-offerings/{id}/assignments/{id}/edit -> PUT)
+- Delete Assignment (DELETE /professor/course-offerings/{id}/assignments/{id})
+- View Submissions (/professor/course-offerings/{id}/assignments/{id}/submissions): List of student submissions
+- View Submission Detail (/professor/course-offerings/{id}/assignments/{id}/submissions/{id}): See submitted file/content
+- Grade Submission (POST /professor/course-offerings/{id}/assignments/{id}/submissions/{id}/grade): Score + feedback
+- Download Submission (GET /professor/course-offerings/{id}/assignments/{id}/submissions/{id}/download): Download student's file
+
+### 6. EXAMS
+- Manage Exams (/professor/course-offering/{id}/exams): List all exams for a course offering
+- Create Exam (POST /professor/course-offering/{id}/exams): Title, description, max_score, type (midterm/final)
+- Edit Exam (GET /professor/course-offering/{id}/exams/{id}/edit -> PUT)
+- Delete Exam (DELETE /professor/course-offering/{id}/exams/{id})
+
+### 7. QUIZZES
+- Quiz Index (/professor/quizzes/{quiz}/questions): List questions for a quiz
+- Create Quiz Question (POST /professor/quizzes/{quiz}/questions): Add questions with options and correct answer
+
+### 8. NOTIFICATIONS
+- List Notifications (/professor/notifications): View all sent notifications
+- Create Notification (/professor/notifications/create): Compose notification to students
+  - Select course offering -> select recipients (students)
+  - Title, message content
+- Store Notification (POST /professor/notifications/store): Send notification
+- Edit Notification (/professor/notifications/{id}/edit -> PUT)
+- Delete Notification (DELETE /professor/notifications/{id})
+- Mark as Read (POST /professor/notifications/{id}/mark-as-read)
+- Mark All Read (POST /professor/notifications/mark-all-as-read)
+- Send via Telegram: Send grade notifications to students via Telegram bot
+  - Single student: POST /professor/send-grade-telegram/{enrollment_id}
+  - All students: POST /professor/course-offering/{id}/send-all-telegram
+
+### 9. STUDENT MANAGEMENT
+- Students in Course (/professor/course-offerings/{id}/students): List enrolled students with profile pictures
+- Student Profile (/professor/course-offerings/{id}/students/{id}): View individual student profile
+- Toggle Class Leader (PATCH /professor/course-offering/{id}/student/{id}/toggle-leader): Assign/remove class leader
+- Update Telegram (POST /professor/update-telegram): Update professor's Telegram chat ID
+
+### 10. SCHEDULE
+- My Schedule (/professor/my-schedule): View teaching schedule
+  - Shows: course name, day of week, time range, room number
+  - Grouped by course offering
+  - Print button available
+
+### 11. PROFILE
+- View Profile (/professor/profile): Show professor profile
+- Edit Profile (/professor/profile/edit): Form to edit name, email, phone, profile picture
+- Update Profile (PUT /professor/profile): Save changes
+- Create Profile (/professor/profile/create): Initial profile setup
+
+### 12. BROWSE (Read-Only)
+- Departments (/professor/view-departments): List all departments
+- Programs (/professor/view-programs): List all programs
+- Courses (/professor/view-courses): List all courses
+- All Students (/professor/all-students): List all students in system
+- All Data View (/professor/all-data-view): Combined data overview
