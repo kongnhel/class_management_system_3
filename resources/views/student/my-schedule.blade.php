@@ -9,9 +9,6 @@
             </div>
             
             <div class="flex gap-2 w-full md:w-auto">
-                <button onclick="exportToWord()" class="flex-1 md:flex-none inline-flex items-center justify-center px-4 py-2.5 bg-emerald-600 text-white font-bold rounded-xl shadow-lg shadow-emerald-100 hover:bg-emerald-700 transition-all text-xs">
-                    <i class="fas fa-file-word mr-2"></i> Word
-                </button>
                 <button onclick="window.print()" class="flex-1 md:flex-none inline-flex items-center justify-center px-4 py-2.5 bg-emerald-600 text-white font-bold rounded-xl shadow-lg shadow-emerald-100 hover:bg-emerald-700 transition-all text-xs">
                     <i class="fas fa-print mr-2"></i> {{ __('បោះពុម្ព') }}
                 </button>
@@ -317,33 +314,6 @@
             canvas.width = img.naturalWidth; canvas.height = img.naturalHeight;
             var ctx = canvas.getContext("2d"); ctx.drawImage(img, 0, 0);
             return canvas.toDataURL("image/png");
-        }
-
-        function exportToWord() {
-            const logo = document.getElementById('logoImg');
-            const line = document.getElementById('lineImg');
-            let content = document.getElementById('printable-area').cloneNode(true);
-            
-            if(logo && logo.src) { content.querySelector('#logoImg').src = getBase64Image(logo); }
-            if(line && line.src) { content.querySelector('#lineImg').src = getBase64Image(line); }
-
-            const htmlString = `
-                <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-                <head><meta charset='utf-8'><style>
-                    body { font-family: 'Battambang', Arial, sans-serif; }
-                    .header-layout { width: 100%; border-bottom: 2px solid black; margin-bottom: 20px; }
-                    .custom-table { width: 100%; border-collapse: collapse; }
-                    th, td { border: 1pt solid black; padding: 5px; text-align: center; }
-                    th { background-color: #f1f5f9; font-family: 'Moul', serif; font-size: 10pt; }
-                    @page { size: A4 landscape; margin: 1cm; }
-                </style></head>
-                <body>${content.innerHTML}</body></html>`;
-
-            const blob = new Blob(['\ufeff', htmlString], { type: 'application/msword' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url; link.download = 'My-Study-Schedule.doc';
-            document.body.appendChild(link); link.click(); document.body.removeChild(link);
         }
     </script>
 </x-app-layout>

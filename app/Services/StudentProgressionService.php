@@ -98,7 +98,8 @@ class StudentProgressionService
         $courseOfferingIds = $this->getYearCourseOfferingIds($student, $program, $yearLevel);
 
         if ($courseOfferingIds->isEmpty()) {
-            return false;
+            // No courses assigned for this year = cannot advance (treat as F)
+            return true;
         }
 
         // Check exam results for F grades
@@ -122,7 +123,9 @@ class StudentProgressionService
                 })->get();
 
             if ($examResults->isEmpty()) {
-                continue;
+                // No scores at all = F grade
+                $hasF = true;
+                break;
             }
 
             $finalExamScore = 0;
