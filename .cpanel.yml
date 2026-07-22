@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/nmuehxii/class_management_system/class_management
+    - /bin/cp -R * $DEPLOYPATH
