@@ -19,7 +19,7 @@
                 </div>
                 <div class="flex gap-3">
                     <a href="{{ route('admin.grades.export', $courseOffering->id) }}" class="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-5 py-2.5 rounded-xl font-bold shadow-md transition-all text-sm">
-                        <i class="fas fa-download"></i> នាំចេញ CSV
+                        <i class="fas fa-download"></i> ទាញយក Excel
                     </a>
                     <a href="{{ route('admin.grades.index') }}" class="flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-700 px-5 py-2.5 rounded-xl font-bold shadow-sm border border-gray-200 transition-all text-sm">
                         <i class="fas fa-arrow-left"></i> ត្រឡប់ក្រោយ

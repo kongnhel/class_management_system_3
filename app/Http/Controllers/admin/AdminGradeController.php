@@ -12,6 +12,7 @@ use App\Models\Program;
 use App\Models\Quiz;
 use App\Services\GradingService;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AdminGradeController extends Controller
 {
@@ -251,12 +252,11 @@ class AdminGradeController extends Controller
 
         $students = $students->sortByDesc('temp_total')->values();
 
-        $fileName = 'Gradebook_'.str_replace([' ', '/', '\\'], '_', $courseOffering->course->title_km).'.doc';
+        $fileName = 'Gradebook_'.str_replace([' ', '/', '\\'], '_', $courseOffering->course->title_km).'.xlsx';
 
-        $html = view('professor.grades.export_word', compact('courseOffering', 'students', 'assessments', 'gradebook'))->render();
-
-        return response($html)
-            ->header('Content-Type', 'application/msword; charset=utf-8')
-            ->header('Content-Disposition', "attachment; filename*=UTF-8''".rawurlencode($fileName));
+        return Excel::download(
+            new \App\Exports\ProfessorGradeExcelExport($courseOffering, $students, $assessments, $gradebook),
+            $fileName
+        );
     }
 }
