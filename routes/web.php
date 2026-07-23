@@ -131,6 +131,7 @@ Route::middleware(['auth', 'role:admin', 'throttle:120,1'])->prefix('admin')->na
     Route::delete('/users/{user}', [UserController::class, 'deleteUser'])->name('delete-user');
     Route::get('/users/show/{user}', [UserController::class, 'showUser'])->name('show-user');
     Route::get('/users/export', [UserController::class, 'exportUsers'])->name('users.export');
+    Route::get('/users/print-students', [UserController::class, 'printStudents'])->name('users.print-students');
 
     Route::get('/students/{student}/transition', [TransitionController::class, 'create'])->name('students.transition');
     Route::post('/students/{student}/transition', [TransitionController::class, 'store'])->name('students.transition.store');

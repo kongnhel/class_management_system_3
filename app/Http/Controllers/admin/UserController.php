@@ -481,6 +481,8 @@ class UserController extends Controller
                     'role' => $user->role,
                     'full_name_km' => $profile->full_name_km ?? '',
                     'full_name_en' => $profile->full_name_en ?? '',
+                    'gender' => $profile->gender ?? '',
+                    'phone_number' => $profile->phone_number ?? '',
                     'student_id_code' => $user->student_id_code ?? '',
                     'program_name' => $user->program?->name_km ?? '',
                     'department_name' => $user->department?->name_km ?? '',
@@ -548,5 +550,42 @@ class UserController extends Controller
         $fileName = 'users_'.($filters['tab'] ?? 'list').'_'.now()->format('Ymd_His').'.xlsx';
 
         return Excel::download(new UsersExport($filters), $fileName);
+    }
+
+    public function printStudents(Request $request)
+    {
+        $generation = $request->input('generation');
+        $program_id = $request->input('program_id');
+
+        $progressionService = app(\App\Services\StudentProgressionService::class);
+
+        $students = User::where('role', 'student')
+            ->with(['studentProfile', 'program', 'studentProgramEnrollments', 'profile'])
+            ->when($generation, fn ($q) => $q->where('generation', $generation))
+            ->when($program_id, fn ($q) => $q->where('program_id', $program_id))
+            ->orderBy('generation', 'desc')
+            ->orderBy('name', 'asc')
+            ->get();
+
+        $students->each(function ($student) use ($progressionService) {
+            $student->computed_year_level = $student->program
+                ? $progressionService->getYearLevel($student, $student->program)
+                : null;
+        });
+
+        $html = view('admin.users.print-students', compact('students'))->render();
+
+        $tmpFile = tempnam(sys_get_temp_dir(), 'pdf_') . '.pdf';
+
+        \Spatie\Browsershot\Browsershot::html($html)
+            ->setChromePath(env('CHROME_PATH', 'C:\Program Files\Google\Chrome\Application\chrome.exe'))
+            ->landscape()
+            ->format('A4')
+            ->save($tmpFile);
+
+        return response()->file($tmpFile, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="student_list.pdf"',
+        ]);
     }
 }

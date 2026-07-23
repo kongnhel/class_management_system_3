@@ -1,0 +1,282 @@
+<link rel="icon" type="image/png" href="http://127.0.0.1:8000/assets/image/nmu_Logo.png">
+<title>Class Management System</title>
+
+<!DOCTYPE html>
+<html lang="km">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="sob56ww4hE9CfeanKVLWpCpiZ464DOJPywSf6bm9">
+
+        <link rel="icon" type="image/png" href="http://127.0.0.1:8000/assets/image/nmu_Logo.png">
+        <title>Class Management System</title>
+
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.bunny.net">
+        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@100;300;400;700;900&display=swap" rel="stylesheet">
+
+        <!-- Icons -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+        <!-- Scripts (តែ១ដងប៉ុណ្ណោះ!) -->
+        <script type="module" src="http://[::1]:5173/@vite/client" data-navigate-track="reload"></script><link rel="stylesheet" href="http://[::1]:5173/resources/css/app.css" data-navigate-track="reload" /><script type="module" src="http://[::1]:5173/resources/js/app.js" data-navigate-track="reload"></script>
+        <style>
+            body, nav, div {
+                font-family: 'Battambang', sans-serif;
+            }
+        </style>
+    </head>
+    <body class="font-sans text-gray-900 antialiased">
+        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 dark:bg-gray-900">
+            <meta name="csrf-token" content="sob56ww4hE9CfeanKVLWpCpiZ464DOJPywSf6bm9">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Battambang:wght@400;700&display=swap');
+        body { font-family: 'Inter', 'Battambang', sans-serif; margin: 0; }
+        .min-h-screen { padding: 0 !important; justify-content: stretch !important; align-items: stretch !important; max-width: 100% !important; }
+    </style>
+
+    <div class="min-h-screen flex">
+        
+        <div class="hidden lg:flex lg:w-1/2 relative overflow-hidden items-center justify-center">
+            <img src="http://127.0.0.1:8000/assets/image/download (5).jpg" alt="" class="absolute inset-0 w-full h-full object-cover">
+            <div class="absolute inset-0 bg-emerald-900/70"></div>
+            <div class="relative z-10 text-center px-12">
+                <img src="http://127.0.0.1:8000/assets/image/nmu_Logo.png" alt="Logo" class="w-28 h-28 mx-auto mb-8 drop-shadow-2xl">
+                <h1 class="text-4xl font-extrabold text-white leading-tight mb-4">Class Management<br>System</h1>
+                <p class="text-emerald-100 text-lg max-w-sm mx-auto leading-relaxed">ប្រព័ន្ធគ្រប់គ្រងថ្នាក់រៀន សម្រាប់សកលវិទ្យាល័យ</p>
+                <div class="mt-10 flex items-center justify-center gap-3">
+                    <div class="w-3 h-3 rounded-full bg-emerald-300 animate-pulse"></div>
+                    <span class="text-emerald-200 text-sm font-medium">សូមចូលប្រព័ន្ធដើម្បីបន្ត</span>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="w-full lg:w-1/2 flex items-center justify-center px-6 py-12 bg-gray-50">
+            <div class="w-full max-w-md">
+                
+                <div class="lg:hidden text-center mb-8">
+                    <img src="http://127.0.0.1:8000/assets/image/nmu_Logo.png" alt="Logo" class="w-16 h-16 mx-auto mb-3">
+                    <h2 class="text-xl font-bold text-gray-800">Class Management System</h2>
+                </div>
+
+                
+                <div class="mb-8">
+                    <h2 class="text-3xl font-extrabold text-gray-900">ចូលប្រើប្រាស់</h2>
+                    <p class="text-gray-500 mt-2 text-sm">សូមបញ្ចូលព័ត៌មានគណនីរបស់អ្នកដើម្បីចូល</p>
+                </div>
+
+                
+                <div>
+                    <form method="POST" action="http://127.0.0.1:8000/login" class="space-y-5">
+                        <input type="hidden" name="_token" value="sob56ww4hE9CfeanKVLWpCpiZ464DOJPywSf6bm9" autocomplete="off">                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">អ៊ីមែល / លេខទូរស័ព្ទ / លេខសម្គាល់</label>
+                            <input id="login_identifier" type="text" name="login_identifier" required 
+                                   class="block w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none" 
+                                   placeholder="អ៊ីមែល / លេខទូរស័ព្ទ / លេខសម្គាល់" value="" />
+                                                    </div>
+
+                        <div id="passwordSection">
+                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">ពាក្យសម្ងាត់</label>
+                            <div class="relative">
+                                <input id="password" type="password" name="password" 
+                                       class="block w-full px-4 py-3 pr-12 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none" 
+                                       placeholder="••••••••" />
+                                <button type="button" onclick="togglePassword()" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600">
+                                    <svg id="eyeOpen" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                    <svg id="eyeClosed" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/></svg>
+                                </button>
+                            </div>
+                                                    </div>
+
+                        <button type="submit" id="loginBtn" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-emerald-200 hover:shadow-emerald-300 transition-all duration-200 text-sm">
+                            ចូលប្រើប្រព័ន្ធ
+                        </button>
+                    </form>
+
+                    <div class="flex items-center gap-4 my-6">
+                        <div class="flex-1 h-px bg-gray-200"></div>
+                        <span class="text-xs font-bold text-gray-400 uppercase">ឬ</span>
+                        <div class="flex-1 h-px bg-gray-200"></div>
+                    </div>
+
+                    <button onclick="loginWithGoogle()" 
+                            class="w-full py-3.5 bg-white border border-gray-200 hover:border-gray-300 text-gray-700 font-bold rounded-xl flex items-center justify-center gap-3 transition-all text-sm shadow-sm">
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5">
+                        ចូលជាមួយ Google
+                    </button>
+                </div>
+
+                
+                <p class="text-center text-sm text-gray-500 mt-8">
+                    មិនទាន់មានគណនីមែនទេ?
+                    <a href="http://127.0.0.1:8000/register" class="font-bold text-emerald-600 hover:text-emerald-700 ml-1">
+                        ចុះឈ្មោះទីនេះ
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function togglePassword() {
+            const input = document.getElementById('password');
+            const open = document.getElementById('eyeOpen');
+            const closed = document.getElementById('eyeClosed');
+            if (input.type === 'password') {
+                input.type = 'text';
+                open.classList.add('hidden');
+                closed.classList.remove('hidden');
+            } else {
+                input.type = 'password';
+                open.classList.remove('hidden');
+                closed.classList.add('hidden');
+            }
+        }
+    </script>
+
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC5QgFzC-Kuudj7mWxLPf58xmoe_feXF3o",
+            authDomain: "classmanagementsystem-cd57f.firebaseapp.com",
+            projectId: "classmanagementsystem-cd57f",
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        window.loginWithGoogle = () => {
+            const btn = event?.currentTarget;
+            if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; }
+            
+            signInWithPopup(auth, provider).then(async (result) => {
+                const idToken = await result.user.getIdToken();
+                return fetch('http://127.0.0.1:8000/auth/google/callback', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json', 
+                        'X-CSRF-TOKEN': 'sob56ww4hE9CfeanKVLWpCpiZ464DOJPywSf6bm9' 
+                    },
+                    body: JSON.stringify({ 
+                        id_token: idToken
+                    })
+                });
+            }).then(async (res) => {
+                const data = await res.json().catch(() => ({ status: 'error', message: 'មានបញ្ហាក្នុងការទាក់ទងនឹង server។' }));
+                if (data.status === 'success') {
+                    window.location.href = "/dashboard";
+                } else {
+                    showToast(data.message || 'បរាជ័យក្នុងការចូល', 'error');
+                    if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+                }
+            }).catch(error => {
+                console.error('Google login error:', error);
+                let msg = 'មិនអាចចូលជាមួយ Google បានទេ។';
+                if (error.code === 'auth/popup-closed-by-user') {
+                    msg = 'បង្អួចបានបិទមុនពេលចូលបានសម្រេច។';
+                } else if (error.code === 'auth/popup-blocked') {
+                    msg = 'បង្អួចផុតត្រូវបានបិទ។ សូមអនុញ្ញាត popup សម្រាប់ទំព័រនេះ។';
+                } else if (error.code === 'auth/unauthorized-domain') {
+                    msg = 'Domain នេះមិនទាន់បានអនុញ្ញាតនៅក្នុង Firebase Console ទេ។';
+                } else if (error.code === 'auth/network-request-failed') {
+                    msg = 'មានបញ្ហាបណ្តាញអ៊ីនធឺណិត។ សូមព្យាយាមម្តងទៀត។';
+                } else if (error.message) {
+                    msg = error.message;
+                }
+                showToast(msg, 'error');
+                if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+            });
+        };
+    </script>
+        </div>
+        <div id="toast-container" class="fixed top-6 right-6 z-[9999] w-full max-w-sm space-y-3 pointer-events-none"></div>
+
+
+
+
+<script>
+(function() {
+    const typeConfig = {
+        success: {
+            title: 'ជោគជ័យ',
+            iconBg: 'bg-green-50 text-green-600',
+            bar: 'bg-green-500',
+            svg: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>'
+        },
+        error: {
+            title: 'មានបញ្ហា',
+            iconBg: 'bg-red-50 text-red-600',
+            bar: 'bg-red-500',
+            svg: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01M5.07 19h13.86c1.54 0 2.5-1.67 1.73-3L13.73 4a2 2 0 00-3.46 0L3.34 16c-.77 1.33.19 3 1.73 3z"/></svg>'
+        },
+        warning: {
+            title: 'ព្រមាន',
+            iconBg: 'bg-amber-50 text-amber-600',
+            bar: 'bg-amber-500',
+            svg: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01M5.07 19h13.86c1.54 0 2.5-1.67 1.73-3L13.73 4a2 2 0 00-3.46 0L3.34 16c-.77 1.33.19 3 1.73 3z"/></svg>'
+        },
+        info: {
+            title: 'ព័ត៌មាន',
+            iconBg: 'bg-emerald-50 text-emerald-600',
+            bar: 'bg-emerald-500',
+            svg: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z"/></svg>'
+        }
+    };
+
+    window.showToast = function(message, type) {
+        const cfg = typeConfig[type] || typeConfig.info;
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+
+        const id = 'toast-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5);
+        const toastEl = document.createElement('div');
+        toastEl.id = id;
+        toastEl.className = 'bg-white rounded-2xl shadow-xl border border-gray-100 p-4 transform translate-x-full opacity-0 transition-all duration-300 pointer-events-auto';
+        toastEl.innerHTML = `
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl ${cfg.iconBg} flex items-center justify-center shrink-0">
+                    ${cfg.svg}
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-bold text-gray-900">${cfg.title}</p>
+                    <p class="text-sm text-gray-500 leading-relaxed break-words">${message}</p>
+                </div>
+                <button onclick="document.getElementById('${id}')?.remove()" class="text-gray-400 hover:text-gray-600 shrink-0">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="mt-3 h-1 bg-gray-100 rounded-full overflow-hidden">
+                <div class="h-full ${cfg.bar} transition-all duration-100 ease-linear" style="width: 100%"></div>
+            </div>
+        `;
+
+        container.appendChild(toastEl);
+        requestAnimationFrame(() => {
+            toastEl.classList.remove('translate-x-full', 'opacity-0');
+        });
+
+        const bar = toastEl.querySelector('.h-full');
+        let progress = 100;
+        const interval = setInterval(() => {
+            progress -= 0.5;
+            if (bar) bar.style.width = progress + '%';
+            if (progress <= 0) {
+                clearInterval(interval);
+                toastEl.classList.add('translate-x-full', 'opacity-0');
+                setTimeout(() => toastEl.remove(), 300);
+            }
+        }, 50);
+    };
+})();
+</script>    </body>
+</html>

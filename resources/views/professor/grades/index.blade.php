@@ -27,14 +27,6 @@
                             {{ __('បង្កើតការវាយតម្លៃ') }}
                         </a>
 
-                        <a href="{{ route('professor.grades.export-docx', ['offering_id' => $courseOffering->id]) }}"
-                            class="group inline-flex items-center justify-center px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-bold text-xs transition-all duration-200 shadow-sm hover:shadow-emerald-200">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5l5 5v11a2 2 0 01-2 2z"/>
-                            </svg>
-                            {{ __('ទាញយក (.doc)') }}
-                        </a>
-
                         <button onclick="window.print()"
                             class="group inline-flex items-center justify-center px-4 py-2.5 bg-slate-600 hover:bg-slate-700 text-white rounded-2xl font-bold text-xs transition-all duration-200 shadow-sm">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -335,47 +327,42 @@
 
             {{-- Desktop Table View --}}
             <div class="hidden lg:block bg-white shadow-sm border border-slate-200 rounded-2xl overflow-hidden">
-                {{-- Print-only University Header --}}
+                {{-- Print-only University Header (matching Excel export) --}}
                 <div class="hidden print:block" id="printHeader">
-                    <div class="text-center mb-2">
-                        <p class="text-[11px] font-black text-slate-900 leading-tight">ពិធីការដាក់ពិន្ទុសរុប</p>
-                        <p class="text-[10px] font-bold text-slate-700 mt-0.5">តំណាង សាខា មជ្ឈមណ្ឌបណ្តុះបណ្តាល</p>
-                    </div>
-                    <div class="text-[9px] text-slate-600 leading-relaxed mb-3">
-                        <p>នាយកដ្ឋានសិក្សាអប់រំ និងបណ្តុះបណ្តាលវិជ្ជាជីវៈ</p>
-                        <p>រដ្ឋបាលខេត្តស្វាយរៀង ឬ រដ្ឋបាលរាជធានីភ្នំពេញ</p>
-                    </div>
-                    <div class="text-center mb-3">
-                        <p class="text-[9px] text-slate-700">
-                            ប្រធានបទសិក្សាមុខវិជ្ជា <strong>{{ $courseOffering->course->title_km ?? 'មិនទាន់កំណត់' }}</strong> និងមានវិញ្ញាបនបត្រសម្គាល់លទ្ធផល។
-                        </p>
-                        <p class="text-[9px] text-slate-700">
-                            ឈ្មោះសាខា <strong>សាខាស្វាយរៀង</strong> ឆមាសទី <strong>{{ $courseOffering->semester }}</strong> ឆ្នាំសិក្សា <strong>{{ $courseOffering->academic_year }}</strong> (សម័យប្រឡង)
-                        </p>
-                        <p class="text-[9px] text-slate-700">
-                            ចំនួនសិស្សសរុប <strong>{{ $totalStudents }}</strong> នាក់ និស្សិតប្រុស <strong>{{ $maleCount }}</strong> នាក់ និស្សិតស្រី <strong>{{ $femaleCount }}</strong> នាក់
-                        </p>
-                    </div>
+                    <p class="text-center font-bold mb-0" style="font-family:'Khmer OS Battambang',sans-serif; font-size:12px;">ព្រះរាជាណាចក្រកម្ពុជា</p>
+                    <p class="text-center font-bold mb-3" style="font-family:'Khmer OS Battambang',sans-serif; font-size:12px;">ជាតិ សាសនា ព្រះមហាក្សត្រ</p>
+
+                    @php
+                        $facultyName = $courseOffering->course->department->faculty->name_km ?? 'មហាវិទ្យាល័យ';
+                        $lecturerName = $courseOffering->lecturer->name ?? '';
+                        $phone = $courseOffering->lecturer->phone_number ?? '';
+                        $courseName = $courseOffering->course->title_km ?? $courseOffering->course->title_en ?? '';
+                        $academicYear = $courseOffering->academic_year ?? '';
+                        $semester = $courseOffering->semester ?? '';
+                    @endphp
+
+                    <p class="text-left mb-1" style="font-family:'Khmer OS Battambang',sans-serif; font-size:10px;">ទីតាំង៖ {{ $facultyName }}</p>
+                    <p class="text-center font-bold mb-1" style="font-family:'Khmer OS Battambang',sans-serif; font-size:11px;">បញ្ជីស្រង់ពិន្ទុប្រចាំ{{ $semester }} ឆ្នាំសិក្សា {{ $academicYear }}</p>
+                    <p class="text-center mb-4" style="font-family:'Khmer OS Battambang',sans-serif; font-size:10px;">មុខវិជ្ជា {{ $courseName }} បង្រៀនដោយលោក/អ្នកគ្រូ {{ $lecturerName }} លេខទូរស័ព្ទ {{ $phone }}</p>
                 </div>
 
-                {{-- Print-only Simple Table --}}
+                {{-- Print-only Table (matching Excel export) --}}
                 <div class="hidden print:block" id="printTable">
-                    <table class="w-full text-center border-collapse" style="font-size:9px;">
+                    <table class="w-full text-center border-collapse" style="font-family:'Khmer OS Battambang',sans-serif;">
                         <thead>
-                            <tr class="bg-gray-200">
-                                <th class="border border-black px-2 py-1" style="width:30px;">ល.រ</th>
-                                <th class="border border-black px-2 py-1" style="width:80px;">អត្តលេខ</th>
-                                <th class="border border-black px-2 py-1 text-left" style="width:150px;">ឈ្មោះជាខ្មែរ</th>
-                                <th class="border border-black px-2 py-1 text-left" style="width:120px;">ឈ្មោះជាអង់គ្លេស</th>
-                                <th class="border border-black px-2 py-1" style="width:50px;">{{ __('ភេទ') }}</th>
-                                <th class="border border-black px-2 py-1" style="width:50px;">{{ __('វត្តមាន') }}</th>
+                            <tr>
+                                <th class="border border-black px-1 py-1" style="width:30px; font-size:10px;">ល.រ</th>
+                                <th class="border border-black px-1 py-1 text-left" style="width:160px; font-size:10px;">គោត្តនាម និងនាម</th>
+                                <th class="border border-black px-1 py-1 text-left" style="width:120px; font-size:10px;">ឈ្មោះអង់គ្លេស</th>
+                                <th class="border border-black px-1 py-1" style="width:35px; font-size:10px;">ភេទ</th>
                                 @foreach($assessments as $assessment)
-                                    <th class="border border-black px-2 py-1" style="min-width:60px;">
-                                        {{ Str::limit($assessment->title_km, 15) }}
+                                    <th class="border border-black px-1 py-1" style="min-width:70px; font-size:9px; white-space:pre-line;">
+                                        {{ $assessment->title_km }}\n({{ $assessment->max_score }} ពិន្ទុ)
                                     </th>
                                 @endforeach
-                                <th class="border border-black px-2 py-1" style="width:50px;">{{ __('សរុប') }}</th>
-                                <th class="border border-black px-2 py-1" style="width:40px;">{{ __('និទ្ទេស') }}</th>
+                                <th class="border border-black px-1 py-1" style="width:55px; font-size:10px;">វត្តមាន</th>
+                                <th class="border border-black px-1 py-1" style="width:55px; font-size:10px;">ពិន្ទុសរុប</th>
+                                <th class="border border-black px-1 py-1" style="width:55px; font-size:10px;">ចំណាត់ថ្នាក់</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -386,26 +373,25 @@
                                     $quizBonus = 0;
                                 @endphp
                                 <tr>
-                                    <td class="border border-black px-1 py-0.5">{{ $loop->iteration }}</td>
-                                    <td class="border border-black px-1 py-0.5 text-left" style="font-size:8px;">{{ $student->student_id_code }}</td>
-                                    <td class="border border-black px-1 py-0.5 text-left">{{ $student->profile->full_name_km ?? $student->name }}</td>
-                                    <td class="border border-black px-1 py-0.5 text-left" style="font-size:8px;">{{ $student->profile?->full_name_en ?? '' }}</td>
-                                    <td class="border border-black px-1 py-0.5">{{ $student->profile?->gender == 'male' ? 'ប្រុស' : 'ស្រី' }}</td>
-                                    <td class="border border-black px-1 py-0.5">{{ number_format($attendanceScore, 1) }}</td>
+                                    <td class="border border-black px-1 py-0.5" style="font-size:10px;">{{ $loop->iteration }}</td>
+                                    <td class="border border-black px-1 py-0.5 text-left" style="font-size:10px;">{{ $student->studentProfile->full_name_km ?? $student->profile->full_name_km ?? $student->name }}</td>
+                                    <td class="border border-black px-1 py-0.5 text-left" style="font-size:10px;">{{ $student->studentProfile?->full_name_en ?? $student->profile?->full_name_en ?? '' }}</td>
+                                    <td class="border border-black px-1 py-0.5" style="font-size:10px;">{{ ($student->studentProfile->gender ?? $student->profile?->gender) == 'male' ? 'ប' : 'ស' }}</td>
                                     @foreach($assessments as $assessment)
                                         @php
                                             $type = ($assessment instanceof \App\Models\Assignment) ? 'assignment' : (($assessment instanceof \App\Models\Quiz) ? 'quiz' : 'exam');
                                             $score = $gradebook[$student->id][$type . '_' . $assessment->id] ?? 0;
                                             if ($type === 'quiz') { $quizBonus += $score; } else { $baseScore += $score; }
                                         @endphp
-                                        <td class="border border-black px-1 py-0.5">{{ number_format($score, 1) }}</td>
+                                        <td class="border border-black px-1 py-0.5" style="font-size:10px;">{{ $score > 0 ? number_format($score, 1) : '' }}</td>
                                     @endforeach
+                                    <td class="border border-black px-1 py-0.5" style="font-size:10px;">{{ $attendanceScore > 0 ? number_format($attendanceScore, 1) : '' }}</td>
                                     @php
                                         $rowTotal = min($baseScore + $quizBonus, 100);
                                         $grade = \App\Services\GradingService::getLetterGrade($rowTotal);
                                     @endphp
-                                    <td class="border border-black px-1 py-0.5 font-bold">{{ number_format($rowTotal, 1) }}</td>
-                                    <td class="border border-black px-1 py-0.5 font-bold">{{ $grade }}</td>
+                                    <td class="border border-black px-1 py-0.5 font-bold" style="font-size:10px;">{{ number_format($rowTotal, 1) }}</td>
+                                    <td class="border border-black px-1 py-0.5 font-bold" style="font-size:10px;">{{ $grade }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -588,33 +574,31 @@
                         </tbody>
                     </table>
 
-                    {{-- Print-only Footer --}}
-                    <div class="hidden print:block border-t border-slate-400 pt-3 mt-4" id="printFooter">
-                        <div class="text-[8px] text-slate-600 leading-relaxed mb-4">
-                            <p class="mb-1"><strong>កំណត់សម្គាល់៖</strong></p>
-                            <p class="flex gap-4">
-                                <span>អត្រា = ពិន្ទុ / ពិន្ទុអតិបរិមា × ១០០</span>
-                                <span>ឧទាហរណ៍ = ៧៥ / ១០០ × ១០០ = ៧៥%</span>
-                            </p>
-                            <p>ប្រសិនបើសិស្សមានអត្រាផ្ទៀងផ្ទាត់សម្គាល់តិចជាង ៨០% នឹងត្រូវបានគេចាត់ទុកជា « <strong>«មិនបានប្រឡង»</strong> ឬ <strong>«អវត្តមាន»</strong> ។</p>
-                        </div>
-                        <div class="grid grid-cols-3 gap-6 text-center text-[9px] text-slate-700 mt-8 pt-6 border-t border-slate-300">
-                            <div>
-                                <p class="font-bold">ធ្វើនៅ ថ្ងៃទី _____ ខែ _______ ឆ្នាំ _______</p>
-                                <div class="mt-6 border-t border-slate-400 w-40 mx-auto"></div>
-                                <p class="mt-2 font-bold">អ្នករៀបចំបញ្ជី</p>
+                    {{-- Print-only Footer (matching Excel export) --}}
+                    <div class="hidden print:block pt-2 mt-2" id="printFooter" style="font-family:'Khmer OS Battambang',sans-serif;">
+                        <table class="w-full border-collapse" style="font-size:10px;">
+                            <tr>
+                                <td class="border border-black px-2 py-1 text-right font-bold" colspan="{{ 4 + count($assessments) }}">មធ្យមភាគរួម</td>
+                                <td class="border border-black px-2 py-1 text-center font-bold" colspan="2">{{ number_format($classAvg, 1) }}</td>
+                                <td class="border border-black px-2 py-1"></td>
+                            </tr>
+                            <tr>
+                                <td class="border border-black px-2 py-1 text-right font-bold" colspan="{{ 4 + count($assessments) }}">អ្នកប្រឡងជាប់ / ធ្លាក់</td>
+                                <td class="border border-black px-2 py-1 text-center font-bold" colspan="2">{{ $passCount }} / {{ $failCount }}</td>
+                                <td class="border border-black px-2 py-1"></td>
+                            </tr>
+                        </table>
+
+                        <div class="grid grid-cols-2 gap-8 mt-6 pt-4" style="font-size:10px;">
+                            <div class="text-center">
+                                <p class="font-bold">ហត្ថលេខារបស់លោក/អ្នកគ្រូ</p>
+                                <div class="mt-8 border-t border-black w-48 mx-auto"></div>
+                                <p class="mt-1 font-bold">{{ $lecturerName }}</p>
                             </div>
-                            <div>
-                                <div class="w-20 h-20 border border-slate-300 rounded-full mx-auto mb-2"></div>
-                                <p class="font-bold">ប្រធានការិយាល័យសិក្សា<br>មានការព្រមព្រៀង</p>
-                                <div class="mt-2 border-t border-slate-400 w-40 mx-auto"></div>
-                                <p class="mt-2 font-bold">ឈ្មោះ និងហត្ថលេខា</p>
-                            </div>
-                            <div>
-                                <div class="w-20 h-20 border border-slate-300 rounded-full mx-auto mb-2"></div>
-                                <p class="font-bold">នាយកសាខា<br>មានការព្រមព្រៀង</p>
-                                <div class="mt-2 border-t border-slate-400 w-40 mx-auto"></div>
-                                <p class="mt-2 font-bold">ឈ្មោះ និងហត្ថលេខា</p>
+                            <div class="text-center">
+                                <p class="font-bold">ហត្ថលេខារបស់នាយកសាលា</p>
+                                <div class="mt-8 border-t border-black w-48 mx-auto"></div>
+                                <p class="mt-1 font-bold">នាយកសាលា</p>
                             </div>
                         </div>
                     </div>
@@ -685,7 +669,7 @@
 
         @media print {
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            body { background: white !important; font-size: 11px !important; margin: 0 !important; padding: 10mm !important; }
+            body { background: white !important; font-size: 10px !important; margin: 0 !important; padding: 8mm !important; font-family: 'Khmer OS Battambang', sans-serif !important; }
 
             .print\:hidden, nav, header, footer, .no-print, #chat-overlay, #confirm-modal,
             .fixed, .overflow-x-auto { display: none !important; }
@@ -700,8 +684,8 @@
             .shadow-lg.shadow-emerald-100 { box-shadow: none !important; }
 
             table { min-width: 100% !important; border-collapse: collapse !important; }
-            th, td { padding: 4px 6px !important; border: 1px solid black !important; font-size: 9px !important; }
-            thead tr { background-color: #e5e5e5 !important; }
+            th, td { padding: 3px 5px !important; border: 1px solid black !important; font-size: 10px !important; font-family: 'Khmer OS Battambang', sans-serif !important; }
+            thead tr { background-color: #d9d9d9 !important; }
 
             .rounded-2xl, .rounded-3xl { border-radius: 0 !important; }
 

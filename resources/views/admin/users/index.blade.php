@@ -59,6 +59,8 @@
                     showEditModal: false,
                     editLoading: false,
                     editSaving: false,
+                    showProfilePreview: false,
+                    previewUser: {},
                     editDepartments: [],
                     editForm: {
                         id: '', name: '', email: '', role: 'admin', password: '', password_confirmation: '',
@@ -83,7 +85,12 @@
                 }" class="mt-8">
                     
                     {{-- 🔥 ដាក់ប៊ូតុង Excel នៅទីនេះ (ក្នុង x-data) ដើម្បីឱ្យវាស្គាល់ activeTab និង Filter --}}
-                    <div class="flex justify-end mb-4">
+                    <div class="flex justify-end mb-4 gap-2">
+                        <a href="javascript:void(0)" onclick="printStudentsPdf()"
+                           class="w-full md:w-auto inline-flex items-center justify-center px-6 py-3 bg-blue-600 border border-transparent rounded-2xl font-bold text-sm text-white hover:bg-blue-700 active:scale-95 transition-all duration-200 shadow-lg shadow-blue-200">
+                            <i class="fas fa-print mr-2 text-lg"></i> 
+                            {{ __('បោះពុម្ព PDF') }}
+                        </a>
                         <button @click="window.location.href = '{{ route('admin.users.export') }}?tab=' + activeTab + 
                             '&search={{ request('search') }}' + 
                             '&generation={{ request('generation') }}' + 
@@ -727,6 +734,75 @@
                     </div>
                 </div>
 
+                {{-- Profile Preview Modal --}}
+                <div x-show="showProfilePreview" x-cloak
+                     x-transition:enter="transition ease-out duration-300"
+                     x-transition:enter-start="opacity-0"
+                     x-transition:enter-end="opacity-100"
+                     x-transition:leave="transition ease-in duration-200"
+                     x-transition:leave-start="opacity-100"
+                     x-transition:leave-end="opacity-0"
+                     class="fixed inset-0 z-[200] flex items-center justify-center p-4" style="display:none;">
+                    <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="showProfilePreview = false"></div>
+                    <div class="relative bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden"
+                         x-transition:enter="transition ease-out duration-300"
+                         x-transition:enter-start="opacity-0 scale-95"
+                         x-transition:enter-end="opacity-100 scale-100">
+                        
+                        <div class="bg-gradient-to-br from-emerald-600 to-emerald-700 p-6 text-center">
+                            <div class="w-20 h-20 rounded-full bg-white/20 backdrop-blur-md border-2 border-white/30 mx-auto mb-3 flex items-center justify-center overflow-hidden">
+                                <template x-if="previewUser.profile_picture_url">
+                                    <img :src="previewUser.profile_picture_url" class="w-full h-full object-cover">
+                                </template>
+                                <template x-if="!previewUser.profile_picture_url">
+                                    <span class="text-2xl font-black text-white" x-text="previewUser.name ? previewUser.name.charAt(0).toUpperCase() : '?'"></span>
+                                </template>
+                            </div>
+                            <h3 class="text-xl font-black text-white" x-text="previewUser.full_name_km || previewUser.name"></h3>
+                            <p class="text-emerald-100 text-sm font-medium mt-1" x-text="previewUser.email || 'មិនទាន់បង្កើតគណនី'"></p>
+                        </div>
+                        
+                        <div class="p-6 space-y-3">
+                            <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                                <span class="text-xs font-bold text-gray-400 uppercase">ឈ្មោះអ្នកប្រើ</span>
+                                <span class="text-sm font-bold text-gray-800" x-text="previewUser.name"></span>
+                            </div>
+                            <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                                <span class="text-xs font-bold text-gray-400 uppercase">ឈ្មោះពេញ</span>
+                                <span class="text-sm font-bold text-gray-800" x-text="previewUser.full_name_km || 'N/A'"></span>
+                            </div>
+                            <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                                <span class="text-xs font-bold text-gray-400 uppercase">ឈ្មោះអង់គ្លេស</span>
+                                <span class="text-sm font-bold text-gray-800" x-text="previewUser.full_name_en || 'N/A'"></span>
+                            </div>
+                            <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                                <span class="text-xs font-bold text-gray-400 uppercase">តួនាទី</span>
+                                <span class="text-sm font-bold px-2 py-0.5 rounded-full"
+                                      :class="{
+                                          'bg-red-50 text-red-700': previewUser.role === 'admin',
+                                          'bg-emerald-50 text-emerald-700': previewUser.role === 'professor',
+                                          'bg-blue-50 text-blue-700': previewUser.role === 'student'
+                                      }"
+                                      x-text="previewUser.role === 'admin' ? 'អ្នកគ្រប់គ្រង' : (previewUser.role === 'professor' ? 'សាស្ត្រាចារ្យ' : 'និស្សិត')"></span>
+                            </div>
+                            <div class="flex justify-between items-center py-2 border-b border-gray-100" x-show="previewUser.gender">
+                                <span class="text-xs font-bold text-gray-400 uppercase">ភេទ</span>
+                                <span class="text-sm font-bold text-gray-800" x-text="previewUser.gender === 'male' ? 'ប្រុស' : 'ស្រី'"></span>
+                            </div>
+                            <div class="flex justify-between items-center py-2" x-show="previewUser.phone_number">
+                                <span class="text-xs font-bold text-gray-400 uppercase">ទូរស័ព្ទ</span>
+                                <span class="text-sm font-bold text-gray-800" x-text="previewUser.phone_number"></span>
+                            </div>
+                        </div>
+
+                        <div class="p-4 bg-gray-50 border-t border-gray-100 flex justify-center">
+                            <button @click="showProfilePreview = false" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-sm transition-all shadow-sm">
+                                យល់ព្រម
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 </div>
             </div>
         </div>
@@ -900,6 +976,17 @@
                     row.style.backgroundColor = '#d1fae5';
                     setTimeout(function() { row.style.backgroundColor = ''; }, 1500);
                 }
+                c.previewUser = {
+                    name: data.user.name || '',
+                    email: data.user.email || '',
+                    full_name_km: data.user.full_name_km || '',
+                    full_name_en: data.user.full_name_en || '',
+                    role: data.user.role || '',
+                    gender: data.user.gender || '',
+                    phone_number: data.user.phone_number || '',
+                    profile_picture_url: data.user.profile_picture_url || ''
+                };
+                c.showProfilePreview = true;
                 window.showToast && window.showToast(data.message || 'បានធ្វើបច្ចុប្បន្នភាព។', 'success');
             } else {
                 var msg = data.message || 'មានបញ្ហា។';
@@ -970,5 +1057,19 @@
             });
         }
     })();
+
+    function printStudentsPdf() {
+        var root = document.getElementById('user-manage-root');
+        var activeTab = Alpine.$data(root).activeTab;
+        if (activeTab !== 'students') {
+            alert('មុខងារនេះគាំទ្រតែសម្រាប់និស្សិតប៉ុណ្ណោះ។');
+            return;
+        }
+        var genEl = document.querySelector('select[name=generation]');
+        var progEl = document.querySelector('select[name=program_id]');
+        var gen = genEl ? genEl.value : '';
+        var prog = progEl ? progEl.value : '';
+        window.open('{{ route('admin.users.print-students') }}?generation=' + gen + '&program_id=' + prog, '_blank');
+    }
     </script>
 </x-app-layout>
