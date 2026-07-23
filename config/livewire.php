@@ -15,6 +15,8 @@ return [
 
     'class_namespace' => 'App\\Livewire',
 
+    
+
     /*
     |--------------------------------------------------------------------------
     | View Path
@@ -128,7 +130,7 @@ return [
     |
     */
 
-    'inject_assets' => true,
+    'inject_assets' => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -141,5 +143,7 @@ return [
     */
 
     'pagination_theme' => 'tailwind',
+
+    
 
 ];

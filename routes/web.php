@@ -36,6 +36,20 @@ use App\Http\Controllers\StudentProfileController;
 use App\Http\Controllers\TelegramController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\File;
+
+Route::get('/vendor/livewire/livewire.js', function () {
+    $path = base_path('vendor/livewire/livewire/dist/livewire.js');
+    
+    if (!File::exists($path)) {
+        abort(404);
+    }
+
+    return response()->file($path, [
+        'Content-Type' => 'application/javascript; charset=utf-8',
+        'Cache-Control' => 'public, max-age=31536000',
+    ]);
+});
 
 // ========================================================
 // AUTHENTICATED ROUTES - AI Chat (All Authenticated Users)
