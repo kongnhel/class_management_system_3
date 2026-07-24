@@ -52,7 +52,8 @@ Schedule::call(function () {
         }
     }
 })
-    ->name('send-daily-professor-schedule') // បន្ថែមឈ្មោះដើម្បីកុំឱ្យ Error Overlapping
-    ->dailyAt('07:00')
+    ->name('send-daily-professor-schedule')
+    // ->dailyAt('07:00') // បិទชั�វិញនៅពេល Test រួច
+    ->everyMinute() // បើកសម្រាប់ Test ប៉ុណ្ណោះ - សូមបិទវិញនៅពេល Test រួច
     ->timezone('Asia/Phnom_Penh')
     ->withoutOverlapping();
