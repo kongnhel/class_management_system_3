@@ -140,4 +140,38 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.querySelector('form[action="{{ route("admin.attendance.index") }}"]');
+            if (!form) return;
+
+            let debounceTimer;
+
+            form.querySelectorAll('select').forEach(function (select) {
+                select.addEventListener('change', function () {
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(function () {
+                        form.submit();
+                    }, 100);
+                });
+            });
+
+            const searchInput = form.querySelector('input[name="search"]');
+            if (searchInput) {
+                searchInput.addEventListener('input', function () {
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(function () {
+                        form.submit();
+                    }, 400);
+                });
+                searchInput.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter') {
+                        clearTimeout(debounceTimer);
+                        form.submit();
+                    }
+                });
+            }
+        });
+    </script>
 </x-app-layout>

@@ -180,6 +180,12 @@
                                         $programName = $courseOffering->targetPrograms->first()?->name_km
                                             ?? $courseOffering->course->programs->first()?->name_km
                                             ?? '...';
+                                        $now = \Carbon\Carbon::now('Asia/Phnom_Penh');
+                                        $scanWindowStart = $startTime->copy()->subMinutes(5);
+                                        $scanWindowEnd = $endTime->copy()->addMinutes(10);
+                                        $isScanActive = $now->gte($scanWindowStart) && $now->lte($scanWindowEnd);
+                                        $isScanNotStarted = $now->lt($scanWindowStart);
+                                        $isScanEnded = $now->gt($scanWindowEnd);
                                     @endphp
 
                                     <div class="rounded-2xl border {{ $isCompletedToday ? 'border-emerald-100 bg-emerald-50/30' : 'border-slate-100 bg-slate-50/30' }} overflow-hidden transition-all hover:shadow-md">
@@ -204,9 +210,17 @@
                                                 <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold bg-emerald-100 text-emerald-700 border border-emerald-200 flex-shrink-0">
                                                     <i class="fas fa-check-double"></i> {{ __('បានស្កែន') }}
                                                 </span>
-                                            @else
+                                            @elseif($isScanActive)
                                                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold bg-emerald-100 text-emerald-700 border border-emerald-200 flex-shrink-0">
-                                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> {{ __('រង់ចាំ') }}
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> {{ __('កំពុងស្កែន') }}
+                                                </span>
+                                            @elseif($isScanNotStarted)
+                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold bg-yellow-100 text-yellow-700 border border-yellow-200 flex-shrink-0">
+                                                    <i class="fas fa-clock"></i> {{ __('រង់ចាំម៉ោង') }}
+                                                </span>
+                                            @else
+                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold bg-slate-100 text-slate-500 border border-slate-200 flex-shrink-0">
+                                                    <i class="fas fa-times-circle"></i> {{ __('បានបញ្ចប់') }}
                                                 </span>
                                             @endif
                                         </div>
@@ -225,24 +239,29 @@
 
                                         {{-- action --}}
                                         <div class="px-4 pb-4">
-                                            <button type="button"
-                                                @if($isCompletedToday)
+                                            @if($isCompletedToday)
+                                                <button type="button"
                                                     onclick="openAttendanceListOnly({{ $courseOffering->id }})"
-                                                @else
-                                                    onclick="verifyTeacherLocationBeforeScan({{ $courseOffering->id }}, {{ $firstSchedule->id }})"
-                                                @endif
-                                                id="btn-scan-{{ $courseOffering->id }}"
-                                                class="w-full py-2.5 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-2
-                                                {{ $isCompletedToday
-                                                    ? 'bg-white border-2 border-emerald-500 text-emerald-600 hover:bg-emerald-50'
-                                                    : 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm shadow-emerald-100'
-                                                }}">
-                                                @if($isCompletedToday)
+                                                    id="btn-scan-{{ $courseOffering->id }}"
+                                                    class="w-full py-2.5 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-2 bg-white border-2 border-emerald-500 text-emerald-600 hover:bg-emerald-50">
                                                     <i class="fas fa-clipboard-list"></i> {{ __('ពិនិត្យវត្តមានឡើងវិញ') }}
-                                                @else
+                                                </button>
+                                            @elseif($isScanActive)
+                                                <button type="button"
+                                                    onclick="verifyTeacherLocationBeforeScan({{ $courseOffering->id }}, {{ $firstSchedule->id }})"
+                                                    id="btn-scan-{{ $courseOffering->id }}"
+                                                    class="w-full py-2.5 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-2 bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm shadow-emerald-100">
                                                     <i class="fas fa-qrcode"></i> {{ __('ចាប់ផ្ដើមស្រង់វត្តមាន') }}
-                                                @endif
-                                            </button>
+                                                </button>
+                                            @elseif($isScanNotStarted)
+                                                <div class="w-full py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 bg-yellow-50 text-yellow-600 border border-yellow-200 cursor-not-allowed">
+                                                    <i class="fas fa-clock"></i> {{ __('សូមរង់ចាំដល់ម៉ោង') }} {{ $startTime->format('H:i') }}
+                                                </div>
+                                            @else
+                                                <div class="w-full py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 bg-slate-50 text-slate-400 border border-slate-200 cursor-not-allowed">
+                                                    <i class="fas fa-times-circle"></i> {{ __('ម៉ោងស្កែនបានបញ្ចប់') }}
+                                                </div>
+                                            @endif
                                         </div>
                                     </div>
                                 @endforeach

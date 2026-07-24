@@ -30,7 +30,7 @@
         
         {{-- 2. Main Modal Container --}}
         <div class="bg-white md:rounded-[2rem] shadow-2xl w-full md:max-w-7xl mx-auto flex flex-col lg:flex-row h-[100dvh] md:h-[90vh] overflow-hidden relative border border-white/10"
-             @if($isOpen) wire:poll.10s @endif> 
+             @if($isOpen) wire:poll.30s @endif> 
 
             {{-- Close Button --}}
             <button wire:click="close" class="absolute top-4 right-4 lg:top-6 lg:right-6 z-[70] p-2 rounded-full bg-black/20 hover:bg-red-500 hover:text-white text-white/70 backdrop-blur-md transition-all">
@@ -44,41 +44,95 @@
 
                 <div class="relative z-10 flex flex-col items-center w-full max-w-md mx-auto">
                     <div class="text-center mb-4 lg:mb-8">
-                        <div class="inline-flex items-center gap-2 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 mb-2">
-                            <span class="relative flex h-2 w-2">
-                              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                              <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                            </span>
-                            <span class="text-[10px] font-bold tracking-widest uppercase text-emerald-400">{{ __('Live Attendance') }}</span>
+                        <div class="inline-flex items-center gap-2 px-2 py-0.5 rounded-full {{ $scanStatus === 'active' ? 'bg-emerald-500/10 border border-emerald-500/20' : 'bg-slate-500/10 border border-slate-500/20' }} mb-2">
+                            @if($scanStatus === 'active')
+                                <span class="relative flex h-2 w-2">
+                                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                  <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                                </span>
+                                <span class="text-[10px] font-bold tracking-widest uppercase text-emerald-400">Live Attendance</span>
+                            @else
+                                <span class="relative flex h-2 w-2">
+                                  <span class="relative inline-flex rounded-full h-2 w-2 bg-slate-500"></span>
+                                </span>
+                                <span class="text-[10px] font-bold tracking-widest uppercase text-slate-400">{{ $scanStatus === 'not_started' ? 'រង់ចាំ' : ($scanStatus === 'ended' ? 'បានបញ្ចប់' : 'មិនដំណើរការ') }}</span>
+                            @endif
                         </div>
-                        <h2 class="text-xl lg:text-4xl font-black text-white tracking-tight mb-1">{{ __('ស្កែនវត្តមាន') }}</h2>
+                        <h2 class="text-xl lg:text-4xl font-black text-white tracking-tight mb-1">ស្កែនវត្តមាន</h2>
                         <p class="text-emerald-300 text-xs lg:text-sm font-bold uppercase truncate max-w-[250px] lg:max-w-none">{{ $courseName }}</p>
                     </div>
 
-                    {{-- QR Code Box --}}
-                    <div class="relative group mx-auto">
-                        <div class="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-purple-500 rounded-2xl blur opacity-30"></div>
-                        <div class="relative bg-white p-2 lg:p-4 rounded-xl lg:rounded-2xl shadow-2xl">
-                            <div class="relative overflow-hidden rounded-lg w-[140px] h-[140px] lg:w-[240px] lg:h-[240px] bg-white flex items-center justify-center">
-                                @if($qrCodeImage)
-                                    {!! $qrCodeImage !!}
-                                @endif
-                                <div class="scan-line"></div>
+                    {{-- Schedule Info Bar --}}
+                    @if($scheduleInfo)
+                    <div class="w-full mb-4 lg:mb-6 bg-white/5 backdrop-blur-sm rounded-xl p-3 border border-white/10">
+                        <div class="flex items-center justify-between text-white text-xs lg:text-sm">
+                            <div class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                <span class="font-bold">{{ $scheduleInfo['start_time'] }} - {{ $scheduleInfo['end_time'] }}</span>
+                            </div>
+                            @if($scanStatus === 'active' && isset($scheduleInfo['minutes_remaining']))
+                                <span class="text-emerald-400 font-bold text-xs">នៅសល់ {{ $scheduleInfo['minutes_remaining'] }} នាទី</span>
+                            @elseif($scanStatus === 'not_started' && isset($scheduleInfo['minutes_until']))
+                                <span class="text-yellow-400 font-bold text-xs">ចាប់ផ្តើមក្នុង {{ $scheduleInfo['minutes_until'] }} នាទី</span>
+                            @endif
+                        </div>
+                    </div>
+                    @endif
+
+                    {{-- QR Code Box / Status Messages --}}
+                    @if($scanStatus === 'active')
+                        <div class="relative group mx-auto">
+                            <div class="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-purple-500 rounded-2xl blur opacity-30"></div>
+                            <div class="relative bg-white p-2 lg:p-4 rounded-xl lg:rounded-2xl shadow-2xl">
+                                <div class="relative overflow-hidden rounded-lg w-[140px] h-[140px] lg:w-[240px] lg:h-[240px] bg-white flex items-center justify-center">
+                                    @if($qrCodeImage)
+                                        {!! $qrCodeImage !!}
+                                    @endif
+                                    <div class="scan-line"></div>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    {{-- Countdown Timer --}}
-                    <div class="mt-4 lg:mt-8 w-48 lg:w-full" x-data="{ timeLeft: 10 }" x-init="setInterval(() => { timeLeft = timeLeft > 1 ? timeLeft - 1 : 10 }, 1000)">
-                        <div class="flex items-center justify-between text-slate-400 text-[10px] lg:text-sm font-medium mb-1.5 px-1">
-                            <span>{{ __('QR ប្តូរថ្មី') }}</span>
-                            <span class="font-mono text-white font-bold"><span x-text="timeLeft">10</span>s</span>
+                        {{-- Countdown Timer --}}
+                        <div class="mt-4 lg:mt-8 w-48 lg:w-full" x-data="{ timeLeft: 30 }" x-init="setInterval(() => { timeLeft = timeLeft > 1 ? timeLeft - 1 : 30 }, 1000)">
+                            <div class="flex items-center justify-between text-slate-400 text-[10px] lg:text-sm font-medium mb-1.5 px-1">
+                                <span>QR ប្តូរថ្មី</span>
+                                <span class="font-mono text-white font-bold"><span x-text="timeLeft">30</span>s</span>
+                            </div>
+                            <div class="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 transition-all duration-1000 ease-linear"
+                                     :style="'width: ' + (timeLeft / 30 * 100) + '%'"></div>
+                            </div>
                         </div>
-                        <div class="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
-                            <div class="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 transition-all duration-1000 ease-linear"
-                                 :style="'width: ' + (timeLeft / 10 * 100) + '%'"></div>
+                    @elseif($scanStatus === 'not_started')
+                        <div class="flex flex-col items-center text-center py-8">
+                            <div class="w-20 h-20 bg-yellow-500/10 rounded-full flex items-center justify-center mb-4">
+                                <svg class="w-10 h-10 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            </div>
+                            <h3 class="text-lg font-bold text-white mb-1">មិនទាន់ដល់ម៉ោង</h3>
+                            <p class="text-slate-400 text-xs">សូមរង់ចាំដល់ម៉ោងកំណត់ទើបអាចស្កែនបាន។</p>
+                            @if(isset($scheduleInfo['minutes_until']))
+                                <div class="mt-4 text-3xl font-black text-yellow-400">{{ $scheduleInfo['minutes_until'] }}</div>
+                                <div class="text-xs text-slate-400">នាទីទៀត</div>
+                            @endif
                         </div>
-                    </div>
+                    @elseif($scanStatus === 'ended')
+                        <div class="flex flex-col items-center text-center py-8">
+                            <div class="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mb-4">
+                                <svg class="w-10 h-10 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
+                            </div>
+                            <h3 class="text-lg font-bold text-white mb-1">ការស្កែនបានបញ្ចប់</h3>
+                            <p class="text-slate-400 text-xs">ម៉ោងកាលវិភាគបានចប់ហើយ។</p>
+                        </div>
+                    @else
+                        <div class="flex flex-col items-center text-center py-8">
+                            <div class="w-20 h-20 bg-slate-500/10 rounded-full flex items-center justify-center mb-4">
+                                <svg class="w-10 h-10 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                            </div>
+                            <h3 class="text-lg font-bold text-white mb-1">មិនមានកាលវិភាគ</h3>
+                            <p class="text-slate-400 text-xs">ថ្ងៃនេះមិនមានកាលវិភាគសម្រាប់មុខវិជ្ជានេះទេ។</p>
+                        </div>
+                    @endif
                 </div>
             </div>
 
@@ -87,8 +141,14 @@
                 
                 <div class="px-6 py-4 border-b border-slate-200 bg-white sticky top-0 z-30 flex justify-between items-center shrink-0">
                     <div>
-                        <h3 class="text-lg lg:text-xl font-bold text-slate-800">{{ __('បញ្ជីឈ្មោះសិស្ស') }}</h3>
-                        <p class="text-[10px] text-slate-500 font-medium uppercase tracking-wider">{{ __('កំពុងរង់ចាំសិស្សស្កែន...') }}</p>
+                        <h3 class="text-lg lg:text-xl font-bold text-slate-800">បញ្ជីឈ្មោះសិស្ស</h3>
+                        <p class="text-[10px] text-slate-500 font-medium uppercase tracking-wider">
+                            @if($scanStatus === 'active')
+                                កំពុងរង់ចាំសិស្សស្កែន...
+                            @else
+                                ការស្កែនមិនទាន់ដំណើរការ
+                            @endif
+                        </p>
                     </div>
                     <div class="flex items-center gap-3">
                         @if(isset($attendances) && count($attendances) > 0)
@@ -99,14 +159,14 @@
                                 <span class="text-sm font-black text-slate-600 leading-none">
                                     {{ count($attendances) }}/{{ $totalEnrolled }}
                                 </span>
-                                <span class="text-[8px] font-bold text-slate-400 uppercase">{{ __('សិស្ស') }}</span>
+                                <span class="text-[8px] font-bold text-slate-400 uppercase">សិស្ស</span>
                             </div>
                         @endif
                         <div class="bg-emerald-50 px-4 py-1.5 rounded-xl border border-emerald-100 flex flex-col items-center">
                             <span class="text-xl lg:text-2xl font-black text-emerald-600 leading-none">
                                 {{ isset($attendances) ? str_pad(count($attendances), 2, '0', STR_PAD_LEFT) : '00' }}
                             </span>
-                            <span class="text-[9px] font-bold text-emerald-400 uppercase">{{ __('Scanned') }}</span>
+                            <span class="text-[9px] font-bold text-emerald-400 uppercase">Scanned</span>
                         </div>
                     </div>
                 </div>
@@ -116,24 +176,17 @@
                         {{-- Summary Bar --}}
                         @php
                             $presentCount = $attendances->where('status', 'present')->count();
-                            $lateCount = $attendances->where('status', 'late')->count();
                             $permissionCount = $attendances->where('status', 'permission')->count();
                         @endphp
                         <div class="flex items-center gap-3 mb-4 px-2">
                             <div class="flex items-center gap-1.5 bg-green-50 border border-green-200 px-3 py-1.5 rounded-lg">
                                 <div class="w-2 h-2 bg-green-500 rounded-full"></div>
-                                <span class="text-[11px] font-bold text-green-700">{{ $presentCount }} {{ __('មក') }}</span>
+                                <span class="text-[11px] font-bold text-green-700">{{ $presentCount }} មក</span>
                             </div>
-                            @if($lateCount > 0)
-                            <div class="flex items-center gap-1.5 bg-yellow-50 border border-yellow-200 px-3 py-1.5 rounded-lg">
-                                <div class="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                                <span class="text-[11px] font-bold text-yellow-700">{{ $lateCount }} {{ __('យឺត') }}</span>
-                            </div>
-                            @endif
                             @if($permissionCount > 0)
                             <div class="flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-lg">
                                 <div class="w-2 h-2 bg-emerald-500 rounded-full"></div>
-                                <span class="text-[11px] font-bold text-emerald-700">{{ $permissionCount }} {{ __('ច្បាប់') }}</span>
+                                <span class="text-[11px] font-bold text-emerald-700">{{ $permissionCount }} ច្បាប់</span>
                             </div>
                             @endif
                         </div>
@@ -144,7 +197,6 @@
                             @php
                                 $statusColors = [
                                     'present' => ['bg' => 'bg-green-50', 'border' => 'border-green-200', 'text' => 'text-green-700', 'dot' => 'bg-green-500', 'label' => 'មក'],
-                                    'late' => ['bg' => 'bg-yellow-50', 'border' => 'border-yellow-200', 'text' => 'text-yellow-700', 'dot' => 'bg-yellow-500', 'label' => 'យឺត'],
                                     'permission' => ['bg' => 'bg-emerald-50', 'border' => 'border-emerald-200', 'text' => 'text-emerald-700', 'dot' => 'bg-emerald-500', 'label' => 'ច្បាប់'],
                                     'absent' => ['bg' => 'bg-red-50', 'border' => 'border-red-200', 'text' => 'text-red-700', 'dot' => 'bg-red-500', 'label' => 'អវត្តមាន'],
                                 ];
@@ -206,8 +258,8 @@
                             <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-4">
                                 <svg class="w-10 h-10 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4" /></svg>
                             </div>
-                            <h4 class="text-slate-500 font-bold text-sm mb-1">{{ __('មិនទាន់មានសិស្សស្កែន') }}</h4>
-                            <p class="text-slate-400 text-xs">{{ __('សូមរង់ចាំសិស្សស្កែន QR Code') }}</p>
+                            <h4 class="text-slate-500 font-bold text-sm mb-1">មិនទាន់មានសិស្សស្កែន</h4>
+                            <p class="text-slate-400 text-xs">សូមរង់ចាំសិស្សស្កែន QR Code</p>
                         </div>
                     @endif
                 </div>
@@ -215,12 +267,12 @@
                 {{-- Action Bar --}}
                 <div class="p-4 lg:p-6 border-t border-slate-200 bg-white flex flex-row gap-3 shrink-0 z-30 pb-10 lg:pb-6">
                     <button wire:click="close" class="flex-1 px-4 py-3 rounded-xl font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors text-sm">
-                        {{ __('បិទផ្ទាំង') }}
+                        បិទផ្ទាំង
                     </button>
 
                     <button wire:click="$set('showConfirmation', true)"
                             class="flex-[2] relative px-4 py-3 rounded-xl font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-200 transition-all active:scale-95 text-sm">
-                        {{ __('បញ្ចប់ និងរក្សាទុក') }}
+                        បញ្ចប់ និងរក្សាទុក
                     </button>
                 </div>
             </div>
@@ -235,67 +287,15 @@
             <div class="mx-auto w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4 text-red-600">
                 <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
             </div>
-            <h3 class="text-lg font-black text-slate-800 mb-2">{{ __('តើអ្នកប្រាកដទេ?') }}</h3>
+            <h3 class="text-lg font-black text-slate-800 mb-2">តើអ្នកប្រាកដទេ?</h3>
             <p class="text-slate-500 text-xs mb-6">
-                {{ __('ការបញ្ចប់នឹងកំណត់សិស្សដែលមិនទាន់ស្កែនជា "អវត្តមាន" ដោយស្វ័យប្រវត្តិ។') }}
+                ការបញ្ចប់នឹងកំណត់សិស្សដែលមិនទាន់ស្កែនជា "អវត្តមាន" ដោយស្វ័យប្រវត្តិ។
             </p>
             <div class="flex gap-3">
-                <button wire:click="$set('showConfirmation', false)" class="flex-1 py-3 rounded-xl font-bold text-slate-600 bg-slate-100"> {{ __('បោះបង់') }} </button>
-                <button wire:click="closeAttendance" class="flex-1 py-3 rounded-xl font-bold text-white bg-red-600"> {{ __('យល់ព្រម') }} </button>
+                <button wire:click="$set('showConfirmation', false)" class="flex-1 py-3 rounded-xl font-bold text-slate-600 bg-slate-100"> បោះបង់ </button>
+                <button wire:click="closeAttendance" class="flex-1 py-3 rounded-xl font-bold text-white bg-red-600"> យល់ព្រម </button>
             </div>
         </div>
     </div>
     @endif
 </div>
-
-<script>
-function handleStartScan(sessionId) {
-    if (navigator.geolocation) {
-        Swal.fire({
-            title: 'កំពុងផ្ទៀងផ្ទាត់ទីតាំង...',
-            text: 'សូមរង់ចាំបន្តិច ដើម្បីប្រាកដថាអ្នកនៅក្នុងសាលា NMU',
-            allowOutsideClick: false,
-            didOpen: () => { Swal.showLoading() }
-        });
-
-        navigator.geolocation.getCurrentPosition(
-            function(position) {
-                const lat = position.coords.latitude;
-                const lng = position.coords.longitude;
-
-                axios.post('/professor/attendance/verify-location', {
-                    session_id: sessionId,
-                    lat: lat,
-                    lng: lng
-                })
-                .then(response => {
-                    Swal.close();
-                    if (response.data.success) {
-                        Livewire.dispatch('openAttendanceModal', { courseOfferingId: sessionId }); 
-                    }
-                })
-                .catch(error => {
-                    Swal.close();
-                    let msg = error.response?.data?.message || 'ការផ្ទៀងផ្ទាត់ទីតាំងបរាជ័យ!';
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'មិនអាចបើកការស្កែនបានទេ!',
-                        text: msg,
-                        confirmButtonText: 'យល់ព្រម',
-                        confirmButtonColor: '#4f46e5'
-                    });
-                });
-            },
-            function(error) {
-                Swal.close();
-                let errorMsg = "មិនអាចចូលប្រើ GPS បានទេ។ សូមពិនិត្យការអនុញ្ញាត (Permission)។";
-                if(error.code == 1) errorMsg = "បងត្រូវតែ 'Allow' ទីតាំង ទើបអាចប្រើប្រព័ន្ធបាន។";
-                Swal.fire('កំហុស GPS', errorMsg, 'warning');
-            },
-            { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
-        );
-    } else {
-        Swal.fire('បរាជ័យ', "កម្មវិធីរុករក (Browser) របស់អ្នកមិនគាំទ្រ GPS ទេ។", 'error');
-    }
-}
-</script>

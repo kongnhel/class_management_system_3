@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\AttendanceQrToken;
 use App\Models\AttendanceRecord;
 use App\Models\CourseOffering;
+use App\Models\Schedule;
 use App\Models\StudentCourseEnrollment;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
@@ -110,14 +112,78 @@ class AttendanceApiController extends Controller
 
         $totalEnrolled = StudentCourseEnrollment::where('course_offering_id', $courseOfferingId)->count();
 
-        return response()->json([
+            return response()->json([
             'success' => true,
             'attendances' => $attendances,
             'total_enrolled' => $totalEnrolled,
             'counts' => [
                 'present' => $attendances->where('status', 'present')->count(),
-                'late' => $attendances->where('status', 'late')->count(),
                 'permission' => $attendances->where('status', 'permission')->count(),
+            ],
+        ]);
+    }
+
+    public function checkAvailability(Request $request)
+    {
+        $request->validate([
+            'course_offering_id' => 'required|exists:course_offerings,id',
+        ]);
+
+        $courseOfferingId = $request->course_offering_id;
+        $now = Carbon::now('Asia/Phnom_Penh');
+        $todayName = $now->format('l');
+
+        $schedule = Schedule::where('course_offering_id', $courseOfferingId)
+            ->where('day_of_week', $todayName)
+            ->first();
+
+        if (! $schedule) {
+            return response()->json([
+                'available' => false,
+                'status' => 'no_schedule',
+                'message' => 'មិនមានកាលវិភាគសម្រាប់ថ្ងៃនេះ។',
+            ]);
+        }
+
+        $startTime = Carbon::parse($schedule->start_time);
+        $endTime = Carbon::parse($schedule->end_time);
+        $windowStart = $startTime->copy()->subMinutes(5);
+        $windowEnd = $endTime->copy()->addMinutes(10);
+
+        if ($now->lt($windowStart)) {
+            $minutesUntil = $now->diffInMinutes($windowStart);
+            return response()->json([
+                'available' => false,
+                'status' => 'not_started',
+                'message' => "ការស្កែននឹងចាប់ផ្តើមនៅពេលវេលាជាក់លាក់។ សូមរង់ចាំ {$minutesUntil} នាទីទៀត។",
+                'schedule' => [
+                    'start_time' => $startTime->format('h:i A'),
+                    'end_time' => $endTime->format('h:i A'),
+                    'start_minutes' => $minutesUntil,
+                ],
+            ]);
+        }
+
+        if ($now->gt($windowEnd)) {
+            return response()->json([
+                'available' => false,
+                'status' => 'ended',
+                'message' => 'ការស្កែនបានបញ្ចប់ហើយ។ ម៉ោងកាលវិភាគចប់។',
+                'schedule' => [
+                    'start_time' => $startTime->format('h:i A'),
+                    'end_time' => $endTime->format('h:i A'),
+                ],
+            ]);
+        }
+
+        return response()->json([
+            'available' => true,
+            'status' => 'active',
+            'message' => 'ការស្កែនកំពុងដំណើរការ។',
+            'schedule' => [
+                'start_time' => $startTime->format('h:i A'),
+                'end_time' => $endTime->format('h:i A'),
+                'minutes_remaining' => $now->diffInMinutes($windowEnd),
             ],
         ]);
     }

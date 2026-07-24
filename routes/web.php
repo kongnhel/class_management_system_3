@@ -358,6 +358,8 @@ Route::middleware(['auth', 'role:professor'])->prefix('professor')->name('profes
         ->name('attendance.api.students');
     Route::post('/attendance/close', [App\Http\Controllers\professor\AttendanceApiController::class, 'closeSession'])
         ->name('attendance.api.close');
+    Route::post('/attendance/check-availability', [App\Http\Controllers\professor\AttendanceApiController::class, 'checkAvailability'])
+        ->name('attendance.api.check-availability');
 
     Route::get('/course-offerings/{offering_id}/assignments/{assignment_id}/submissions', [App\Http\Controllers\professor\ProfessorSubmissionController::class, 'index'])
         ->name('submissions.index');
