@@ -56,10 +56,10 @@
                         </div>
                     </div>
                     <div class="flex flex-wrap items-center gap-3">
-                        <button onclick="exportToWord()" class="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2.5 rounded-xl font-bold transition-all text-sm backdrop-blur-sm">
+                        <button onclick="printOrExport('word')" class="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2.5 rounded-xl font-bold transition-all text-sm backdrop-blur-sm">
                             <i class="fas fa-file-word"></i> <span>Word</span>
                         </button>
-                        <button onclick="window.print()" class="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2.5 rounded-xl font-bold transition-all text-sm backdrop-blur-sm">
+                        <button onclick="printOrExport('print')" class="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2.5 rounded-xl font-bold transition-all text-sm backdrop-blur-sm">
                             <i class="fas fa-print"></i> <span>{{ __('បោះពុម្ព') }}</span>
                         </button>
                         <a href="{{ route('admin.create-course-offering') }}" class="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white px-5 py-2.5 rounded-xl font-bold shadow-lg transition-all text-sm">
@@ -559,5 +559,57 @@
             link.href = url; link.download = 'NMU-Academic-Schedule.doc';
             document.body.appendChild(link); link.click(); document.body.removeChild(link);
         }
+
+        function showFilterAlert() {
+            document.getElementById('filter-alert-modal').classList.remove('hidden');
+        }
+        function closeFilterAlert() {
+            document.getElementById('filter-alert-modal').classList.add('hidden');
+        }
+        function printOrExport(action) {
+            var progEl = document.querySelector('select[name=program_id]');
+            var genEl = document.querySelector('input[name=generation]');
+            var shiftEl = document.querySelector('select[name=shift]');
+            var semEl = document.querySelector('select[name=semester]');
+            var yearEl = document.querySelector('select[name=academic_year]');
+            var lectEl = document.querySelector('select[name=lecturer_id]');
+            var prog = progEl ? progEl.value : '';
+            var gen = genEl ? genEl.value : '';
+            var shift = shiftEl ? shiftEl.value : '';
+            var sem = semEl ? semEl.value : '';
+            var year = yearEl ? yearEl.value : '';
+            var lect = lectEl ? lectEl.value : '';
+            if (!prog && !gen && !shift && !sem && !year && !lect) {
+                showFilterAlert();
+                return;
+            }
+            if (action === 'print') {
+                window.print();
+            } else if (action === 'word') {
+                exportToWord();
+            }
+        }
     </script>
+
+    {{-- Filter Alert Modal --}}
+    <div id="filter-alert-modal" class="hidden fixed inset-0 z-[9999] overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen p-4 text-center">
+            <div class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm" onclick="closeFilterAlert()"></div>
+            <div class="inline-block w-full max-w-md p-6 text-left align-middle transition-all transform bg-white shadow-2xl rounded-2xl z-50">
+                <div class="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-amber-100 rounded-full">
+                    <i class="fas fa-filter text-amber-600 text-xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-center text-gray-900">សូមជ្រើសរើសទិន្នន័យ</h3>
+                <p class="mt-2 text-sm text-center text-gray-500">
+                    សូមជ្រើសរើស <span class="font-black text-amber-600">កម្មវិធីសិក្សា</span> <span class="font-black text-amber-600">ជំនាន់</span> <span class="font-black text-amber-600">ឆមាស</span> <span class="font-black text-amber-600">ឆ្នាំសិក្សា</span> ឬ <span class="font-black text-amber-600">សាស្ត្រាចារ្យ</span> យ៉ាងតិចមួយមុនពេលបោះពុម្ព។
+                </p>
+                <div class="mt-6 flex justify-center">
+                    <button type="button" onclick="closeFilterAlert()" class="px-6 py-2 text-sm font-bold text-white bg-amber-500 rounded-xl hover:bg-amber-600 shadow-lg shadow-amber-200 transition-all">
+                        យល់ព្រម
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </x-app-layout>

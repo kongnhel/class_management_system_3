@@ -560,7 +560,7 @@ class UserController extends Controller
         $progressionService = app(\App\Services\StudentProgressionService::class);
 
         $students = User::where('role', 'student')
-            ->with(['studentProfile', 'program', 'studentProgramEnrollments', 'profile'])
+            ->with(['studentProfile', 'program.department.faculty', 'studentProgramEnrollments', 'profile'])
             ->when($generation, fn ($q) => $q->where('generation', $generation))
             ->when($program_id, fn ($q) => $q->where('program_id', $program_id))
             ->orderBy('generation', 'desc')
@@ -573,44 +573,9 @@ class UserController extends Controller
                 : null;
         });
 
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('admin.users.print-students', compact('students'))
-            ->setPaper('a4', 'landscape');
+        $program = $program_id ? \App\Models\Program::with('department.faculty')->find($program_id) : null;
+        $currentAcademicYear = \App\Models\AcademicYear::getCurrent();
 
-        $domPdf = $pdf->getDomPDF();
-        $fontDir = $domPdf->getOptions()->getFontDir();
-
-        $srcFont = 'C:\Windows\Fonts\KhmerOSbattambang.ttf';
-        if (!file_exists($srcFont)) {
-            $srcFont = base_path('storage/fonts/KhmerOSbattambang.ttf');
-        }
-        $localFont = $fontDir . '/KhmerOSbattambang.ttf';
-
-        if (!is_dir($fontDir)) {
-            mkdir($fontDir, 0755, true);
-        }
-
-        if (!file_exists($localFont) && file_exists($srcFont)) {
-            copy($srcFont, $localFont);
-        }
-
-        if (file_exists($localFont)) {
-            $chroot = $domPdf->getOptions()->getChroot();
-            if (is_array($chroot)) {
-                $chroot = $chroot[0] ?? realpath('.');
-            }
-            $relativeFontPath = str_replace($chroot . '\\', '', str_replace($chroot . '/', '', $localFont));
-            $fontUrl = 'file://' . str_replace('\\', '/', $relativeFontPath);
-
-            $domPdf->getFontMetrics()->registerFont(
-                ['family' => 'KhmerOSbattambang', 'weight' => 'normal', 'style' => 'normal'],
-                $fontUrl
-            );
-            $domPdf->getFontMetrics()->registerFont(
-                ['family' => 'KhmerOSbattambang', 'weight' => 'bold', 'style' => 'normal'],
-                $fontUrl
-            );
-        }
-
-        return $pdf->stream('student_list.pdf');
+        return view('admin.users.print-students', compact('students', 'generation', 'program', 'currentAcademicYear'));
     }
 }

@@ -12,6 +12,7 @@
         "danog/madelineproto": "*",
         "doctrine/dbal": "^4.3",
         "intervention/image": "*",
+        "khmer-pdf/laravel-kh-pdf": "^1.0",
         "kreait/laravel-firebase": "^6.2",
         "laravel/framework": "^12.0",
         "laravel/sanctum": "^4.0",

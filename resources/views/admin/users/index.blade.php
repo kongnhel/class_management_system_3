@@ -52,6 +52,7 @@
                 <div id="user-manage-root" x-data="{ 
                     activeTab: $persist('admins').as('user_manage_tab'),
                     showDeleteModal: false,
+                    showPrintAlert: false,
                     deletingUserId: '',
                     deletingUserType: '',
                     deletingFormId: '',
@@ -549,6 +550,28 @@
                                         <button type="button" @click="executeDeleteUser()" :disabled="isDeleting" class="px-5 py-2 text-sm font-bold text-white bg-red-600 rounded-xl hover:bg-red-700 shadow-lg shadow-red-200 transition-all disabled:opacity-50">
                                             <span x-show="!isDeleting">{{ __('លុបចេញ') }}</span>
                                             <span x-show="isDeleting"><i class="fas fa-spinner fa-spin mr-1"></i> កំពុងលុប...</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Print Alert Modal --}}
+                        <div x-show="showPrintAlert" class="fixed inset-0 z-[9999] overflow-y-auto" x-cloak>
+                            <div class="flex items-center justify-center min-h-screen p-4 text-center">
+                                <div x-show="showPrintAlert" x-transition.opacity class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm" @click="showPrintAlert = false"></div>
+                                <div x-show="showPrintAlert" @click.away="showPrintAlert = false" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                                     class="inline-block w-full max-w-md p-6 my-8 text-left align-middle transition-all transform bg-white shadow-2xl rounded-2xl z-50">
+                                    <div class="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-amber-100 rounded-full">
+                                        <i class="fas fa-filter text-amber-600 text-xl"></i>
+                                    </div>
+                                    <h3 class="text-lg font-bold text-center text-gray-900">សូមជ្រើសរើសទិន្នន័យ</h3>
+                                    <p class="mt-2 text-sm text-center text-gray-500">
+                                        សូមជ្រើសរើស <span class="font-black text-amber-600">ជំនាន់</span> ឬ <span class="font-black text-amber-600">កម្មវិធីសិក្សា</span> មុនពេលបោះពុម្ព។
+                                    </p>
+                                    <div class="mt-6 flex justify-center">
+                                        <button type="button" @click="showPrintAlert = false" class="px-6 py-2 text-sm font-bold text-white bg-amber-500 rounded-xl hover:bg-amber-600 shadow-lg shadow-amber-200 transition-all">
+                                            យល់ព្រម
                                         </button>
                                     </div>
                                 </div>
@@ -1060,7 +1083,8 @@
 
     function printStudentsPdf() {
         var root = document.getElementById('user-manage-root');
-        var activeTab = Alpine.$data(root).activeTab;
+        var scope = Alpine.$data(root);
+        var activeTab = scope.activeTab;
         if (activeTab !== 'students') {
             alert('មុខងារនេះគាំទ្រតែសម្រាប់និស្សិតប៉ុណ្ណោះ។');
             return;
@@ -1069,6 +1093,10 @@
         var progEl = document.querySelector('select[name=program_id]');
         var gen = genEl ? genEl.value : '';
         var prog = progEl ? progEl.value : '';
+        if (!gen && !prog) {
+            scope.showPrintAlert = true;
+            return;
+        }
         window.open('{{ route('admin.users.print-students') }}?generation=' + gen + '&program_id=' + prog, '_blank');
     }
     </script>

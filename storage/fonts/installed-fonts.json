@@ -1,6 +1,8 @@
 {
     "khmerosbattambang": {
-        "normal": "C:\\laragon\\www\\sarana\\class_management-last-2\\class_management-last\\class_management\\storage\\fonts\/khmerosbattambang_normal_f3ee78e88e6fb4a092090273230ace50",
-        "bold": "khmerosbattambang_bold_f3ee78e88e6fb4a092090273230ace50"
+        "normal": "KhmerOSbattambang",
+        "bold": "KhmerOSbattambang",
+        "italic": "KhmerOSbattambang",
+        "bold-italic": "KhmerOSbattambang"
     }
 }
