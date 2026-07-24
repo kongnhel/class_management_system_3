@@ -573,19 +573,44 @@ class UserController extends Controller
                 : null;
         });
 
-        $html = view('admin.users.print-students', compact('students'))->render();
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('admin.users.print-students', compact('students'))
+            ->setPaper('a4', 'landscape');
 
-        $tmpFile = tempnam(sys_get_temp_dir(), 'pdf_') . '.pdf';
+        $domPdf = $pdf->getDomPDF();
+        $fontDir = $domPdf->getOptions()->getFontDir();
 
-        \Spatie\Browsershot\Browsershot::html($html)
-            ->setChromePath(env('CHROME_PATH', 'C:\Program Files\Google\Chrome\Application\chrome.exe'))
-            ->landscape()
-            ->format('A4')
-            ->save($tmpFile);
+        $srcFont = 'C:\Windows\Fonts\KhmerOSbattambang.ttf';
+        if (!file_exists($srcFont)) {
+            $srcFont = base_path('storage/fonts/KhmerOSbattambang.ttf');
+        }
+        $localFont = $fontDir . '/KhmerOSbattambang.ttf';
 
-        return response()->file($tmpFile, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="student_list.pdf"',
-        ]);
+        if (!is_dir($fontDir)) {
+            mkdir($fontDir, 0755, true);
+        }
+
+        if (!file_exists($localFont) && file_exists($srcFont)) {
+            copy($srcFont, $localFont);
+        }
+
+        if (file_exists($localFont)) {
+            $chroot = $domPdf->getOptions()->getChroot();
+            if (is_array($chroot)) {
+                $chroot = $chroot[0] ?? realpath('.');
+            }
+            $relativeFontPath = str_replace($chroot . '\\', '', str_replace($chroot . '/', '', $localFont));
+            $fontUrl = 'file://' . str_replace('\\', '/', $relativeFontPath);
+
+            $domPdf->getFontMetrics()->registerFont(
+                ['family' => 'KhmerOSbattambang', 'weight' => 'normal', 'style' => 'normal'],
+                $fontUrl
+            );
+            $domPdf->getFontMetrics()->registerFont(
+                ['family' => 'KhmerOSbattambang', 'weight' => 'bold', 'style' => 'normal'],
+                $fontUrl
+            );
+        }
+
+        return $pdf->stream('student_list.pdf');
     }
 }
