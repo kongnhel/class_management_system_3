@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>បញ្ជីឈ្មោះនិស្សិត</title>
+    <title>បញ្ជីឈ្មោះសាស្ត្រាចារ្យ</title>
     <link rel="icon" type="image/png" href="{{ asset('assets/image/nmu_Logo.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Moul:wght@400&display=swap" rel="stylesheet">
@@ -48,9 +48,9 @@
         .col-name-en { width: 130px; }
         .col-gender { width: 35px; }
         .col-dob { width: 80px; }
-        .col-year { width: 40px; }
+        .col-dept { width: auto; }
         .col-phone { width: 80px; }
-        .col-address { width: auto; }
+        .col-pos { width: auto; }
 
         .signature-section { display: flex; justify-content: space-between; margin-top: 40px; padding: 0 30px; }
         .signature-block { text-align: center; font-size: 12px; }
@@ -69,7 +69,7 @@
 
 <div class="container">
     <div class="toolbar">
-        <h2>បញ្ជីឈ្មោះនិស្សិត</h2>
+        <h2>បញ្ជីឈ្មោះសាស្ត្រាចារ្យ</h2>
         <div>
             <a href="{{ url()->previous() }}" class="btn btn-back">ត្រឡប់ក្រោយ</a>
             <button onclick="window.print()" class="btn btn-print">🖨️ Print</button>
@@ -77,19 +77,14 @@
     </div>
 
     @php
-        $totalStudents = $students->count();
-        $maleCount = $students->filter(fn($s) => ($s->studentProfile->gender ?? $s->profile?->gender) === 'male')->count();
-        $femaleCount = $totalStudents - $maleCount;
-        $programName = $program?->name_km ?? ($students->first()?->program->name_km ?? 'មិនកំណត់');
-        $facultyName = $program?->department->faculty->name_km ?? ($students->first()?->program->department->faculty->name_km ?? 'មិនកំណត់');
-        $generationDisplay = $generation ?? ($students->first()?->generation ?? 'មិនកំណត់');
+        $totalProfessors = $professors->count();
+        $maleCount = $professors->filter(fn($p) => ($p->profile?->gender) === 'male')->count();
+        $femaleCount = $totalProfessors - $maleCount;
+        $facultyName = $faculty?->name_km ?? 'មិនកំណត់';
+        $departmentName = $department?->name_km ?? 'មិនកំណត់';
+        $currentAcademicYear = \App\Models\AcademicYear::getCurrent();
+        $academicYearName = $currentAcademicYear?->name ?? '';
         $currentYear = \Carbon\Carbon::now()->year + 543;
-        $academicYearName = $currentAcademicYear?->name ?? $currentYear . ' - ' . ($currentYear + 1);
-
-        function toKhmerNums($n) {
-            $khmer = ['០','១','២','៣','៤','៥','៦','៧','៨','៩'];
-            return str_replace(range(0,9), $khmer, $n);
-        }
     @endphp
 
     <div class="doc-header">
@@ -100,18 +95,20 @@
             <p class="line1">ព្រះរាជាណាចក្រកម្ពុជា</p>
             <p class="line2">ជាតិ សាសនា ព្រះមហាក្សត្រ</p>
             <p class="line-motto"><img src="{{ asset('assets/image/2.png') }}" alt="motto" style="height:18px;"></p>
-            <p class="line3">ឆ្នាំសិក្សា {{ $academicYearName }}</p>
+            @if($academicYearName)
+                <p class="line3">ឆ្នាំសិក្សា {{ $academicYearName }}</p>
+            @endif
             <p class="line4">សាកលវិទ្យាល័យជាតិមានជ័យ</p>
             <p class="line5">{{ $facultyName }}</p>
-            <p class="line6">បញ្ជីឈ្មោះនិស្សិត</p>
-            <p class="line7">ចំនួន {{ toKhmerNums((string) $totalStudents) }} នាក់</p>
+            <p class="line6">បញ្ជីឈ្មោះសាស្ត្រាចារ្យ</p>
+            <p class="line7">ចំនួន {{ $totalProfessors }} នាក់</p>
         </div>
     </div>
 
     <div class="info-row">
-        <span>កម្មវិធីសិក្សា៖ <strong>{{ $programName }}</strong></span>
-        <span>ជំនាន់ទី៖ <strong>{{ $generationDisplay }}</strong></span>
-        <span>សរុប៖ <strong>{{ $totalStudents }}</strong> នាក់ (ប្រុស <strong>{{ $maleCount }}</strong> នាក់, ស្រី <strong>{{ $femaleCount }}</strong> នាក់)</span>
+        <span>មហវិទ្យាល័យ៖ <strong>{{ $facultyName }}</strong></span>
+        <span>ដេប៉ាតឺម៉ង់៖ <strong>{{ $departmentName }}</strong></span>
+        <span>សរុប៖ <strong>{{ $totalProfessors }}</strong> នាក់ (ប្រុស <strong>{{ $maleCount }}</strong> នាក់, ស្រី <strong>{{ $femaleCount }}</strong> នាក់)</span>
     </div>
 
     <table>
@@ -123,27 +120,27 @@
                 <th class="col-name-en">ឈ្មោះអង់គ្លេស</th>
                 <th class="col-gender">ភេទ</th>
                 <th class="col-dob">ថ្ងៃខែឆ្នាំកំណើត</th>
-                <th class="col-year">ឆ្នាំទី</th>
+                <th class="col-dept text-left">ដេប៉ាតឺម៉ង់</th>
                 <th class="col-phone">ទូរស័ព្ទ</th>
-                <th class="col-address text-left">អាសយដ្ឋាន</th>
+                <th class="col-pos text-left">តួនាទី</th>
             </tr>
         </thead>
         <tbody>
-            @foreach($students as $index => $student)
+            @foreach($professors as $index => $professor)
                 @php
-                    $gender = ($student->studentProfile->gender ?? $student->profile?->gender) ?? '';
+                    $gender = $professor->professorProfile?->gender ?? $professor->profile?->gender ?? '';
                     $genderText = $gender === 'male' ? 'ប' : ($gender === 'female' ? 'ស' : '');
                 @endphp
                 <tr>
                     <td class="col-stt">{{ $index + 1 }}</td>
-                    <td class="col-id">{{ $student->student_id_code ?? '' }}</td>
-                    <td class="col-name-kh text-left">{{ $student->studentProfile->full_name_km ?? $student->profile->full_name_km ?? $student->name }}</td>
-                    <td class="col-name-en text-left">{{ $student->studentProfile->full_name_en ?? $student->profile?->full_name_en ?? '' }}</td>
+                    <td class="col-id">{{ $professor->professorProfile->staff_id ?? $professor->name }}</td>
+                    <td class="col-name-kh text-left">{{ $professor->professorProfile->full_name_km ?? $professor->profile->full_name_km ?? $professor->name }}</td>
+                    <td class="col-name-en text-left">{{ $professor->professorProfile->full_name_en ?? $professor->profile?->full_name_en ?? '' }}</td>
                     <td class="col-gender">{{ $genderText }}</td>
-                    <td class="col-dob" style="font-size:10px;">@if($student->studentProfile->date_of_birth ?? $student->profile?->date_of_birth){{ \Carbon\Carbon::parse($student->studentProfile->date_of_birth ?? $student->profile?->date_of_birth)->format('d/m/Y') }}@endif</td>
-                    <td class="col-year">{{ $student->computed_year_level ?? '' }}</td>
-                    <td class="col-phone">{{ $student->studentProfile->phone_number ?? $student->profile?->phone_number ?? '' }}</td>
-                    <td class="col-address text-left" style="font-size:10px;">{{ $student->studentProfile->address ?? $student->profile?->address ?? '' }}</td>
+                    <td class="col-dob" style="font-size:10px;">@if($professor->professorProfile?->date_of_birth ?? $professor->profile?->date_of_birth){{ \Carbon\Carbon::parse($professor->professorProfile?->date_of_birth ?? $professor->profile?->date_of_birth)->format('d/m/Y') }}@endif</td>
+                    <td class="col-dept text-left">{{ $professor->professorProfile->department?->name_km ?? $professor->department?->name_km ?? '' }}</td>
+                    <td class="col-phone">{{ $professor->professorProfile->phone_number ?? $professor->profile?->phone_number ?? '' }}</td>
+                    <td class="col-pos text-left">{{ $professor->professorProfile->position ?? '' }}</td>
                 </tr>
             @endforeach
         </tbody>

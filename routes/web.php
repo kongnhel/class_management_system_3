@@ -132,6 +132,7 @@ Route::middleware(['auth', 'role:admin', 'throttle:120,1'])->prefix('admin')->na
     Route::get('/users/show/{user}', [UserController::class, 'showUser'])->name('show-user');
     Route::get('/users/export', [UserController::class, 'exportUsers'])->name('users.export');
     Route::get('/users/print-students', [UserController::class, 'printStudents'])->name('users.print-students');
+    Route::get('/users/print-professors', [UserController::class, 'printProfessors'])->name('users.print-professors');
 
     Route::get('/students/{student}/transition', [TransitionController::class, 'create'])->name('students.transition');
     Route::post('/students/{student}/transition', [TransitionController::class, 'store'])->name('students.transition.store');

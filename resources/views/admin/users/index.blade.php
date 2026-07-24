@@ -223,6 +223,37 @@
                         </div>
 
                         <div x-show="activeTab === 'professors'" class="space-y-4">
+                            <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm mb-6">
+                                <form id="professor-filter-form" action="{{ route('admin.manage-users') }}" method="GET" class="flex flex-wrap items-end gap-4">
+                                    <input type="hidden" name="tab" value="professors">
+                                    <input type="hidden" name="search" value="{{ request('search') }}">
+
+                                    <div class="flex-1 min-w-[200px]">
+                                        <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">{{ __('មហវិទ្យាល័យ') }}</label>
+                                        <select name="faculty_id" onchange="this.form.submit()" class="w-full border-gray-200 rounded-xl text-sm focus:ring-green-500">
+                                            <option value="">{{ __('គ្រប់មហវិទ្យាល័យ') }}</option>
+                                            @foreach($faculties as $fac)
+                                                <option value="{{ $fac->id }}" {{ request('faculty_id') == $fac->id ? 'selected' : '' }}>{{ $fac->name_km }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="flex-1 min-w-[200px]">
+                                        <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">{{ __('ដេប៉ាតឺម៉ង់') }}</label>
+                                        <select name="department_id" onchange="this.form.submit()" class="w-full border-gray-200 rounded-xl text-sm focus:ring-green-500">
+                                            <option value="">{{ __('គ្រប់ដេប៉ាតឺម៉ង់') }}</option>
+                                            @foreach($departments as $dept)
+                                                <option value="{{ $dept->id }}" {{ request('department_id') == $dept->id ? 'selected' : '' }}>{{ $dept->name_km }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <a href="{{ route('admin.manage-users', ['tab' => 'professors']) }}" class="px-6 py-2 bg-gray-100 text-gray-600 rounded-xl font-bold text-sm hover:bg-gray-200 transition-all">
+                                        {{ __('Reset') }}
+                                    </a>
+                                </form>
+                            </div>
+
                             @if ($professorsGrouped->isEmpty())
                                 <div class="bg-gray-100 p-8 rounded-2xl text-center text-gray-500 shadow-inner border-2 border-dashed border-gray-200">
                                     <i class="fas fa-user-tie text-4xl mb-3 text-gray-300"></i>
@@ -567,7 +598,7 @@
                                     </div>
                                     <h3 class="text-lg font-bold text-center text-gray-900">សូមជ្រើសរើសទិន្នន័យ</h3>
                                     <p class="mt-2 text-sm text-center text-gray-500">
-                                        សូមជ្រើសរើស <span class="font-black text-amber-600">ជំនាន់</span> ឬ <span class="font-black text-amber-600">កម្មវិធីសិក្សា</span> មុនពេលបោះពុម្ព។
+                                        សូមជ្រើសរើស <span class="font-black text-amber-600">ជំនាន់</span> និង <span class="font-black text-amber-600">កម្មវិធីសិក្សា</span> សម្រាប់និស្សិត ឬ <span class="font-black text-amber-600">មហវិទ្យាល័យ</span> / <span class="font-black text-amber-600">ដេប៉ាតឺម៉ង់</span> សម្រាប់សាស្ត្រាចារ្យ មុនពេលបោះពុម្ព។
                                     </p>
                                     <div class="mt-6 flex justify-center">
                                         <button type="button" @click="showPrintAlert = false" class="px-6 py-2 text-sm font-bold text-white bg-amber-500 rounded-xl hover:bg-amber-600 shadow-lg shadow-amber-200 transition-all">
@@ -1085,19 +1116,30 @@
         var root = document.getElementById('user-manage-root');
         var scope = Alpine.$data(root);
         var activeTab = scope.activeTab;
-        if (activeTab !== 'students') {
-            alert('មុខងារនេះគាំទ្រតែសម្រាប់និស្សិតប៉ុណ្ណោះ។');
-            return;
+
+        if (activeTab === 'students') {
+            var genEl = document.querySelector('select[name=generation]');
+            var progEl = document.querySelector('select[name=program_id]');
+            var gen = genEl ? genEl.value : '';
+            var prog = progEl ? progEl.value : '';
+            if (!gen || !prog) {
+                scope.showPrintAlert = true;
+                return;
+            }
+            window.open('{{ route('admin.users.print-students') }}?generation=' + gen + '&program_id=' + prog, '_blank');
+        } else if (activeTab === 'professors') {
+            var facEl = document.querySelector('#professor-filter-form select[name=faculty_id]');
+            var deptEl = document.querySelector('#professor-filter-form select[name=department_id]');
+            var fac = facEl ? facEl.value : '';
+            var dept = deptEl ? deptEl.value : '';
+            if (!fac && !dept) {
+                scope.showPrintAlert = true;
+                return;
+            }
+            window.open('{{ route('admin.users.print-professors') }}?faculty_id=' + fac + '&department_id=' + dept, '_blank');
+        } else {
+            alert('មុខងារនេះគាំទ្រតែសម្រាប់និស្សិត និងសាស្ត្រាចារ្យប៉ុណ្ណោះ។');
         }
-        var genEl = document.querySelector('select[name=generation]');
-        var progEl = document.querySelector('select[name=program_id]');
-        var gen = genEl ? genEl.value : '';
-        var prog = progEl ? progEl.value : '';
-        if (!gen && !prog) {
-            scope.showPrintAlert = true;
-            return;
-        }
-        window.open('{{ route('admin.users.print-students') }}?generation=' + gen + '&program_id=' + prog, '_blank');
     }
     </script>
 </x-app-layout>

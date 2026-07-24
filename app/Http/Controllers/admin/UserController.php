@@ -38,6 +38,8 @@ class UserController extends Controller
         $search = $request->input('search');
         $generation = $request->input('generation');
         $program_id = $request->input('program_id');
+        $faculty_id = $request->input('faculty_id');
+        $department_id = $request->input('department_id');
 
         $admins = User::where('role', 'admin')
             ->with('profile')
@@ -54,7 +56,7 @@ class UserController extends Controller
             ->paginate(10, ['*'], 'adminsPage');
 
         $professors = User::where('role', 'professor')
-            ->with(['profile', 'department'])
+            ->with(['profile', 'department', 'professorProfile'])
             ->when($search, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'LIKE', "%{$search}%")
@@ -67,6 +69,12 @@ class UserController extends Controller
                                 ->orWhere('name_en', 'LIKE', "%{$search}%");
                         });
                 });
+            })
+            ->when($faculty_id, function ($query, $faculty_id) {
+                $query->whereHas('department', fn ($q) => $q->where('faculty_id', $faculty_id));
+            })
+            ->when($department_id, function ($query, $department_id) {
+                $query->where('department_id', $department_id);
             })
             ->orderBy('name', 'asc')
             ->get();
@@ -123,6 +131,8 @@ class UserController extends Controller
             ->sortDesc();
 
         $programs = \App\Models\Program::all();
+        $faculties = \App\Models\Faculty::all();
+        $departments = \App\Models\Department::with('faculty')->get();
 
         return view('admin.users.index', compact(
             'admins',
@@ -131,7 +141,9 @@ class UserController extends Controller
             'studentsGrouped',
             'professorsGrouped',
             'generations',
-            'programs'
+            'programs',
+            'faculties',
+            'departments'
         ));
     }
 
@@ -577,5 +589,28 @@ class UserController extends Controller
         $currentAcademicYear = \App\Models\AcademicYear::getCurrent();
 
         return view('admin.users.print-students', compact('students', 'generation', 'program', 'currentAcademicYear'));
+    }
+
+    public function printProfessors(Request $request)
+    {
+        $faculty_id = $request->input('faculty_id');
+        $department_id = $request->input('department_id');
+
+        $query = User::where('role', 'professor')
+            ->with(['profile', 'department.faculty', 'professorProfile']);
+
+        if ($faculty_id) {
+            $query->whereHas('department', fn ($q) => $q->where('faculty_id', $faculty_id));
+        }
+        if ($department_id) {
+            $query->where('department_id', $department_id);
+        }
+
+        $professors = $query->orderBy('name', 'asc')->get();
+
+        $faculty = $faculty_id ? \App\Models\Faculty::find($faculty_id) : null;
+        $department = $department_id ? \App\Models\Department::find($department_id) : null;
+
+        return view('admin.users.print-professors', compact('professors', 'faculty', 'department'));
     }
 }

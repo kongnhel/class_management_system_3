@@ -97,6 +97,11 @@ class User extends Authenticatable
         return $this->hasOne(UserProfile::class);
     }
 
+    public function professorProfile()
+    {
+        return $this->hasOne(ProfessorProfile::class);
+    }
+
     /**
      * Get the department that the professor user belongs to.
      */
