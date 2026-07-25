@@ -53,7 +53,5 @@ Schedule::call(function () {
     }
 })
     ->name('send-daily-professor-schedule')
-    // ->dailyAt('07:00') // បិទชั�វិញនៅពេល Test រួច
-    ->everyMinute() // បើកសម្រាប់ Test ប៉ុណ្ណោះ - សូមបិទវិញនៅពេល Test រួច
-    ->timezone('Asia/Phnom_Penh')
-    ->withoutOverlapping();
+    ->everyFiveMinutes() 
+    ->timezone('Asia/Phnom_Penh');
