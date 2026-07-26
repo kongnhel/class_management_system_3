@@ -257,6 +257,7 @@ Route::middleware(['auth', 'role:professor'])->prefix('professor')->name('profes
     Route::get('/all-students', [ProfessorController::class, 'allStudents'])->name('all-students');
     Route::get('/my-course-offerings', [ProfessorCourseOfferingController::class, 'myCourseOfferings'])->name('my-course-offerings');
     Route::get('/course-offering/{offering_id}/grades', [ProfessorGradeController::class, 'manageGrades'])->name('manage-grades');
+    Route::get('/course-offering/{offering_id}/grades/print', [ProfessorGradeController::class, 'printGrades'])->name('grades.print');
     Route::get('/course-offering/{offering_id}/grades/export-excel', [ProfessorGradeController::class, 'exportExcel'])->name('grades.export-excel');
     Route::post('/course-offering/{offering_id}/grades/import-excel', [ProfessorGradeController::class, 'importGradesExcel'])->name('grades.import-excel');
     Route::get('/course-offering/{offering_id}/attendance', [ProfessorController::class, 'manageAttendance'])->name('manage-attendance');

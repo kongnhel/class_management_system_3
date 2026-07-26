@@ -1,3 +1,7 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Battambang:wght@300;400;700&family=Moul:wght@400&display=swap" rel="stylesheet">
+
 <x-app-layout>
     {{-- Main Container --}}
     <div class="min-h-screen bg-slate-50/80 font-['Battambang'] pb-12 print:bg-white print:pb-0">
@@ -36,7 +40,7 @@
         {{-- CONTENT SECTION --}}
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 print:mt-0 print:px-0 print:max-w-none">
             
-            {{-- SCREEN VIEW (Cards) --}}
+            {{-- SCREEN VIEW --}}
             <div class="print:hidden">
                 @if ($courseOfferings->isEmpty())
                     <div class="flex flex-col items-center justify-center py-24 bg-white rounded-3xl border border-dashed border-slate-300">
@@ -47,120 +51,314 @@
                         <p class="text-slate-500 mt-2">{{ __('សូមទាក់ទងការិយាល័យសិក្សាសម្រាប់ព័ត៌មានបន្ថែម។') }}</p>
                     </div>
                 @else
-                    <div class="space-y-6">
-                        @foreach ($courseOfferings as $offering)
-                            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition-shadow duration-300">
-                                {{-- Subject Header --}}
-                                <div class="p-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50/30">
-                                    <div class="flex items-center gap-4">
-                                        <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-lg font-bold shadow-sm">
-                                            {{ substr($offering->course?->title_en ?? '', 0, 1) }}
-                                        </div>
-                                        <div>
-                                            <h3 class="text-lg font-bold text-slate-900 leading-tight">{{ $offering->course?->title_en ?? 'N/A' }}</h3>
-                                            <p class="text-sm text-slate-500 font-medium">{{ $offering->course?->title_km ?? '' }}</p>
-                                        </div>
-                                    </div>
-                                    <div class="flex flex-wrap gap-2">
-                                        <span class="px-3 py-1 rounded-lg bg-white border border-slate-200 text-xs font-bold text-slate-600 uppercase tracking-wide shadow-sm">
-                                            Year {{ $offering->academic_year }}
-                                        </span>
-                                        <span class="px-3 py-1 rounded-lg bg-white border border-slate-200 text-xs font-bold text-slate-600 uppercase tracking-wide shadow-sm">
-                                            Sem {{ $offering->semester }}
-                                        </span>
+                    @php
+                        $weekdayMap = ['Monday' => 'ចន្ទ/Mon', 'Tuesday' => 'អង្គារ/Tue', 'Wednesday' => 'ពុធ/Wed', 'Thursday' => 'ព្រហស្បតិ៍/Thu', 'Friday' => 'សុក្រ/Fri'];
+                        $weekendMap = ['Saturday' => 'សៅរ៍/Sat', 'Sunday' => 'អាទិត្យ/Sun'];
+
+                        $allSchedules = collect();
+                        foreach ($courseOfferings as $offering) {
+                            foreach ($offering->schedules as $schedule) {
+                                $allSchedules->push((object)[
+                                    'day_of_week' => $schedule->day_of_week,
+                                    'start_time' => $schedule->start_time,
+                                    'end_time' => $schedule->end_time,
+                                    'course_title_km' => $offering->course?->title_km ?? '',
+                                    'course_title_en' => $offering->course?->title_en ?? '',
+                                    'room_number' => $schedule->room?->room_number ?? '-',
+                                ]);
+                            }
+                        }
+
+                        $weekdaySchedules = $allSchedules->filter(fn($s) => array_key_exists($s->day_of_week, $weekdayMap));
+                        $weekendSchedules = $allSchedules->filter(fn($s) => array_key_exists($s->day_of_week, $weekendMap));
+
+                        $weekdayRows = $weekdaySchedules->groupBy(fn($s) => \Carbon\Carbon::parse($s->start_time)->format('H:i') . '-' . \Carbon\Carbon::parse($s->end_time)->format('H:i'))->sortKeys();
+                        $weekendTimeSlots = $weekendSchedules->map(fn($s) => \Carbon\Carbon::parse($s->start_time)->format('H:i') . '-' . \Carbon\Carbon::parse($s->end_time)->format('H:i'))->unique()->sort();
+                    @endphp
+
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="p-6">
+                            {{-- Header --}}
+                            <div class="grid grid-cols-3 items-start gap-4 border-b-2 border-black pb-4 mb-4 text-center">
+                                <div class="flex flex-col items-center">
+                                    <img src="{{ asset('assets/image/nmu_Logo.png') }}" alt="Logo" class="w-20 h-20 object-contain">
+                                    <h3 class="text-sm font-bold text-blue-700 mt-1" style="font-family: 'Moul', serif;">សាកលវិទ្យាល័យជាតិមានជ័យ</h3>
+                                    <h3 class="text-sm font-bold text-blue-700" style="font-family: 'Moul', serif;">ការិយាល័យសិក្សា</h3>
+                                </div>
+                                <div class="flex flex-col items-center">
+                                    <h2 class="text-base font-bold" style="font-family: 'Moul', serif;">ព្រះរាជាណាចក្រកម្ពុជា</h2>
+                                    <h2 class="text-base font-bold" style="font-family: 'Moul', serif;">ជាតិ សាសនា ព្រះមហាក្សត្រ</h2>
+                                    <img src="{{ asset('assets/image/2.png') }}" alt="motto" class="h-7 mx-auto mt-1">
+                                </div>
+                                <div></div>
+                            </div>
+
+                            <div class="text-center mb-4">
+                                <h1 class="text-lg font-bold" style="font-family: 'Moul', serif;">តារាងវិភាគប្រចាំ{{ $semester }}</h1>
+                                <p class="text-sm font-bold mt-1">ឆ្នាំសិក្សា {{ $academicYear }}</p>
+                            </div>
+
+                            {{-- Weekday Table --}}
+                            @if($weekdayRows->isNotEmpty())
+                                <div class="mb-5">
+                                    <div class="text-left font-bold underline text-sm mb-1">វេនសិក្សា៖ ចន្ទ-សុក្រ (Mon-Fri)</div>
+                                    <div class="overflow-x-auto">
+                                        <table class="w-full border-collapse border border-black text-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th class="border border-black px-2 py-1 bg-slate-100" style="font-family: 'Moul', serif; width: 12%;">ម៉ោងសិក្សា</th>
+                                                    @foreach($weekdayMap as $label)
+                                                        <th class="border border-black px-2 py-1 bg-slate-100" style="font-family: 'Moul', serif;">{{ $label }}</th>
+                                                    @endforeach
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($weekdayRows as $slot => $slots)
+                                                <tr>
+                                                    <td class="border border-black px-2 py-1 text-center font-bold bg-slate-50">{{ $slot }}</td>
+                                                    @foreach($weekdayMap as $dayKey => $label)
+                                                        <td class="border border-black px-2 py-1 text-center">
+                                                            @php $class = $slots->where('day_of_week', $dayKey)->first(); @endphp
+                                                            @if($class)
+                                                                <div class="flex flex-col gap-0.5">
+                                                                    <span class="font-bold">{{ $class->course_title_km }}</span>
+                                                                    <span class="text-xs">បន្ទប់ {{ $class->room_number }}</span>
+                                                                </div>
+                                                            @endif
+                                                        </td>
+                                                    @endforeach
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
+                            @endif
 
-                                {{-- Schedules Grid --}}
-                                <div class="p-6">
-                                    @if ($offering->schedules->isEmpty())
-                                        <div class="text-center py-6 bg-slate-50 rounded-xl border border-dashed border-slate-200">
-                                            <p class="text-sm text-slate-400 italic">{{ __('មិនទាន់កំណត់ម៉ោងបង្រៀន') }}</p>
-                                        </div>
-                                    @else
-                                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                            @foreach ($offering->schedules as $schedule)
-                                                <div class="flex items-start p-4 rounded-xl border border-slate-100 bg-white hover:border-emerald-200 hover:shadow-sm transition-all group">
-                                                    <div class="mr-4 mt-1">
-                                                        <div class="w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                                                            <i class="far fa-clock"></i>
-                                                        </div>
-                                                    </div>
-                                                    <div>
-                                                        <p class="text-base font-black text-slate-800 mb-1">{{ __($schedule->day_of_week) }}</p>
-                                                        <div class="space-y-1">
-                                                            <p class="text-sm font-bold text-slate-600 flex items-center gap-2">
-                                                                <span class="text-xs text-slate-400 uppercase tracking-wider w-10">Time:</span>
-                                                                {{ \Carbon\Carbon::parse($schedule->start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($schedule->end_time)->format('H:i') }}
-                                                            </p>
-                                                            <p class="text-sm font-bold text-slate-600 flex items-center gap-2">
-                                                                <span class="text-xs text-slate-400 uppercase tracking-wider w-10">Room:</span>
-                                                                <span class="text-emerald-600">{{ $schedule->room->room_number ?? 'N/A' }}</span>
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endforeach
-                                        </div>
-                                    @endif
+                            {{-- Weekend Table --}}
+                            @if($weekendSchedules->isNotEmpty())
+                                <div class="mb-5">
+                                    <div class="text-left font-bold underline text-sm mb-1">វេនសិក្សា៖ សៅរ៍-អាទិត្យ (Sat-Sun)</div>
+                                    <div class="overflow-x-auto">
+                                        <table class="w-full border-collapse border border-black text-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th class="border border-black px-2 py-1 bg-slate-100" style="font-family: 'Moul', serif; width: 12%;">ថ្ងៃសិក្សា</th>
+                                                    @foreach($weekendTimeSlots as $time)
+                                                        <th class="border border-black px-2 py-1 bg-slate-100" style="font-family: 'Moul', serif;">{{ $time }}</th>
+                                                    @endforeach
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($weekendMap as $dayKey => $label)
+                                                <tr>
+                                                    <td class="border border-black px-2 py-1 text-center font-bold bg-slate-50">{{ $label }}</td>
+                                                    @foreach($weekendTimeSlots as $time)
+                                                        <td class="border border-black px-2 py-1 text-center">
+                                                            @php
+                                                                $class = $weekendSchedules->filter(function($s) use ($dayKey, $time) {
+                                                                    $slot = \Carbon\Carbon::parse($s->start_time)->format('H:i') . '-' . \Carbon\Carbon::parse($s->end_time)->format('H:i');
+                                                                    return $s->day_of_week === $dayKey && $slot === $time;
+                                                                })->first();
+                                                            @endphp
+                                                            @if($class)
+                                                                <div class="flex flex-col gap-0.5">
+                                                                    <span class="font-bold">{{ $class->course_title_km }}</span>
+                                                                    <span class="text-xs">បន្ទប់ {{ $class->room_number }}</span>
+                                                                </div>
+                                                            @endif
+                                                        </td>
+                                                    @endforeach
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            @endif
+
+                            {{-- Footer Signature --}}
+                            <div class="flex justify-between mt-6">
+                                <div class="text-left w-1/2 pl-2">
+                                    <div class="text-sm font-bold">បានឃើញ និងឯកភាព</div>
+                                    <div class="text-sm" style="font-family: 'Moul', serif;">ជ. សាកលវិទ្យាធិការ</div>
+                                    <div class="text-sm" style="font-family: 'Moul', serif;">សាកលវិទ្យាធិការរង</div>
+                                    <div class="h-16"></div>
+                                </div>
+                                @php
+                                    $now = now();
+                                    $khmerMonths = [1=>'មករា',2=>'កុម្ភៈ',3=>'មីនា',4=>'មេសា',5=>'ឧសភា',6=>'មិថុនា',7=>'កក្កដា',8=>'សីហា',9=>'កញ្ញា',10=>'តុលា',11=>'វិច្ឆិកា',12=>'ធ្នូ'];
+                                    function toKhmerNumsScr($n) { return str_replace(range(0,9), ['០','១','២','៣','៤','៥','៦','៧','៨','៩'], $n); }
+                                @endphp
+                                <div class="text-right w-1/2 pr-2">
+                                    <div class="text-xs">ថ្ងៃទី{{ toKhmerNumsScr($now->format('d')) }} ខែ{{ $khmerMonths[$now->month] }} ឆ្នាំ{{ toKhmerNumsScr((string)$now->year) }}</div>
+                                    <div class="text-sm mt-1" style="font-family: 'Moul', serif;">ប្រធានការិយាល័យសិក្សា</div>
+                                    <div class="h-16"></div>
                                 </div>
                             </div>
-                        @endforeach
+                        </div>
                     </div>
                 @endif
             </div>
 
-            {{-- PRINT VIEW (Simple Table) --}}
+            <style>
+                @media print {
+                    body { font-family: 'Battambang', 'Khmer OS Battambang', sans-serif !important; }
+                    * { font-family: 'Battambang', 'Khmer OS Battambang', sans-serif !important; }
+                    .font-moul, [style*="font-family: 'Moul'"] { font-family: 'Moul', serif !important; }
+                }
+            </style>
+
+            {{-- PRINT VIEW (Matching Student Schedule Print Layout) --}}
             <div class="hidden print:block font-['Battambang']">
-                <div class="text-center mb-8">
-                    <h1 class="text-2xl font-bold mb-2">{{ __('កាលវិភាគបង្រៀន') }}</h1>
-                    <p class="text-sm text-gray-600">Lecturer Teaching Schedule</p>
+                @php
+                    $weekdayMap = ['Monday' => 'ចន្ទ/Mon', 'Tuesday' => 'អង្គារ/Tue', 'Wednesday' => 'ពុធ/Wed', 'Thursday' => 'ព្រហស្បតិ៍/Thu', 'Friday' => 'សុក្រ/Fri'];
+                    $weekendMap = ['Saturday' => 'សៅរ៍/Sat', 'Sunday' => 'អាទិត្យ/Sun'];
+
+                    $allSchedules = collect();
+                    foreach ($courseOfferings as $offering) {
+                        foreach ($offering->schedules as $schedule) {
+                            $allSchedules->push((object)[
+                                'day_of_week' => $schedule->day_of_week,
+                                'start_time' => $schedule->start_time,
+                                'end_time' => $schedule->end_time,
+                                'course_title_km' => $offering->course?->title_km ?? '',
+                                'course_title_en' => $offering->course?->title_en ?? '',
+                                'room_number' => $schedule->room?->room_number ?? '-',
+                                'offering_id' => $offering->id,
+                                'academic_year' => $offering->academic_year,
+                                'semester' => $offering->semester,
+                            ]);
+                        }
+                    }
+
+                    $weekdaySchedules = $allSchedules->filter(fn($s) => array_key_exists($s->day_of_week, $weekdayMap));
+                    $weekendSchedules = $allSchedules->filter(fn($s) => array_key_exists($s->day_of_week, $weekendMap));
+
+                    $weekdayRows = $weekdaySchedules->groupBy(fn($s) => \Carbon\Carbon::parse($s->start_time)->format('H:i') . '-' . \Carbon\Carbon::parse($s->end_time)->format('H:i'))->sortKeys();
+                    $weekendTimeSlots = $weekendSchedules->map(fn($s) => \Carbon\Carbon::parse($s->start_time)->format('H:i') . '-' . \Carbon\Carbon::parse($s->end_time)->format('H:i'))->unique()->sort();
+
+                    function toKhmerNumsPrint($n) {
+                        $khmer = ['០','១','២','៣','៤','៥','៦','៧','៨','៩'];
+                        return str_replace(range(0,9), $khmer, $n);
+                    }
+                    $now = now();
+                    $khmerMonths = [1=>'មករា',2=>'កុម្ភៈ',3=>'មីនា',4=>'មេសា',5=>'ឧសភា',6=>'មិថុនា',7=>'កក្កដា',8=>'សីហា',9=>'កញ្ញា',10=>'តុលា',11=>'វិច្ឆិកា',12=>'ធ្នូ'];
+                    $dayKh = toKhmerNumsPrint($now->format('d'));
+                    $monthKh = $khmerMonths[$now->month];
+                    $yearKh = toKhmerNumsPrint((string)$now->year);
+                @endphp
+
+                {{-- HEADER --}}
+                <div style="display: grid; grid-template-columns: 30% 40% 30%; text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px;">
+                    <div style="display: flex; flex-direction: column; align-items: center;">
+                        <img src="{{ asset('assets/image/nmu_Logo.png') }}" alt="Logo" style="width: 70px; height: auto; margin-bottom: 5px;">
+                        <h3 style="font-family: 'Moul', serif; font-size: 10pt; color: #2a58ad; line-height: 1.4; margin: 0;">សាកលវិទ្យាល័យជាតិមានជ័យ</h3>
+                        <h3 style="font-family: 'Moul', serif; font-size: 10pt; color: #2a58ad; line-height: 1.4; margin: 0;">ការិយាល័យសិក្សា</h3>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: center;">
+                        <h2 style="font-family: 'Moul', serif; font-size: 11pt; margin: 0;">ព្រះរាជាណាចក្រកម្ពុជា</h2>
+                        <h2 style="font-family: 'Moul', serif; font-size: 11pt; margin: 0;">ជាតិ សាសនា ព្រះមហាក្សត្រ</h2>
+                        <img src="{{ asset('assets/image/2.png') }}" alt="motto" style="height: 30px; margin-top: 5px;">
+                    </div>
+                    <div></div>
                 </div>
 
-                <table class="w-full border-collapse border border-gray-300 text-sm">
-                    <thead>
-                        <tr class="bg-gray-100">
-                            <th class="border border-gray-300 px-3 py-2 text-left w-1/3">{{ __('មុខវិជ្ជា') }}</th>
-                            <th class="border border-gray-300 px-3 py-2 text-center">{{ __('ឆ្នាំ/ឆមាស') }}</th>
-                            <th class="border border-gray-300 px-3 py-2 text-center">{{ __('ថ្ងៃ') }}</th>
-                            <th class="border border-gray-300 px-3 py-2 text-center">{{ __('ម៉ោង') }}</th>
-                            <th class="border border-gray-300 px-3 py-2 text-center">{{ __('បន្ទប់') }}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($courseOfferings as $offering)
-                            @if ($offering->schedules->isEmpty())
+                <div style="text-align: center; margin-bottom: 15px;">
+                    <h1 style="font-family: 'Moul', serif; font-size: 13pt; margin: 5px 0;">តារាងវិភាគប្រចាំ{{ $semester }}</h1>
+                    <p style="font-size: 9pt; font-weight: bold; margin: 2px 0;">
+                        ឆ្នាំសិក្សា {{ $academicYear }}
+                    </p>
+                </div>
+
+                {{-- WEEKDAY TABLE --}}
+                @if($weekdayRows->isNotEmpty())
+                    <div style="margin-bottom: 15px;">
+                        <div style="text-align: left; font-weight: bold; text-decoration: underline; font-size: 10pt; margin-bottom: 5px;">វេនសិក្សា៖ ចន្ទ-សុក្រ (Mon-Fri)</div>
+                        <table style="width: 100%; border-collapse: collapse; border: 1.5pt solid black;">
+                            <thead>
                                 <tr>
-                                    <td class="border border-gray-300 px-3 py-2 font-bold">{{ $offering->course?->title_en ?? 'N/A' }}</td>
-                                    <td class="border border-gray-300 px-3 py-2 text-center">Y{{ $offering->academic_year }} / S{{ $offering->semester }}</td>
-                                    <td colspan="3" class="border border-gray-300 px-3 py-2 text-center italic text-gray-500">{{ __('មិនមានកាលវិភាគ') }}</td>
+                                    <th style="border: 1pt solid black; padding: 4px; background-color: #f1f5f9; font-family: 'Moul', serif; width: 12%;">ម៉ោងសិក្សា</th>
+                                    @foreach($weekdayMap as $label)
+                                        <th style="border: 1pt solid black; padding: 4px; background-color: #f1f5f9; font-family: 'Moul', serif; font-size: 8.5pt;">{{ $label }}</th>
+                                    @endforeach
                                 </tr>
-                            @else
-                                @foreach ($offering->schedules as $index => $schedule)
-                                    <tr>
-                                        @if ($index === 0)
-                                            <td class="border border-gray-300 px-3 py-2 font-bold align-top" rowspan="{{ $offering->schedules->count() }}">
-                                                {{ $offering->course?->title_en ?? 'N/A' }}
-                                                <div class="text-xs font-normal text-gray-500 mt-1">{{ $offering->course?->title_km ?? '' }}</div>
-                                            </td>
-                                            <td class="border border-gray-300 px-3 py-2 text-center align-top" rowspan="{{ $offering->schedules->count() }}">
-                                                Y{{ $offering->academic_year }} / S{{ $offering->semester }}
-                                            </td>
-                                        @endif
-                                        <td class="border border-gray-300 px-3 py-2 text-center">{{ __($schedule->day_of_week) }}</td>
-                                        <td class="border border-gray-300 px-3 py-2 text-center">
-                                            {{ \Carbon\Carbon::parse($schedule->start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($schedule->end_time)->format('H:i') }}
+                            </thead>
+                            <tbody>
+                                @foreach($weekdayRows as $slot => $slots)
+                                <tr>
+                                    <td style="border: 1pt solid black; padding: 4px; text-align: center; font-weight: bold; background-color: #f8fafc; font-size: 8.5pt;">{{ $slot }}</td>
+                                    @foreach($weekdayMap as $dayKey => $label)
+                                        <td style="border: 1pt solid black; padding: 4px; text-align: center; vertical-align: middle; font-size: 8.5pt;">
+                                            @php $class = $slots->where('day_of_week', $dayKey)->first(); @endphp
+                                            @if($class)
+                                                <div style="display: flex; flex-direction: column; gap: 2px;">
+                                                    <span style="font-weight: bold; color: #1e293b;">{{ $class->course_title_km }}</span>
+                                                    <span style="color: #334155;">បន្ទប់ {{ $class->room_number }}</span>
+                                                </div>
+                                            @endif
                                         </td>
-                                        <td class="border border-gray-300 px-3 py-2 text-center font-bold">{{ $schedule->room->room_number ?? '-' }}</td>
-                                    </tr>
+                                    @endforeach
+                                </tr>
                                 @endforeach
-                            @endif
-                        @endforeach
-                    </tbody>
-                </table>
-                
-                <div class="mt-8 text-right text-xs text-gray-500">
-                    <p>Printed on: {{ now()->format('d-M-Y H:i A') }}</p>
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+
+                {{-- WEEKEND TABLE --}}
+                @if($weekendSchedules->isNotEmpty())
+                    <div style="margin-bottom: 15px;">
+                        <div style="text-align: left; font-weight: bold; text-decoration: underline; font-size: 10pt; margin-bottom: 5px;">វេនសិក្សា៖ សៅរ៍-អាទិត្យ (Sat-Sun)</div>
+                        <table style="width: 100%; border-collapse: collapse; border: 1.5pt solid black;">
+                            <thead>
+                                <tr>
+                                    <th style="border: 1pt solid black; padding: 4px; background-color: #f1f5f9; font-family: 'Moul', serif; width: 12%;">ថ្ងៃសិក្សា</th>
+                                    @foreach($weekendTimeSlots as $time)
+                                        <th style="border: 1pt solid black; padding: 4px; background-color: #f1f5f9; font-family: 'Moul', serif; font-size: 8.5pt;">{{ $time }}</th>
+                                    @endforeach
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($weekendMap as $dayKey => $label)
+                                <tr>
+                                    <td style="border: 1pt solid black; padding: 4px; text-align: center; font-weight: bold; background-color: #f8fafc; font-size: 8.5pt;">{{ $label }}</td>
+                                    @foreach($weekendTimeSlots as $time)
+                                        <td style="border: 1pt solid black; padding: 4px; text-align: center; vertical-align: middle; font-size: 8.5pt;">
+                                            @php
+                                                $class = $weekendSchedules->filter(function($s) use ($dayKey, $time) {
+                                                    $slot = \Carbon\Carbon::parse($s->start_time)->format('H:i') . '-' . \Carbon\Carbon::parse($s->end_time)->format('H:i');
+                                                    return $s->day_of_week === $dayKey && $slot === $time;
+                                                })->first();
+                                            @endphp
+                                            @if($class)
+                                                <div style="display: flex; flex-direction: column; gap: 2px;">
+                                                    <span style="font-weight: bold; color: #1e293b;">{{ $class->course_title_km }}</span>
+                                                    <span style="color: #334155;">បន្ទប់ {{ $class->room_number }}</span>
+                                                </div>
+                                            @endif
+                                        </td>
+                                    @endforeach
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+
+                {{-- FOOTER SIGNATURE --}}
+                <div style="display: flex; justify-content: space-between; margin-top: 20px; gap: 10px;">
+                    <div style="text-align: left; padding-left: 10px; width: 48%;">
+                        <div style="font-size: 9pt; font-weight: bold;">បានឃើញ និងឯកភាព</div>
+                        <div style="font-size: 9pt; font-family: 'Moul', serif;">ជ. សាកលវិទ្យាធិការ</div>
+                        <div style="font-size: 9pt; font-family: 'Moul', serif;">សាកលវិទ្យាធិការរង</div>
+                        <div style="height: 70px;"></div>
+                    </div>
+                    <div style="text-align: right; padding-right: 10px; width: 48%;">
+                        <div style="font-size: 8.5pt;">ថ្ងៃទី{{ $dayKh }} ខែ{{ $monthKh }} ឆ្នាំ{{ $yearKh }}</div>
+                        <div style="font-size: 9pt; font-family: 'Moul', serif; margin-top: 5px;">ប្រធានការិយាល័យសិក្សា</div>
+                        <div style="height: 70px;"></div>
+                    </div>
                 </div>
             </div>
 
