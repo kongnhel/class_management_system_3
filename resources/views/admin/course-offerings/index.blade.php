@@ -96,7 +96,12 @@
                         </div>
                         <div>
                             <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('ជំនាន់') }}</label>
-                            <input type="text" name="generation" value="{{ request('generation') }}" placeholder="Ex: 17" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm">
+                            <select name="generation" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm">
+                                <option value="">{{ __('ទាំងអស់') }}</option>
+                                @foreach($generations as $gen)
+                                    <option value="{{ $gen }}" {{ request('generation') == $gen ? 'selected' : '' }}>G{{ $gen }}</option>
+                                @endforeach
+                            </select>
                         </div>
                         <div>
                             <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('វេនសិក្សា') }}</label>
@@ -139,9 +144,6 @@
                         <a href="{{ route('admin.manage-course-offerings') }}" class="flex items-center gap-2 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl font-bold text-sm transition-colors">
                             <i class="fas fa-undo"></i> <span>{{ __('កំណត់ឡើងវិញ') }}</span>
                         </a>
-                        <button type="submit" class="flex items-center gap-2 bg-gradient-to-r from-slate-800 to-slate-700 hover:from-slate-700 hover:to-slate-600 text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-md transition-all">
-                            <i class="fas fa-filter"></i> <span>{{ __('ត្រងទិន្នន័យ') }}</span>
-                        </button>
                     </div>
                 </form>
             </div>
@@ -513,6 +515,43 @@
     </div>
 
     <script>
+        // Auto-submit filter form on change
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterForm = document.querySelector('form[action="{{ route("admin.manage-course-offerings") }}"]');
+            if (!filterForm) return;
+
+            let debounceTimer;
+
+            // Selects: submit immediately on change
+            filterForm.querySelectorAll('select').forEach(function(select) {
+                select.addEventListener('change', function() {
+                    showFilterLoading();
+                    filterForm.submit();
+                });
+            });
+
+            // Text inputs: debounce 500ms then submit
+            filterForm.querySelectorAll('input[type="text"]').forEach(function(input) {
+                input.addEventListener('input', function() {
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(function() {
+                        showFilterLoading();
+                        filterForm.submit();
+                    }, 500);
+                });
+            });
+
+            function showFilterLoading() {
+                let overlay = document.getElementById('filter-loading-overlay');
+                if (!overlay) {
+                    overlay = document.createElement('div');
+                    overlay.id = 'filter-loading-overlay';
+                    overlay.innerHTML = '<div style="position:fixed;inset:0;background:rgba(255,255,255,0.7);z-index:9998;display:flex;align-items:center;justify-content:center;"><div style="text-align:center;"><i class="fas fa-spinner fa-spin fa-2x text-emerald-600"></i><p style="margin-top:8px;font-size:13px;color:#666;font-weight:600;">កំពុងត្រង...</p></div></div>';
+                    document.body.appendChild(overlay);
+                }
+            }
+        });
+
         function openDeleteModal(id) {
             const form = document.getElementById('delete-form');
             form.action = '{{ route("admin.course-offerings.destroy", ":id") }}'.replace(':id', id);

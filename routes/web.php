@@ -282,6 +282,7 @@ Route::middleware(['auth', 'role:professor'])->prefix('professor')->name('profes
     Route::get('/all-data', [ProfessorController::class, 'allDataView'])->name('all-data-view');
     Route::get('/course-offering/{offering_id}/students', [ProfessorController::class, 'getStudentsInCourseOffering'])->name('students.in-course-offering');
     Route::get('/course-offerings/{courseOffering}/students', [ProfessorController::class, 'showStudentsInCourse'])->name('professor.course-offerings.students.index');
+    Route::get('/course-offerings/{courseOffering}/students/print', [ProfessorController::class, 'printStudents'])->name('students.print');
     Route::get('/course-offerings/{courseOffering}/students/{student}', [ProfessorController::class, 'showStudentProfile'])->name('students.show');
     Route::get('/students/{student}', [ProfessorController::class, 'showStudentProfile'])->name('professor.students.show');
     Route::get('/profile/create', [ProfessorProfileController::class, 'create'])->name('profile.create');

@@ -818,6 +818,7 @@ class ProfessorGradeController extends Controller
         $query = DB::table('exam_results as er')
             ->join('users as u', 'er.student_user_id', '=', 'u.id')
             ->leftJoin('user_profiles as up', 'u.id', '=', 'up.user_id')
+            ->leftJoin('student_profiles as sp', 'u.id', '=', 'sp.user_id')
             ->leftJoin('exams as e', function ($join) {
                 $join->on('er.assessment_id', '=', 'e.id')
                      ->where('er.assessment_type', '=', 'exam');
@@ -836,7 +837,7 @@ class ProfessorGradeController extends Controller
             })
             ->select(
                 'u.name as student_name',
-                'up.profile_picture_url as profile_pic',
+                DB::raw("COALESCE(sp.profile_picture_url, up.profile_picture_url) as profile_pic"),
                 DB::raw("CASE WHEN er.assessment_type = 'exam' THEN c_exam.title_km ELSE c_assign.title_km END as course_title_km"),
                 'er.assessment_type',
                 'er.score_obtained as score',

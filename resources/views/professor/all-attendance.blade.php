@@ -72,6 +72,80 @@
                 </form>
             </div>
 
+            {{-- Filters --}}
+            <div class="bg-white rounded-2xl border border-gray-200 p-4 mb-6" x-data="attendanceFilters()">
+                <div class="flex flex-col sm:flex-row gap-3">
+                    {{-- Search by student name --}}
+                    <div class="relative flex-1">
+                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                        <input
+                            type="text"
+                            x-model="search"
+                            @input="filterRows()"
+                            placeholder="ស្វែងរកឈ្មោះសិស្ស..."
+                            class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-gray-50"
+                        >
+                    </div>
+                    {{-- Filter by course --}}
+                    <div class="relative sm:w-48">
+                        <i class="fas fa-book absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                        <select
+                            x-model="courseFilter"
+                            @change="filterRows()"
+                            class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-gray-50 appearance-none"
+                        >
+                            <option value="">មុខវិជ្ជា​ទាំងអស់</option>
+                            <template x-for="c in courses" :key="c">
+                                <option :value="c" x-text="c"></option>
+                            </template>
+                        </select>
+                        <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-[10px] pointer-events-none"></i>
+                    </div>
+                    {{-- Filter by status --}}
+                    <div class="relative sm:w-40">
+                        <i class="fas fa-tag absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                        <select
+                            x-model="statusFilter"
+                            @change="filterRows()"
+                            class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-gray-50 appearance-none"
+                        >
+                            <option value="">ស្ថានភាព​ទាំងអស់</option>
+                            <option value="present">មានវត្តមាន</option>
+                            <option value="absent">អវត្តមាន</option>
+                            <option value="permission">មានច្បាប់</option>
+                        </select>
+                        <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-[10px] pointer-events-none"></i>
+                    </div>
+                    {{-- Filter by date --}}
+                    <div class="relative sm:w-44">
+                        <i class="fas fa-calendar absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                        <select
+                            x-model="dateFilter"
+                            @change="filterRows()"
+                            class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-gray-50 appearance-none"
+                        >
+                            <option value="">កាលបរិច្ឆេទ​ទាំងអស់</option>
+                            <template x-for="d in dates" :key="d">
+                                <option :value="d" x-text="d"></option>
+                            </template>
+                        </select>
+                        <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-[10px] pointer-events-none"></i>
+                    </div>
+                    {{-- Clear --}}
+                    <button
+                        x-show="search || courseFilter || statusFilter || dateFilter"
+                        @click="clearFilters()"
+                        class="px-4 py-2.5 rounded-xl bg-red-50 text-red-600 text-xs font-bold hover:bg-red-100 transition-colors whitespace-nowrap"
+                    >
+                        <i class="fas fa-times mr-1"></i> សម្អាត
+                    </button>
+                </div>
+                {{-- Result count --}}
+                <div class="mt-3 text-xs text-gray-400 font-bold" x-show="search || courseFilter || statusFilter || dateFilter">
+                    រកឃើញ <span x-text="visibleCount" class="text-emerald-600"></span> ក្នុងចំណោម <span x-text="totalCount" class="text-gray-600"></span> កំណត់ត្រា
+                </div>
+            </div>
+
             {{-- Records Table --}}
             <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
                 <div class="px-5 py-4 border-b border-gray-200 flex items-center justify-between">
@@ -97,11 +171,15 @@
                                     $colors = ['present' => 'green', 'absent' => 'red', 'late' => 'yellow', 'permission' => 'blue'];
                                     $color = $colors[$record->status] ?? 'gray';
                                 @endphp
-                                <tr class="hover:bg-gray-50 transition-colors">
+                                <tr class="hover:bg-gray-50 transition-colors attendance-row"
+                                    data-name="{{ mb_strtolower($record->student?->studentProfile?->full_name_km ?? $record->student?->name ?? '') }}"
+                                    data-course="{{ mb_strtolower($record->courseOffering?->course?->title_km ?? '') }}"
+                                    data-status="{{ $record->status }}"
+                                    data-date="{{ \Carbon\Carbon::parse($record->date)->format('Y-m-d') }}">
                                     <td class="px-5 py-3">
                                         <div class="flex items-center gap-3">
                                             @php $profilePic = $record->student?->studentProfile?->profile_picture_url ?? $record->student?->profile?->profile_picture_url ?? null; @endphp
-                                            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-500 flex items-center justify-center text-white font-bold text-[10px] shadow-sm shrink-0">
+                                            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-500 flex items-center justify-center text-white font-bold text-[10px] shadow-sm shrink-0 overflow-hidden">
                                                 @if($profilePic)
                                                     <img src="{{ $profilePic }}" class="w-full h-full rounded-full object-cover" alt="">
                                                 @else
@@ -131,6 +209,12 @@
                         </tbody>
                     </table>
                 </div>
+                {{-- No results message --}}
+                <div id="no-results" class="px-6 py-16 text-center hidden">
+                    <i class="fas fa-search text-gray-300 text-3xl mb-3"></i>
+                    <p class="text-sm font-bold text-gray-400">មិនพบលទ្ធផល</p>
+                    <p class="text-xs text-gray-300 mt-1">សូមព្យាយាមស្វែងរកផ្សេង</p>
+                </div>
                 <div class="px-5 py-3 border-t border-gray-100">
                     {{ $attendances->links('pagination::tailwind') }}
                 </div>
@@ -144,4 +228,81 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function attendanceFilters() {
+            return {
+                search: '',
+                courseFilter: '',
+                statusFilter: '',
+                dateFilter: '',
+                courses: [],
+                dates: [],
+                visibleCount: 0,
+                totalCount: 0,
+
+                init() {
+                    const rows = document.querySelectorAll('.attendance-row');
+                    this.totalCount = rows.length;
+                    this.visibleCount = rows.length;
+
+                    const courseSet = new Set();
+                    const dateSet = new Set();
+                    rows.forEach(row => {
+                        const c = row.getAttribute('data-course');
+                        if (c) courseSet.add(c);
+                        const d = row.getAttribute('data-date');
+                        if (d) dateSet.add(d);
+                    });
+                    this.courses = [...courseSet].sort();
+                    this.dates = [...dateSet].sort().reverse();
+                },
+
+                filterRows() {
+                    const rows = document.querySelectorAll('.attendance-row');
+                    const noResults = document.getElementById('no-results');
+                    const pagination = document.querySelector('.px-5.py-3.border-t');
+                    let count = 0;
+
+                    rows.forEach(row => {
+                        const name = row.getAttribute('data-name') || '';
+                        const course = row.getAttribute('data-course') || '';
+                        const status = row.getAttribute('data-status') || '';
+                        const date = row.getAttribute('data-date') || '';
+
+                        const matchSearch = !this.search || name.includes(this.search.toLowerCase());
+                        const matchCourse = !this.courseFilter || course === this.courseFilter.toLowerCase();
+                        const matchStatus = !this.statusFilter || status === this.statusFilter;
+                        const matchDate = !this.dateFilter || date === this.dateFilter;
+
+                        if (matchSearch && matchCourse && matchStatus && matchDate) {
+                            row.style.display = '';
+                            count++;
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+
+                    this.visibleCount = count;
+
+                    const hasFilter = this.search || this.courseFilter || this.statusFilter || this.dateFilter;
+                    if (count === 0 && hasFilter) {
+                        noResults.classList.remove('hidden');
+                        if (pagination) pagination.style.display = 'none';
+                    } else {
+                        noResults.classList.add('hidden');
+                        if (pagination) pagination.style.display = '';
+                    }
+                },
+
+                clearFilters() {
+                    this.search = '';
+                    this.courseFilter = '';
+                    this.statusFilter = '';
+                    this.dateFilter = '';
+                    this.filterRows();
+                }
+            }
+        }
+    </script>
 </x-app-layout>

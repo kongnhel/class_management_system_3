@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AcademicYear;
 use App\Models\Course;
 use App\Models\CourseOffering;
+use App\Models\Generation;
 use App\Models\Program;
 use App\Models\Room;
 use App\Models\User;
@@ -93,11 +94,14 @@ class CourseOfferingController extends Controller
             ->orderBy('name')
             ->get(['id', 'name']);
 
+        $generations = Generation::orderBy('name', 'desc')->pluck('name')->filter()->values();
+
         return view('admin.course-offerings.index', compact(
             'courseOfferings',
             'programs',
             'academicYears',
-            'lecturers'
+            'lecturers',
+            'generations'
         ));
     }
 

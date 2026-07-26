@@ -190,12 +190,6 @@
     @media (max-width: 1024px) {
         .hide-lg { display: none !important; }
     }
-
-    @media print {
-        .no-print { display: none !important; }
-        @page { size: A4; margin: 1.5cm; }
-        body { -webkit-print-color-adjust: exact; }
-    }
 </style>
 
 <div class="sl-wrap no-print" style="min-height:100vh; background: linear-gradient(160deg,#f0fdf4 0%,#f8fafc 55%); padding: 36px 0 60px;">
@@ -231,7 +225,7 @@
                     </svg>
                     {{ __('ត្រឡប់') }}
                 </a>
-                <button onclick="window.print()" class="btn-print kh">
+                <button onclick="window.open('{{ route('professor.students.print', $courseOffering->id) }}', '_blank')" class="btn-print kh">
                     <svg style="width:15px;height:15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2z"/>
                     </svg>
@@ -404,80 +398,6 @@
             </div>
         </div>
 
-    </div>
-</div>
-
-
-{{-- ================= PRINT SECTION (unchanged) ================= --}}
-<div class="hidden print:block font-serif text-black px-10 py-8 bg-white">
-    <div class="flex flex-col items-center text-center mb-8">
-        <div class="mb-2">
-            <h2 class="text-[16px] font-bold mb-1" style="font-family:'Khmer OS Muol Light',serif;">ព្រះរាជាណាចក្រកម្ពុជា</h2>
-            <h2 class="text-[15px] font-bold" style="font-family:'Khmer OS Muol Light',serif;">ជាតិ សាសនា ព្រះមហាក្សត្រ</h2>
-            <div class="mt-1 flex justify-center"><span class="w-24 border-b border-black"></span></div>
-        </div>
-        <div class="mt-6">
-            <h1 class="text-xl font-bold uppercase tracking-widest" style="font-family:'Khmer OS Muol Light',serif;">
-                {{ __('បញ្ជីរាយនាមនិស្សិតសរុប') }}
-            </h1>
-        </div>
-    </div>
-
-    <div class="mb-6 grid grid-cols-2 gap-y-2 text-[13px]">
-        <div>
-            <p><span class="font-bold">{{ __('មុខវិជ្ជា៖') }}</span> <span class="ml-1">{{ $courseOffering->course->title_en }}</span></p>
-            <p><span class="font-bold">{{ __('ជំនាន់៖') }}</span> <span class="ml-1">{{ $courseOffering->generation ?? $courseOffering->targetPrograms->pluck('generation')->filter()->first() ?? '...' }}</span></p>
-        </div>
-        <div class="text-right">
-            <p><span class="font-bold">{{ __('កាលបរិច្ឆេទបោះពុម្ព៖') }}</span> <span class="ml-1">{{ now()->format('d/m/Y') }}</span></p>
-            <p><span class="font-bold">{{ __('សរុបនិស្សិត៖') }}</span> <span class="ml-1">{{ count($paginatedStudents) }} {{ __('នាក់') }}</span></p>
-        </div>
-    </div>
-
-    <table class="w-full border-collapse border border-black text-[12px]">
-        <thead>
-            <tr class="bg-gray-100 border border-black">
-                <th class="border border-black px-2 py-3 w-[5%] text-center">ល.រ</th>
-                <th class="border border-black px-2 py-3 w-[12%] text-center">{{ __('អត្តលេខ') }}</th>
-                <th class="border border-black px-2 py-3 text-left w-[20%]">{{ __('ឈ្មោះនិស្សិត') }}</th>
-                <th class="border border-black px-2 py-3 w-[8%] text-center">{{ __('ភេទ') }}</th>
-                <th class="border border-black px-2 py-3 w-[12%] text-center">{{ __('ថ្ងៃខែឆ្នាំកំណើត') }}</th>
-                <th class="border border-black px-2 py-3 text-left w-[28%]">{{ __('ដេប៉ាតឺម៉ង់ / កម្មវិធីសិក្សា') }}</th>
-                <th class="border border-black px-2 py-3 w-[15%] text-center">{{ __('លេខទូរស័ព្ទ') }}</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($paginatedStudents as $index => $student)
-                @php
-                    $profile = $student->studentProfile;
-                    $enrollment = $student->studentProgramEnrollments->first();
-                    $genderKm = in_array(strtoupper($profile?->gender ?? ''), ['M', 'MALE']) ? 'ប្រុស' : 'ស្រី';
-                @endphp
-                <tr>
-                    <td class="border border-black px-2 py-2 text-center">{{ $index + 1 }}</td>
-                    <td class="border border-black px-2 py-2 text-center font-mono">{{ $student->student_id_code ?? '-' }}</td>
-                    <td class="border border-black px-2 py-2 font-medium">{{ $profile?->full_name_km ?? $student->name }}</td>
-                    <td class="border border-black px-2 py-2 text-center">{{ $genderKm }}</td>
-                    <td class="border border-black px-2 py-2 text-center font-mono">
-                        {{ $profile?->date_of_birth ? \Carbon\Carbon::parse($profile->date_of_birth)->format('d/m/Y') : '-' }}
-                    </td>
-                    <td class="border border-black px-2 py-2 leading-tight">{{ $enrollment->program->name_km ?? __('មិនទាន់កំណត់') }}</td>
-                    <td class="border border-black px-2 py-2 text-center font-mono">{{ $profile?->phone_number ?? '-' }}</td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
-
-    <div class="mt-12 flex justify-between">
-        <div class="text-center w-1/3">
-            <p class="text-[13px]">{{ __('បានពិនិត្យដោយ') }}</p>
-            <p class="mt-16 font-bold underline">..........................................</p>
-        </div>
-        <div class="text-center w-1/3">
-            <p class="text-[12px] italic">ធ្វើនៅ រាជធានីភ្នំពេញ, ថ្ងៃទី....... ខែ....... ឆ្នាំ២០...</p>
-            <p class="text-[13px] font-bold mt-1">អ្នករៀបចំបញ្ជី</p>
-            <p class="mt-16 font-bold">..........................................</p>
-        </div>
     </div>
 </div>
 

@@ -306,6 +306,27 @@ class ProfessorController extends Controller
         return view('professor.students.index', compact('courseOffering', 'students'));
     }
 
+    public function printStudents(CourseOffering $courseOffering)
+    {
+        if ($courseOffering->lecturer_user_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $courseOffering->load([
+            'course',
+            'targetPrograms',
+            'studentCourseEnrollments.student.studentProfile',
+            'studentCourseEnrollments.student.studentProgramEnrollments.program',
+            'studentCourseEnrollments.student.profile',
+        ]);
+
+        $students = $courseOffering->studentCourseEnrollments->map(function ($enrollment) {
+            return $enrollment->student;
+        })->sortBy('name')->values();
+
+        return view('professor.students.print', compact('courseOffering', 'students'));
+    }
+
     public function mySchedule()
     {
         $user = Auth::user();
