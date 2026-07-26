@@ -1,7 +1,7 @@
 ﻿<x-app-layout>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Moul:wght@400&display=swap" rel="stylesheet">
 
     @php
         $totalStudents = $students->count();
@@ -29,7 +29,7 @@
                         {{ __('របាយការណ៍វត្តមានសរុប') }}
                     </h1>
                 </div>
-                <button onclick="window.print()" 
+                <button onclick="window.open('{{ route('professor.attendance-report.print', ['courseOffering' => $courseOffering->id]) }}', '_blank')"
                         class="no-print inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-200 text-gray-600 rounded-xl font-bold hover:bg-gray-50 hover:border-gray-300 transition-all shadow-sm text-sm">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
@@ -39,21 +39,40 @@
             </div>
 
             {{-- Print Header --}}
-            <div class="hidden print:block text-center mb-8">
-                <h1 class="text-lg font-bold mb-0.5">ព្រះរាជាណាចក្រកម្ពុជា</h1>
-                <h2 class="text-base font-bold text-gray-600">ជាតិ សាសនា ព្រះមហាក្សត្រ</h2>
-                <div class="w-20 h-[1px] bg-black mx-auto mt-2 mb-6"></div>
-                <div class="flex justify-between text-left text-sm mt-6 px-4">
+            <div class="hidden print:block mb-6">
+                <div class="grid grid-cols-3 items-start gap-4 border-b-2 border-black pb-4 text-center">
+                    <div class="flex flex-col items-center">
+                        <img src="{{ asset('assets/image/nmu_Logo.png') }}" alt="Logo" class="w-20 h-20 object-contain">
+                        <h3 class="text-sm font-bold text-blue-700 mt-1" style="font-family: 'Moul', serif;">សាកលវិទ្យាល័យជាតិមានជ័យ</h3>
+                        <h3 class="text-sm font-bold text-blue-700" style="font-family: 'Moul', serif;">ការិយាល័យសិក្សា</h3>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <h2 class="text-base font-bold" style="font-family: 'Moul', serif;">ព្រះរាជាណាចក្រកម្ពុជា</h2>
+                        <h2 class="text-base font-bold" style="font-family: 'Moul', serif;">ជាតិ សាសនា ព្រះមហាក្សត្រ</h2>
+                        <img src="{{ asset('assets/image/2.png') }}" alt="motto" class="h-7 mx-auto mt-1">
+                    </div>
+                    <div></div>
+                </div>
+
+                <div class="text-center mt-4 mb-2">
+                    <h1 class="text-lg font-bold underline decoration-double" style="font-family: 'Moul', serif;">របាយការណ៍វត្តមានសរុប</h1>
+                </div>
+
+                @php
+                    $now = \Carbon\Carbon::now();
+                    $khmerMonths = [1=>'មករា',2=>'កុម្ភៈ',3=>'មីនា',4=>'មេសា',5=>'ឧសភា',6=>'មិថុនា',7=>'កក្កដា',8=>'សីហា',9=>'កញ្ញា',10=>'តុលា',11=>'វិច្ឆិកា',12=>'ធ្នូ'];
+                    function toKhmerNumsReport($n) { return str_replace(range(0,9), ['០','១','២','៣','៤','៥','៦','៧','៨','៩'], $n); }
+                @endphp
+
+                <div class="flex justify-between text-sm mt-4 px-2">
                     <div>
-                        <p class="font-bold">គ្រឹះស្ថានសិក្សា៖ ............................................</p>
-                        <p class="font-bold mt-1">មុខវិជ្ជា៖ {{ $courseOffering->course->name_km }}</p>
+                        <p class="font-bold">មុខវិជ្ជា៖ {{ $courseOffering->course->name_km ?? $courseOffering->course->title_km }}</p>
                         <p class="font-bold mt-1">ឆ្នាំសិក្សា៖ {{ $courseOffering->academic_year }} | {{ $courseOffering->semester }}</p>
                     </div>
                     <div class="text-right">
-                        <p>កាលបរិច្ឆេទ៖ {{ date('d/m/Y') }}</p>
+                        <p>{{ toKhmerNumsReport($now->format('d')) }} {{ $khmerMonths[$now->month] }} {{ toKhmerNumsReport((string)$now->year) }}</p>
                     </div>
                 </div>
-                <h3 class="text-lg font-bold mt-8 underline decoration-double">របាយការណ៍វត្តមានសរុប</h3>
             </div>
 
             {{-- Summary Cards --}}
@@ -224,12 +243,12 @@
                 {{-- Signature Section --}}
                 <div class="px-6 py-8 grid grid-cols-2 gap-8 border-t border-gray-100 bg-gray-50/30 print:bg-white print:mt-8">
                     <div class="text-center">
-                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-14 print:mb-20">ហត្ថលេខាសាស្ត្រាចារ្យ</p>
-                        <div class="w-32 h-px bg-gray-300 mx-auto print:bg-black"></div>
+                        <div class="h-20"></div>
+                        <p class="text-sm font-bold mb-1" style="font-family: 'Moul', serif;">ហត្ថលេខាសាស្ត្រាចារ្យ</p>
                     </div>
                     <div class="text-center">
-                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-14 print:mb-20">ការិយាល័យសិក្សា</p>
-                        <div class="w-32 h-px bg-gray-300 mx-auto print:bg-black"></div>
+                        <div class="h-20"></div>
+                        <p class="text-sm font-bold mb-1" style="font-family: 'Moul', serif;">ការិយាល័យសិក្សា</p>
                     </div>
                 </div>
             </div>
@@ -239,7 +258,9 @@
     <style>
         @media print {
             .no-print { display: none !important; }
-            body { background-color: white !important; -webkit-print-color-adjust: exact; }
+            body { background-color: white !important; -webkit-print-color-adjust: exact; font-family: 'Battambang', sans-serif !important; }
+            * { font-family: 'Battambang', sans-serif !important; }
+            [style*="font-family: 'Moul'"] { font-family: 'Moul', serif !important; }
             .py-6, .py-10 { padding: 0 !important; margin: 0 !important; }
             .max-w-6xl { max-width: 100% !important; width: 100% !important; padding: 0 !important; }
             table { width: 100% !important; }

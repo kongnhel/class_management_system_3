@@ -489,7 +489,13 @@ public function store(Request $request)
             'studentCourseEnrollments.student.profile',
         ]);
 
-        return view('admin.course-offerings.show', compact('courseOffering'));
+        $attendanceRecords = \App\Models\AttendanceRecord::where('course_offering_id', $courseOffering->id)
+            ->with('student.profile', 'student.studentProfile')
+            ->orderBy('date', 'desc')
+            ->get()
+            ->groupBy('date');
+
+        return view('admin.course-offerings.show', compact('courseOffering', 'attendanceRecords'));
     }
 
     public function enrollStudentForm()

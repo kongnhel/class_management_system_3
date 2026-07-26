@@ -330,6 +330,8 @@ Route::middleware(['auth', 'role:professor'])->prefix('professor')->name('profes
     Route::post('/course-offerings/{courseOffering}/attendance', [ProfessorController::class, 'attendanceStore'])->name('attendance.store');
     Route::get('/course-offerings/{courseOffering}/attendance-report', [ProfessorController::class, 'attendanceReport'])
         ->name('attendance.report');
+    Route::get('/course-offerings/{courseOffering}/attendance-report/print', [ProfessorController::class, 'printAttendanceReport'])
+        ->name('attendance-report.print');
     Route::post('/grades/store/{assessment_id}', [ProfessorController::class, 'updateGrades'])
         ->name('grades.update-grades');
     Route::delete('/assessments/{id}', [ProfessorGradeController::class, 'destroyAssessment'])->name('assessments.destroy');

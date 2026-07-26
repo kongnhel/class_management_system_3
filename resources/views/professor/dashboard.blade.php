@@ -54,7 +54,7 @@
                         @else
                             <div class="inline-flex items-center gap-2 bg-emerald-500/20 border border-emerald-400/30 text-emerald-100 px-4 py-2.5 rounded-xl font-bold text-xs">
                                 <i class="fa-solid fa-circle-check text-sm"></i>
-                                <span>{{ __('Google រួចរាល់') }}</span>
+                                <span>{{ auth()->user()->email }}</span>
                             </div>
                         @endif
                     </div>

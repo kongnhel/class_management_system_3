@@ -513,6 +513,37 @@ class ProfessorController extends Controller
         return view('professor.attendance.report', compact('courseOffering', 'students'));
     }
 
+    public function printAttendanceReport($courseOfferingId)
+    {
+        $courseOffering = CourseOffering::with(['course', 'program.department.faculty'])->findOrFail($courseOfferingId);
+
+        $students = User::whereHas('enrolledCourses', function ($query) use ($courseOfferingId) {
+            $query->where('course_offering_id', $courseOfferingId);
+        })
+            ->with(['studentProfile', 'profile'])
+            ->withCount([
+                'attendanceRecords as present_count' => function ($query) use ($courseOfferingId) {
+                    $query->where('course_offering_id', $courseOfferingId)
+                        ->where('status', 'present');
+                },
+                'attendanceRecords as absent_count' => function ($query) use ($courseOfferingId) {
+                    $query->where('course_offering_id', $courseOfferingId)
+                        ->where('status', 'absent');
+                },
+                'attendanceRecords as permission_count' => function ($query) use ($courseOfferingId) {
+                    $query->where('course_offering_id', $courseOfferingId)
+                        ->where('status', 'permission');
+                },
+                'attendanceRecords as late_count' => function ($query) use ($courseOfferingId) {
+                    $query->where('course_offering_id', $courseOfferingId)
+                        ->where('status', 'late');
+                },
+            ])
+            ->get();
+
+        return view('professor.attendance.print-report', compact('courseOffering', 'students'));
+    }
+
     public function allAttendance(Request $request)
     {
         $user = Auth::user();

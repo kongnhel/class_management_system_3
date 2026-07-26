@@ -184,6 +184,114 @@
                             </table>
                         </div>
                     </div>
+
+                    {{-- Professor Attendance History --}}
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center justify-between mb-5">
+                            <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                                <div class="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center">
+                                    <i class="fas fa-clipboard-check text-blue-500 text-sm"></i>
+                                </div>
+                                {{ __('ប្រវត្តិវត្តមានសាស្ត្រាចារ្យ') }}
+                            </h3>
+                            @php
+                                $totalRecords = $attendanceRecords->flatten()->count();
+                                $totalDates = $attendanceRecords->count();
+                            @endphp
+                            <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-blue-50 text-blue-700">{{ $totalDates }} ថ្ងៃ | {{ $totalRecords }} កំណត់ត្រា</span>
+                        </div>
+
+                        @if($attendanceRecords->isEmpty())
+                            <div class="text-center py-12">
+                                <div class="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-3">
+                                    <i class="fas fa-clipboard text-gray-300 text-2xl"></i>
+                                </div>
+                                <p class="text-gray-400 text-sm">{{ __('មិនទាន់មានកំណត់ត្រាវត្តមាន') }}</p>
+                            </div>
+                        @else
+                            <div class="space-y-4 max-h-[600px] overflow-y-auto">
+                                @foreach($attendanceRecords as $date => $records)
+                                    @php
+                                        $presentCount = $records->where('status', 'present')->count();
+                                        $absentCount = $records->where('status', 'absent')->count();
+                                        $lateCount = $records->where('status', 'late')->count();
+                                        $permissionCount = $records->where('status', 'permission')->count();
+                                        $dayTotal = $records->count();
+                                        $dayPercent = $dayTotal > 0 ? round((($presentCount + $lateCount) / $dayTotal) * 100) : 0;
+                                    @endphp
+                                    <div class="border border-gray-200 rounded-xl overflow-hidden">
+                                        <div class="bg-gray-50 px-4 py-3 flex items-center justify-between cursor-pointer hover:bg-gray-100 transition-colors" onclick="this.parentElement.querySelector('.attendance-detail').classList.toggle('hidden')">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-10 h-10 rounded-xl bg-white border border-gray-200 flex items-center justify-center">
+                                                    <i class="fas fa-calendar-day text-gray-500"></i>
+                                                </div>
+                                                <div>
+                                                    <p class="text-sm font-bold text-gray-900">{{ \Carbon\Carbon::parse($date)->format('d/m/Y') }}</p>
+                                                    <p class="text-xs text-gray-500">{{ \Carbon\Carbon::parse($date)->translatedFormat('l') }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center gap-4">
+                                                <div class="flex items-center gap-2 text-xs">
+                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-bold">
+                                                        <i class="fas fa-check-circle"></i> {{ $presentCount }}
+                                                    </span>
+                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 font-bold">
+                                                        <i class="fas fa-clock"></i> {{ $lateCount }}
+                                                    </span>
+                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 font-bold">
+                                                        <i class="fas fa-file-alt"></i> {{ $permissionCount }}
+                                                    </span>
+                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-rose-50 text-rose-700 font-bold">
+                                                        <i class="fas fa-times-circle"></i> {{ $absentCount }}
+                                                    </span>
+                                                </div>
+                                                <span class="text-xs font-bold {{ $dayPercent >= 75 ? 'text-emerald-600' : ($dayPercent >= 50 ? 'text-amber-600' : 'text-rose-600') }}">{{ $dayPercent }}%</span>
+                                                <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+                                            </div>
+                                        </div>
+                                        <div class="attendance-detail hidden">
+                                            <table class="w-full text-sm">
+                                                <thead class="bg-gray-100">
+                                                    <tr>
+                                                        <th class="px-4 py-2 text-left text-xs font-bold text-gray-500">#</th>
+                                                        <th class="px-4 py-2 text-left text-xs font-bold text-gray-500">{{ __('ឈ្មោះនិស្សិត') }}</th>
+                                                        <th class="px-4 py-2 text-center text-xs font-bold text-gray-500">{{ __('ស្ថានភាព') }}</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="divide-y divide-gray-100">
+                                                    @foreach($records as $i => $record)
+                                                        <tr class="hover:bg-gray-50">
+                                                            <td class="px-4 py-2 text-gray-500">{{ $i + 1 }}</td>
+                                                            <td class="px-4 py-2 font-medium text-gray-900">{{ $record->student->studentProfile->full_name_km ?? $record->student->name }}</td>
+                                                            <td class="px-4 py-2 text-center">
+                                                                @php
+                                                                    $statusColors = [
+                                                                        'present' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                                                                        'late' => 'bg-amber-50 text-amber-700 border-amber-200',
+                                                                        'permission' => 'bg-blue-50 text-blue-700 border-blue-200',
+                                                                        'absent' => 'bg-rose-50 text-rose-700 border-rose-200',
+                                                                    ];
+                                                                    $statusLabels = [
+                                                                        'present' => 'វត្តមាន',
+                                                                        'late' => 'យឺត',
+                                                                        'permission' => 'ច្បាប់',
+                                                                        'absent' => 'អវត្តមាន',
+                                                                    ];
+                                                                @endphp
+                                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs font-bold border {{ $statusColors[$record->status] ?? 'bg-gray-100 text-gray-600 border-gray-200' }}">
+                                                                    {{ $statusLabels[$record->status] ?? $record->status }}
+                                                                </span>
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
                 </div>
 
                 {{-- Right Column: Lecturer + Programs + Schedules --}}
