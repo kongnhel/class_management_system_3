@@ -71,13 +71,18 @@ try {
                     })->get();
 
                     foreach ($courseOfferings as $offering) {
-                        StudentCourseEnrollment::create([
-                            'student_user_id' => $user->id,
-                            'student_id' => $user->id,
-                            'course_offering_id' => $offering->id,
-                            'enrollment_date' => now(),
-                            'status' => 'enrolled',
-                        ]);
+                        $alreadyEnrolled = StudentCourseEnrollment::where('student_user_id', $user->id)
+                            ->where('course_offering_id', $offering->id)
+                            ->exists();
+                        if (!$alreadyEnrolled) {
+                            StudentCourseEnrollment::create([
+                                'student_user_id' => $user->id,
+                                'student_id' => $user->id,
+                                'course_offering_id' => $offering->id,
+                                'enrollment_date' => now(),
+                                'status' => 'enrolled',
+                            ]);
+                        }
                     }
 
                     event(new Registered($user));

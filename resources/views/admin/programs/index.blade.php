@@ -1,6 +1,6 @@
 ﻿<x-app-layout>
     <div class="py-10 bg-gray-50 min-h-screen">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8" x-data="{ viewMode: localStorage.getItem('program_view') || 'card' }" x-init="$watch('viewMode', v => localStorage.setItem('program_view', v))">
 
             {{-- Header --}}
             <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
@@ -13,10 +13,29 @@
                     </h1>
                     <p class="mt-1 text-sm text-gray-500 ml-11">{{ __('រកឃើញកម្មវិធីសិក្សាចំនួន') }} {{ $programs->total() }} {{ __('កម្មវិធី') }}</p>
                 </div>
-                <a href="{{ route('admin.create-program') }}" class="mt-4 md:mt-0 inline-flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-emerald-600 text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg shadow-emerald-500/25 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200">
-                    <i class="fas fa-plus"></i>
-                    {{ __('បន្ថែមកម្មវិធីសិក្សាថ្មី') }}
-                </a>
+                <div class="mt-4 md:mt-0 flex items-center gap-3">
+                    {{-- View Toggle --}}
+                    <div class="inline-flex rounded-xl bg-white border border-gray-200 p-1 shadow-sm">
+                        <button @click="viewMode = 'card'"
+                                :class="viewMode === 'card' ? 'bg-emerald-50 text-emerald-600 shadow-sm' : 'text-gray-400 hover:text-gray-600'"
+                                class="p-2 rounded-lg transition-all duration-200" title="{{ __('ទម្រង់ប័ណ្ណ') }}">
+                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+                            </svg>
+                        </button>
+                        <button @click="viewMode = 'table'"
+                                :class="viewMode === 'table' ? 'bg-emerald-50 text-emerald-600 shadow-sm' : 'text-gray-400 hover:text-gray-600'"
+                                class="p-2 rounded-lg transition-all duration-200" title="{{ __('ទម្រង់តារាង') }}">
+                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 01-1.125-1.125M3.375 19.5h7.5c.621 0 1.125-.504 1.125-1.125m-9.75 0V5.625m0 12.75v-1.5c0-.621.504-1.125 1.125-1.125m18.375 2.625V5.625m0 12.75c0 .621-.504 1.125-1.125 1.125m1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125m0 3.75h-7.5A1.125 1.125 0 0112 18.375m9.75-12.75c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125m19.5 0v1.5c0 .621-.504 1.125-1.125 1.125M2.25 5.625v1.5c0 .621.504 1.125 1.125 1.125m0 0h17.25m-17.25 0h7.5c.621 0 1.125.504 1.125 1.125M3.375 8.25c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125m17.25-3.75h-7.5c-.621 0-1.125.504-1.125 1.125m8.625-1.125c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h7.5m-7.5 0c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125M12 10.875v-1.5m0 1.5c0 .621-.504 1.125-1.125 1.125M12 10.875c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125M13.125 12h7.5m-7.5 0c-.621 0-1.125.504-1.125 1.125M20.625 12c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h7.5M12 14.625v-1.5m0 1.5c0 .621-.504 1.125-1.125 1.125M12 14.625c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125m0 0v.375" />
+                            </svg>
+                        </button>
+                    </div>
+                    <a href="{{ route('admin.create-program') }}" class="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-emerald-600 text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg shadow-emerald-500/25 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200">
+                        <i class="fas fa-plus"></i>
+                        {{ __('បន្ថែមកម្មវិធីសិក្សាថ្មី') }}
+                    </a>
+                </div>
             </div>
 
             {{-- Search & Filters --}}
@@ -88,73 +107,128 @@
                 </div>
             </form>
 
-            {{-- Programs Grid --}}
             @if($programs->count() > 0)
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    @foreach($programs as $program)
-                        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden group">
-                            {{-- Card Header --}}
-                            <div class="p-6 pb-4">
-                                <div class="flex items-start justify-between mb-4">
-                                    <div class="p-3 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-500/20">
-                                        <i class="fas fa-graduation-cap text-lg"></i>
+                {{-- Card View --}}
+                <div x-show="viewMode === 'card'" x-transition>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        @foreach($programs as $program)
+                            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden group">
+                                <div class="p-6 pb-4">
+                                    <div class="flex items-start justify-between mb-4">
+                                        <div class="p-3 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-500/20">
+                                            <i class="fas fa-graduation-cap text-lg"></i>
+                                        </div>
+                                        @if($program->pathwayProgram)
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-purple-100 text-purple-700">
+                                                <i class="fas fa-link"></i> {{ __('ផ្លូវបន្ត') }}
+                                            </span>
+                                        @endif
+                                    </div>
+                                    <h3 class="text-lg font-bold text-gray-900 leading-tight group-hover:text-emerald-600 transition-colors">{{ $program->name_km }}</h3>
+                                    <p class="text-sm text-gray-500 mt-1">{{ $program->name_en }}</p>
+                                </div>
+                                <div class="px-6 pb-4 space-y-3">
+                                    <div class="flex items-center gap-2 text-sm">
+                                        <i class="fas fa-building text-gray-400 w-4"></i>
+                                        <span class="text-gray-600">{{ $program->department->name_km ?? 'N/A' }}</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 text-sm">
+                                        <i class="fas fa-calendar-alt text-gray-400 w-4"></i>
+                                        <span class="text-gray-600">{{ $program->duration_years }} {{ __('ឆ្នាំ') }}</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 text-sm">
+                                        <i class="fas fa-award text-gray-400 w-4"></i>
+                                        <span class="text-gray-600">{{ $program->degree_level }}</span>
                                     </div>
                                     @if($program->pathwayProgram)
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-purple-100 text-purple-700">
-                                            <i class="fas fa-link"></i> {{ __('ផ្លូវបន្ត') }}
-                                        </span>
+                                        <div class="flex items-center gap-2 text-sm">
+                                            <i class="fas fa-arrow-right text-purple-400 w-4"></i>
+                                            <span class="text-purple-600">{{ __('ផ្លូវបន្ត') }}: {{ $program->pathwayProgram->name_km }}</span>
+                                        </div>
                                     @endif
                                 </div>
-                                <h3 class="text-lg font-bold text-gray-900 leading-tight group-hover:text-emerald-600 transition-colors">{{ $program->name_km }}</h3>
-                                <p class="text-sm text-gray-500 mt-1">{{ $program->name_en }}</p>
-                            </div>
-
-                            {{-- Card Body --}}
-                            <div class="px-6 pb-4 space-y-3">
-                                <div class="flex items-center gap-2 text-sm">
-                                    <i class="fas fa-building text-gray-400 w-4"></i>
-                                    <span class="text-gray-600">{{ $program->department->name_km ?? 'N/A' }}</span>
-                                </div>
-                                <div class="flex items-center gap-2 text-sm">
-                                    <i class="fas fa-calendar-alt text-gray-400 w-4"></i>
-                                    <span class="text-gray-600">{{ $program->duration_years }} {{ __('ឆ្នាំ') }}</span>
-                                </div>
-                                <div class="flex items-center gap-2 text-sm">
-                                    <i class="fas fa-award text-gray-400 w-4"></i>
-                                    <span class="text-gray-600">{{ $program->degree_level }}</span>
-                                </div>
-                                @if($program->pathwayProgram)
-                                    <div class="flex items-center gap-2 text-sm">
-                                        <i class="fas fa-arrow-right text-purple-400 w-4"></i>
-                                        <span class="text-purple-600">{{ __('ផ្លូវបន្ត') }}: {{ $program->pathwayProgram->name_km }}</span>
+                                <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
+                                    <div class="flex items-center gap-1.5">
+                                        <a href="{{ route('admin.edit-program', $program->id) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-bold text-emerald-600 hover:bg-emerald-50 hover:border-emerald-200 transition">
+                                            <i class="fas fa-pen text-[10px]"></i> {{ __('កែប្រែ') }}
+                                        </a>
+                                        <button onclick="openDeleteModal('{{ route('admin.delete-program', $program->id) }}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-bold text-red-600 hover:bg-red-50 hover:border-red-200 transition">
+                                            <i class="fas fa-trash text-[10px]"></i> {{ __('លុប') }}
+                                        </button>
                                     </div>
-                                @endif
-                            </div>
-
-                            {{-- Card Footer --}}
-                            <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
-                                <div class="flex items-center gap-1.5">
-                                    <a href="{{ route('admin.edit-program', $program->id) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-bold text-emerald-600 hover:bg-emerald-50 hover:border-emerald-200 transition">
-                                        <i class="fas fa-pen text-[10px]"></i> {{ __('កែប្រែ') }}
-                                    </a>
-                                    <button onclick="openDeleteModal('{{ route('admin.delete-program', $program->id) }}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-bold text-red-600 hover:bg-red-50 hover:border-red-200 transition">
-                                        <i class="fas fa-trash text-[10px]"></i> {{ __('លុប') }}
-                                    </button>
                                 </div>
                             </div>
+                        @endforeach
+                    </div>
+                </div>
+
+                {{-- Table View --}}
+                <div x-show="viewMode === 'table'" x-transition>
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">#</th>
+                                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('ឈ្មោះខ្មែរ') }}</th>
+                                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('ឈ្មោះអង់គ្លេស') }}</th>
+                                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('ដេប៉ាតឺម៉ង់') }}</th>
+                                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('រយៈពេល') }}</th>
+                                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('កម្រិតសញ្ញាបត្រ') }}</th>
+                                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('ផ្លូវបន្ត') }}</th>
+                                        <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('សកម្មភាព') }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-100">
+                                    @foreach($programs as $index => $program)
+                                    <tr class="hover:bg-gray-50 transition-colors">
+                                        <td class="px-6 py-4 text-sm text-gray-500">{{ $programs->firstItem() + $index }}</td>
+                                        <td class="px-6 py-4">
+                                            <div class="font-semibold text-gray-900 text-sm">{{ $program->name_km }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 text-sm text-gray-600">{{ $program->name_en }}</td>
+                                        <td class="px-6 py-4 text-sm text-gray-600">{{ $program->department->name_km ?? 'N/A' }}</td>
+                                        <td class="px-6 py-4 text-sm text-gray-600">{{ $program->duration_years }} {{ __('ឆ្នាំ') }}</td>
+                                        <td class="px-6 py-4">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                                {{ $program->degree_level }}
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 text-sm">
+                                            @if($program->pathwayProgram)
+                                                <span class="inline-flex items-center gap-1 text-purple-600 font-medium">
+                                                    <i class="fas fa-link text-[10px]"></i> {{ $program->pathwayProgram->name_km }}
+                                                </span>
+                                            @else
+                                                <span class="text-gray-400">-</span>
+                                            @endif
+                                        </td>
+                                        <td class="px-6 py-4 text-center">
+                                            <div class="flex items-center justify-center gap-2">
+                                                <a href="{{ route('admin.edit-program', $program->id) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-bold text-emerald-600 hover:bg-emerald-50 hover:border-emerald-200 transition">
+                                                    <i class="fas fa-pen text-[10px]"></i> {{ __('កែប្រែ') }}
+                                                </a>
+                                                <button onclick="openDeleteModal('{{ route('admin.delete-program', $program->id) }}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-bold text-red-600 hover:bg-red-50 hover:border-red-200 transition">
+                                                    <i class="fas fa-trash text-[10px]"></i> {{ __('លុប') }}
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
-                    @endforeach
+                    </div>
                 </div>
 
                 {{-- Pagination --}}
                 @if($programs->hasPages())
-                    <div class="mt-8">
+                    <div class="mt-6">
                         {{ $programs->links() }}
                     </div>
                 @endif
 
             @else
-                {{-- Empty State --}}
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-16 text-center">
                     <div class="p-4 bg-gray-100 rounded-2xl inline-block mb-4">
                         <i class="fas fa-graduation-cap text-gray-400 text-4xl"></i>
