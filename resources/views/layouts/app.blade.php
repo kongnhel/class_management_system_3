@@ -54,6 +54,12 @@
 </style>
         <style>
             [x-cloak] { display: none !important; }
+            
+            /* Global hand cursor for all buttons and clickable elements */
+            button, a, [role="button"], input[type="submit"], input[type="button"], 
+            select, [onclick], [x-on\\:click], [\\@click] {
+                cursor: pointer !important;
+            }
             body {
                 transition: background-color 0.3s ease, color 0.3s ease;
             }

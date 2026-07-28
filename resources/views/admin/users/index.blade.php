@@ -52,7 +52,6 @@
                 <div id="user-manage-root" x-data="{ 
                     activeTab: $persist('admins').as('user_manage_tab'),
                     showDeleteModal: false,
-                    showPrintAlert: false,
                     deletingUserId: '',
                     deletingUserType: '',
                     deletingFormId: '',
@@ -158,10 +157,10 @@
                                                     <td class="px-6 py-3 font-semibold text-gray-900 edit-user-name">{{ $admin->name }}</td>
                                                     <td class="px-6 py-3 text-gray-600 edit-user-email">{{ $admin->email }}</td>
                                                     <td class="px-6 py-3 text-gray-600 edit-user-fullname">{{ $admin->profile->full_name_km ?? 'N/A' }}</td>
-                                                    <td class="px-6 py-3 text-right font-bold space-x-3">
-                                                        <a href="{{ route('admin.show-user', $admin->id) }}" class="text-green-600 hover:underline">{{ __('មើល') }}</a>
-                                                        <button type="button" @click.stop="openEditModal({{ $admin->id }})" class="text-emerald-600 hover:underline">{{ __('កែប្រែ') }}</button>
-                                                        <button type="button" @click.stop="confirmDelete('delete-admin-{{ $admin->id }}', '{{ __('អ្នកគ្រប់គ្រង') }}')" class="text-red-500 hover:underline">{{ __('លុប') }}</button>
+                                                    <td class="px-6 py-3 text-right font-bold space-x-4">
+                                                        <a href="{{ route('admin.show-user', $admin->id) }}" class="text-green-600 hover:text-green-700 text-sm px-3 py-1.5 rounded-lg hover:bg-green-50 transition-all">{{ __('មើល') }}</a>
+                                                        <button type="button" @click.stop="openEditModal({{ $admin->id }})" class="text-emerald-600 hover:text-emerald-700 text-sm px-3 py-1.5 rounded-lg hover:bg-emerald-50 transition-all">{{ __('កែប្រែ') }}</button>
+                                                        <button type="button" @click.stop="confirmDelete('delete-admin-{{ $admin->id }}', '{{ __('អ្នកគ្រប់គ្រង') }}')" class="text-red-500 hover:text-red-600 text-sm px-3 py-1.5 rounded-lg hover:bg-red-50 transition-all">{{ __('លុប') }}</button>
                                                         <form id="delete-admin-{{ $admin->id }}" action="{{ route('admin.delete-user', $admin->id) }}" method="POST" class="hidden">@csrf @method('DELETE')</form>
                                                     </td>
                                                 </tr>
@@ -199,15 +198,15 @@
                                                 <div class="min-w-0">
                                                      <p class="text-xs text-gray-600 font-medium truncate">{{ $admin->profile->full_name_km ?? 'No Name' }}</p>
                                                 </div>
-                                                <div class="flex space-x-4 text-xs font-bold">
-                                                    <a href="{{ route('admin.show-user', $admin->id) }}" class="text-green-600 flex items-center">
-                                                         <i class="fas fa-eye mr-1 text-[10px]"></i> {{ __('មើល') }}
+                                                <div class="flex space-x-4 text-sm font-bold">
+                                                    <a href="{{ route('admin.show-user', $admin->id) }}" class="text-green-600 flex items-center px-3 py-1.5 rounded-lg hover:bg-green-50 transition-all">
+                                                         <i class="fas fa-eye mr-1.5"></i> {{ __('មើល') }}
                                                      </a>
-                                                     <button type="button" @click.stop="openEditModal({{ $admin->id }})" class="text-emerald-600 flex items-center">
-                                                         <i class="fas fa-edit mr-1 text-[10px]"></i> {{ __('កែ') }}
+                                                     <button type="button" @click.stop="openEditModal({{ $admin->id }})" class="text-emerald-600 flex items-center px-3 py-1.5 rounded-lg hover:bg-emerald-50 transition-all">
+                                                         <i class="fas fa-edit mr-1.5"></i> {{ __('កែ') }}
                                                      </button>
-                                                    <button @click.stop="confirmDelete('del-adm-mob-{{ $admin->id }}', 'Admin')" class="text-red-500 flex items-center">
-                                                        <i class="fas fa-trash mr-1 text-[10px]"></i> {{ __('លុប') }}
+                                                    <button @click.stop="confirmDelete('del-adm-mob-{{ $admin->id }}', 'Admin')" class="text-red-500 flex items-center px-3 py-1.5 rounded-lg hover:bg-red-50 transition-all">
+                                                        <i class="fas fa-trash mr-1.5"></i> {{ __('លុប') }}
                                                     </button>
                                                 </div>
                                                 <form id="del-adm-mob-{{ $admin->id }}" action="{{ route('admin.delete-user', $admin->id) }}" method="POST" class="hidden">@csrf @method('DELETE')</form>
@@ -313,10 +312,10 @@
                                                                     </td>
                                                                     <td class="px-6 py-3 text-sm text-gray-600 font-medium edit-user-email">{{ $professor->email }}</td>
                                                                     <td class="px-6 py-3 text-right">
-                                                                        <div class="flex items-center justify-end gap-3 text-xs font-bold">
-                                                                            <a href="{{ route('admin.show-user', $professor->id) }}" class="text-green-600">{{ __('មើល') }}</a>
-                                                                            <button type="button" @click.stop="openEditModal({{ $professor->id }})" class="text-emerald-600">{{ __('កែ') }}</button>
-                                                                            <button type="button" @click.stop="confirmDelete('del-prof-{{ $professor->id }}', '{{ __('លោកគ្រូអ្នកគ្រូ') }}')" class="text-red-500">{{ __('លុប') }}</button>
+                                                                        <div class="flex items-center justify-end gap-4 text-sm font-bold">
+                                                                            <a href="{{ route('admin.show-user', $professor->id) }}" class="text-green-600 hover:text-green-700 px-3 py-1.5 rounded-lg hover:bg-green-50 transition-all">{{ __('មើល') }}</a>
+                                                                            <button type="button" @click.stop="openEditModal({{ $professor->id }})" class="text-emerald-600 hover:text-emerald-700 px-3 py-1.5 rounded-lg hover:bg-emerald-50 transition-all">{{ __('កែ') }}</button>
+                                                                            <button type="button" @click.stop="confirmDelete('del-prof-{{ $professor->id }}', '{{ __('លោកគ្រូអ្នកគ្រូ') }}')" class="text-red-500 hover:text-red-600 px-3 py-1.5 rounded-lg hover:bg-red-50 transition-all">{{ __('លុប') }}</button>
                                                                         </div>
                                                                         <form id="del-prof-{{ $professor->id }}" action="{{ route('admin.delete-user', $professor->id) }}" method="POST" class="hidden">@csrf @method('DELETE')</form>
                                                                     </td>
@@ -347,14 +346,14 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div class="flex items-center justify-between mt-4 pt-3 border-t border-gray-100">
-                                                                <span class="text-[10px] font-bold text-gray-400 italic">{{ $professor->profile->full_name_km ?? 'N/A' }}</span>
-                                                                <div class="flex space-x-4">
-                                                                    <a href="{{ route('admin.show-user', $professor->id) }}" class="text-green-600 text-xs font-bold uppercase tracking-widest">{{ __('មើល') }}</a>
-                                                                    <button type="button" @click.stop="openEditModal({{ $professor->id }})" class="text-emerald-600 text-xs font-bold uppercase tracking-widest">{{ __('កែ') }}</button>
-                                                                    <button @click.stop="confirmDelete('del-mob-prof-{{ $professor->id }}', 'Professor')" class="text-red-500 text-xs font-bold uppercase tracking-widest">{{ __('លុប') }}</button>
+                                                                <div class="flex items-center justify-between mt-4 pt-3 border-t border-gray-100">
+                                                                    <span class="text-[10px] font-bold text-gray-400 italic">{{ $professor->profile->full_name_km ?? 'N/A' }}</span>
+                                                                    <div class="flex space-x-4">
+                                                                        <a href="{{ route('admin.show-user', $professor->id) }}" class="text-green-600 text-sm font-bold px-3 py-1.5 rounded-lg hover:bg-green-50 transition-all">{{ __('មើល') }}</a>
+                                                                        <button type="button" @click.stop="openEditModal({{ $professor->id }})" class="text-emerald-600 text-sm font-bold px-3 py-1.5 rounded-lg hover:bg-emerald-50 transition-all">{{ __('កែ') }}</button>
+                                                                        <button @click.stop="confirmDelete('del-mob-prof-{{ $professor->id }}', 'Professor')" class="text-red-500 text-sm font-bold px-3 py-1.5 rounded-lg hover:bg-red-50 transition-all">{{ __('លុប') }}</button>
+                                                                    </div>
                                                                 </div>
-                                                            </div>
                                                             <form id="del-mob-prof-{{ $professor->id }}" action="{{ route('admin.delete-user', $professor->id) }}" method="POST" class="hidden">@csrf @method('DELETE')</form>
                                                         </div>
                                                     @endforeach
@@ -494,10 +493,10 @@
                                                                                 @endif
                                                                             </td>
                                                                             <td class="px-6 py-3 text-right">
-                                                                                <div class="flex items-center justify-end gap-3 text-xs font-bold">
-                                                                                    <a href="{{ route('admin.show-user', $student->id) }}" class="text-green-600">{{ __('មើល') }}</a>
-                                                                                    <button type="button" @click.stop="openEditModal({{ $student->id }})" class="text-emerald-600">{{ __('កែ') }}</button>
-                                                                                    <button type="button" @click.stop="confirmDelete('del-std-{{ $student->id }}', '{{ __('និស្សិត') }}')" class="text-red-500">{{ __('លុប') }}</button>
+                                                                                <div class="flex items-center justify-end gap-4 text-sm font-bold">
+                                                                                    <a href="{{ route('admin.show-user', $student->id) }}" class="text-green-600 hover:text-green-700 px-3 py-1.5 rounded-lg hover:bg-green-50 transition-all">{{ __('មើល') }}</a>
+                                                                                    <button type="button" @click.stop="openEditModal({{ $student->id }})" class="text-emerald-600 hover:text-emerald-700 px-3 py-1.5 rounded-lg hover:bg-emerald-50 transition-all">{{ __('កែ') }}</button>
+                                                                                    <button type="button" @click.stop="confirmDelete('del-std-{{ $student->id }}', '{{ __('និស្សិត') }}')" class="text-red-500 hover:text-red-600 px-3 py-1.5 rounded-lg hover:bg-red-50 transition-all">{{ __('លុប') }}</button>
                                                                                 </div>
                                                                                 <form id="del-std-{{ $student->id }}" action="{{ route('admin.delete-user', $student->id) }}" method="POST" class="hidden">@csrf @method('DELETE')</form>
                                                                             </td>
@@ -544,9 +543,9 @@
                                                                     <div class="flex items-center justify-between mt-4 pt-3 border-t border-gray-100">
                                                                         <span class="text-[10px] font-bold text-gray-400 italic">{{ $student->studentProfile->full_name_km ?? 'N/A' }}</span>
                                                                         <div class="flex space-x-4">
-                                                                            <a href="{{ route('admin.show-user', $student->id) }}" class="text-green-600 text-xs font-bold uppercase tracking-widest">{{ __('មើល') }}</a>
-                                                                            <button type="button" @click.stop="openEditModal({{ $student->id }})" class="text-emerald-600 text-xs font-bold uppercase tracking-widest">{{ __('កែ') }}</button>
-                                                                            <button @click="confirmDelete('del-mob-{{ $student->id }}', 'Student')" class="text-red-500 text-xs font-bold uppercase tracking-widest">{{ __('លុប') }}</button>
+                                                                            <a href="{{ route('admin.show-user', $student->id) }}" class="text-green-600 text-sm font-bold px-3 py-1.5 rounded-lg hover:bg-green-50 transition-all">{{ __('មើល') }}</a>
+                                                                            <button type="button" @click.stop="openEditModal({{ $student->id }})" class="text-emerald-600 text-sm font-bold px-3 py-1.5 rounded-lg hover:bg-emerald-50 transition-all">{{ __('កែ') }}</button>
+                                                                            <button @click="confirmDelete('del-mob-{{ $student->id }}', 'Student')" class="text-red-500 text-sm font-bold px-3 py-1.5 rounded-lg hover:bg-red-50 transition-all">{{ __('លុប') }}</button>
                                                                         </div>
                                                                     </div>
                                                                     <form id="del-mob-{{ $student->id }}" action="{{ route('admin.delete-user', $student->id) }}" method="POST" class="hidden">@csrf @method('DELETE')</form>
@@ -581,28 +580,6 @@
                                         <button type="button" @click="executeDeleteUser()" :disabled="isDeleting" class="px-5 py-2 text-sm font-bold text-white bg-red-600 rounded-xl hover:bg-red-700 shadow-lg shadow-red-200 transition-all disabled:opacity-50">
                                             <span x-show="!isDeleting">{{ __('លុបចេញ') }}</span>
                                             <span x-show="isDeleting"><i class="fas fa-spinner fa-spin mr-1"></i> កំពុងលុប...</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {{-- Print Alert Modal --}}
-                        <div x-show="showPrintAlert" class="fixed inset-0 z-[9999] overflow-y-auto" x-cloak>
-                            <div class="flex items-center justify-center min-h-screen p-4 text-center">
-                                <div x-show="showPrintAlert" x-transition.opacity class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm" @click="showPrintAlert = false"></div>
-                                <div x-show="showPrintAlert" @click.away="showPrintAlert = false" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
-                                     class="inline-block w-full max-w-md p-6 my-8 text-left align-middle transition-all transform bg-white shadow-2xl rounded-2xl z-50">
-                                    <div class="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-amber-100 rounded-full">
-                                        <i class="fas fa-filter text-amber-600 text-xl"></i>
-                                    </div>
-                                    <h3 class="text-lg font-bold text-center text-gray-900">សូមជ្រើសរើសទិន្នន័យ</h3>
-                                    <p class="mt-2 text-sm text-center text-gray-500">
-                                        សូមជ្រើសរើស <span class="font-black text-amber-600">ជំនាន់</span> និង <span class="font-black text-amber-600">កម្មវិធីសិក្សា</span> សម្រាប់និស្សិត ឬ <span class="font-black text-amber-600">មហវិទ្យាល័យ</span> / <span class="font-black text-amber-600">ដេប៉ាតឺម៉ង់</span> សម្រាប់សាស្ត្រាចារ្យ មុនពេលបោះពុម្ព។
-                                    </p>
-                                    <div class="mt-6 flex justify-center">
-                                        <button type="button" @click="showPrintAlert = false" class="px-6 py-2 text-sm font-bold text-white bg-amber-500 rounded-xl hover:bg-amber-600 shadow-lg shadow-amber-200 transition-all">
-                                            យល់ព្រម
                                         </button>
                                     </div>
                                 </div>
@@ -788,80 +765,36 @@
                     </div>
                 </div>
 
-                {{-- Profile Preview Modal --}}
-                <div x-show="showProfilePreview" x-cloak
-                     x-transition:enter="transition ease-out duration-300"
-                     x-transition:enter-start="opacity-0"
-                     x-transition:enter-end="opacity-100"
-                     x-transition:leave="transition ease-in duration-200"
-                     x-transition:leave-start="opacity-100"
-                     x-transition:leave-end="opacity-0"
-                     class="fixed inset-0 z-[200] flex items-center justify-center p-4" style="display:none;">
-                    <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="showProfilePreview = false"></div>
-                    <div class="relative bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden"
-                         x-transition:enter="transition ease-out duration-300"
-                         x-transition:enter-start="opacity-0 scale-95"
-                         x-transition:enter-end="opacity-100 scale-100">
-                        
-                        <div class="bg-gradient-to-br from-emerald-600 to-emerald-700 p-6 text-center">
-                            <div class="w-20 h-20 rounded-full bg-white/20 backdrop-blur-md border-2 border-white/30 mx-auto mb-3 flex items-center justify-center overflow-hidden">
-                                <template x-if="previewUser.profile_picture_url">
-                                    <img :src="previewUser.profile_picture_url" class="w-full h-full object-cover">
-                                </template>
-                                <template x-if="!previewUser.profile_picture_url">
-                                    <span class="text-2xl font-black text-white" x-text="previewUser.name ? previewUser.name.charAt(0).toUpperCase() : '?'"></span>
-                                </template>
-                            </div>
-                            <h3 class="text-xl font-black text-white" x-text="previewUser.full_name_km || previewUser.name"></h3>
-                            <p class="text-emerald-100 text-sm font-medium mt-1" x-text="previewUser.email || 'មិនទាន់បង្កើតគណនី'"></p>
-                        </div>
-                        
-                        <div class="p-6 space-y-3">
-                            <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                                <span class="text-xs font-bold text-gray-400 uppercase">ឈ្មោះអ្នកប្រើ</span>
-                                <span class="text-sm font-bold text-gray-800" x-text="previewUser.name"></span>
-                            </div>
-                            <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                                <span class="text-xs font-bold text-gray-400 uppercase">ឈ្មោះពេញ</span>
-                                <span class="text-sm font-bold text-gray-800" x-text="previewUser.full_name_km || 'N/A'"></span>
-                            </div>
-                            <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                                <span class="text-xs font-bold text-gray-400 uppercase">ឈ្មោះអង់គ្លេស</span>
-                                <span class="text-sm font-bold text-gray-800" x-text="previewUser.full_name_en || 'N/A'"></span>
-                            </div>
-                            <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                                <span class="text-xs font-bold text-gray-400 uppercase">តួនាទី</span>
-                                <span class="text-sm font-bold px-2 py-0.5 rounded-full"
-                                      :class="{
-                                          'bg-red-50 text-red-700': previewUser.role === 'admin',
-                                          'bg-emerald-50 text-emerald-700': previewUser.role === 'professor',
-                                          'bg-blue-50 text-blue-700': previewUser.role === 'student'
-                                      }"
-                                      x-text="previewUser.role === 'admin' ? 'អ្នកគ្រប់គ្រង' : (previewUser.role === 'professor' ? 'សាស្ត្រាចារ្យ' : 'និស្សិត')"></span>
-                            </div>
-                            <div class="flex justify-between items-center py-2 border-b border-gray-100" x-show="previewUser.gender">
-                                <span class="text-xs font-bold text-gray-400 uppercase">ភេទ</span>
-                                <span class="text-sm font-bold text-gray-800" x-text="previewUser.gender === 'male' ? 'ប្រុស' : 'ស្រី'"></span>
-                            </div>
-                            <div class="flex justify-between items-center py-2" x-show="previewUser.phone_number">
-                                <span class="text-xs font-bold text-gray-400 uppercase">ទូរស័ព្ទ</span>
-                                <span class="text-sm font-bold text-gray-800" x-text="previewUser.phone_number"></span>
-                            </div>
-                        </div>
-
-                        <div class="p-4 bg-gray-50 border-t border-gray-100 flex justify-center">
-                            <button @click="showProfilePreview = false" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-sm transition-all shadow-sm">
-                                យល់ព្រម
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+    <style>
+        /* Enhanced hover effects for action links */
+        .text-green-600:hover, .text-emerald-600:hover, .text-red-500:hover {
+            text-decoration: underline !important;
+            transform: scale(1.05);
+            transition: all 0.2s ease;
+        }
+        
+        /* Button hover effects */
+        button[type="button"]:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Tab navigation hover */
+        nav a:hover {
+            border-bottom-width: 2px;
+        }
+        
+        /* Action links in tables */
+        td a:hover, td button:hover {
+            opacity: 0.8;
+        }
+    </style>
 
     <script>
     var ADMIN_BASE = '{{ url("/admin/users") }}';
@@ -1030,17 +963,6 @@
                     row.style.backgroundColor = '#d1fae5';
                     setTimeout(function() { row.style.backgroundColor = ''; }, 1500);
                 }
-                c.previewUser = {
-                    name: data.user.name || '',
-                    email: data.user.email || '',
-                    full_name_km: data.user.full_name_km || '',
-                    full_name_en: data.user.full_name_en || '',
-                    role: data.user.role || '',
-                    gender: data.user.gender || '',
-                    phone_number: data.user.phone_number || '',
-                    profile_picture_url: data.user.profile_picture_url || ''
-                };
-                c.showProfilePreview = true;
                 window.showToast && window.showToast(data.message || 'បានធ្វើបច្ចុប្បន្នភាព។', 'success');
             } else {
                 var msg = data.message || 'មានបញ្ហា។';
@@ -1123,7 +1045,7 @@
             var gen = genEl ? genEl.value : '';
             var prog = progEl ? progEl.value : '';
             if (!gen || !prog) {
-                scope.showPrintAlert = true;
+                window.showToast && window.showToast('សូមជ្រើសរើសជំនាន់ និងកម្មវិធីសិក្សាមុនពេលបោះពុម្ព។', 'warning');
                 return;
             }
             window.open('{{ route('admin.users.print-students') }}?generation=' + gen + '&program_id=' + prog, '_blank');
@@ -1133,12 +1055,12 @@
             var fac = facEl ? facEl.value : '';
             var dept = deptEl ? deptEl.value : '';
             if (!fac && !dept) {
-                scope.showPrintAlert = true;
+                window.showToast && window.showToast('សូមជ្រើសរើសមហវិទ្យាល័យ ឬដេប៉ាតឺម៉ង់មុនពេលបោះពុម្ព។', 'warning');
                 return;
             }
             window.open('{{ route('admin.users.print-professors') }}?faculty_id=' + fac + '&department_id=' + dept, '_blank');
         } else {
-            alert('មុខងារនេះគាំទ្រតែសម្រាប់និស្សិត និងសាស្ត្រាចារ្យប៉ុណ្ណោះ។');
+            window.showToast && window.showToast('មុខងារនេះគាំទ្រតែសម្រាប់និស្សិត និងសាស្ត្រាចារ្យប៉ុណ្ណោះ។', 'warning');
         }
     }
     </script>

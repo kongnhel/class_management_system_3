@@ -71,11 +71,22 @@
                                 <h4 class="font-bold text-slate-800 leading-tight">
                                     {{ $att->courseOffering?->course?->title_km ?? $att->courseOffering?->course?->title_en ?? 'N/A' }}
                                 </h4>
-                                <p class="text-xs text-slate-400 font-bold mt-1">
-                                     {{ __('ជំនាន់') }} {{ $att->courseOffering?->generation ?? $att->courseOffering?->targetPrograms->pluck('generation')->filter()->first() ?? '...' }}
-                                     • {{ __('បន្ទប់') }} {{ $att->courseOffering?->room_number ?? 'Online' }}
-                                    • {{ $att->courseOffering?->semester ?? '' }}/{{ $att->courseOffering?->academic_year ?? '' }}
-                                </p>
+                                <div class="flex items-center gap-2 mt-1.5 flex-wrap">
+                                    @php
+                                        $gen = $att->courseOffering?->generation ?? $att->courseOffering?->targetPrograms->first()?->pivot?->generation ?? null;
+                                    @endphp
+                                    @if($gen)
+                                        <span class="inline-flex items-center gap-1 bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full text-[10px] font-bold">
+                                            <i class="fas fa-graduation-cap"></i> {{ __('ជំនាន់ទី') }} {{ $gen }}
+                                        </span>
+                                    @endif
+                                    <span class="inline-flex items-center gap-1 bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full text-[10px] font-bold">
+                                        <i class="fas fa-door-open"></i> {{ $att->courseOffering?->room_number ?? 'Online' }}
+                                    </span>
+                                    <span class="inline-flex items-center gap-1 bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full text-[10px] font-bold">
+                                        <i class="fas fa-calendar"></i> {{ $att->courseOffering?->semester ?? '' }}/{{ $att->courseOffering?->academic_year ?? '' }}
+                                    </span>
+                                </div>
                             </div>
                         </div>
 
