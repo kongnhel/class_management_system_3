@@ -1,5 +1,10 @@
 ﻿<x-app-layout>
-    <div class="bg-gray-50 min-h-screen">
+    @php
+        $allStudentsJson = $students->map(fn($s) => ['id' => $s->id, 'name' => $s->profile?->full_name_km ?? $s->name])->values()->toJson();
+    @endphp
+    <script type="application/json" id="students-data">{!! $allStudentsJson !!}</script>
+
+    <div class="bg-gray-50 min-h-screen" x-data="attendanceApp()">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
 
             {{-- Header --}}
@@ -34,25 +39,52 @@
                 </h3>
                 <form action="{{ route('professor.attendances.store') }}" method="POST">
                     @csrf
+                    <input type="hidden" name="student_user_ids" :value="selectedStudents.join(',')">
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
                         <div>
                             <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">វគ្គសិក្សា</label>
-                            <select name="course_offering_id" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
+                            <select name="course_offering_id" x-model="selectedCourse" @change="fetchStudents($event.target.value)" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
                                 <option value="">ជ្រើសរើសវគ្គសិក្សា</option>
                                 @foreach($professorCourseOfferings as $offering)
                                     <option value="{{ $offering->id }}">{{ $offering->course?->title_km ?? $offering->course?->title_en ?? 'N/A' }} ({{ $offering->academic_year }})</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div>
+
+                        {{-- Student Multi-Select Dropdown --}}
+                        <div class="relative" @click.away="studentDropdownOpen = false">
                             <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">និស្សិត</label>
-                            <select name="student_user_id" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
-                                <option value="">ជ្រើសរើសនិស្សិត</option>
-                                @foreach($students as $student)
-                                    <option value="{{ $student->id }}">{{ $student->profile?->full_name_km ?? $student->name }}</option>
-                                @endforeach
-                            </select>
+                            <button type="button" @click="toggleStudentDropdown()"
+                                class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all text-left flex items-center justify-between">
+                                <span x-text="getStudentNames() || 'ជ្រើសរើសនិស្សិត'"></span>
+                                <i class="fas fa-chevron-down text-gray-400 text-xs" :class="studentDropdownOpen ? 'rotate-180' : ''"></i>
+                            </button>
+                            <div x-show="studentDropdownOpen" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                                class="absolute z-30 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+                                <div class="p-2 border-b border-gray-100 sticky top-0 bg-white">
+                                    <label class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 cursor-pointer">
+                                        <input type="checkbox" x-model="selectAll" @change="toggleAllStudents()"
+                                            class="w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500">
+                                        <span class="text-sm font-bold text-gray-700">ជ្រើសរើសទាំងអស់</span>
+                                    </label>
+                                </div>
+                                <div class="p-1">
+                                    <template x-for="student in courseFilterStudents" :key="student.id">
+                                        <label class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-emerald-50 cursor-pointer" :class="selectedStudents.includes(student.id) ? 'bg-emerald-50' : ''">
+                                            <input type="checkbox" :value="student.id"
+                                                @change="toggleStudent(student.id)"
+                                                :checked="selectedStudents.includes(student.id)"
+                                                class="w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500">
+                                            <span class="text-sm text-gray-700" x-text="student.name"></span>
+                                        </label>
+                                    </template>
+                                </div>
+                                <div class="p-2 border-t border-gray-100 sticky bottom-0 bg-white" x-show="selectedStudents.length > 0">
+                                    <button type="button" @click="clearStudents()" class="w-full text-xs font-bold text-gray-400 hover:text-gray-600 py-1">បោះបង់ការជ្រើសរើស</button>
+                                </div>
+                            </div>
                         </div>
+
                         <div>
                             <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">កាលបរិច្ឆេទ</label>
                             <input type="date" name="date" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
@@ -230,6 +262,60 @@
     </div>
 
     <script>
+        function attendanceApp() {
+            const allStudents = JSON.parse(document.getElementById('students-data').textContent || '[]');
+            return {
+                selectedStudents: [],
+                selectAll: false,
+                studentDropdownOpen: false,
+                students: allStudents,
+                courseFilterStudents: allStudents,
+                selectedCourse: '',
+
+                toggleStudentDropdown() { this.studentDropdownOpen = !this.studentDropdownOpen; },
+                toggleStudent(id) {
+                    const idx = this.selectedStudents.indexOf(id);
+                    if (idx === -1) this.selectedStudents.push(id);
+                    else this.selectedStudents.splice(idx, 1);
+                    this.selectAll = this.selectedStudents.length === this.courseFilterStudents.length && this.courseFilterStudents.length > 0;
+                },
+                toggleAllStudents() {
+                    if (this.selectAll) {
+                        this.selectedStudents = this.courseFilterStudents.map(s => s.id);
+                    } else {
+                        this.selectedStudents = [];
+                    }
+                },
+                clearStudents() { this.selectedStudents = []; this.selectAll = false; this.studentDropdownOpen = false; },
+                getStudentNames() {
+                    if (this.selectedStudents.length === 0) return '';
+                    if (this.selectedStudents.length === 1) {
+                        const s = this.courseFilterStudents.find(s => s.id === this.selectedStudents[0]);
+                        return s ? s.name : '';
+                    }
+                    return this.selectedStudents.length + ' និស្សិតត្រូវបានជ្រើសរើស';
+                },
+                fetchStudents(courseId) {
+                    this.selectedStudents = [];
+                    this.selectAll = false;
+                    if (!courseId) {
+                        this.courseFilterStudents = this.students;
+                        return;
+                    }
+                    fetch('/professor/api/course-offering/' + courseId + '/students', {
+                        headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                    .then(r => r.json())
+                    .then(data => {
+                        this.courseFilterStudents = data.students || [];
+                    })
+                    .catch(() => {
+                        this.courseFilterStudents = this.students;
+                    });
+                }
+            }
+        }
+
         function attendanceFilters() {
             return {
                 search: '',

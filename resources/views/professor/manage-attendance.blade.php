@@ -1,24 +1,10 @@
 ﻿<x-app-layout>
-    <div class="bg-gray-50 min-h-screen" x-data="{
-            open: false,
-            attendanceId: '',
-            studentUserId: '',
-            date: '',
-            status: '',
-            remarks: '',
-            updateRoute: '{{ route('professor.attendances.update', 0) }}',
-            showDelete: false,
-            deleteId: null,
-            deleteStudentName: ''
-        }"
-        @open-edit-modal.window="
-            open = true;
-            attendanceId = $event.detail.id;
-            studentUserId = $event.detail.studentUserId;
-            date = $event.detail.date;
-            status = $event.detail.status;
-            remarks = $event.detail.remarks;
-        ">
+    @php
+        $enrolledStudentsJson = $courseOffering->studentCourseEnrollments->unique('student_user_id')->filter(fn($e) => $e->student)->values()->map(fn($e) => ['id' => $e->student->id, 'name' => $e->student->studentProfile?->full_name_km ?? $e->student->name])->toJson();
+    @endphp
+    <script type="application/json" id="enrolled-students-data">{!! $enrolledStudentsJson !!}</script>
+
+    <div class="bg-gray-50 min-h-screen" x-data="manageAttendanceApp()">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
 
             {{-- Header --}}
@@ -56,35 +42,62 @@
                 <h3 class="font-bold text-gray-800 text-sm mb-4 flex items-center gap-2">
                     <i class="fas fa-plus-circle text-emerald-500"></i> បន្ថែមកំណត់ត្រាថ្មី
                 </h3>
-                <form action="{{ route('professor.attendances.store') }}" method="POST" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+                <form action="{{ route('professor.attendances.store') }}" method="POST" id="addAttendanceForm">
                     @csrf
                     <input type="hidden" name="course_offering_id" value="{{ $courseOffering->id }}">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">និស្សិត</label>
-                        <select name="student_user_id" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
-                            <option value="">ជ្រើសរើសនិស្សិត</option>
-                            @foreach($courseOffering->studentCourseEnrollments->unique('student_user_id') as $enrollment)
-                                @if($enrollment->student)
-                                <option value="{{ $enrollment->student->id }}">{{ $enrollment->student->studentProfile?->full_name_km ?? $enrollment->student->name }}</option>
-                                @endif
-                            @endforeach
-                        </select>
+                    <input type="hidden" name="student_user_ids" :value="selectedStudents.join(',')">
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+                        {{-- Student Multi-Select Dropdown --}}
+                        <div class="relative" @click.away="studentDropdownOpen = false">
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">និស្សិត</label>
+                            <button type="button" @click="toggleStudentDropdown()"
+                                class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all text-left flex items-center justify-between">
+                                <span x-text="getStudentNames() || 'ជ្រើសរើសនិស្សិត'"></span>
+                                <i class="fas fa-chevron-down text-gray-400 text-xs" :class="studentDropdownOpen ? 'rotate-180' : ''"></i>
+                            </button>
+                            <div x-show="studentDropdownOpen" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                                class="absolute z-30 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+                                <div class="p-2 border-b border-gray-100 sticky top-0 bg-white">
+                                    <label class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 cursor-pointer">
+                                        <input type="checkbox" x-model="selectAll" @change="toggleAllStudents()"
+                                            class="w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500">
+                                        <span class="text-sm font-bold text-gray-700">ជ្រើសរើសទាំងអស់</span>
+                                    </label>
+                                </div>
+                                <div class="p-1">
+                                    <template x-for="student in students" :key="student.id">
+                                        <label class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-emerald-50 cursor-pointer" :class="selectedStudents.includes(student.id) ? 'bg-emerald-50' : ''">
+                                            <input type="checkbox" :value="student.id"
+                                                @change="toggleStudent(student.id)"
+                                                :checked="selectedStudents.includes(student.id)"
+                                                class="w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500">
+                                            <span class="text-sm text-gray-700" x-text="student.name"></span>
+                                        </label>
+                                    </template>
+                                </div>
+                                <div class="p-2 border-t border-gray-100 sticky bottom-0 bg-white" x-show="selectedStudents.length > 0">
+                                    <button type="button" @click="clearStudents()" class="w-full text-xs font-bold text-gray-400 hover:text-gray-600 py-1">បោះបង់ការជ្រើសរើស</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">កាលបរិច្ឆេទ</label>
+                            <input type="date" name="date" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">ស្ថានភាព</label>
+                            <select name="status" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
+                                <option value="present">មានវត្តមាន</option>
+                                <option value="absent">អវត្តមាន</option>
+                                <option value="permission">មានច្បាប់</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white rounded-xl font-bold text-sm shadow-md transition-all active:scale-95">
+                            <i class="fas fa-save"></i> រក្សាទុក
+                        </button>
                     </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">កាលបរិច្ឆេទ</label>
-                        <input type="date" name="date" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">ស្ថានភាព</label>
-                        <select name="status" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
-                            <option value="present">មានវត្តមាន</option>
-                            <option value="absent">អវត្តមាន</option>
-                            <option value="permission">មានច្បាប់</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white rounded-xl font-bold text-sm shadow-md transition-all active:scale-95">
-                        <i class="fas fa-save"></i> រក្សាទុក
-                    </button>
                 </form>
             </div>
 
@@ -236,6 +249,68 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function manageAttendanceApp() {
+            const enrolledStudents = JSON.parse(document.getElementById('enrolled-students-data').textContent || '[]');
+            return {
+                open: false,
+                attendanceId: '',
+                studentUserId: '',
+                date: '',
+                status: '',
+                remarks: '',
+                updateRoute: '{{ route('professor.attendances.update', 0) }}',
+                showDelete: false,
+                deleteId: null,
+                deleteStudentName: '',
+                studentDropdownOpen: false,
+                selectedStudents: [],
+                selectAll: false,
+                students: enrolledStudents,
+
+                toggleStudentDropdown() { this.studentDropdownOpen = !this.studentDropdownOpen; },
+                toggleStudent(id) {
+                    const idx = this.selectedStudents.indexOf(id);
+                    if (idx === -1) this.selectedStudents.push(id);
+                    else this.selectedStudents.splice(idx, 1);
+                    this.selectAll = this.selectedStudents.length === this.students.length;
+                },
+                toggleAllStudents() {
+                    if (this.selectAll) {
+                        this.selectedStudents = this.students.map(s => s.id);
+                    } else {
+                        this.selectedStudents = [];
+                    }
+                },
+                clearStudents() { this.selectedStudents = []; this.selectAll = false; this.studentDropdownOpen = false; },
+                getStudentNames() {
+                    if (this.selectedStudents.length === 0) return '';
+                    if (this.selectedStudents.length === 1) {
+                        const s = this.students.find(s => s.id === this.selectedStudents[0]);
+                        return s ? s.name : '';
+                    }
+                    return this.selectedStudents.length + ' និស្សិតត្រូវបានជ្រើសរើស';
+                }
+            }
+        }
+    </script>
+
+    <script>
+        document.addEventListener('alpine:init', () => {
+            window.addEventListener('open-edit-modal', (e) => {
+                const app = Alpine.$data(document.querySelector('[x-data]'));
+                if (app) {
+                    app.open = true;
+                    app.attendanceId = e.detail.id;
+                    app.studentUserId = e.detail.studentUserId;
+                    app.date = e.detail.date;
+                    app.status = e.detail.status;
+                    app.remarks = e.detail.remarks;
+                }
+            });
+        });
+    </script>
 
     <script>
         document.querySelectorAll('.edit-attendance').forEach(btn => {

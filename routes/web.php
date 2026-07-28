@@ -275,6 +275,7 @@ Route::middleware(['auth', 'role:professor'])->prefix('professor')->name('profes
     Route::put('/course-offering/{offering_id}/exams/{exam}', [ProfessorController::class, 'updateExam'])->name('exams.update');
     Route::delete('/course-offering/{offering_id}/exams/{exam}', [ProfessorController::class, 'destroyExam'])->name('exams.destroy');
     Route::get('/all-attendance', [ProfessorController::class, 'allAttendance'])->name('all-attendance');
+    Route::get('/api/course-offering/{offering_id}/students', [ProfessorController::class, 'apiGetStudents'])->name('api.course-offering.students');
     Route::post('/attendances', [ProfessorAttendanceController::class, 'storeAttendance'])->name('attendances.store');
     Route::put('/attendances/{attendance}', [ProfessorAttendanceController::class, 'updateAttendance'])->name('attendances.update');
     Route::delete('/attendances/{attendance}', [ProfessorAttendanceController::class, 'destroyAttendance'])->name('attendances.destroy');

@@ -79,8 +79,10 @@ class AttendanceApiController extends Controller
 
     public function getStudents(Request $request, $courseOfferingId)
     {
+        $today = now()->toDateString();
+
         $attendances = AttendanceRecord::where('course_offering_id', $courseOfferingId)
-            ->where('date', now()->toDateString())
+            ->whereDate('date', $today)
             ->with('student')
             ->with('student.studentProfile')
             ->with('student.profile')
@@ -99,6 +101,15 @@ class AttendanceApiController extends Controller
                     if (!empty($pic) && $pic !== 'null') { $profilePic = $pic; break; }
                 }
 
+                $source = 'qr';
+                if ($record->remarks === 'System Auto-Absent') {
+                    $source = 'system';
+                } elseif (!empty($record->remarks)) {
+                    $source = 'manual';
+                } elseif ($record->created_at->lt(now()->subMinutes(5))) {
+                    $source = 'manual';
+                }
+
                 return [
                     'id' => $record->id,
                     'status' => $record->status,
@@ -107,18 +118,24 @@ class AttendanceApiController extends Controller
                     'profile_pic' => $profilePic,
                     'initial' => mb_substr($record->student->studentProfile?->full_name_km ?? $record->student->profile?->full_name_km ?? $record->student->name ?? 'N', 0, 1),
                     'time' => $record->created_at->format('H:i:s'),
+                    'source' => $source,
+                    'remarks' => $record->remarks ?? '',
                 ];
             });
 
         $totalEnrolled = StudentCourseEnrollment::where('course_offering_id', $courseOfferingId)->count();
 
-            return response()->json([
+        return response()->json([
             'success' => true,
             'attendances' => $attendances,
             'total_enrolled' => $totalEnrolled,
             'counts' => [
                 'present' => $attendances->where('status', 'present')->count(),
+                'late' => $attendances->where('status', 'late')->count(),
                 'permission' => $attendances->where('status', 'permission')->count(),
+                'absent' => $attendances->where('status', 'absent')->count(),
+                'manual' => $attendances->where('source', 'manual')->count(),
+                'qr' => $attendances->where('source', 'qr')->count(),
             ],
         ]);
     }

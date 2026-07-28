@@ -145,4 +145,30 @@
             </div>
         </div>
     </div>
+
+    <script>
+    (function() {
+        var form = document.querySelector('form[action="{{ route('admin.grades.index') }}"]');
+        var searchInput = form ? form.querySelector('input[name="search"]') : null;
+        var timer = null;
+
+        if (!form) return;
+
+        // Live search with debounce
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                clearTimeout(timer);
+                timer = setTimeout(function() { form.submit(); }, 500);
+            });
+        }
+
+        // Auto-submit on dropdown change
+        var selects = form.querySelectorAll('select');
+        selects.forEach(function(select) {
+            select.addEventListener('change', function() {
+                form.submit();
+            });
+        });
+    })();
+    </script>
 </x-app-layout>

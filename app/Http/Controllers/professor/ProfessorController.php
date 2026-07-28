@@ -230,6 +230,29 @@ class ProfessorController extends Controller
     }
 
     /**
+     * API to get students for a course offering (JSON response).
+     */
+    public function apiGetStudents($offering_id)
+    {
+        $user = Auth::user();
+
+        $courseOffering = CourseOffering::where('id', $offering_id)
+            ->where('lecturer_user_id', $user->id)
+            ->with(['studentCourseEnrollments.student.studentProfile'])
+            ->firstOrFail();
+
+        $students = $courseOffering->studentCourseEnrollments
+            ->filter(fn($enrollment) => $enrollment->student)
+            ->map(fn($enrollment) => [
+                'id' => $enrollment->student->id,
+                'name' => $enrollment->student->studentProfile?->full_name_km ?? $enrollment->student->name,
+            ])
+            ->values();
+
+        return response()->json(['students' => $students]);
+    }
+
+    /**
      * Display an 'all-in-one' view for professors,
      * combining various data points from all their courses.
      */

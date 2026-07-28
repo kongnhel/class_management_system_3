@@ -91,7 +91,7 @@
                     <template x-if="students.length > 0">
                         <div>
                             {{-- Summary Bar --}}
-                            <div class="flex items-center gap-3 mb-4 px-2">
+                            <div class="flex items-center gap-3 mb-4 px-2 flex-wrap">
                                 <div class="flex items-center gap-1.5 bg-green-50 border border-green-200 px-3 py-1.5 rounded-lg">
                                     <div class="w-2 h-2 bg-green-500 rounded-full"></div>
                                     <span class="text-[11px] font-bold text-green-700" x-text="counts.present + ' មក'"></span>
@@ -106,6 +106,18 @@
                                     <div class="flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-lg">
                                         <div class="w-2 h-2 bg-emerald-500 rounded-full"></div>
                                         <span class="text-[11px] font-bold text-emerald-700" x-text="counts.permission + ' ច្បាប់'"></span>
+                                    </div>
+                                </template>
+                                <template x-if="counts.manual > 0">
+                                    <div class="flex items-center gap-1.5 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-lg">
+                                        <div class="w-2 h-2 bg-amber-500 rounded-full"></div>
+                                        <span class="text-[11px] font-bold text-amber-700" x-text="counts.manual + ' បញ្ចូនដោយដៃ'"></span>
+                                    </div>
+                                </template>
+                                <template x-if="counts.qr > 0">
+                                    <div class="flex items-center gap-1.5 bg-blue-50 border border-blue-200 px-3 py-1.5 rounded-lg">
+                                        <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                        <span class="text-[11px] font-bold text-blue-700" x-text="counts.qr + ' QR'"></span>
                                     </div>
                                 </template>
                             </div>
@@ -163,6 +175,18 @@
                                                     <svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                                     <span x-text="student.time"></span>
                                                 </span>
+                                                <template x-if="student.source === 'manual'">
+                                                    <span class="inline-flex items-center gap-1 text-[9px] font-bold text-amber-600 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded">
+                                                        <svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                                                        បញ្ចូនដោយដៃ
+                                                    </span>
+                                                </template>
+                                                <template x-if="student.source === 'qr'">
+                                                    <span class="inline-flex items-center gap-1 text-[9px] font-bold text-blue-600 bg-blue-50 border border-blue-200 px-1.5 py-0.5 rounded">
+                                                        <svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" /></svg>
+                                                        QR Code
+                                                    </span>
+                                                </template>
                                             </div>
                                         </div>
 
@@ -182,7 +206,7 @@
                                 <svg class="w-10 h-10 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4" /></svg>
                             </div>
                             <h4 class="text-slate-500 font-bold text-sm mb-1">មិនទាន់មានសិស្សស្កែន</h4>
-                            <p class="text-slate-400 text-xs">សូមរង់ចាំសិស្សស្កែន QR Code</p>
+                            <p class="text-slate-400 text-xs">សូមរង់ចាំសិស្សស្កែន QR Code ឬបញ្ចូនវត្តមានដោយដៃ</p>
                         </div>
                     </template>
                 </div>
@@ -259,7 +283,7 @@ function attendanceModal() {
         qrSvg: '',
         students: [],
         totalEnrolled: 0,
-        counts: { present: 0, late: 0, permission: 0 },
+        counts: { present: 0, late: 0, permission: 0, absent: 0, manual: 0, qr: 0 },
         pollInterval: null,
         qrInterval: null,
         qrTimeLeft: 10,

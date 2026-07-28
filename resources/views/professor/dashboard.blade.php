@@ -67,7 +67,7 @@
             @php
                 $todayClassCount = $todaySchedules->pluck('course_offering_id')->unique()->count();
             @endphp
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 lg:gap-4">
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3 lg:gap-4">
                 <div class="bg-white p-4 rounded-2xl border border-emerald-100 shadow-sm flex items-center gap-3">
                     <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg flex-shrink-0"><i class="fas fa-chalkboard-teacher"></i></div>
                     <div class="min-w-0">
@@ -87,20 +87,6 @@
                     <div class="min-w-0">
                         <p class="text-[10px] text-gray-400 font-bold uppercase truncate">{{ __('វត្តមានថ្ងៃនេះ') }}</p>
                         <h4 class="text-xl font-black text-gray-800">{{ $todayAttendanceCount ?? 0 }}</h4>
-                    </div>
-                </div>
-                <div class="bg-white p-4 rounded-2xl border border-amber-100 shadow-sm flex items-center gap-3">
-                    <div class="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg flex-shrink-0"><i class="fas fa-file-signature"></i></div>
-                    <div class="min-w-0">
-                        <p class="text-[10px] text-gray-400 font-bold uppercase truncate">{{ __('ការងារដាក់ឱ្យ') }}</p>
-                        <h4 class="text-xl font-black text-gray-800">{{ $upcomingAssignments->count() }}</h4>
-                    </div>
-                </div>
-                <div class="bg-white p-4 rounded-2xl border border-rose-100 shadow-sm flex items-center gap-3">
-                    <div class="w-11 h-11 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center text-lg flex-shrink-0"><i class="fas fa-award"></i></div>
-                    <div class="min-w-0">
-                        <p class="text-[10px] text-gray-400 font-bold uppercase truncate">{{ __('ប្រឡង/ឃ្វីស') }}</p>
-                        <h4 class="text-xl font-black text-gray-800">{{ $upcomingExams->count() + $upcomingQuizzes->count() }}</h4>
                     </div>
                 </div>
             </div>

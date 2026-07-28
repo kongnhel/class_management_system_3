@@ -19,35 +19,48 @@ class ProfessorAttendanceController extends Controller
     {
         $request->validate([
             'course_offering_id' => 'required|exists:course_offerings,id',
-            'student_user_id' => [
-                'required',
-                Rule::exists('student_course_enrollments', 'student_user_id')
-                    ->where('course_offering_id', $request->course_offering_id),
-            ],
+            'student_user_ids' => 'required_without:student_user_id|string',
+            'student_user_id' => 'required_without:student_user_ids|nullable',
             'date' => 'required|date',
             'status' => 'required|in:present,absent,late,permission',
             'remarks' => 'nullable|string|max:255',
         ], [
-            'student_user_id.required' => 'អត្តសញ្ញាណសិស្សតម្រូវឱ្យបញ្ចូល។',
-            'student_user_id.exists' => 'អត្តសញ្ញាណសិស្សមិនមានឈ្មោះក្នុងបញ្ជីរៀននៃវគ្គសិក្សានេះទេ។',
-            'course_offering_id.required' => 'អត្តសញ្ញាណវគ្គសិក្សាតម្រូវឱ្យបញ្ចូល។',
+            'student_user_ids.required_without' => 'សូមជ្រើសរើសនិស្សិតយ៉ាងហោចណាស់មួយ។',
             'date.required' => 'កាលបរិច្ឆេទតម្រូវឱ្យបញ្ចូល។',
             'status.required' => 'ស្ថានភាពវត្តមានតម្រូវឱ្យបញ្ចូល។',
         ]);
 
-        AttendanceRecord::updateOrInsert(
-            [
-                'course_offering_id' => $request->input('course_offering_id'),
-                'student_user_id' => $request->input('student_user_id'),
-                'date' => $request->input('date'),
-            ],
-            [
-                'user_id' => $request->input('student_user_id'),
-                'status' => $request->input('status'),
-                'remarks' => $request->input('remarks'),
-                'updated_at' => now(),
-            ]
-        );
+        // Get student IDs from either single or multiple selection
+        $studentIds = [];
+        if (!empty($request->student_user_ids)) {
+            $studentIds = array_filter(explode(',', $request->student_user_ids));
+        } elseif (!empty($request->student_user_id)) {
+            $studentIds = [$request->student_user_id];
+        }
+
+        if (empty($studentIds)) {
+            return redirect()->back()->with('error', 'សូមជ្រើសរើសនិស្សិតយ៉ាងហោចណាស់មួយ។');
+        }
+
+        foreach ($studentIds as $studentId) {
+            $studentId = trim($studentId);
+            if (empty($studentId)) continue;
+
+            AttendanceRecord::updateOrInsert(
+                [
+                    'course_offering_id' => $request->input('course_offering_id'),
+                    'student_user_id' => $studentId,
+                    'date' => $request->input('date'),
+                ],
+                [
+                    'user_id' => $studentId,
+                    'status' => $request->input('status'),
+                    'remarks' => $request->input('remarks') ?: 'Manual entry',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
+        }
 
         return redirect()->route('professor.manage-attendance', ['offering_id' => $request->input('course_offering_id')])
             ->with('success', __('កំណត់ត្រាវត្តមានត្រូវបានបន្ថែមដោយជោគជ័យ។'));

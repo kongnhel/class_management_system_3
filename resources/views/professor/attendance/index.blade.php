@@ -1,7 +1,7 @@
 ﻿<x-app-layout>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <div class="py-12 bg-slate-50 min-h-screen">
+    <div class="py-12 bg-slate-50 min-h-screen" x-data="attendanceBulk()">
         <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
             
             <div class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -38,6 +38,36 @@
                 </div>
             </div>
 
+            {{-- Bulk Action Bar --}}
+            <div class="bg-white shadow-sm border border-slate-200 rounded-2xl p-4 mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div class="flex items-center gap-4">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" @change="toggleAll($event)" :checked="allSelected"
+                            class="w-4 h-4 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500 cursor-pointer">
+                        <span class="text-sm font-bold text-slate-700">{{ __('ជ្រើសរើសទាំងអស់') }}</span>
+                    </label>
+                    <span class="text-xs font-bold text-slate-400" x-show="selectedIds.length > 0" x-text="selectedIds.length + ' {{ __('រកឃើញ') }}'"></span>
+                </div>
+                <div class="flex items-center gap-2" x-show="selectedIds.length > 0" x-transition>
+                    <button type="button" @click="bulkSet('present')"
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-50 border border-green-200 text-green-700 rounded-lg text-xs font-bold hover:bg-green-100 transition-all">
+                        <i class="fas fa-check-circle"></i> {{ __('មក') }} (<span x-text="selectedIds.length"></span>)
+                    </button>
+                    <button type="button" @click="bulkSet('permission')"
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 border border-blue-200 text-blue-700 rounded-lg text-xs font-bold hover:bg-blue-100 transition-all">
+                        <i class="fas fa-file-alt"></i> {{ __('ច្បាប់') }} (<span x-text="selectedIds.length"></span>)
+                    </button>
+                    <button type="button" @click="bulkSet('absent')"
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-50 border border-red-200 text-red-700 rounded-lg text-xs font-bold hover:bg-red-100 transition-all">
+                        <i class="fas fa-times-circle"></i> {{ __('អវត្តមាន') }} (<span x-text="selectedIds.length"></span>)
+                    </button>
+                    <button type="button" @click="clearSelection()"
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 border border-slate-200 text-slate-600 rounded-lg text-xs font-bold hover:bg-slate-200 transition-all ml-1">
+                        <i class="fas fa-times"></i> {{ __('បោះបង់') }}
+                    </button>
+                </div>
+            </div>
+
             <div class="bg-white shadow-sm border border-slate-200 rounded-2xl overflow-hidden">
                 <form id="attendanceForm" action="{{ route('professor.attendance.store', $courseOffering->id) }}" method="POST">
                     @csrf
@@ -46,13 +76,20 @@
                         <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr class="bg-slate-50 border-b border-slate-200">
+                                    <th class="px-4 py-4 w-12"></th>
                                     <th class="px-8 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">{{ __('ឈ្មោះនិស្សិត') }}</th>
                                     <th class="px-8 py-4 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">{{ __('ស្ថានភាពវត្តមាន') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100">
                                 @foreach ($students as $student)
-                                    <tr class="hover:bg-slate-50 transition-colors group">
+                                    <tr class="hover:bg-slate-50 transition-colors group" :class="selectedIds.includes({{ $student->id }}) ? 'bg-emerald-50/50' : ''">
+                                        <td class="px-4 py-5">
+                                            <input type="checkbox" value="{{ $student->id }}"
+                                                @change="toggleStudent({{ $student->id }})"
+                                                :checked="selectedIds.includes({{ $student->id }})"
+                                                class="w-4 h-4 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500 cursor-pointer">
+                                        </td>
                                         <td class="px-8 py-5">
                                             <div class="flex items-center">
                                                 <div class="h-10 w-10 flex-shrink-0 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold group-hover:bg-green-100 group-hover:text-green-600 transition-colors">
@@ -104,6 +141,43 @@
     </div>
 
     <script>
+        function attendanceBulk() {
+            return {
+                selectedIds: [],
+                allSelected: false,
+                totalStudents: {{ $students->count() }},
+                toggleAll(event) {
+                    if (event.target.checked) {
+                        this.selectedIds = [@foreach($students as $s){{ $s->id }}, @endphp].map(id => id);
+                        this.allSelected = true;
+                    } else {
+                        this.selectedIds = [];
+                        this.allSelected = false;
+                    }
+                },
+                toggleStudent(id) {
+                    const idx = this.selectedIds.indexOf(id);
+                    if (idx === -1) {
+                        this.selectedIds.push(id);
+                    } else {
+                        this.selectedIds.splice(idx, 1);
+                    }
+                    this.allSelected = this.selectedIds.length === this.totalStudents;
+                },
+                bulkSet(status) {
+                    this.selectedIds.forEach(id => {
+                        const radio = document.querySelector('input[name="attendance[' + id + ']"][value="' + status + '"]');
+                        if (radio) radio.checked = true;
+                    });
+                    this.clearSelection();
+                },
+                clearSelection() {
+                    this.selectedIds = [];
+                    this.allSelected = false;
+                }
+            }
+        }
+
         function getLocation() {
             const btn = document.getElementById('btn-location');
             btn.disabled = true;
@@ -122,7 +196,6 @@
             const lng = position.coords.longitude;
             const sessionId = '{{ $courseOffering->id }}';
 
-            // ផ្ញើទៅកាន់ Controller verifyLocation
             fetch('{{ route("professor.verify-location") }}', {
                 method: 'POST',
                 headers: {
