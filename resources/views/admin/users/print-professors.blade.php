@@ -7,10 +7,11 @@
     <link rel="icon" type="image/png" href="{{ asset('assets/image/nmu_Logo.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Moul:wght@400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@100;300;400;700;900&family=Noto+Sans+Khmer:wght@100;300;400;700&display=swap" rel="stylesheet">
     <style>
         @page { size: A4 landscape; margin: 15mm; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Khmer OS Battambang', 'KhmerOSbattambang', sans-serif; font-size: 12px; color: #000; padding: 0; }
+        body { font-family: 'Khmer OS Battambang', 'Battambang', 'Noto Sans Khmer', sans-serif; font-size: 12px; color: #000; padding: 0; }
         .container { max-width: 100%; margin: 0 auto; padding: 10px 20px; }
 
         .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #ddd; }
@@ -25,7 +26,7 @@
         .doc-header .logo { flex-shrink: 0; width: 100px; margin-right: 15px; padding-top: 5px; }
         .doc-header .logo img { width: 100px; height: 100px; object-fit: contain; }
         .doc-header .text { flex: 1; text-align: center; }
-        .header-kh { font-family: 'Moul', 'Khmer OS Muol', 'KhmerOSmuol', 'Khmer OS Battambang', serif; }
+        .header-kh { font-family: 'Moul', 'Khmer OS Muol', 'KhmerOSmuol', 'Khmer OS Battambang', 'Battambang', serif; }
         .line1 { font-size: 14px; margin-bottom: 2px; }
         .line2 { font-size: 14px; font-weight: bold; margin-bottom: 2px; }
         .line-motto { font-size: 11px; margin-bottom: 2px; letter-spacing: 2px; }

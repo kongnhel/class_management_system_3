@@ -6,16 +6,17 @@
     <title>បញ្ជីឈ្មោះនិស្សិត</title>
     <link rel="icon" type="image/png" href="{{ asset('assets/image/nmu_Logo.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Moul:wght@400&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Moul:wght@400&family=Noto+Sans+Khmer:wght@300;400;500;600;700;800&family=Battambang:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         @page { size: A4 landscape; margin: 15mm; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Khmer OS Battambang', 'KhmerOSbattambang', sans-serif; font-size: 12px; color: #000; padding: 0; }
+        body { font-family: 'Khmer OS Battambang', 'Battambang', 'Noto Sans Khmer', sans-serif; font-size: 12px; color: #000; padding: 0; }
         .container { max-width: 100%; margin: 0 auto; padding: 10px 20px; }
 
         .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #ddd; }
-        .toolbar h2 { margin: 0; font-size: 15px; color: #333; }
-        .btn { display: inline-block; padding: 7px 18px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; text-decoration: none; }
+        .toolbar h2 { margin: 0; font-size: 15px; color: #333; font-family: 'Khmer OS Battambang', 'Battambang', 'Noto Sans Khmer', sans-serif; }
+        .btn { display: inline-block; padding: 7px 18px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; text-decoration: none; font-family: 'Khmer OS Battambang', 'Battambang', 'Noto Sans Khmer', sans-serif; }
         .btn-print { background: #2563eb; color: #fff; }
         .btn-print:hover { background: #1d4ed8; }
         .btn-back { background: #6b7280; color: #fff; }
@@ -25,7 +26,7 @@
         .doc-header .logo { flex-shrink: 0; width: 100px; margin-right: 15px; padding-top: 5px; }
         .doc-header .logo img { width: 100px; height: 100px; object-fit: contain; }
         .doc-header .text { flex: 1; text-align: center; }
-        .header-kh { font-family: 'Moul', 'Khmer OS Muol', 'KhmerOSmuol', 'Khmer OS Battambang', serif; }
+        .header-kh { font-family: 'Moul', 'Khmer OS Battambang', 'Battambang', serif; }
         .line1 { font-size: 14px; margin-bottom: 2px; }
         .line2 { font-size: 14px; font-weight: bold; margin-bottom: 2px; }
         .line-motto { font-size: 11px; margin-bottom: 2px; letter-spacing: 2px; }
@@ -35,10 +36,10 @@
         .line6 { font-size: 16px; font-weight: bold; color: #b91c1c; margin-bottom: 4px; }
         .line7 { font-size: 11px; font-style: italic; color: #555; }
 
-        .info-row { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 12px; line-height: 1.6; }
+        .info-row { display: flex; justify-content: space-between; margin-bottom: 6px; font-family: 'Khmer OS Battambang', 'Battambang', 'Noto Sans Khmer', sans-serif; font-size: 12px; line-height: 1.6; }
 
         table { width: 100%; border-collapse: collapse; margin-top: 5px; table-layout: fixed; }
-        th, td { border: 1px solid #000; padding: 4px 6px; text-align: center; vertical-align: middle; font-size: 11px; word-wrap: break-word; }
+        th, td { border: 1px solid #000; padding: 4px 6px; text-align: center; vertical-align: middle; font-family: 'Khmer OS Battambang', 'Battambang', 'Noto Sans Khmer', sans-serif; font-size: 11px; word-wrap: break-word; }
         th { background-color: #fff; font-weight: bold; }
         .text-left { text-align: left; }
 
@@ -53,7 +54,7 @@
         .col-address { width: auto; }
 
         .signature-section { display: flex; justify-content: space-between; margin-top: 40px; padding: 0 30px; }
-        .signature-block { text-align: center; font-size: 12px; }
+        .signature-block { text-align: center; font-size: 12px; font-family: 'Khmer OS Battambang', 'Battambang', 'Noto Sans Khmer', sans-serif; }
         .signature-block .title { font-weight: bold; }
         .signature-block .date-line { margin-top: 5px; font-style: italic; font-size: 11px; }
         .signature-block .sign-line { margin-top: 50px; border-top: 1px solid #000; width: 200px; display: inline-block; }
