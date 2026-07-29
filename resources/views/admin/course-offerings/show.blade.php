@@ -273,7 +273,6 @@
                                                                     ];
                                                                     $statusLabels = [
                                                                         'present' => 'វត្តមាន',
-                                                                        'late' => 'យឺត',
                                                                         'permission' => 'ច្បាប់',
                                                                         'absent' => 'អវត្តមាន',
                                                                     ];

@@ -42,7 +42,6 @@
                                         'present', 'មាន' => ['label' => 'មកសិក្សា', 'color' => 'bg-emerald-500', 'text' => 'text-emerald-700', 'bg_soft' => 'bg-emerald-50'],
                                         'absent', 'អវត្តមាន' => ['label' => 'អវត្តមាន', 'color' => 'bg-rose-500', 'text' => 'text-rose-700', 'bg_soft' => 'bg-rose-50'],
                                         'permission', 'ច្បាប់' => ['label' => 'ច្បាប់', 'color' => 'bg-amber-500', 'text' => 'text-amber-700', 'bg_soft' => 'bg-amber-50'],
-                                        'late', 'យឺត' => ['label' => 'យឺតយ៉ាវ', 'color' => 'bg-orange-500', 'text' => 'text-orange-700', 'bg_soft' => 'bg-orange-50'],
                                         default => ['label' => $attendance->status, 'color' => 'bg-slate-400', 'text' => 'text-slate-600', 'bg_soft' => 'bg-slate-50']
                                     };
                                 @endphp
@@ -84,7 +83,6 @@
                                 'present', 'មាន' => ['label' => 'មកសិក្សា', 'dot' => 'bg-emerald-500'],
                                 'absent', 'អវត្តមាន' => ['label' => 'អវត្តមាន', 'dot' => 'bg-rose-500'],
                                 'permission', 'ច្បាប់' => ['label' => 'ច្បាប់', 'dot' => 'bg-amber-500'],
-                                'late', 'យឺត' => ['label' => 'យឺតយ៉ាវ', 'dot' => 'bg-orange-500'],
                                 default => ['label' => $attendance->status, 'dot' => 'bg-slate-400']
                             };
                         @endphp

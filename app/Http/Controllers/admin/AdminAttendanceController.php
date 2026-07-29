@@ -8,6 +8,7 @@ use App\Models\CourseOffering;
 use App\Models\Generation;
 use App\Models\Program;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AdminAttendanceController extends Controller
 {
@@ -86,7 +87,6 @@ class AdminAttendanceController extends Controller
             $totalDays = $studentRecords->count();
             $presentDays = $studentRecords->where('status', 'present')->count();
             $absentDays = $studentRecords->where('status', 'absent')->count();
-            $lateDays = $studentRecords->where('status', 'late')->count();
             $permissionDays = $studentRecords->where('status', 'permission')->count();
 
             $attendanceRate = $totalDays > 0 ? round(($presentDays / $totalDays) * 100, 1) : 0;
@@ -96,7 +96,6 @@ class AdminAttendanceController extends Controller
                 'total_days' => $totalDays,
                 'present_days' => $presentDays,
                 'absent_days' => $absentDays,
-                'late_days' => $lateDays,
                 'permission_days' => $permissionDays,
                 'attendance_rate' => $attendanceRate,
             ];
@@ -108,12 +107,65 @@ class AdminAttendanceController extends Controller
             'total_records' => $attendanceRecords->count(),
             'present_total' => $attendanceRecords->where('status', 'present')->count(),
             'absent_total' => $attendanceRecords->where('status', 'absent')->count(),
-            'late_total' => $attendanceRecords->where('status', 'late')->count(),
             'overall_rate' => $attendanceRecords->count() > 0
                 ? round(($attendanceRecords->where('status', 'present')->count() / $attendanceRecords->count()) * 100, 1)
                 : 0,
         ];
 
         return view('admin.attendance.show', compact('courseOffering', 'studentAttendance', 'stats'));
+    }
+
+    public function exportAttendance(CourseOffering $courseOffering)
+    {
+        $courseOffering->load([
+            'course',
+            'lecturer',
+            'targetPrograms',
+            'studentCourseEnrollments.student.studentProfile',
+        ]);
+
+        $attendanceRecords = AttendanceRecord::where('course_offering_id', $courseOffering->id)
+            ->with('student')
+            ->get();
+
+        $enrollments = $courseOffering->studentCourseEnrollments
+            ->unique('student_user_id')
+            ->values();
+
+        $studentAttendance = $enrollments->map(function ($enrollment) use ($attendanceRecords) {
+            $studentRecords = $attendanceRecords->where('student_user_id', $enrollment->student_user_id);
+            $totalDays = $studentRecords->count();
+            $presentDays = $studentRecords->where('status', 'present')->count();
+            $absentDays = $studentRecords->where('status', 'absent')->count();
+            $permissionDays = $studentRecords->where('status', 'permission')->count();
+
+            $attendanceRate = $totalDays > 0 ? round(($presentDays / $totalDays) * 100, 1) : 0;
+
+            return [
+                'student' => $enrollment->student,
+                'total_days' => $totalDays,
+                'present_days' => $presentDays,
+                'absent_days' => $absentDays,
+                'permission_days' => $permissionDays,
+                'attendance_rate' => $attendanceRate,
+            ];
+        });
+
+        $stats = [
+            'total_students' => $enrollments->count(),
+            'total_records' => $attendanceRecords->count(),
+            'present_total' => $attendanceRecords->where('status', 'present')->count(),
+            'absent_total' => $attendanceRecords->where('status', 'absent')->count(),
+            'overall_rate' => $attendanceRecords->count() > 0
+                ? round(($attendanceRecords->where('status', 'present')->count() / $attendanceRecords->count()) * 100, 1)
+                : 0,
+        ];
+
+        $fileName = 'Attendance_'.str_replace([' ', '/', '\\'], '_', $courseOffering->course->title_km ?? 'report').'.xlsx';
+
+        return Excel::download(
+            new \App\Exports\AdminAttendanceExcelExport($courseOffering, $studentAttendance, $stats),
+            $fileName
+        );
     }
 }

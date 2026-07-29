@@ -127,15 +127,6 @@
                     </div>
                 </div>
 
-                {{-- Late --}}
-                <div class="bg-white p-4 rounded-2xl border border-amber-100 shadow-sm flex items-center gap-3">
-                    <div class="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg flex-shrink-0"><i class="fas fa-clock"></i></div>
-                    <div class="min-w-0">
-                        <p class="text-[10px] text-gray-400 font-bold uppercase truncate">{{ __('stu_late') }}</p>
-                        <h4 class="text-xl font-black text-gray-800">{{ $totalLate ?? 0 }}</h4>
-                    </div>
-                </div>
-
                 {{-- Completed courses --}}
                 @if($totalCoursesInProgram > 0)
                 <div class="bg-white p-4 rounded-2xl border border-violet-100 shadow-sm flex items-center gap-3">
@@ -295,8 +286,6 @@
                                             </span>
                                         @elseif($course->today_status == 'absent')
                                             <span class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-100">{{ __('stu_absent') }}</span>
-                                        @elseif($course->today_status == 'late')
-                                            <span class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-100">{{ __('stu_late') }}</span>
                                         @else
                                             <span class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-gray-50 text-gray-400 border border-gray-100">{{ __('stu_not_recorded') }}</span>
                                         @endif
@@ -413,7 +402,7 @@
                                 <h4 class="text-sm font-bold text-gray-800">{{ __('stu_attendance_score') }}</h4>
                             </div>
                             @php
-                                $totalRecords = ($totalPresent ?? 0) + ($totalAbsent ?? 0) + ($totalPermission ?? 0) + ($totalLate ?? 0);
+                                $totalRecords = ($totalPresent ?? 0) + ($totalAbsent ?? 0) + ($totalPermission ?? 0);
                                 $presentRate = $totalRecords > 0 ? round((($totalPresent ?? 0) / $totalRecords) * 100) : 0;
                             @endphp
                             <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-{{ $scoreColor }}-50 text-{{ $scoreColor }}-600">{{ $presentRate }}%</span>
@@ -443,10 +432,6 @@
                             <div class="flex items-center justify-between py-2 px-3 bg-emerald-50/50 rounded-lg">
                                 <span class="flex items-center gap-2 text-xs font-semibold text-gray-600"><i class="fas fa-file-contract text-emerald-500"></i> {{ __('stu_permission') }}</span>
                                 <span class="font-black text-gray-800 text-sm">{{ $totalPermission ?? 0 }}</span>
-                            </div>
-                            <div class="flex items-center justify-between py-2 px-3 bg-amber-50/50 rounded-lg">
-                                <span class="flex items-center gap-2 text-xs font-semibold text-gray-600"><i class="fas fa-clock text-amber-500"></i> {{ __('stu_late') }}</span>
-                                <span class="font-black text-gray-800 text-sm">{{ $totalLate ?? 0 }}</span>
                             </div>
                         </div>
                     </div>

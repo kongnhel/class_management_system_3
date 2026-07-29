@@ -200,7 +200,7 @@
                         <tbody class="divide-y divide-gray-100">
                             @forelse($attendances as $record)
                                 @php
-                                    $colors = ['present' => 'green', 'absent' => 'red', 'late' => 'yellow', 'permission' => 'blue'];
+                                    $colors = ['present' => 'green', 'absent' => 'red', 'permission' => 'blue'];
                                     $color = $colors[$record->status] ?? 'gray';
                                 @endphp
                                 <tr class="hover:bg-gray-50 transition-colors attendance-row"

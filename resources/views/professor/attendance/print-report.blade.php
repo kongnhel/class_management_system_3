@@ -46,7 +46,6 @@
         .col-id { width: 100px; }
         .col-name { width: 150px; }
         .col-p { width: 50px; }
-        .col-l { width: 50px; }
         .col-a { width: 50px; }
         .col-total { width: 55px; }
         .col-percent { width: 70px; }
@@ -79,9 +78,8 @@
         $totalPresent = $students->sum('present_count');
         $totalPermission = $students->sum('permission_count');
         $totalAbsent = $students->sum('absent_count');
-        $totalLate = $students->sum('late_count');
-        $allSessions = $totalPresent + $totalPermission + $totalAbsent + $totalLate;
-        $avgAttendance = $allSessions > 0 ? (($totalPresent + $totalLate) / $allSessions) * 100 : 0;
+        $allSessions = $totalPresent + $totalPermission + $totalAbsent;
+        $avgAttendance = $allSessions > 0 ? ($totalPresent / $allSessions) * 100 : 0;
 
         $now = \Carbon\Carbon::now();
         $khmerMonths = [1=>'មករា',2=>'កុម្ភៈ',3=>'មីនា',4=>'មេសា',5=>'ឧសភា',6=>'មិថុនា',7=>'កក្កដា',8=>'សីហា',9=>'កញ្ញា',10=>'តុលា',11=>'វិច្ឆិកា',12=>'ធ្នូ'];
@@ -122,7 +120,6 @@
                 <th class="col-id">អត្តសញ្ញាណ</th>
                 <th class="col-name text-left">គោត្តនាម និងនាម</th>
                 <th class="col-p">P</th>
-                <th class="col-l">L</th>
                 <th class="col-a">A</th>
                 <th class="col-total">សរុប</th>
                 <th class="col-percent">ភាគរយ</th>
@@ -131,15 +128,14 @@
         <tbody>
             @foreach($students as $index => $data)
                 @php
-                    $total = ($data->present_count ?? 0) + ($data->permission_count ?? 0) + ($data->absent_count ?? 0) + ($data->late_count ?? 0);
-                    $percentage = $total > 0 ? (($data->present_count + ($data->late_count ?? 0)) / $total) * 100 : 0;
+                    $total = ($data->present_count ?? 0) + ($data->permission_count ?? 0) + ($data->absent_count ?? 0);
+                    $percentage = $total > 0 ? (($data->present_count ?? 0) / $total) * 100 : 0;
                 @endphp
                 <tr>
                     <td>{{ $index + 1 }}</td>
                     <td style="font-size:11px;">{{ $data->student_id_code ?? '' }}</td>
                     <td class="text-left" style="font-size:11px;">{{ $data->studentProfile->full_name_km ?? $data->profile->full_name_km ?? $data->name }}</td>
                     <td>{{ $data->present_count ?? 0 }}</td>
-                    <td>{{ $data->late_count ?? 0 }}</td>
                     <td>{{ $data->absent_count ?? 0 }}</td>
                     <td style="font-weight:bold;">{{ $total }}</td>
                     <td style="font-weight:bold;">{{ number_format($percentage, 0) }}%</td>

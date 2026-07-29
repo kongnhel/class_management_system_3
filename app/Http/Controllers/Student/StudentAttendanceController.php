@@ -80,7 +80,7 @@ class StudentAttendanceController extends Controller
                 if (! in_array($studentUserId, $enrolledStudentIds)) {
                     continue;
                 }
-                if (! in_array($status, ['present', 'absent', 'late', 'permission'])) {
+                if (! in_array($status, ['present', 'absent', 'permission'])) {
                     continue;
                 }
 
@@ -134,9 +134,6 @@ class StudentAttendanceController extends Controller
                 },
                 'attendanceRecords as permission_count' => function ($query) use ($courseOfferingId) {
                     $query->where('course_offering_id', $courseOfferingId)->where('status', 'permission');
-                },
-                'attendanceRecords as late_count' => function ($query) use ($courseOfferingId) {
-                    $query->where('course_offering_id', $courseOfferingId)->where('status', 'late');
                 },
             ])
             ->get();

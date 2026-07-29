@@ -5,13 +5,12 @@
 
     @php
         $totalStudents = $students->count();
-        $totalSessions = $students->sum(function($s) { return ($s->present_count ?? 0) + ($s->permission_count ?? 0) + ($s->absent_count ?? 0) + ($s->late_count ?? 0); });
+        $totalSessions = $students->sum(function($s) { return ($s->present_count ?? 0) + ($s->permission_count ?? 0) + ($s->absent_count ?? 0); });
         $totalPresent = $students->sum('present_count');
         $totalPermission = $students->sum('permission_count');
         $totalAbsent = $students->sum('absent_count');
-        $totalLate = $students->sum('late_count');
-        $allSessions = $totalPresent + $totalPermission + $totalAbsent + $totalLate;
-        $avgAttendance = $allSessions > 0 ? (($totalPresent + $totalLate) / $allSessions) * 100 : 0;
+        $allSessions = $totalPresent + $totalPermission + $totalAbsent;
+        $avgAttendance = $allSessions > 0 ? ($totalPresent / $allSessions) * 100 : 0;
     @endphp
 
     <div class="py-6 md:py-10 bg-gray-50 min-h-screen font-['Battambang']">
@@ -95,7 +94,7 @@
                         </div>
                         <div>
                             <p class="text-xs text-gray-400 font-bold uppercase tracking-wide">វត្តមាន</p>
-                            <p class="text-2xl font-extrabold text-emerald-600">{{ $totalPresent + $totalLate }}</p>
+                            <p class="text-2xl font-extrabold text-emerald-600">{{ $totalPresent }}</p>
                         </div>
                     </div>
                 </div>
@@ -171,7 +170,6 @@
                                 <th class="px-6 py-3 text-left text-[11px] font-bold text-gray-400 uppercase tracking-wider">#</th>
                                 <th class="px-6 py-3 text-left text-[11px] font-bold text-gray-400 uppercase tracking-wider">ឈ្មោះនិស្សិត</th>
                                 <th class="px-4 py-3 text-center text-[11px] font-bold text-emerald-500 uppercase tracking-wider">P</th>
-                                <th class="px-4 py-3 text-center text-[11px] font-bold text-amber-500 uppercase tracking-wider">L</th>
                                 <th class="px-4 py-3 text-center text-[11px] font-bold text-rose-500 uppercase tracking-wider">A</th>
                                 <th class="px-4 py-3 text-center text-[11px] font-bold text-gray-400 uppercase tracking-wider">សរុប</th>
                                 <th class="px-6 py-3 text-right text-[11px] font-bold text-gray-400 uppercase tracking-wider">ភាគរយ</th>
@@ -180,8 +178,8 @@
                         <tbody class="divide-y divide-gray-50">
                             @forelse ($students as $index => $data)
                                 @php
-                                    $total = ($data->present_count ?? 0) + ($data->permission_count ?? 0) + ($data->absent_count ?? 0) + ($data->late_count ?? 0);
-                                    $percentage = $total > 0 ? (($data->present_count + ($data->late_count ?? 0)) / $total) * 100 : 0;
+                                    $total = ($data->present_count ?? 0) + ($data->permission_count ?? 0) + ($data->absent_count ?? 0);
+                                    $percentage = $total > 0 ? (($data->present_count ?? 0) / $total) * 100 : 0;
                                 @endphp
                                 <tr class="hover:bg-gray-50/50 transition-colors">
                                     <td class="px-6 py-3.5 text-sm font-bold text-gray-300">{{ $index + 1 }}</td>

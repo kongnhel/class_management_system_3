@@ -223,6 +223,7 @@ Route::middleware(['auth', 'role:admin', 'throttle:120,1'])->prefix('admin')->na
     // Attendance Dashboard
     Route::get('/attendance', [AdminAttendanceController::class, 'index'])->name('attendance.index');
     Route::get('/attendance/{courseOffering}', [AdminAttendanceController::class, 'show'])->name('attendance.show');
+    Route::get('/attendance/{courseOffering}/export', [AdminAttendanceController::class, 'exportAttendance'])->name('attendance.export');
 
     // Bulk Import
     Route::get('/import', [BulkImportController::class, 'index'])->name('import.index');

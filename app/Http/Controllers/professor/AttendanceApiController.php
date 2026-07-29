@@ -131,7 +131,6 @@ class AttendanceApiController extends Controller
             'total_enrolled' => $totalEnrolled,
             'counts' => [
                 'present' => $attendances->where('status', 'present')->count(),
-                'late' => $attendances->where('status', 'late')->count(),
                 'permission' => $attendances->where('status', 'permission')->count(),
                 'absent' => $attendances->where('status', 'absent')->count(),
                 'manual' => $attendances->where('source', 'manual')->count(),

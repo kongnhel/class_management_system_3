@@ -482,7 +482,7 @@ class ProfessorController extends Controller
         ]);
 
         foreach ($request->attendance as $studentId => $status) {
-            if (! in_array($status, ['present', 'absent', 'late', 'permission'])) {
+            if (! in_array($status, ['present', 'absent', 'permission'])) {
                 continue;
             }
             DB::table('attendances')->updateOrInsert(
@@ -526,10 +526,6 @@ class ProfessorController extends Controller
                     $query->where('course_offering_id', $courseOfferingId)
                         ->where('status', 'permission');
                 },
-                'attendanceRecords as late_count' => function ($query) use ($courseOfferingId) {
-                    $query->where('course_offering_id', $courseOfferingId)
-                        ->where('status', 'late');
-                },
             ])
             ->get();
 
@@ -557,10 +553,6 @@ class ProfessorController extends Controller
                     $query->where('course_offering_id', $courseOfferingId)
                         ->where('status', 'permission');
                 },
-                'attendanceRecords as late_count' => function ($query) use ($courseOfferingId) {
-                    $query->where('course_offering_id', $courseOfferingId)
-                        ->where('status', 'late');
-                },
             ])
             ->get();
 
@@ -586,7 +578,6 @@ class ProfessorController extends Controller
             $record->status_km = match ($record->status) {
                 'present' => 'មានវត្តមាន',
                 'absent' => 'អវត្តមាន',
-                'late' => 'មកយឺត',
                 'permission' => 'មានច្បាប់',
                 default => 'មិនស្គាល់',
             };
@@ -616,7 +607,6 @@ class ProfessorController extends Controller
             $record->status_km = match ($record->status) {
                 'present' => 'មានវត្តមាន',
                 'absent' => 'អវត្តមាន',
-                'late' => 'មកយឺត',
                 'permission' => 'មានច្បាប់',
                 default => 'មិនស្គាល់',
             };

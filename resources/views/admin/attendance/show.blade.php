@@ -15,10 +15,13 @@
                 <a href="{{ route('admin.attendance.index') }}" class="flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-700 px-5 py-2.5 rounded-xl font-bold shadow-sm border border-gray-200 transition-all text-sm">
                     <i class="fas fa-arrow-left"></i> ត្រឡប់ក្រោយ
                 </a>
+                <a href="{{ route('admin.attendance.export', $courseOffering->id) }}" class="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2.5 rounded-xl font-bold shadow-sm transition-all text-sm">
+                    <i class="fas fa-download"></i> នាំចេញ XLSX
+                </a>
             </div>
 
             {{-- Stats Cards --}}
-            <div class="grid grid-cols-2 md:grid-cols-6 gap-4 mb-8">
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-5">
                     <div class="flex items-center gap-3 mb-2">
                         <div class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
@@ -57,15 +60,6 @@
                 </div>
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-5">
                     <div class="flex items-center gap-3 mb-2">
-                        <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center">
-                            <i class="fas fa-clock text-amber-500"></i>
-                        </div>
-                        <span class="text-xs font-bold text-gray-500 uppercase">យឺត</span>
-                    </div>
-                    <div class="text-2xl font-bold text-amber-600">{{ $stats['late_total'] }}</div>
-                </div>
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-5">
-                    <div class="flex items-center gap-3 mb-2">
                         <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
                             <i class="fas fa-percentage text-emerald-500"></i>
                         </div>
@@ -90,7 +84,6 @@
                                 <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">សរុប</th>
                                 <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">មានវត្តមាន</th>
                                 <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">អវត្តមាន</th>
-                                <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">យឺត</th>
                                 <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">អនុគ្រោះ</th>
                                 <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">អត្រា</th>
                             </tr>
@@ -129,11 +122,6 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-center">
-                                    <span class="inline-flex items-center justify-center min-w-[28px] h-7 px-2 rounded-lg bg-amber-50 text-amber-600 font-bold text-xs">
-                                        {{ $data['late_days'] }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 text-center">
                                     <span class="inline-flex items-center justify-center min-w-[28px] h-7 px-2 rounded-lg bg-emerald-50 text-emerald-600 font-bold text-xs">
                                         {{ $data['permission_days'] }}
                                     </span>
@@ -164,7 +152,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="8" class="px-6 py-16">
+                                <td colspan="7" class="px-6 py-16">
                                     <div class="flex flex-col items-center gap-3">
                                         <div class="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center">
                                             <i class="fas fa-inbox text-gray-300 text-2xl"></i>

@@ -25,7 +25,6 @@ class StudentController extends Controller
         $totalPresent = \App\Models\AttendanceRecord::where('student_user_id', $studentId)->where('status', 'present')->count();
         $totalAbsent = \App\Models\AttendanceRecord::where('student_user_id', $studentId)->where('status', 'absent')->count();
         $totalPermission = \App\Models\AttendanceRecord::where('student_user_id', $studentId)->where('status', 'permission')->count();
-        $totalLate = \App\Models\AttendanceRecord::where('student_user_id', $studentId)->where('status', 'late')->count();
 
         // Today's enrolled courses
         $todayOfferingIds = Schedule::where('day_of_week', $todayName)->pluck('course_offering_id');
@@ -168,7 +167,7 @@ class StudentController extends Controller
         }
 
         return view('student.dashboard', compact(
-            'user', 'totalPresent', 'totalAbsent', 'totalPermission', 'totalLate',
+            'user', 'totalPresent', 'totalAbsent', 'totalPermission',
             'enrolledCourses', 'upcomingSchedules', 'studentProgram', 'availableCoursesInProgram',
             'completedCoursesCount', 'totalCoursesInProgram', 'combinedFeed', 'todayName',
             'attendanceScore', 'gpa', 'averageScore', 'overallRank', 'totalClassmates', 'overallGrade'

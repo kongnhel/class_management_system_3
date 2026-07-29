@@ -6,9 +6,8 @@
     @php
         $totalPresent = $students->sum('present_count');
         $totalAbsent  = $students->sum('absent_count');
-        $totalLate    = $students->sum('late_count') ?? 0;
         $totalPerm    = $students->sum('permission_count');
-        $grandTotal   = $totalPresent + $totalPerm + $totalAbsent + $totalLate;
+        $grandTotal   = $totalPresent + $totalPerm + $totalAbsent;
         $overallRate  = $grandTotal > 0 ? round((($totalPresent + $totalPerm) / $grandTotal) * 100) : 0;
     @endphp
 
@@ -98,7 +97,6 @@
                     <th style="width:5%">#</th>
                     <th style="width:30%">{{ __('និស្សិត') }}</th>
                     <th style="width:10%">{{ __('មក') }}</th>
-                    <th style="width:10%">{{ __('យឺត') }}</th>
                     <th style="width:10%">{{ __('ច្បាប់') }}</th>
                     <th style="width:10%">{{ __('អវត្តមាន') }}</th>
                     <th style="width:10%">{{ __('ភាគរយ') }}</th>
@@ -107,14 +105,13 @@
             <tbody>
                 @foreach($students as $index => $data)
                     @php
-                        $total = $data->present_count + $data->permission_count + $data->absent_count + ($data->late_count ?? 0);
+                        $total = $data->present_count + $data->permission_count + $data->absent_count;
                         $percentage = $total > 0 ? round((($data->present_count + $data->permission_count) / $total) * 100) : 0;
                     @endphp
                     <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $data->studentProfile->full_name_km ?? $data->name }}</td>
                         <td>{{ $data->present_count }}</td>
-                        <td>{{ $data->late_count ?? 0 }}</td>
                         <td>{{ $data->permission_count }}</td>
                         <td>{{ $data->absent_count }}</td>
                         <td>{{ $percentage }}%</td>
@@ -217,10 +214,6 @@
                     <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center"><i class="fas fa-user-times"></i></div>
                     <div><p class="text-[10px] font-bold text-gray-400 uppercase">{{ __('អវត្តមាន') }}</p><h3 class="text-lg font-black text-gray-800">{{ $totalAbsent }}</h3></div>
                 </div>
-                <div class="bg-white p-4 rounded-2xl border border-amber-100 shadow-sm flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center"><i class="fas fa-clock"></i></div>
-                    <div><p class="text-[10px] font-bold text-gray-400 uppercase">{{ __('មកយឺត') }}</p><h3 class="text-lg font-black text-gray-800">{{ $totalLate }}</h3></div>
-                </div>
                 <div class="bg-white p-4 rounded-2xl border border-emerald-100 shadow-sm flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center"><i class="fas fa-file-contract"></i></div>
                     <div><p class="text-[10px] font-bold text-gray-400 uppercase">{{ __('ច្បាប់') }}</p><h3 class="text-lg font-black text-gray-800">{{ $totalPerm }}</h3></div>
@@ -255,7 +248,6 @@
                                 <th class="px-5 py-3.5 text-center text-[11px] font-bold text-slate-400 uppercase tracking-wider w-12">#</th>
                                 <th class="px-5 py-3.5 text-left text-[11px] font-bold text-slate-400 uppercase tracking-wider">{{ __('និស្សិត') }}</th>
                                 <th class="px-3 py-3.5 text-center text-[11px] font-bold text-emerald-600 uppercase tracking-wider">{{ __('មក') }}</th>
-                                <th class="px-3 py-3.5 text-center text-[11px] font-bold text-amber-600 uppercase tracking-wider">{{ __('មកយឺត') }}</th>
                                 <th class="px-3 py-3.5 text-center text-[11px] font-bold text-emerald-600 uppercase tracking-wider">{{ __('ច្បាប់') }}</th>
                                 <th class="px-3 py-3.5 text-center text-[11px] font-bold text-rose-600 uppercase tracking-wider">{{ __('អវត្តមាន') }}</th>
                                 <th class="px-5 py-3.5 text-right text-[11px] font-bold text-slate-400 uppercase tracking-wider">{{ __('ភាគរយ') }}</th>
@@ -264,7 +256,7 @@
                         <tbody class="divide-y divide-slate-50">
                             @foreach($students as $index => $data)
                                 @php
-                                    $total = $data->present_count + $data->permission_count + $data->absent_count + ($data->late_count ?? 0);
+                                    $total = $data->present_count + $data->permission_count + $data->absent_count;
                                     $percentage = $total > 0 ? round((($data->present_count + $data->permission_count) / $total) * 100) : 0;
                                     $rowColor = $percentage < 75 ? 'rose' : 'emerald';
                                 @endphp
@@ -287,7 +279,6 @@
                                         </div>
                                     </td>
                                     <td class="px-3 py-3.5 text-center"><span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 text-xs font-black">{{ $data->present_count }}</span></td>
-                                    <td class="px-3 py-3.5 text-center"><span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-amber-50 text-amber-700 text-xs font-black">{{ $data->late_count ?? 0 }}</span></td>
                                     <td class="px-3 py-3.5 text-center"><span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 text-xs font-black">{{ $data->permission_count }}</span></td>
                                     <td class="px-3 py-3.5 text-center"><span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-rose-50 text-rose-700 text-xs font-black">{{ $data->absent_count }}</span></td>
                                     <td class="px-5 py-3.5">
@@ -308,7 +299,7 @@
                 <div class="md:hidden divide-y divide-slate-100">
                     @foreach($students as $index => $data)
                         @php
-                            $total = $data->present_count + $data->permission_count + $data->absent_count + ($data->late_count ?? 0);
+                            $total = $data->present_count + $data->permission_count + $data->absent_count;
                             $percentage = $total > 0 ? round((($data->present_count + $data->permission_count) / $total) * 100) : 0;
                             $rowColor = $percentage < 75 ? 'rose' : 'emerald';
                         @endphp
@@ -332,10 +323,6 @@
                                 <div class="text-center bg-emerald-50 rounded-lg py-1.5">
                                     <p class="text-[9px] font-bold text-emerald-500 uppercase">{{ __('មក') }}</p>
                                     <p class="text-sm font-black text-emerald-700">{{ $data->present_count }}</p>
-                                </div>
-                                <div class="text-center bg-amber-50 rounded-lg py-1.5">
-                                    <p class="text-[9px] font-bold text-amber-500 uppercase">{{ __('យឺត') }}</p>
-                                    <p class="text-sm font-black text-amber-700">{{ $data->late_count ?? 0 }}</p>
                                 </div>
                                 <div class="text-center bg-emerald-50 rounded-lg py-1.5">
                                     <p class="text-[9px] font-bold text-emerald-500 uppercase">{{ __('ច្បាប់') }}</p>

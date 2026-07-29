@@ -9,10 +9,12 @@ use App\Models\Quiz;
 use App\Services\GradingService;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithDrawings;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 
-class ProfessorGradeExcelExport implements FromCollection, WithStyles
+class ProfessorGradeExcelExport implements FromCollection, WithStyles, WithDrawings
 {
     protected CourseOffering $courseOffering;
     protected Collection $students;
@@ -30,6 +32,27 @@ class ProfessorGradeExcelExport implements FromCollection, WithStyles
     public function collection(): Collection
     {
         return collect([]);
+    }
+
+    public function drawings(): array
+    {
+        $logoPath = public_path('assets/image/nmu_Logo.png');
+        if (!file_exists($logoPath)) {
+            return [];
+        }
+
+        $logo = new Drawing();
+        $logo->setName('NMU Logo');
+        $logo->setDescription('National Meanchey University Logo');
+        $logo->setPath($logoPath);
+        $logo->setCoordinates('A1');
+        $logo->setOffsetX(0);
+        $logo->setOffsetY(0);
+        $logo->setResizeProportional(false);
+        $logo->setWidth(80);
+        $logo->setHeight(80);
+
+        return [$logo];
     }
 
     protected function getLastColLetter(): string
@@ -62,62 +85,65 @@ class ProfessorGradeExcelExport implements FromCollection, WithStyles
         $sheet->getColumnDimension($this->colLetter(5 + $assessmentCount))->setWidth(10);     // Total
         $sheet->getColumnDimension($this->colLetter(6 + $assessmentCount))->setWidth(12);     // Grade
 
+        // ── Logo (centered at top) ──
+        $sheet->getRowDimension(1)->setRowHeight(20);
+        $sheet->getRowDimension(2)->setRowHeight(20);
+        $sheet->getRowDimension(3)->setRowHeight(20);
+        $sheet->getRowDimension(4)->setRowHeight(20);
+
         // ── Row 1: ព្រះរាជាណាចក្រកម្ពុជា ──
-        $sheet->mergeCells("A1:{$lastCol}1");
-        $sheet->setCellValue('A1', 'ព្រះរាជាណាចក្រកម្ពុជា');
-        $sheet->getStyle('A1')->applyFromArray([
+        $sheet->mergeCells("A3:{$lastCol}3");
+        $sheet->setCellValue('A3', 'ព្រះរាជាណាចក្រកម្ពុជា');
+        $sheet->getStyle('A3')->applyFromArray([
             'font' => ['name' => $khmerFont, 'size' => 10, 'bold' => true],
             'alignment' => ['horizontal' => 'center', 'vertical' => 'center'],
         ]);
-        $sheet->getRowDimension(1)->setRowHeight(20);
 
         // ── Row 2: ជាតិ សាសនា ព្រះមហាក្សត្រ ──
-        $sheet->mergeCells("A2:{$lastCol}2");
-        $sheet->setCellValue('A2', 'ជាតិ សាសនា ព្រះមហាក្សត្រ');
-        $sheet->getStyle('A2')->applyFromArray([
+        $sheet->mergeCells("A4:{$lastCol}4");
+        $sheet->setCellValue('A4', 'ជាតិ សាសនា ព្រះមហាក្សត្រ');
+        $sheet->getStyle('A4')->applyFromArray([
             'font' => ['name' => $khmerFont, 'size' => 10, 'bold' => true],
             'alignment' => ['horizontal' => 'center', 'vertical' => 'center'],
         ]);
-        $sheet->getRowDimension(2)->setRowHeight(20);
+        $sheet->getRowDimension(4)->setRowHeight(20);
 
-        // ── Row 3-4: Empty ──
-
-        // ── Row 5: Location (merged A5:B5 like template) ──
-        $sheet->mergeCells('A5:B5');
+        // ── Row 7: Location (merged A7:B7 like template) ──
+        $sheet->mergeCells('A7:B7');
         $facultyName = $this->courseOffering->course->department->faculty->name_km
             ?? 'មហាវិទ្យាល័យ';
-        $sheet->setCellValue('A5', 'ទីតាំង៖ ' . $facultyName);
-        $sheet->getStyle('A5')->applyFromArray([
+        $sheet->setCellValue('A7', 'ទីតាំង៖ ' . $facultyName);
+        $sheet->getStyle('A7')->applyFromArray([
             'font' => ['name' => $khmerFont, 'size' => 8],
             'alignment' => ['horizontal' => 'left'],
         ]);
 
-        // ── Row 6: Title ──
-        $sheet->mergeCells("A6:{$lastCol}6");
+        // ── Row 8: Title ──
+        $sheet->mergeCells("A8:{$lastCol}8");
         $courseName = $this->courseOffering->course->title_km ?? $this->courseOffering->course->title_en ?? '';
         $academicYear = $this->courseOffering->academic_year ?? '';
         $semester = $this->courseOffering->semester ?? '';
         $section = $this->courseOffering->section ?? '';
         $sectionText = $section ? " ផ្នែក{$section}" : '';
-        $sheet->setCellValue('A6', "បញ្ជីស្រង់ពិន្ទុប្រចាំ{$semester} ឆ្នាំសិក្សា {$academicYear}{$sectionText}");
-        $sheet->getStyle('A6')->applyFromArray([
+        $sheet->setCellValue('A8', "បញ្ជីស្រង់ពិន្ទុប្រចាំ{$semester} ឆ្នាំសិក្សា {$academicYear}{$sectionText}");
+        $sheet->getStyle('A8')->applyFromArray([
             'font' => ['name' => $khmerFont, 'size' => 9, 'bold' => true],
             'alignment' => ['horizontal' => 'center', 'vertical' => 'center'],
         ]);
-        $sheet->getRowDimension(6)->setRowHeight(18);
+        $sheet->getRowDimension(8)->setRowHeight(18);
 
-        // ── Row 7: Subject + Lecturer info ──
-        $sheet->mergeCells("A7:{$lastCol}7");
+        // ── Row 9: Subject + Lecturer info ──
+        $sheet->mergeCells("A9:{$lastCol}9");
         $lecturerName = $this->courseOffering->lecturer->name ?? '';
         $phone = $this->courseOffering->lecturer->phone_number ?? '';
-        $sheet->setCellValue('A7', "មុខវិជ្ជា {$courseName} បង្រៀនដោយលោក/អ្នកគ្រូ {$lecturerName} លេខទូរស័ព្ទ {$phone}");
-        $sheet->getStyle('A7')->applyFromArray([
+        $sheet->setCellValue('A9', "មុខវិជ្ជា {$courseName} បង្រៀនដោយលោក/អ្នកគ្រូ {$lecturerName} លេខទូរស័ព្ទ {$phone}");
+        $sheet->getStyle('A9')->applyFromArray([
             'font' => ['name' => $khmerFont, 'size' => 9],
             'alignment' => ['horizontal' => 'center', 'vertical' => 'center'],
         ]);
-        $sheet->getRowDimension(7)->setRowHeight(18);
+        $sheet->getRowDimension(9)->setRowHeight(18);
 
-        // ── Rows 8-9: Column headers (merged vertically like template) ──
+        // ── Rows 10-11: Column headers (merged vertically like template) ──
         $headers = ['ល.រ', 'គោត្តនាម និងនាម', 'ឈ្មោះអង់គ្លេស', 'ភេទ'];
         foreach ($this->assessments as $a) {
             $name = $a->title_km ?? $a->title_en ?? 'Assessment';
@@ -131,23 +157,23 @@ class ProfessorGradeExcelExport implements FromCollection, WithStyles
 
         foreach ($headers as $colIndex => $header) {
             $colLetter = $this->colLetter($colIndex);
-            $sheet->mergeCells("{$colLetter}8:{$colLetter}9");
-            $sheet->setCellValue("{$colLetter}8", $header);
+            $sheet->mergeCells("{$colLetter}10:{$colLetter}11");
+            $sheet->setCellValue("{$colLetter}10", $header);
         }
 
-        // Style header rows 8-9
-        $sheet->getStyle("A8:{$lastCol}9")->applyFromArray([
+        // Style header rows 10-11
+        $sheet->getStyle("A10:{$lastCol}11")->applyFromArray([
             'font' => ['name' => $khmerFont, 'size' => 10, 'bold' => true],
             'alignment' => ['horizontal' => 'center', 'vertical' => 'center', 'wrapText' => true],
             'borders' => [
                 'allBorders' => ['borderStyle' => 'thin', 'color' => ['rgb' => '000000']],
             ],
         ]);
-        $sheet->getRowDimension(8)->setRowHeight(25);
-        $sheet->getRowDimension(9)->setRowHeight(25);
+        $sheet->getRowDimension(10)->setRowHeight(25);
+        $sheet->getRowDimension(11)->setRowHeight(25);
 
-        // ── Data Rows (start at row 10) ──
-        $dataStartRow = 10;
+        // ── Data Rows (start at row 12) ──
+        $dataStartRow = 12;
         $borderStyle = [
             'borders' => [
                 'allBorders' => ['borderStyle' => 'thin', 'color' => ['rgb' => '000000']],

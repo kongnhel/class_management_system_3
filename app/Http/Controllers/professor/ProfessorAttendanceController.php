@@ -22,7 +22,7 @@ class ProfessorAttendanceController extends Controller
             'student_user_ids' => 'required_without:student_user_id|string',
             'student_user_id' => 'required_without:student_user_ids|nullable',
             'date' => 'required|date',
-            'status' => 'required|in:present,absent,late,permission',
+            'status' => 'required|in:present,absent,permission',
             'remarks' => 'nullable|string|max:255',
         ], [
             'student_user_ids.required_without' => 'សូមជ្រើសរើសនិស្សិតយ៉ាងហោចណាស់មួយ។',
@@ -79,7 +79,7 @@ class ProfessorAttendanceController extends Controller
                     ->where('course_offering_id', $request->course_offering_id),
             ],
             'date' => 'required|date',
-            'status' => 'required|in:present,absent,late,permission',
+            'status' => 'required|in:present,absent,permission',
             'remarks' => 'nullable|string|max:255',
         ], [
             'student_user_id.required' => 'អត្តសញ្ញាណសិស្សតម្រូវឱ្យបញ្ចូល។',

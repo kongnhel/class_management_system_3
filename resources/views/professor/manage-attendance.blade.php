@@ -138,8 +138,8 @@
                                 <td class="px-5 py-3 text-sm text-gray-600">{{ \Carbon\Carbon::parse($record->date)->format('Y-m-d') }}</td>
                                 <td class="px-5 py-3">
                                     @php
-                                        $colors = ['present' => 'green', 'absent' => 'red', 'late' => 'yellow', 'permission' => 'blue'];
-                                        $labels = ['present' => 'មានវត្តមាន', 'absent' => 'អវត្តមាន', 'late' => 'មកយឺត', 'permission' => 'មានច្បាប់'];
+                                        $colors = ['present' => 'green', 'absent' => 'red', 'permission' => 'blue'];
+                                        $labels = ['present' => 'មានវត្តមាន', 'absent' => 'អវត្តមាន', 'permission' => 'មានច្បាប់'];
                                         $color = $colors[$record->status] ?? 'gray';
                                     @endphp
                                     <span class="inline-flex px-2.5 py-1 rounded-lg text-xs font-bold bg-{{ $color }}-50 text-{{ $color }}-700 border border-{{ $color }}-100">
