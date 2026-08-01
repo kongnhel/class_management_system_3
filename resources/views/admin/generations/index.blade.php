@@ -104,10 +104,10 @@
         </div>
     </div>
 
-    {{-- Edit Modal (plain JS, no Alpine) --}}
+    {{-- Edit Modal --}}
+    <div id="edit-backdrop" class="hidden fixed inset-0 z-[99] bg-gray-900/60 backdrop-blur-sm"></div>
     <div id="edit-modal" class="hidden fixed inset-0 z-[100] overflow-y-auto">
         <div class="flex items-center justify-center min-h-screen px-4 pb-20 text-center sm:block sm:p-0">
-            <div id="edit-backdrop" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity"></div>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
             <div class="inline-block align-middle bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-md sm:w-full">
                 <div class="bg-white px-8 pt-10 pb-6">
@@ -138,10 +138,10 @@
         </div>
     </div>
 
-    {{-- Delete Confirmation Modal (plain JS, no Alpine) --}}
+    {{-- Delete Confirmation Modal --}}
+    <div id="delete-backdrop" class="hidden fixed inset-0 z-[99] bg-gray-900/60 backdrop-blur-sm"></div>
     <div id="delete-modal" class="hidden fixed inset-0 z-[100] overflow-y-auto">
         <div class="flex items-center justify-center min-h-screen px-4 pb-20 text-center sm:block sm:p-0">
-            <div id="delete-backdrop" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity"></div>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
             <div class="inline-block align-middle bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-lg sm:w-full">
                 <div class="bg-white px-8 pt-10 pb-6">
@@ -173,20 +173,24 @@
         function openEditModal(id, name) {
             document.getElementById('edit-generation-form').action = '/admin/generations/' + id;
             document.getElementById('edit-name-input').value = name;
+            document.getElementById('edit-backdrop').classList.remove('hidden');
             document.getElementById('edit-modal').classList.remove('hidden');
         }
 
         function closeEditModal() {
+            document.getElementById('edit-backdrop').classList.add('hidden');
             document.getElementById('edit-modal').classList.add('hidden');
         }
 
         function openDeleteModal(id, name) {
             document.getElementById('delete-generation-form').action = '/admin/generations/' + id;
             document.getElementById('delete-gen-name').textContent = name;
+            document.getElementById('delete-backdrop').classList.remove('hidden');
             document.getElementById('delete-modal').classList.remove('hidden');
         }
 
         function closeDeleteModal() {
+            document.getElementById('delete-backdrop').classList.add('hidden');
             document.getElementById('delete-modal').classList.add('hidden');
         }
 

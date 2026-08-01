@@ -86,10 +86,20 @@ class DepartmentController extends Controller
             return redirect()->route('admin.manage-departments')->with('error', 'មិនអាចលុបដេប៉ាតឺម៉ង់នេះបានទេ ព្រោះមានអ្នកប្រើប្រាស់ភ្ជាប់នឹងដេប៉ាតឺម៉ង់នេះ។');
         }
 
+        if ($department->courses()->exists()) {
+            return redirect()->route('admin.manage-departments')->with('error', 'មិនអាចលុបដេប៉ាតឺម៉ង់នេះបានទេ ព្រោះមានមុខវិជ្ជាភ្ជាប់នឹងដេប៉ាតឺម៉ង់នេះ។');
+        }
+
+        if ($department->programs()->exists()) {
+            return redirect()->route('admin.manage-departments')->with('error', 'មិនអាចលុបដេប៉ាតឺម៉ង់នេះបានទេ ព្រោះមានកម្មវិធីសិក្សាភ្ជាប់នឹងដេប៉ាតឺម៉ង់នេះ។');
+        }
+
         try {
             DB::beginTransaction();
 
             $oldAttributes = $department->attributesToArray();
+
+            $department->courses()->delete();
 
             $programs = $department->programs()->get();
             foreach ($programs as $program) {
