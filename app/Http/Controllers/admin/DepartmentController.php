@@ -82,6 +82,10 @@ class DepartmentController extends Controller
         $deptId = $department->id;
         $deptName = $department->name_km;
 
+        if (User::where('department_id', $department->id)->exists()) {
+            return redirect()->route('admin.manage-departments')->with('error', 'មិនអាចលុបដេប៉ាតឺម៉ង់នេះបានទេ ព្រោះមានអ្នកប្រើប្រាស់ភ្ជាប់នឹងដេប៉ាតឺម៉ង់នេះ។');
+        }
+
         try {
             DB::beginTransaction();
 
