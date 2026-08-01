@@ -243,7 +243,7 @@
                         <div class="relative">
                             <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C8.67 6.165 8 7.388 8 8.75V14.158c0 .53-.211 1.039-.595 1.437L6 17h5m4 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
                             @if($totalUnread > 0)
-                                <span class="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center px-1 shadow-lg">{{ $totalUnread > 99 ? '99+' : $totalUnread }}</span>
+                                <span id="sidebar-unread-badge" class="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center px-1 shadow-lg">{{ $totalUnread > 99 ? '99+' : $totalUnread }}</span>
                             @endif
                         </div>
                         <span>{{ __('nav_notifications') }}</span>

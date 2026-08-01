@@ -36,7 +36,7 @@
                                 $unreadReceived = $receivedNotifications->where('is_read', false)->count();
                             @endphp
                             @if($unreadReceived > 0)
-                                <span class="ml-1 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">{{ $unreadReceived }}</span>
+                                <span id="tab-unread-badge" class="ml-1 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">{{ $unreadReceived }}</span>
                             @endif
                         </button>
                         <button @click="activeTab = 'sent'" :class="{ 'bg-green-600 text-white': activeTab === 'sent', 'bg-gray-200 text-gray-700': activeTab !== 'sent' }" class="px-4 py-2 rounded-full font-semibold transition">
@@ -264,6 +264,27 @@
     </div>
 
     <script>
+        function decrementBadges(count) {
+            var tabBadge = document.getElementById('tab-unread-badge');
+            if (tabBadge) {
+                var newCount = parseInt(tabBadge.textContent) - count;
+                if (newCount <= 0) {
+                    tabBadge.remove();
+                } else {
+                    tabBadge.textContent = newCount;
+                }
+            }
+            var sidebarBadge = document.getElementById('sidebar-unread-badge');
+            if (sidebarBadge) {
+                var newCount = parseInt(sidebarBadge.textContent) - count;
+                if (newCount <= 0) {
+                    sidebarBadge.remove();
+                } else {
+                    sidebarBadge.textContent = newCount > 99 ? '99+' : newCount;
+                }
+            }
+        }
+
         function markNotificationAsRead(id) {
             fetch('/professor/notifications/' + id + '/mark-as-read', {
                 method: 'POST',
@@ -290,6 +311,7 @@
                             button.parentNode.replaceChild(readStatus, button);
                         }
                     }
+                    decrementBadges(1);
                 }
             });
         }
@@ -306,10 +328,12 @@
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
+                    var unreadCount = 0;
                     document.querySelectorAll('[data-read="false"]').forEach(el => {
                         el.classList.remove('bg-green-50', 'border-green-200', 'shadow-sm');
                         el.classList.add('bg-white', 'border-gray-200');
                         el.dataset.read = 'true';
+                        unreadCount++;
 
                         const button = el.querySelector('button[onclick*="markNotificationAsRead"]');
                         if (button) {
@@ -319,6 +343,7 @@
                             button.parentNode.replaceChild(readStatus, button);
                         }
                     });
+                    decrementBadges(unreadCount);
                 }
             });
         }
