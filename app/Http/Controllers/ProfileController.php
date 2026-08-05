@@ -39,7 +39,13 @@ class ProfileController extends Controller
             'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
         ]);
 
-        $user->update($request->only('name', 'email'));
+        $emailChanged = $user->email !== $request->input('email');
+
+        $user->forceFill([
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            ...($emailChanged ? ['email_verified_at' => null] : []),
+        ])->save();
 
         Session::flash('success', 'ព័ត៌មានប្រវត្តិរូបត្រូវបានអាប់ដេតដោយជោគជ័យ!');
 

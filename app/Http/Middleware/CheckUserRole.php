@@ -16,12 +16,11 @@ class CheckUserRole
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
         if (! auth()->check()) {
-            return redirect('/login'); // Redirect to login if not authenticated
+            return redirect()->guest(route('login'));
         }
 
-        if (! in_array(auth()->user()->role, $roles)) {
-            // Redirect or show an error if role is not allowed
-            return abort(403, 'Unauthorized action.'); // 403 Forbidden
+        if (! in_array(auth()->user()->role, $roles, true)) {
+            abort(403, 'Unauthorized action.');
         }
 
         return $next($request);

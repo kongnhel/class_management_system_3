@@ -189,6 +189,8 @@ class StudentGradeController extends Controller
 
     public function enrolledCourses($studentId)
     {
+        abort_unless((int) $studentId === (int) Auth::id(), 403);
+
         $student = User::findOrFail($studentId);
         $enrollments = StudentCourseEnrollment::where('student_user_id', $student->id)
             ->whereHas('courseOffering.course')
@@ -275,6 +277,18 @@ class StudentGradeController extends Controller
     {
         $request->validate(['course_offering_id' => 'required|exists:course_offerings,id']);
         $user = Auth::user();
+
+        $eligible = CourseOffering::whereKey($request->course_offering_id)
+            ->where(function ($query) {
+                $query->whereNull('end_date')->orWhere('end_date', '>=', now());
+            })
+            ->whereHas('targetPrograms', fn ($query) => $query
+                ->where('program_id', $user->program_id)
+                ->where('generation', $user->generation))
+            ->exists();
+
+        abort_unless($eligible, 403);
+
         $exists = StudentCourseEnrollment::where('student_user_id', $user->id)->where('course_offering_id', $request->course_offering_id)->exists();
         if ($exists) return back()->with('error', 'អ្នកបានចុះឈ្មោះរួចហើយ។');
         StudentCourseEnrollment::create(['student_user_id' => $user->id, 'course_offering_id' => $request->course_offering_id, 'enrollment_date' => now(), 'status' => 'enrolled']);
@@ -285,8 +299,13 @@ class StudentGradeController extends Controller
     {
         $request->validate(['program_id' => 'required|exists:programs,id']);
         $user = Auth::user();
+
+        abort_unless((int) $request->program_id === (int) $user->program_id, 403);
+
         $gen = $user->generation;
-        $offerings = CourseOffering::whereHas('targetPrograms', fn ($q) => $q->where('program_id', $request->program_id)->where('generation', $gen))->get();
+        $offerings = CourseOffering::where(function ($query) {
+            $query->whereNull('end_date')->orWhere('end_date', '>=', now());
+        })->whereHas('targetPrograms', fn ($q) => $q->where('program_id', $request->program_id)->where('generation', $gen))->get();
         $enrolled = 0;
         foreach ($offerings as $offering) {
             $exists = StudentCourseEnrollment::where('student_user_id', $user->id)->where('course_offering_id', $offering->id)->exists();

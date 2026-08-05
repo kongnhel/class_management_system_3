@@ -16,7 +16,10 @@ class IsClassLeader
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $courseOfferingId = $request->route('courseOffering') ?? $request->route('courseOfferingId');
+        $courseOffering = $request->route('courseOffering') ?? $request->route('courseOfferingId');
+        $courseOfferingId = is_object($courseOffering)
+            ? $courseOffering->getKey()
+            : $courseOffering;
 
         if (! $courseOfferingId) {
             abort(403, 'មិនអនុញ្ញាត។');

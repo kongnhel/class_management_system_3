@@ -13,6 +13,7 @@ use App\Models\Room;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Maatwebsite\Excel\Facades\Excel;
@@ -564,6 +565,15 @@ public function store(Request $request)
 
     public function exportStudents($offering_id)
     {
+        abort_unless(Auth::user()?->isProfessor(), 403);
+
+        abort_unless(
+            CourseOffering::whereKey($offering_id)
+                ->where('lecturer_user_id', Auth::id())
+                ->exists(),
+            403
+        );
+
         return Excel::download(new CourseStudentsExport($offering_id), 'students_list_course_'.$offering_id.'.xlsx');
     }
 

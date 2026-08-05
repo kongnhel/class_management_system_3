@@ -76,6 +76,17 @@ class GoogleAuthController extends Controller
             ], 401);
         }
 
+        $linkedToAnotherUser = User::where('google_id', $googleId)
+            ->where('id', '!=', $user->getKey())
+            ->exists();
+
+        if ($linkedToAnotherUser) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'គណនី Google នេះត្រូវបានភ្ជាប់ជាមួយអ្នកប្រើប្រាស់ផ្សេងរួចហើយ។',
+            ], 409);
+        }
+
         $user->update([
             'google_id' => $googleId,
             'avatar' => $photoURL,

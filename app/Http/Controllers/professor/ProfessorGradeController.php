@@ -612,6 +612,8 @@ class ProfessorGradeController extends Controller
 
         $courseOffering = $assessment->courseOffering;
 
+        abort_unless($courseOffering && $courseOffering->lecturer_user_id === Auth::id(), 403);
+
         $students = \App\Models\User::whereHas('studentCourseEnrollments', function ($q) use ($courseOffering) {
             $q->where('course_offering_id', $courseOffering->id)
                 ->where('status', 'enrolled');

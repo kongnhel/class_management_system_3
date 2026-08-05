@@ -9,13 +9,18 @@ class TelegramController extends Controller
 {
     public function handleWebhook(Request $request)
     {
+        $secret = config('services.telegram.webhook_secret');
+        $providedSecret = (string) $request->header('X-Telegram-Bot-Api-Secret-Token');
+
+        if (! $secret || ! hash_equals($secret, $providedSecret)) {
+            abort(403);
+        }
+
         $chatId = $request->input('message.chat.id');
         $text = $request->input('message.text');
 
-        if (str_contains($text, '/start')) {
-            $userId = str_replace('/start ', '', $text);
-
-            $user = User::find($userId);
+        if (is_string($text) && preg_match('/^\/start\s+(\d+)$/', trim($text), $matches)) {
+            $user = User::find((int) $matches[1]);
             if ($user) {
                 $user->telegram_chat_id = $chatId;
                 $user->save();

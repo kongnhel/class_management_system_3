@@ -70,6 +70,10 @@ Route::get('/locale/{locale}', function (string $locale) {
     return redirect()->back();
 })->name('locale.switch');
 
+Route::post('/professor/telegram/webhook', [TelegramController::class, 'handleWebhook'])
+    ->middleware('throttle:60,1')
+    ->name('professor.telegram.webhook');
+
 /*
 |--------------------------------------------------------------------------
 | Public Routes
@@ -94,7 +98,10 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-Route::get('/api/check-student/{code}', [StudentRegistrationController::class, 'checkStudent']);
+Route::middleware(['throttle:10,1'])->group(function () {
+    Route::get('/api/check-student/{code}', [StudentRegistrationController::class, 'checkStudent'])
+        ->where('code', '[A-Za-z0-9_-]+');
+});
 /*
 |--------------------------------------------------------------------------
 | Authenticated & Verified Routes (Shared for all authenticated users)
@@ -143,7 +150,6 @@ Route::middleware(['auth', 'role:admin', 'throttle:120,1'])->prefix('admin')->na
     Route::get('/faculties/{faculty}/edit', [FacultyController::class, 'edit'])->name('edit-faculty');
     Route::put('/faculties/{faculty}', [FacultyController::class, 'update'])->name('update-faculty');
     Route::delete('/faculties/{faculty}', [FacultyController::class, 'destroy'])->name('delete-faculty');
-    Route::get('/faculties/{faculty}/delete', [FacultyController::class, 'deleteFaculty'])->name('delete-faculty-get');
     // Route::get('/get-departments-by-faculty/{faculty}', [FacultyController::class, 'getDepartmentsByFaculty'])->name('get-departments-by-faculty');
     // Route::get('/get-departments-by-faculty/{faculty}', [AdminController::class, 'getDepartmentsByFaculty'])->name('get-departments-by-faculty');
 
@@ -248,7 +254,7 @@ Route::middleware(['auth', 'role:admin', 'throttle:120,1'])->prefix('admin')->na
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'role:professor'])->prefix('professor')->name('professor.')->group(function () {
+Route::middleware(['auth', 'role:professor', 'throttle:120,1'])->prefix('professor')->name('professor.')->group(function () {
 
     Route::get('/dashboard', [ProfessorController::class, 'dashboard'])->name('dashboard');
     Route::get('/view-departments', [ProfessorController::class, 'viewDepartments'])->name('view-departments');
@@ -318,7 +324,7 @@ Route::middleware(['auth', 'role:professor'])->prefix('professor')->name('profes
     Route::get('/quizzes/{quiz}/questions', [ProfessorController::class, 'manageQuizQuestions'])->name('quizzes.questions.index');
     Route::post('/quizzes/{quiz}/questions', [ProfessorController::class, 'storeQuizQuestion'])->name('quizzes.questions.store');
 
-    Route::post('/telegram/webhook', [TelegramController::class, 'handleWebhook']);
+    // Telegram webhook is registered outside this authenticated professor group below.
 
     Route::post('/send-grade-telegram/{enrollment_id}', [ProfessorController::class, 'sendGradeTelegram'])
         ->name('send_grade_telegram');
@@ -385,7 +391,7 @@ Route::get('/professor/attendance/history', [ProfessorAttendanceController::clas
     ->middleware(['auth', 'role:professor'])
     ->name('professor.attendance.history');
 
-Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')->group(function () {
+Route::middleware(['auth', 'role:student', 'throttle:120,1'])->prefix('student')->name('student.')->group(function () {
     Route::get('/dashboard', [StudentController::class, 'dashboard'])->name('dashboard');
     Route::get('/my-grades', [StudentGradeController::class, 'myGrades'])->name('my-grades');
     Route::get('/my-assessments', [StudentGradeController::class, 'myAssessments'])->name('my-assessments');
@@ -406,12 +412,14 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')
     Route::patch('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
     Route::get('/my-attendance', [StudentAttendanceController::class, 'myAttendance'])->name('my-attendance');
 
-    Route::get('/class-leader/course/{courseOffering}/attendance', [StudentAttendanceController::class, 'leaderAttendance'])
-        ->name('leader.attendance');
-    Route::post('/class-leader/course/{courseOffering}/attendance', [StudentAttendanceController::class, 'storeLeaderAttendance'])
-        ->name('leader.attendance.store');
-    Route::get('/leader/attendance-report/{courseOffering}', [StudentAttendanceController::class, 'leaderAttendanceReport'])
-        ->name('leader.report');
+    Route::middleware('class.leader')->group(function () {
+        Route::get('/class-leader/course/{courseOffering}/attendance', [StudentAttendanceController::class, 'leaderAttendance'])
+            ->name('leader.attendance');
+        Route::post('/class-leader/course/{courseOffering}/attendance', [StudentAttendanceController::class, 'storeLeaderAttendance'])
+            ->name('leader.attendance.store');
+        Route::get('/leader/attendance-report/{courseOffering}', [StudentAttendanceController::class, 'leaderAttendanceReport'])
+            ->name('leader.report');
+    });
     Route::post('/update-telegram', [StudentController::class, 'updateTelegram'])
         ->name('update_telegram');
     Route::get('/scan', function () {
@@ -436,6 +444,8 @@ Route::middleware(['auth', 'role:professor'])->group(function () {
 Route::post('/auth/google/callback', [GoogleAuthController::class, 'handleCallback'])
     ->name('auth.google.callback');
 
-Route::post('/user/link-google', [App\Http\Controllers\Auth\GoogleAuthController::class, 'linkAccount'])->name('user.link-google');
+Route::post('/user/link-google', [App\Http\Controllers\Auth\GoogleAuthController::class, 'linkAccount'])
+    ->middleware(['auth', 'verified', 'throttle:10,1'])
+    ->name('user.link-google');
 
 require __DIR__.'/auth.php';

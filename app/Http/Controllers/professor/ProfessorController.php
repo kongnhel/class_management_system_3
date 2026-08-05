@@ -693,7 +693,7 @@ class ProfessorController extends Controller
     // ឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲឲ
     public function exportGradebookDocx($offering_id)
     {
-        $courseOffering = \App\Models\CourseOffering::with([
+        $courseOffering = \App\Models\CourseOffering::where('lecturer_user_id', Auth::id())->with([
             'course',
             'studentCourseEnrollments.student.studentProfile',
         ])->findOrFail($offering_id);
