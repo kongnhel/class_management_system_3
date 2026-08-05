@@ -103,17 +103,17 @@
 
                     <div class="border-b-2 border-gray-200">
                         <nav class="-mb-0.5 flex space-x-6 overflow-x-auto" aria-label="Tabs">
-                            <a href="{{ route('admin.manage-users', ['tab' => 'admins', 'search' => request('search')]) }}" @click.prevent="activeTab = 'admins'"
+                            <a wire:navigate href="{{ route('admin.manage-users', ['tab' => 'admins', 'search' => request('search')]) }}" @click="activeTab = 'admins'"
                                class="whitespace-nowrap py-4 px-1 border-b-2 text-lg transition-colors duration-200"
                                :class="{ 'border-green-500 text-green-600 font-semibold': activeTab === 'admins', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'admins' }">
                                 <i class="fas fa-user-shield mr-2"></i>{{ __('អ្នកគ្រប់គ្រង') }}
                             </a>
-                            <a href="{{ route('admin.manage-users', ['tab' => 'professors', 'search' => request('search')]) }}" @click.prevent="activeTab = 'professors'"
+                            <a wire:navigate href="{{ route('admin.manage-users', ['tab' => 'professors', 'search' => request('search')]) }}" @click="activeTab = 'professors'"
                                class="whitespace-nowrap py-4 px-1 border-b-2 text-lg transition-colors duration-200"
                                :class="{ 'border-green-500 text-green-600 font-semibold': activeTab === 'professors', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'professors' }">
                                 <i class="fas fa-chalkboard-teacher mr-2"></i>{{ __('លោកគ្រូអ្នកគ្រូ') }}
                             </a>
-                            <a href="{{ route('admin.manage-users', ['tab' => 'students', 'search' => request('search')]) }}" @click.prevent="activeTab = 'students'"
+                            <a wire:navigate href="{{ route('admin.manage-users', ['tab' => 'students', 'search' => request('search')]) }}" @click="activeTab = 'students'"
                                class="whitespace-nowrap py-4 px-1 border-b-2 text-lg transition-colors duration-200"
                                :class="{ 'border-green-500 text-green-600 font-semibold': activeTab === 'students', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'students' }">
                                 <i class="fas fa-user-graduate mr-2"></i>{{ __('និស្សិត') }}

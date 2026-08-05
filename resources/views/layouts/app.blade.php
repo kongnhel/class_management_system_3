@@ -8,6 +8,7 @@
               localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
           }
       }" 
+      @close-sidebar.window="open = false"
       :class="{ 'dark': darkMode }">
     <head>
         
@@ -92,6 +93,76 @@
             }
             window.scrollTo(0, 0);
         </script>
+        <script data-navigate-once>
+            const sidebarScrollStorageKey = 'class-management-sidebar-scroll-top';
+
+            const getSidebarLinks = () => document.querySelector('.sidebar-links');
+
+            const saveSidebarScrollPosition = () => {
+                const sidebarLinks = getSidebarLinks();
+
+                if (sidebarLinks) {
+                    sessionStorage.setItem(sidebarScrollStorageKey, String(sidebarLinks.scrollTop));
+                }
+            };
+
+            const restoreSidebarScrollPosition = () => {
+                const sidebarLinks = getSidebarLinks();
+
+                if (!sidebarLinks) {
+                    return;
+                }
+
+                const savedScrollTop = Number(sessionStorage.getItem(sidebarScrollStorageKey));
+
+                if (Number.isFinite(savedScrollTop)) {
+                    requestAnimationFrame(() => {
+                        sidebarLinks.scrollTop = savedScrollTop;
+                    });
+                }
+            };
+
+            const syncSidebarTabState = () => {
+                const currentUrl = new URL(window.location.href);
+                const currentPath = currentUrl.pathname.replace(/\/+$/, '');
+                const currentTab = currentUrl.searchParams.get('tab');
+
+                document.querySelectorAll('[data-sidebar-tab]').forEach((link) => {
+                    const linkUrl = new URL(link.href, window.location.href);
+                    const isCurrent = linkUrl.pathname.replace(/\/+$/, '') === currentPath
+                        && link.dataset.sidebarTab === currentTab;
+
+                    link.classList.toggle('sidebar-tab-current', isCurrent);
+                });
+            };
+
+            document.addEventListener('alpine:navigating', saveSidebarScrollPosition);
+            document.addEventListener('livewire:navigated', () => {
+                window.dispatchEvent(new CustomEvent('close-sidebar'));
+                syncSidebarTabState();
+                restoreSidebarScrollPosition();
+                window.scrollTo(0, 0);
+            });
+
+            const bindSidebarScrollListener = () => {
+                const sidebarLinks = getSidebarLinks();
+
+                if (sidebarLinks && !sidebarLinks.dataset.scrollPersistenceBound) {
+                    sidebarLinks.addEventListener('scroll', saveSidebarScrollPosition, { passive: true });
+                    sidebarLinks.dataset.scrollPersistenceBound = 'true';
+                }
+            };
+
+            document.addEventListener('DOMContentLoaded', () => {
+                bindSidebarScrollListener();
+                syncSidebarTabState();
+                restoreSidebarScrollPosition();
+            });
+
+            bindSidebarScrollListener();
+            syncSidebarTabState();
+            restoreSidebarScrollPosition();
+        </script>
     <x-toast />
 
     @auth
@@ -127,7 +198,7 @@
             <div class="flex items-center space-x-3 ml-auto">
     @auth
         {{-- បន្ថែមស្លាក <a> ដើម្បីឱ្យចុចបានទាំងឈ្មោះ និងរូបភាព --}}
-        <a href="{{ route('profile.edit') }}" class="flex items-center space-x-3 hover:opacity-80 transition-opacity">
+        <a href="{{ route('profile.edit') }}" wire:navigate class="flex items-center space-x-3 hover:opacity-80 transition-opacity">
             
             {{-- ឈ្មោះអ្នកប្រើប្រាស់ (បង្ហាញតែលើ Desktop) --}}
             <div class="flex flex-col items-end leading-tight me-2 sm:block">

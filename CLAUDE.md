@@ -1,175 +1,167 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code (claude.ai/code) when working with this repository.
 
-## Project Overview
+## Project
 
-This is a Laravel-based class management system for educational institutions. It supports three main user roles:
-- **Admin**: Manages users, faculties, departments, programs, courses, course offerings, rooms, and announcements
-- **Professor**: Manages course offerings, grades, attendance, assignments, exams, and notifications
-- **Student**: Views enrolled courses, grades, attendance, schedules, and receives notifications
+This is a Laravel 12 class-management application for an educational institution. It has separate admin, professor, and student workflows for academic setup, course offerings, enrollment, grading, attendance, schedules, announcements, and notifications.
 
-## Common Development Commands
+The repository's README is the stock Laravel README, so the application-specific guidance is documented here and in the source code.
 
-### Development Server
+## Commands
+
+### Initial setup
+
 ```bash
-# Start development server with all services (server, queue, logs, vite)
+composer install
+npm install
+```
+
+If `.env` does not exist, copy `.env.example` to `.env` and generate the application key:
+
+```bash
+# PowerShell
+Copy-Item .env.example .env
+php artisan key:generate
+
+# Then create/update the configured database
+php artisan migrate
+```
+
+The example environment uses SQLite at `database/database.sqlite`, with database-backed sessions, cache, and queues. It also contains configuration points for MySQL, Redis, mail, broadcasting, and external integrations.
+
+### Development
+
+```bash
+# Run the HTTP server, queue worker, log viewer, and Vite together
 composer run dev
 
-# Or start individual services
+# Or run individual processes
 php artisan serve
 php artisan queue:listen --tries=1
 php artisan pail --timeout=0
 npm run dev
 ```
 
-### Testing
-```bash
-# Run all tests
-./vendor/bin/pest
+Useful application commands:
 
-# Run specific test file
-./vendor/bin/pest tests/Feature/ExampleTest.php
-```
-
-### Database
 ```bash
-# Run migrations
+php artisan route:list
+php artisan optimize:clear
 php artisan migrate
+php artisan db:seed
 
-# Fresh migration with seeding
+# Destructive: replace the database and run all seeders
 php artisan migrate:fresh --seed
-
-# Create new migration
-php artisan make:migration create_table_name
 ```
 
-### Code Quality
+### Tests
+
+Tests use Pest through Laravel's test runner. PHPUnit's test suites are `tests/Unit` and `tests/Feature`.
+
 ```bash
-# Format code with Laravel Pint
-./vendor/bin/pint
+# All tests
+php artisan test
 
-# Run static analysis
-php artisan code:analyse
+# One test file
+php artisan test tests/Feature/Auth/AuthenticationTest.php
+
+# Filter by test or method name
+php artisan test --filter="user can authenticate"
+
+# Direct Pest invocation, if needed
+php vendor/bin/pest
 ```
+
+The test configuration uses array cache/session and synchronous queues. Database test overrides are commented out in `phpunit.xml`, so enable an appropriate test database in the environment when a test needs database isolation.
+
+### Frontend and formatting
+
+```bash
+# Production asset build
+npm run build
+
+# Format PHP with Laravel Pint
+php vendor/bin/pint
+
+# Check formatting without changing files
+php vendor/bin/pint --test
+```
+
+There is no PHPStan/Psalm script configured in `composer.json`; do not use the old `php artisan code:analyse` command from earlier documentation.
 
 ## Architecture
 
-### Role-Based Access Control
-The system uses a custom role-based middleware system defined in `routes/web.php`:
-- `role:admin` - Admin routes
-- `role:professor` - Professor routes
-- `role:student` - Student routes
+### Application entry points and routing
 
-User roles are stored in the `users` table with a `role` column. The `User` model provides helper methods:
-- `isAdmin()`, `isProfessor()`, `isStudent()` methods in `app/Models/User.php`
+- `bootstrap/app.php` configures the Laravel 12 application, loads `routes/web.php`, `routes/api.php`, `routes/console.php`, and `routes/channels.php`, aliases the custom `role` middleware, and appends security headers.
+- `routes/web.php` is the main application map. It contains shared authenticated routes, the admin/professor/student route groups, QR attendance endpoints, AI chat endpoints, locale switching, Google account routes, and the inclusion of `routes/auth.php`.
+- `routes/auth.php` contains the Breeze-style guest and authenticated login, registration, password, email verification, and logout routes.
+- Admin routes use the `admin` prefix/name group and `auth`, `role:admin`, and throttling. Professor and student routes use corresponding prefixes/name groups and `role:professor` or `role:student`.
+- `app/Http/Middleware/CheckUserRole.php` implements the `role` alias. Roles are stored as strings in `users.role`; `User::isAdmin()`, `isProfessor()`, and `isStudent()` are commonly used by redirects and views.
 
-### Key Models and Relationships
+When changing a feature, trace its route, role middleware, controller, model/query, and Blade/JavaScript caller together. Many endpoints are conventional web routes rather than a separately versioned API.
 
-**User Model** (`app/Models/User.php`):
-- Central model with role-based relationships
-- Relationships to `UserProfile`, `StudentProfile`, `ProfessorProfile`
-- Links to `Department`, `Program`, `CourseOffering` (as lecturer)
-- Attendance records, submissions, exam results, quiz responses
+### Domain model
 
-**CourseOffering Model** (`app/Models/CourseOffering.php`):
-- Links `Course` to `Program` with specific offering details
-- Relationships to `lecturer`, `students`, `schedules`, `assignments`, `exams`, `quizzes`
-- Contains enrollment data through `studentCourseEnrollments`
+The central academic flow is:
 
-**Attendance System**:
-- Attendance records stored in `attendance_records` table
-- Auto-calculation of attendance scores (15% of total grade)
-- Formula: 2 absences = -1 point, 4 permissions = -1 point
-- QR code-based attendance system with location verification
+```text
+Faculty -> Department -> Program -> Course -> CourseOffering
+                                                  |
+                           lecturer, students/enrollments, schedules,
+                           room, assignments, exams, quizzes, attendance,
+                           announcements, and grading categories
+```
 
-### Controller Organization
+The exact relationships are represented by Eloquent models and migrations; `CourseOffering` is the main aggregate for professor and student course work. Student membership is stored through the `student_course_enrollments` table, and the offering also has a many-to-many `students` relationship.
 
-Controllers are organized by role in `app/Http/Controllers/`:
-- `admin/` - Admin-specific controllers
-- `professor/` - Professor-specific controllers
-- `Student/` - Student-specific controllers
-- `Auth/` - Authentication controllers including QR login
+`User` is both the authentication model and the link to role-specific data. It has student/professor profiles, department/program links, taught offerings, enrollments, attendance records, submissions, exam results, notifications, and soft deletes.
 
-### View Structure
+### Grading and attendance
 
-Views are organized by role in `resources/views/`:
-- `admin/` - Admin dashboard and management pages
-- `professor/` - Professor dashboard and course management
-- `student/` - Student dashboard and personal views
-- `auth/` - Authentication pages including QR login
-- `layouts/` - Main layout templates
-- `components/` - Reusable Blade components
+- Assessment data is split across assignments, exams, quizzes, submissions/results, and configurable `GradingCategory` records.
+- `app/Services/GradingService.php` maps total scores out of 100 to the application's letter-grade scale. The documented model is attendance out of 15 plus other assessments out of 85.
+- `User::getAttendanceScoreByCourse()` calculates the automatic attendance score from `AttendanceRecord` rows: one point is deducted for each two absences and each four permissions, with a floor of zero from a maximum of 15.
+- Professor attendance routes create/manage sessions and records; student QR scanning is handled by `AttendanceController`, which validates the token, expiry, enrollment, and duplicate scan before creating a present record. Closing attendance can create absent records for enrolled students who did not scan.
+- Attendance and grade changes often affect exports and notification flows, so check the related professor/student controllers and export classes when changing scoring behavior.
 
-### Key Features
+### Controllers, views, and frontend
 
-**QR Code Login System**:
-- Desktop displays QR code (`QrLoginController`)
-- Mobile app scans and authorizes login
-- Token-based authentication with Firebase integration
-- Location verification for attendance
+Controllers are grouped by responsibility under `app/Http/Controllers/`:
 
-**Grading System**:
-- Multiple assessment types (assignments, exams, quizzes)
-- Grading categories with configurable weights
-- Manual and automatic attendance score calculation
-- Export functionality for grades (CSV, DOCX)
+- `admin/` manages users and academic configuration such as faculties, departments, programs, courses, offerings, rooms, years, imports, grades, and attendance dashboards.
+- `professor/` manages assigned offerings, assessments, grade entry/import/export, attendance, submissions, notifications, profiles, and Telegram actions.
+- `Student/` provides enrollment, grades, schedules, rooms, attendance, notifications, and profile pages.
+- `Auth/` contains authentication-specific controllers, including Google/phone/QR-related flows.
+- Root-level controllers contain shared flows such as profile, attendance scanning, student registration, Telegram, and the AI assistant.
 
-**Notification System**:
-- Database-backed notifications
-- Role-specific notification views
-- Telegram integration for grade notifications
+Blade views are under `resources/views/` with role-specific directories (`admin`, `professor`, `student`) plus `auth`, `layouts`, `components`, and Livewire views. `resources/views/layouts/app.blade.php` and `navigation.blade.php` are the main authenticated shell.
 
-**Real-time Features**:
-- Laravel Echo and Pusher for real-time updates
-- Livewire components for interactive UI elements
+Vite builds `resources/css/app.css` and `resources/js/app.js` from `vite.config.js`. The frontend uses Tailwind CSS, Alpine.js, Axios, Laravel Echo/Pusher, and small feature scripts such as `resources/js/ai-chat.js` and `resources/js/echo.js`. Livewire is a Composer dependency and has a custom JavaScript route in `routes/web.php`.
 
-### Export Functionality
+### Integrations and supporting code
 
-Export classes in `app/Exports/`:
-- `UsersExport` - User data export
-- `CourseStudentsExport` - Course enrollment export
-- `StudentsGradeExport` - Grade data export
+Integration code is spread between controllers, events, and services in `app/Services/`. Relevant dependencies/features include:
 
-### External Integrations
+- Firebase authentication/messaging, Google account linking, and QR login.
+- Pusher/Echo broadcasting and database notifications.
+- Telegram grade/notification delivery through `TelegramClientService` and related controllers.
+- Cloudinary/ImageKit media storage.
+- Excel import/export, PDF generation, DOCX generation, and QR code generation.
+- `StudentProgressionService`, `ActivityLogger`, `OtpService`, and `AIContextService` for cross-cutting workflows.
 
-- **Firebase**: Push notifications and authentication
-- **Pusher**: Real-time event broadcasting
-- **Telegram**: Grade notifications via bot
-- **Cloudinary**: Image storage
-- **DomPDF**: PDF generation
-- **PhpWord**: Word document generation
-- **Excel**: Import/export functionality
+These features depend on environment credentials and external services; local core development can use the defaults in `.env.example`, while integration-specific tests need their corresponding configuration.
 
-## Development Notes
+## Where to look first
 
-### Database
-- Uses SQLite by default (`database/database.sqlite`)
-- Migration files in `database/migrations/`
-- Seeders in `database/seeders/`
-
-### Frontend
-- Uses Vite for asset compilation
-- Tailwind CSS for styling
-- Alpine.js for client-side interactivity
-- Laravel Breeze for authentication scaffolding
-
-### Deployment
-- Configured for Vercel deployment (`vercel.json`)
-- Docker support (`Dockerfile`)
-- Nixpacks configuration (`nixpacks.toml`)
-
-### Testing
-- Uses Pest PHP testing framework
-- Test files in `tests/Feature/` and `tests/Unit/`
-- PHPUnit configuration in `phpunit.xml`
-
-## Important Files
-
-- `routes/web.php` - Main route definitions with role-based middleware
-- `app/Models/User.php` - User model with role methods and relationships
-- `app/Models/CourseOffering.php` - Course offering model with relationships
-- `app/Http/Controllers/AttendanceController.php` - Attendance management
-- `app/Http/Controllers/Auth/QrLoginController.php` - QR code login system
-- `resources/views/layouts/app.blade.php` - Main application layout
-- `resources/views/layouts/navigation.blade.php` - Navigation component
+- `routes/web.php` — route names, role boundaries, and feature entry points.
+- `bootstrap/app.php` and `app/Http/Middleware/CheckUserRole.php` — middleware registration and authorization behavior.
+- `app/Models/User.php` — roles and user-centered relationships.
+- `app/Models/CourseOffering.php` — course offering relationships and enrollment access.
+- `app/Services/GradingService.php` — letter-grade thresholds.
+- `app/Http/Controllers/AttendanceController.php` and `app/Http/Controllers/professor/` — QR/professor attendance flows.
+- `database/migrations/` and `database/seeders/` — schema and initial data.
+- `app/Exports/` — grade, enrollment, and user export implementations.
+- `resources/views/layouts/`, `resources/views/{admin,professor,student}/`, and `resources/js/` — UI and browser-side behavior.
+- `tests/Feature/` and `tests/Unit/` — current Pest coverage, primarily authentication/profile scaffolding.
