@@ -145,7 +145,7 @@
 
             {{-- Breadcrumb --}}
             <div class="flex items-center gap-2 text-xs font-semibold text-slate-400">
-                <a href="{{ route('student.my-enrolled-courses') }}" class="hover:text-emerald-600 transition-colors">{{ __('មុខវិជ្ជារបស់ខ្ញុំ') }}</a>
+                <a wire:navigate href="{{ route('student.my-enrolled-courses') }}" class="hover:text-emerald-600 transition-colors">{{ __('មុខវិជ្ជារបស់ខ្ញុំ') }}</a>
                 <i class="fas fa-chevron-right text-[8px]"></i>
                 <span class="text-slate-600">{{ __('របាយការណ៍វត្តមាន') }}</span>
             </div>

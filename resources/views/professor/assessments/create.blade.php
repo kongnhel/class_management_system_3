@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="max-w-7xl mx-auto px-2">
             <div class="flex items-center gap-3">
-                <a href="{{ route('professor.manage-grades', ['offering_id' => $courseOffering->id]) }}"
+                <a wire:navigate href="{{ route('professor.manage-grades', ['offering_id' => $courseOffering->id]) }}"
                    class="p-2 bg-white border border-slate-200 rounded-xl text-slate-500 hover:bg-emerald-50 transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
                 </a>
@@ -149,7 +149,7 @@
 
                                 {{-- Footer --}}
                                 <div class="mt-10 pt-8 border-t border-gray-100 flex flex-col-reverse sm:flex-row gap-3 sm:justify-end">
-                                    <a href="{{ route('professor.manage-grades', ['offering_id' => $courseOffering->id]) }}"
+                                    <a wire:navigate href="{{ route('professor.manage-grades', ['offering_id' => $courseOffering->id]) }}"
                                        class="w-full sm:w-auto inline-flex justify-center items-center px-8 py-3.5 border border-gray-200 text-sm font-bold rounded-xl text-gray-500 bg-white hover:bg-gray-50 transition-all active:scale-95">
                                         បោះបង់
                                     </a>

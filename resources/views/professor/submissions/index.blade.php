@@ -13,7 +13,7 @@
                 </div>
 
                 <div class="flex flex-wrap items-center justify-center lg:justify-end gap-3">
-                    <a href="{{ route('professor.manage-assignments', ['offering_id' => $courseOffering->id]) }}"
+                    <a wire:navigate href="{{ route('professor.manage-assignments', ['offering_id' => $courseOffering->id]) }}"
                         class="group inline-flex items-center justify-center px-4 py-2.5 bg-slate-600 hover:bg-slate-700 text-white rounded-2xl font-bold text-xs transition-all duration-200 shadow-sm">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
@@ -177,7 +177,7 @@
                                         @endif
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-center">
-                                        <a href="{{ route('professor.submissions.show', ['offering_id' => $courseOffering->id, 'assignment_id' => $assignment->id, 'submission_id' => $submission->id]) }}"
+                                        <a wire:navigate href="{{ route('professor.submissions.show', ['offering_id' => $courseOffering->id, 'assignment_id' => $assignment->id, 'submission_id' => $submission->id]) }}"
                                             class="inline-flex items-center px-3 py-1.5 bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200 transition-colors text-xs font-medium">
                                             <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>

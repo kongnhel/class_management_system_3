@@ -8,7 +8,7 @@
                 <p class="mt-1 text-lg text-gray-500">{{ $exam->title_km ?? $exam->title_en }}</p>
                 <p class="text-md text-gray-400">{{ __('សម្រាប់វគ្គសិក្សា:') }} {{ $courseOffering->course->title_km ?? 'N/A' }}</p>
             </div>
-            <a href="{{ route('professor.manage-exams', ['offering_id' => $courseOffering->id]) }}" class="inline-flex items-center px-6 py-3 bg-white border border-gray-300 rounded-full font-bold text-base text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 transition-all duration-300 shadow-sm">
+            <a wire:navigate href="{{ route('professor.manage-exams', ['offering_id' => $courseOffering->id]) }}" class="inline-flex items-center px-6 py-3 bg-white border border-gray-300 rounded-full font-bold text-base text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 transition-all duration-300 shadow-sm">
                 <i class="fas fa-arrow-left mr-3"></i>
                 {{ __('ត្រឡប់ទៅបញ្ជីការប្រលង') }}
             </a>

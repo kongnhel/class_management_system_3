@@ -21,7 +21,7 @@
 
         {{-- Header --}}
         <div class="w-full max-w-md flex justify-between items-center mb-6">
-            <a href="{{ route('student.dashboard') }}" class="p-3 rounded-full bg-white shadow-sm text-gray-500 hover:text-gray-900 transition-all">
+            <a wire:navigate href="{{ route('student.dashboard') }}" class="p-3 rounded-full bg-white shadow-sm text-gray-500 hover:text-gray-900 transition-all">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
             </a>
             <h1 class="text-xl font-bold text-gray-800">{{ __('QR Attendance') }}</h1>

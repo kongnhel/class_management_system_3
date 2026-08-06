@@ -20,7 +20,7 @@
             <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 no-print">
                 <div>
                     <div class="flex items-center gap-2 text-sm text-gray-400 mb-1">
-                        <a href="{{ route('professor.my-course-offerings') }}" class="hover:text-green-600 transition-colors">{{ __('វគ្គសិក្សា') }}</a>
+                        <a wire:navigate href="{{ route('professor.my-course-offerings') }}" class="hover:text-green-600 transition-colors">{{ __('វគ្គសិក្សា') }}</a>
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                         <span class="text-gray-600 font-bold">{{ $courseOffering->course->name_km }}</span>
                     </div>

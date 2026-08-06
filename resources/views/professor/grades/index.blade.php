@@ -19,7 +19,7 @@
                     </div>
 
                     <div class="grid grid-cols-3 md:flex items-center gap-3 w-full md:w-auto">
-                        <a href="{{ route('professor.assessments.create', ['offering_id' => $courseOffering->id]) }}"
+                        <a wire:navigate href="{{ route('professor.assessments.create', ['offering_id' => $courseOffering->id]) }}"
                             class="group inline-flex items-center justify-center px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-bold text-xs transition-all duration-200 shadow-sm hover:shadow-emerald-200">
                             <svg class="w-4 h-4 mr-2 group-hover:rotate-90 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
@@ -221,7 +221,7 @@
                                     <span class="text-sm font-bold text-slate-700">{{ $assessment->title_km }}</span>
                                 </div>
                                 <div class="flex gap-2">
-                                    <a href="{{ route('professor.assessments.edit', ['id' => $assessment->id, 'type' => $type]) }}"
+                                    <a wire:navigate href="{{ route('professor.assessments.edit', ['id' => $assessment->id, 'type' => $type]) }}"
                                        class="p-2 bg-white text-emerald-600 border border-slate-200 rounded-xl shadow-sm">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                                     </a>
@@ -293,7 +293,7 @@
                                         $type = ($assessment instanceof \App\Models\Assignment) ? 'assignment' : (($assessment instanceof \App\Models\Quiz) ? 'quiz' : 'exam');
                                         $score = $gradebook[$student->id][$type . '_' . $assessment->id] ?? 0;
                                     @endphp
-                                    <a href="{{ route('professor.grades.edit', ['assessment_id' => $assessment->id, 'type' => $type]) }}"
+                                    <a wire:navigate href="{{ route('professor.grades.edit', ['assessment_id' => $assessment->id, 'type' => $type]) }}"
                                        class="flex justify-between items-center p-4 bg-white hover:bg-emerald-50 border border-slate-100 rounded-2xl transition-all active:scale-95 group">
                                         <div class="flex items-center gap-2">
                                             <div class="w-2 h-2 rounded-full {{ $type === 'exam' ? 'bg-rose-400' : ($type === 'quiz' ? 'bg-amber-400' : 'bg-emerald-400') }}"></div>
@@ -434,7 +434,7 @@
                                             @if ($type === 'quiz')
                                                 <span class="text-[9px] font-bold text-amber-500 uppercase tracking-wide">+ Bonus</span>
                                             @endif
-                                            <a href="{{ route('professor.grades.edit', ['assessment_id' => $assessment->id, 'type' => $type]) }}"
+                                            <a wire:navigate href="{{ route('professor.grades.edit', ['assessment_id' => $assessment->id, 'type' => $type]) }}"
                                                class="text-[13px] font-extrabold text-slate-700 hover:text-emerald-600 hover:scale-105 transform transition-all line-clamp-1">
                                                 {{ $assessment->title_km }}
                                             </a>
@@ -455,7 +455,7 @@
                                         </div>
 
                                         <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-200 flex gap-1">
-                                            <a href="{{ route('professor.assessments.edit', ['id' => $assessment->id, 'type' => $type]) }}"
+                                            <a wire:navigate href="{{ route('professor.assessments.edit', ['id' => $assessment->id, 'type' => $type]) }}"
                                                class="p-1.5 bg-white text-slate-400 hover:text-emerald-600 border border-slate-100 rounded-lg shadow-sm" title="{{ __('កែសម្រួល') }}">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                                             </a>

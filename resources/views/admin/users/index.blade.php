@@ -41,7 +41,7 @@
                         
                         <div class="hidden md:block h-8 w-px bg-gray-200"></div>
 
-                        <a href="{{ route('admin.create-user') }}"
+                        <a wire:navigate href="{{ route('admin.create-user') }}"
                            class="w-full md:w-auto inline-flex items-center justify-center px-6 py-3 bg-green-600 border border-transparent rounded-2xl font-bold text-sm text-white hover:bg-green-700 active:scale-95 focus:outline-none focus:ring-4 focus:ring-green-500/30 transition-all duration-200 shadow-lg shadow-green-200">
                             <i class="fas fa-plus-circle mr-2 text-lg"></i> 
                             {{ __('បន្ថែមសមាជិកថ្មី') }}
@@ -158,7 +158,7 @@
                                                     <td class="px-6 py-3 text-gray-600 edit-user-email">{{ $admin->email }}</td>
                                                     <td class="px-6 py-3 text-gray-600 edit-user-fullname">{{ $admin->profile->full_name_km ?? 'N/A' }}</td>
                                                     <td class="px-6 py-3 text-right font-bold space-x-4">
-                                                        <a href="{{ route('admin.show-user', $admin->id) }}" class="text-green-600 hover:text-green-700 text-sm px-3 py-1.5 rounded-lg hover:bg-green-50 transition-all">{{ __('មើល') }}</a>
+                                                        <a wire:navigate href="{{ route('admin.show-user', $admin->id) }}" class="text-green-600 hover:text-green-700 text-sm px-3 py-1.5 rounded-lg hover:bg-green-50 transition-all">{{ __('មើល') }}</a>
                                                         <button type="button" @click.stop="openEditModal({{ $admin->id }})" class="text-emerald-600 hover:text-emerald-700 text-sm px-3 py-1.5 rounded-lg hover:bg-emerald-50 transition-all">{{ __('កែប្រែ') }}</button>
                                                         <button type="button" @click.stop="confirmDelete('delete-admin-{{ $admin->id }}', '{{ __('អ្នកគ្រប់គ្រង') }}')" class="text-red-500 hover:text-red-600 text-sm px-3 py-1.5 rounded-lg hover:bg-red-50 transition-all">{{ __('លុប') }}</button>
                                                         <form id="delete-admin-{{ $admin->id }}" action="{{ route('admin.delete-user', $admin->id) }}" method="POST" class="hidden">@csrf @method('DELETE')</form>
@@ -199,7 +199,7 @@
                                                      <p class="text-xs text-gray-600 font-medium truncate">{{ $admin->profile->full_name_km ?? 'No Name' }}</p>
                                                 </div>
                                                 <div class="flex space-x-4 text-sm font-bold">
-                                                    <a href="{{ route('admin.show-user', $admin->id) }}" class="text-green-600 flex items-center px-3 py-1.5 rounded-lg hover:bg-green-50 transition-all">
+                                                    <a wire:navigate href="{{ route('admin.show-user', $admin->id) }}" class="text-green-600 flex items-center px-3 py-1.5 rounded-lg hover:bg-green-50 transition-all">
                                                          <i class="fas fa-eye mr-1.5"></i> {{ __('មើល') }}
                                                      </a>
                                                      <button type="button" @click.stop="openEditModal({{ $admin->id }})" class="text-emerald-600 flex items-center px-3 py-1.5 rounded-lg hover:bg-emerald-50 transition-all">
@@ -247,7 +247,7 @@
                                         </select>
                                     </div>
 
-                                    <a href="{{ route('admin.manage-users', ['tab' => 'professors']) }}" class="px-6 py-2 bg-gray-100 text-gray-600 rounded-xl font-bold text-sm hover:bg-gray-200 transition-all">
+                                    <a wire:navigate href="{{ route('admin.manage-users', ['tab' => 'professors']) }}" class="px-6 py-2 bg-gray-100 text-gray-600 rounded-xl font-bold text-sm hover:bg-gray-200 transition-all">
                                         {{ __('Reset') }}
                                     </a>
                                 </form>
@@ -313,7 +313,7 @@
                                                                     <td class="px-6 py-3 text-sm text-gray-600 font-medium edit-user-email">{{ $professor->email }}</td>
                                                                     <td class="px-6 py-3 text-right">
                                                                         <div class="flex items-center justify-end gap-4 text-sm font-bold">
-                                                                            <a href="{{ route('admin.show-user', $professor->id) }}" class="text-green-600 hover:text-green-700 px-3 py-1.5 rounded-lg hover:bg-green-50 transition-all">{{ __('មើល') }}</a>
+                                                                            <a wire:navigate href="{{ route('admin.show-user', $professor->id) }}" class="text-green-600 hover:text-green-700 px-3 py-1.5 rounded-lg hover:bg-green-50 transition-all">{{ __('មើល') }}</a>
                                                                             <button type="button" @click.stop="openEditModal({{ $professor->id }})" class="text-emerald-600 hover:text-emerald-700 px-3 py-1.5 rounded-lg hover:bg-emerald-50 transition-all">{{ __('កែ') }}</button>
                                                                             <button type="button" @click.stop="confirmDelete('del-prof-{{ $professor->id }}', '{{ __('លោកគ្រូអ្នកគ្រូ') }}')" class="text-red-500 hover:text-red-600 px-3 py-1.5 rounded-lg hover:bg-red-50 transition-all">{{ __('លុប') }}</button>
                                                                         </div>
@@ -349,7 +349,7 @@
                                                                 <div class="flex items-center justify-between mt-4 pt-3 border-t border-gray-100">
                                                                     <span class="text-[10px] font-bold text-gray-400 italic">{{ $professor->profile->full_name_km ?? 'N/A' }}</span>
                                                                     <div class="flex space-x-4">
-                                                                        <a href="{{ route('admin.show-user', $professor->id) }}" class="text-green-600 text-sm font-bold px-3 py-1.5 rounded-lg hover:bg-green-50 transition-all">{{ __('មើល') }}</a>
+                                                                        <a wire:navigate href="{{ route('admin.show-user', $professor->id) }}" class="text-green-600 text-sm font-bold px-3 py-1.5 rounded-lg hover:bg-green-50 transition-all">{{ __('មើល') }}</a>
                                                                         <button type="button" @click.stop="openEditModal({{ $professor->id }})" class="text-emerald-600 text-sm font-bold px-3 py-1.5 rounded-lg hover:bg-emerald-50 transition-all">{{ __('កែ') }}</button>
                                                                         <button @click.stop="confirmDelete('del-mob-prof-{{ $professor->id }}', 'Professor')" class="text-red-500 text-sm font-bold px-3 py-1.5 rounded-lg hover:bg-red-50 transition-all">{{ __('លុប') }}</button>
                                                                     </div>
@@ -396,7 +396,7 @@
                                         </select>
                                     </div>
 
-                                    <a href="{{ route('admin.manage-users', ['tab' => 'students']) }}" class="px-6 py-2 bg-gray-100 text-gray-600 rounded-xl font-bold text-sm hover:bg-gray-200 transition-all">
+                                    <a wire:navigate href="{{ route('admin.manage-users', ['tab' => 'students']) }}" class="px-6 py-2 bg-gray-100 text-gray-600 rounded-xl font-bold text-sm hover:bg-gray-200 transition-all">
                                         {{ __('Reset') }}
                                     </a>
                                 </form>
@@ -494,7 +494,7 @@
                                                                             </td>
                                                                             <td class="px-6 py-3 text-right">
                                                                                 <div class="flex items-center justify-end gap-4 text-sm font-bold">
-                                                                                    <a href="{{ route('admin.show-user', $student->id) }}" class="text-green-600 hover:text-green-700 px-3 py-1.5 rounded-lg hover:bg-green-50 transition-all">{{ __('មើល') }}</a>
+                                                                                    <a wire:navigate href="{{ route('admin.show-user', $student->id) }}" class="text-green-600 hover:text-green-700 px-3 py-1.5 rounded-lg hover:bg-green-50 transition-all">{{ __('មើល') }}</a>
                                                                                     <button type="button" @click.stop="openEditModal({{ $student->id }})" class="text-emerald-600 hover:text-emerald-700 px-3 py-1.5 rounded-lg hover:bg-emerald-50 transition-all">{{ __('កែ') }}</button>
                                                                                     <button type="button" @click.stop="confirmDelete('del-std-{{ $student->id }}', '{{ __('និស្សិត') }}')" class="text-red-500 hover:text-red-600 px-3 py-1.5 rounded-lg hover:bg-red-50 transition-all">{{ __('លុប') }}</button>
                                                                                 </div>
@@ -543,7 +543,7 @@
                                                                     <div class="flex items-center justify-between mt-4 pt-3 border-t border-gray-100">
                                                                         <span class="text-[10px] font-bold text-gray-400 italic">{{ $student->studentProfile->full_name_km ?? 'N/A' }}</span>
                                                                         <div class="flex space-x-4">
-                                                                            <a href="{{ route('admin.show-user', $student->id) }}" class="text-green-600 text-sm font-bold px-3 py-1.5 rounded-lg hover:bg-green-50 transition-all">{{ __('មើល') }}</a>
+                                                                            <a wire:navigate href="{{ route('admin.show-user', $student->id) }}" class="text-green-600 text-sm font-bold px-3 py-1.5 rounded-lg hover:bg-green-50 transition-all">{{ __('មើល') }}</a>
                                                                             <button type="button" @click.stop="openEditModal({{ $student->id }})" class="text-emerald-600 text-sm font-bold px-3 py-1.5 rounded-lg hover:bg-emerald-50 transition-all">{{ __('កែ') }}</button>
                                                                             <button @click="confirmDelete('del-mob-{{ $student->id }}', 'Student')" class="text-red-500 text-sm font-bold px-3 py-1.5 rounded-lg hover:bg-red-50 transition-all">{{ __('លុប') }}</button>
                                                                         </div>

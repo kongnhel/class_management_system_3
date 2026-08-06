@@ -84,7 +84,7 @@
                     </button>
                 </div> --}}
                       <div class="flex items-center justify-between mt-6">
-                        <a href="{{ route('professor.notifications.index') }}" class="inline-flex items-center px-6 py-3 border border-transparent rounded-full font-semibold text-xs text-gray-700 uppercase tracking-widest hover:text-gray-900 transition ease-in-out duration-150">
+                        <a wire:navigate href="{{ route('professor.notifications.index') }}" class="inline-flex items-center px-6 py-3 border border-transparent rounded-full font-semibold text-xs text-gray-700 uppercase tracking-widest hover:text-gray-900 transition ease-in-out duration-150">
                             <i class="fas fa-arrow-left mr-2"></i> {{ __('ត្រលប់ក្រោយ') }}
                         </a>
                         <button type="submit" class="inline-flex items-center px-8 py-3 bg-gradient-to-r from-green-600 to-green-600 border border-transparent rounded-full font-semibold text-sm text-white uppercase tracking-widest hover:from-green-700 hover:to-green-700 active:from-green-800 active:to-green-800 focus:outline-none focus:border-green-900 focus:ring ring-green-300 disabled:opacity-25 transition ease-in-out duration-150 shadow-lg hover:shadow-xl">

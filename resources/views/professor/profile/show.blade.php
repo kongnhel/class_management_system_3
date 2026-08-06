@@ -14,7 +14,7 @@
                         </p>
                     </div>
                     <div class="w-full md:w-auto">
-                        <a href="{{ route('professor.profile.edit') }}" 
+                        <a wire:navigate href="{{ route('professor.profile.edit') }}"
                            class="flex items-center justify-center px-6 py-3 md:px-8 md:py-4 bg-green-600 text-sm md:text-base font-bold rounded-xl md:rounded-2xl text-white hover:bg-green-700 transition-all shadow-md hover:shadow-lg transform hover:scale-105">
                             <i class="fas fa-user-edit mr-2"></i>
                             {{ __('កែប្រែប្រវត្តិរូប') }}

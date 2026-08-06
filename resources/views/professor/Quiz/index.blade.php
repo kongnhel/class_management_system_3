@@ -7,7 +7,7 @@
                 </h2>
                 <p class="mt-1 text-lg text-gray-500">{{ $courseOffering->course->title_km ?? $courseOffering->course->title_en ?? 'N/A' }} ({{ $courseOffering->academic_year }} - {{ $courseOffering->semester }})</p>
             </div>
-            <a href="{{ route('professor.my-course-offerings', ['offering_id' => $courseOffering->id]) }}"
+            <a wire:navigate href="{{ route('professor.my-course-offerings', ['offering_id' => $courseOffering->id]) }}"
                 class="inline-flex items-center px-6 py-3 
                 bg-gradient-to-r from-emerald-500 via-emerald-600 to-emerald-700 
                 hover:from-emerald-600 hover:via-emerald-700 hover:to-emerald-800 

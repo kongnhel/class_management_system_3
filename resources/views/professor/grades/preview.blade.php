@@ -12,7 +12,7 @@
                     <!-- Action buttons -->
                     <div class="flex justify-between items-center mb-6">
                         <!-- Go back button -->
-                        <a href="{{ route('professor.manage-grades', ['offering_id' => $courseOffering->id]) }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-gray-700 bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all duration-300">
+                        <a wire:navigate href="{{ route('professor.manage-grades', ['offering_id' => $courseOffering->id]) }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-gray-700 bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all duration-300">
                             <i class="fas fa-arrow-left mr-2"></i> ត្រឡប់ក្រោយ
                         </a>
                         

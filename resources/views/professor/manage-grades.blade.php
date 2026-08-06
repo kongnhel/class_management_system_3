@@ -13,7 +13,7 @@
                         <p class="text-sm text-gray-500 mt-0.5">{{ $courseOffering->course->title_km ?? $courseOffering->course->title_en ?? 'N/A' }} · {{ $courseOffering->academic_year }} · {{ $courseOffering->semester }}</p>
                     </div>
                 </div>
-                <a href="{{ route('professor.my-course-offerings') }}" class="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 text-gray-700 rounded-xl font-bold text-sm hover:bg-gray-50 shadow-sm transition-all">
+                <a wire:navigate href="{{ route('professor.my-course-offerings') }}" class="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 text-gray-700 rounded-xl font-bold text-sm hover:bg-gray-50 shadow-sm transition-all">
                     <i class="fas fa-arrow-left"></i> ត្រឡប់ក្រោយ
                 </a>
             </div>

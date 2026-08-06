@@ -12,7 +12,7 @@
             </div>
             
             <div class="flex space-x-3">
-                <a href="{{ route('professor.quizzes.index', $courseOffering->id) }}"
+                <a wire:navigate href="{{ route('professor.quizzes.index', $courseOffering->id) }}"
                    class="inline-flex items-center px-6 py-3 border border-gray-300 bg-white 
                           hover:bg-gray-100 text-gray-700 text-sm font-semibold rounded-lg shadow-sm 
                           transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-emerald-400">

@@ -269,7 +269,7 @@
     {{-- Sticky Actions Bar --}}
     <div class="fixed bottom-0 inset-x-0 bg-white/90 backdrop-blur-xl border-t border-slate-200 py-4 z-40 shadow-[0_-10px_25px_rgba(0,0,0,0.05)]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
-            <a href="{{ route('professor.manage-grades', ['offering_id' => $assessment->course_offering_id]) }}"
+            <a wire:navigate href="{{ route('professor.manage-grades', ['offering_id' => $assessment->course_offering_id]) }}"
                class="p-3 md:px-6 md:py-3 text-slate-500 hover:text-emerald-600 transition-colors">
                 <svg class="w-6 h-6 md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
                 <span class="hidden md:inline-flex items-center text-xs font-bold uppercase tracking-wider">

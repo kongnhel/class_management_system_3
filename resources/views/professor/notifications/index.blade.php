@@ -43,7 +43,7 @@
                             {{ __('ការជូនដំណឹងដែលបានផ្ញើ') }}
                         </button>
                     </div>
-                    <a href="{{ route('professor.notifications.create') }}"
+                    <a wire:navigate href="{{ route('professor.notifications.create') }}"
                        class="inline-flex items-center w-full justify-center md:w-auto px-6 py-3 bg-green-600 text-white font-bold rounded-full shadow-lg hover:bg-green-700 transition duration-300 transform hover:scale-105">
                         <i class="fas fa-plus mr-2"></i> {{ __('បង្កើតការជូនដំណឹងថ្មី') }}
                     </a>

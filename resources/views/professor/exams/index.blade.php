@@ -63,7 +63,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $exam->duration_minutes }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $exam->total_points }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                        <a href="{{ route('professor.edit-exam', ['offering_id' => $courseOffering->id, 'exam' => $exam->id]) }}" class="text-emerald-600 hover:text-emerald-900 mr-3">{{ __('កែប្រែ') }}</a>
+                                        <a wire:navigate href="{{ route('professor.edit-exam', ['offering_id' => $courseOffering->id, 'exam' => $exam->id]) }}" class="text-emerald-600 hover:text-emerald-900 mr-3">{{ __('កែប្រែ') }}</a>
                                         <form action="{{ route('professor.delete-exam', ['offering_id' => $courseOffering->id, 'exam' => $exam->id]) }}" method="POST" class="inline">
                                             @csrf
                                             @method('DELETE')

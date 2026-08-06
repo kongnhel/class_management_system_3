@@ -219,7 +219,7 @@
 
             {{-- Buttons --}}
             <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-                <a href="{{ route('professor.my-course-offerings', ['offering_id' => $courseOffering->id]) }}" class="btn-back kh">
+                <a wire:navigate href="{{ route('professor.my-course-offerings', ['offering_id' => $courseOffering->id]) }}" class="btn-back kh">
                     <svg style="width:14px;height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                     </svg>
@@ -346,7 +346,7 @@
                                 {{-- Actions --}}
                                 <td>
                                     <div style="display:flex; align-items:center; justify-content:flex-end; gap:8px;">
-                                        <a href="{{ route('professor.students.show', ['courseOffering' => $courseOffering->id, 'student' => $student->id]) }}"
+                                        <a wire:navigate href="{{ route('professor.students.show', ['courseOffering' => $courseOffering->id, 'student' => $student->id]) }}"
                                            class="btn-view kh">
                                             <svg style="width:13px;height:13px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -388,7 +388,7 @@
 
             {{-- Footer: Report + Pagination --}}
             <div style="padding:16px 20px; background:#f9fafb; border-top:1px solid #f0fdf4; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px;">
-                <a href="{{ route('professor.attendance.report', $courseOffering->id) }}" class="btn-report kh">
+                <a wire:navigate href="{{ route('professor.attendance.report', $courseOffering->id) }}" class="btn-report kh">
                     <svg style="width:14px;height:14px;color:#16a34a;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5l2 2h5a2 2 0 012 2v14a2 2 0 01-2 2z"/>
                     </svg>

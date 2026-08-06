@@ -56,7 +56,7 @@
                         <button type="submit" class="px-5 py-2 bg-emerald-600 text-white rounded-xl font-bold text-sm hover:bg-emerald-700 transition-all shadow-md shadow-emerald-200">
                             <i class="fas fa-filter mr-1.5"></i> {{ __('ចម្រាញ់') }}
                         </button>
-                        <a href="{{ route('student.my-grades') }}" class="px-5 py-2 bg-slate-100 text-slate-600 rounded-xl font-bold text-sm hover:bg-slate-200 transition-all">
+                        <a wire:navigate href="{{ route('student.my-grades') }}" class="px-5 py-2 bg-slate-100 text-slate-600 rounded-xl font-bold text-sm hover:bg-slate-200 transition-all">
                             Reset
                         </a>
                     </div>

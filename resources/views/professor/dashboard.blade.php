@@ -257,21 +257,21 @@
 
                     {{-- Quick Actions --}}
                     <section class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <a href="{{ route('professor.my-course-offerings') }}" class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:border-emerald-200 hover:shadow-md transition-all group">
+                        <a wire:navigate href="{{ route('professor.my-course-offerings') }}" class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:border-emerald-200 hover:shadow-md transition-all group">
                             <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                                 <i class="fas fa-book"></i>
                             </div>
                             <p class="text-sm font-bold text-gray-800">{{ __('មុខវិជ្ជារបស់ខ្ញុំ') }}</p>
                             <p class="text-xs text-gray-400 mt-0.5">{{ $myCourseOfferings->count() }} {{ __('មុខវិជ្ជា') }}</p>
                         </a>
-                        <a href="{{ route('professor.grades.all') }}" class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:border-emerald-200 hover:shadow-md transition-all group">
+                        <a wire:navigate href="{{ route('professor.grades.all') }}" class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:border-emerald-200 hover:shadow-md transition-all group">
                             <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                                 <i class="fas fa-chart-line"></i>
                             </div>
                             <p class="text-sm font-bold text-gray-800">{{ __('ពិន្ទុសរុប') }}</p>
                             <p class="text-xs text-gray-400 mt-0.5">{{ __('មើលពិន្ទុទាំងអស់') }}</p>
                         </a>
-                        <a href="{{ route('professor.all-attendance') }}" class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:border-violet-200 hover:shadow-md transition-all group">
+                        <a wire:navigate href="{{ route('professor.all-attendance') }}" class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:border-violet-200 hover:shadow-md transition-all group">
                             <div class="w-10 h-10 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                                 <i class="fas fa-clipboard-check"></i>
                             </div>

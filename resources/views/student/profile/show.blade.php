@@ -145,7 +145,7 @@
                                 {{ __('រក្សាទុកការកែប្រែ') }}
                             </button>
                             
-                            <a href="{{ route('student.profile.show') }}" 
+                            <a wire:navigate href="{{ route('student.profile.show') }}"
                                class="w-full sm:flex-1 py-4 bg-white border border-slate-200 text-slate-500 rounded-2xl font-black text-center hover:bg-slate-50 transition-all">
                                 {{ __('បោះបង់') }}
                             </a>

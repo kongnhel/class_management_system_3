@@ -114,10 +114,10 @@
                                                     <i class="fas fa-star-badge mr-2"></i> {{ __('ឧបករណ៍ប្រធានថ្នាក់') }}
                                                 </p>
                                                 <div class="grid grid-cols-2 gap-2 md:gap-3">
-                                                    <a href="{{ route('student.leader.attendance', $enrollment->course_offering_id) }}" class="flex items-center justify-center bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded-xl text-[9px] md:text-[10px] font-bold transition shadow-sm">
+                                                    <a wire:navigate href="{{ route('student.leader.attendance', $enrollment->course_offering_id) }}" class="flex items-center justify-center bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded-xl text-[9px] md:text-[10px] font-bold transition shadow-sm">
                                                         <i class="fas fa-clipboard-list mr-1"></i> {{ __('វត្តមាន') }}
                                                     </a>
-                                                    <a href="{{ route('student.leader.report', $enrollment->course_offering_id) }}" class="flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-xl text-[9px] md:text-[10px] font-bold transition shadow-sm">
+                                                    <a wire:navigate href="{{ route('student.leader.report', $enrollment->course_offering_id) }}" class="flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-xl text-[9px] md:text-[10px] font-bold transition shadow-sm">
                                                         <i class="fas fa-file-invoice mr-1"></i> {{ __('របាយការណ៍') }}
                                                     </a>
                                                 </div>

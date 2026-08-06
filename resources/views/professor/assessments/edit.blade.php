@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="flex items-center gap-3 sm:gap-4">
-                <a href="{{ route('professor.manage-grades', ['offering_id' => $courseOffering->id]) }}" 
+                <a wire:navigate href="{{ route('professor.manage-grades', ['offering_id' => $courseOffering->id]) }}"
                    class="group p-2.5 bg-white border border-slate-200 rounded-xl sm:rounded-2xl hover:bg-emerald-50 hover:border-emerald-100 transition-all duration-200 text-slate-500 hover:text-emerald-600 shadow-sm">
                     <svg class="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/>
@@ -114,7 +114,7 @@
 
                         {{-- Footer Buttons --}}
                         <div class="mt-8 sm:mt-14 pt-6 sm:pt-10 border-t border-slate-100 flex flex-col-reverse sm:flex-row justify-end gap-3 sm:gap-4">
-                            <a href="{{ route('professor.manage-grades', ['offering_id' => $courseOffering->id]) }}" 
+                            <a wire:navigate href="{{ route('professor.manage-grades', ['offering_id' => $courseOffering->id]) }}"
                                class="inline-flex justify-center items-center px-8 py-3.5 sm:py-4 bg-white text-slate-500 rounded-xl sm:rounded-2xl font-bold border border-slate-200 hover:bg-slate-50 hover:text-slate-700 transition-all active:scale-95">
                                 {{ __('បោះបង់') }}
                             </a>

@@ -110,7 +110,7 @@
                             <button type="submit" class="w-full md:w-auto inline-flex items-center justify-center px-12 py-3 md:py-4 bg-green-600 text-white font-bold rounded-full hover:bg-green-700 transition-all transform hover:scale-105 shadow-lg text-sm md:text-lg">
                                 <i class="fas fa-save mr-2"></i> {{ __('រក្សាទុក') }}
                             </button>
-                            <a href="{{ route('professor.profile.show') }}" class="w-full md:w-auto inline-flex items-center justify-center px-12 py-3 md:py-4 bg-white border border-gray-300 text-gray-700 font-bold rounded-full hover:bg-gray-50 transition-all text-sm md:text-lg shadow-sm">
+                            <a wire:navigate href="{{ route('professor.profile.show') }}" class="w-full md:w-auto inline-flex items-center justify-center px-12 py-3 md:py-4 bg-white border border-gray-300 text-gray-700 font-bold rounded-full hover:bg-gray-50 transition-all text-sm md:text-lg shadow-sm">
                                 {{ __('បោះបង់') }}
                             </a>
                         </div>

@@ -150,7 +150,7 @@
                         </div>
                         <h4 class="text-base font-bold text-gray-800">{{ __('សមិទ្ធផលសិក្សា') }}</h4>
                     </div>
-                    <a href="{{ route('student.my-grades') }}" class="text-xs font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1">
+                    <a wire:navigate href="{{ route('student.my-grades') }}" class="text-xs font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1">
                         {{ __('មើលពិន្ទុទាំងអស់') }} <i class="fas fa-arrow-right text-[10px]"></i>
                     </a>
                 </div>
@@ -257,7 +257,7 @@
                                 </div>
                                 <h4 class="text-base font-bold text-gray-800">{{ __('stu_enrolled_courses') }}</h4>
                             </div>
-                            <a href="{{ route('student.my-enrolled-courses') }}" class="text-xs font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1">
+                            <a wire:navigate href="{{ route('student.my-enrolled-courses') }}" class="text-xs font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1">
                                 {{ __('មើលទាំងអស់') }} <i class="fas fa-arrow-right text-[10px]"></i>
                             </a>
                         </div>
@@ -319,13 +319,13 @@
                                                 <i class="fas fa-check"></i> {{ __('បានស្កែនរួចរាល់') }}
                                             </button>
                                         @else
-                                            <a href="{{ route('student.scan') }}" class="flex-1 py-2.5 rounded-xl font-bold text-xs bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm shadow-emerald-100 transition-all flex items-center justify-center gap-1.5">
+                                            <a wire:navigate href="{{ route('student.scan') }}" class="flex-1 py-2.5 rounded-xl font-bold text-xs bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm shadow-emerald-100 transition-all flex items-center justify-center gap-1.5">
                                                 <i class="fas fa-qrcode"></i> {{ __('ស្កែនវត្តមាន') }}
                                             </a>
                                         @endif
 
                                         @if($isLeader)
-                                            <a href="{{ route('student.leader.attendance', $course->id) }}"
+                                            <a wire:navigate href="{{ route('student.leader.attendance', $course->id) }}"
                                                class="py-2.5 px-3 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-800 hover:text-white transition-all flex items-center justify-center gap-1.5 text-xs font-bold" title="{{ __('គ្រប់គ្រងវត្តមាន (ប្រធានថ្នាក់)') }}">
                                                 <i class="fas fa-clipboard-check"></i>
                                             </a>
