@@ -1,6 +1,7 @@
 ﻿<div>
     {{-- Search Bar --}}
-    <div class="mb-6">
+    <form method="GET" action="{{ route('admin.manage-departments') }}" data-admin-realtime-filter class="mb-6">
+    <div>
         <div class="relative max-w-md">
             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -9,12 +10,14 @@
             </div>
             <input
                 type="text"
-                wire:model.live.debounce.300ms="search"
+                name="search"
+                value="{{ $search }}"
                 placeholder="{{ __('ស្វែងរកដេប៉ាតឺម៉ង់...') }}"
-                class="block w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-gray-50 transition"
+                autocomplete="off"
+                class="block w-full pl-11 pr-20 py-3 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-gray-50 transition"
             />
             @if($search)
-                <button wire:click="$set('search', '')" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600">
+                <button type="button" data-admin-clear-search aria-label="{{ __('សម្អាតការស្វែងរក') }}" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600">
                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
@@ -22,6 +25,7 @@
             @endif
         </div>
     </div>
+    </form>
 
     @if ($departments->isNotEmpty())
         {{-- GRID VIEW --}}

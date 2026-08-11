@@ -73,7 +73,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-20 pb-12 relative z-10">
             {{-- Filter Card --}}
             <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-8">
-                <form action="{{ route('admin.manage-course-offerings') }}" method="GET" class="space-y-4">
+                <form action="{{ route('admin.manage-course-offerings') }}" method="GET" data-admin-realtime-filter class="space-y-4">
                     {{-- Row 1: Search --}}
                     <div>
                         <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('ស្វែងរកមុខវិជ្ជា / សាស្ត្រាចារ្យ') }}</label>
@@ -515,43 +515,6 @@
     </div>
 
     <script>
-        // Auto-submit filter form on change
-        document.addEventListener('DOMContentLoaded', function() {
-            const filterForm = document.querySelector('form[action="{{ route("admin.manage-course-offerings") }}"]');
-            if (!filterForm) return;
-
-            let debounceTimer;
-
-            // Selects: submit immediately on change
-            filterForm.querySelectorAll('select').forEach(function(select) {
-                select.addEventListener('change', function() {
-                    showFilterLoading();
-                    filterForm.submit();
-                });
-            });
-
-            // Text inputs: debounce 500ms then submit
-            filterForm.querySelectorAll('input[type="text"]').forEach(function(input) {
-                input.addEventListener('input', function() {
-                    clearTimeout(debounceTimer);
-                    debounceTimer = setTimeout(function() {
-                        showFilterLoading();
-                        filterForm.submit();
-                    }, 500);
-                });
-            });
-
-            function showFilterLoading() {
-                let overlay = document.getElementById('filter-loading-overlay');
-                if (!overlay) {
-                    overlay = document.createElement('div');
-                    overlay.id = 'filter-loading-overlay';
-                    overlay.innerHTML = '<div style="position:fixed;inset:0;background:rgba(255,255,255,0.7);z-index:9998;display:flex;align-items:center;justify-content:center;"><div style="text-align:center;"><i class="fas fa-spinner fa-spin fa-2x text-emerald-600"></i><p style="margin-top:8px;font-size:13px;color:#666;font-weight:600;">កំពុងត្រង...</p></div></div>';
-                    document.body.appendChild(overlay);
-                }
-            }
-        });
-
         function openDeleteModal(id) {
             const form = document.getElementById('delete-form');
             form.action = '{{ route("admin.course-offerings.destroy", ":id") }}'.replace(':id', id);

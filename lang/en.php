@@ -1,4 +1,6 @@
-<?php\n\nreturn array (
+<?php
+
+return array (
   'success' => 'Success!',
   'error' => 'Error!',
   'save' => 'Save',

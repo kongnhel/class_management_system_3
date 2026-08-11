@@ -110,7 +110,7 @@
                         <a wire:navigate wire:current="bg-green-600 text-white shadow-md shadow-green-600/20" href="{{ route('admin.generations.index') }}"
                            class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all {{ request()->routeIs('admin.generations.*') ? 'bg-green-600 text-white shadow-md shadow-green-600/20' : 'text-gray-400 hover:bg-slate-700/50 hover:text-white' }}">
                             <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                            <span>គ្រប់គ្រងជំនាន់</span>
+                            <span>{{ __('nav_generation_management') }}</span>
                         </a>
                         <a wire:navigate wire:current="bg-green-600 text-white shadow-md shadow-green-600/20" href="{{ route('admin.manage-courses') }}"
                            class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all {{ request()->routeIs('admin.manage-courses') ? 'bg-green-600 text-white shadow-md shadow-green-600/20' : 'text-gray-400 hover:bg-slate-700/50 hover:text-white' }}">
@@ -146,7 +146,7 @@
                     <button @click="open = !open"
                             class="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200 {{ $isUserMgmtOpen ? 'bg-green-500/10 text-green-400' : 'text-slate-400 hover:bg-slate-700/40 hover:text-slate-300' }}">
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                        <span class="flex-1 text-left">គ្រប់គ្រងអ្នកប្រើប្រាស់</span>
+                        <span class="flex-1 text-left">{{ __('nav_user_management') }}</span>
                         <svg class="w-4 h-4 shrink-0 transition-transform duration-300 ease-out" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
                     </button>
                     <div x-show="open" x-collapse x-cloak class="mt-1 ml-2 border-l-2 border-slate-700/60 pl-2 space-y-0.5">
@@ -178,7 +178,7 @@
                         <a wire:navigate wire:current="bg-green-600 text-white shadow-md shadow-green-600/20" href="{{ route('admin.import.index') }}"
                            class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all {{ request()->routeIs('admin.import.*') ? 'bg-green-600 text-white shadow-md shadow-green-600/20' : 'text-gray-400 hover:bg-slate-700/50 hover:text-white' }}">
                             <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-                            <span>នាំចូលអ្នកប្រើប្រាស់</span>
+                            <span>{{ __('nav_import_users') }}</span>
                         </a>
                     </div>
                 </div>
@@ -187,23 +187,23 @@
                 <div class="mt-3 space-y-0.5">
                     <div class="flex items-center gap-2.5 px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-slate-500">
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-                        <span>វិនិច្ឆ័យ</span>
+                        <span>{{ __('nav_grades_attendance') }}</span>
                     </div>
                     <a wire:navigate wire:current="bg-green-600 text-white shadow-md shadow-green-600/20" href="{{ route('admin.grades.index') }}"
                        class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all {{ request()->routeIs('admin.grades.*') ? 'bg-green-600 text-white shadow-md shadow-green-600/20' : 'text-gray-400 hover:bg-slate-700/50 hover:text-white' }}">
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-                        <span>{{ __('ពិន្ទុសិស្ស') }}</span>
+                        <span>{{ __('nav_my_grades') }}</span>
                     </a>
                     <a wire:navigate wire:current="bg-green-600 text-white shadow-md shadow-green-600/20" href="{{ route('admin.attendance.index') }}"
                        class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all {{ request()->routeIs('admin.attendance.*') ? 'bg-green-600 text-white shadow-md shadow-green-600/20' : 'text-gray-400 hover:bg-slate-700/50 hover:text-white' }}">
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
-                        <span>{{ __('វត្តមានសិស្ស') }}</span>
+                        <span>{{ __('nav_student_attendance') }}</span>
                     </a>
                     {{--
                     <a wire:navigate wire:current="bg-green-600 text-white shadow-md shadow-green-600/20" href="{{ route('admin.progression.index') }}"
                        class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all {{ request()->routeIs('admin.progression.*') ? 'bg-green-600 text-white shadow-md shadow-green-600/20' : 'text-gray-400 hover:bg-slate-700/50 hover:text-white' }}">
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                        <span>ជំនាន់និស្សិត</span>
+                        <span>{{ __('nav_generation_management') }}</span>
                     </a>
                     --}}
                 </div>
@@ -212,7 +212,7 @@
                 <div class="mt-3 space-y-0.5">
                     <div class="flex items-center gap-2.5 px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-slate-500">
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.899a9 9 0 010 12.728M5.88 15.828l2.585-2.585M13.414 7.05l-2.585 2.585M12 12h.01M3 3l.707.707M20.293 3.707l-.707.707M3 21l.707-.707M20.293 20.293l-.707-.707"/></svg>
-                        <span>ផ្សេងៗ</span>
+                        <span>{{ __('nav_other') }}</span>
                     </div>
                     <a wire:navigate wire:current="bg-green-600 text-white shadow-md shadow-green-600/20" href="{{ route('admin.announcements.index') }}"
                        class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all {{ request()->routeIs('admin.announcements.*') ? 'bg-green-600 text-white shadow-md shadow-green-600/20' : 'text-gray-400 hover:bg-slate-700/50 hover:text-white' }}">
@@ -283,7 +283,7 @@
                     <a wire:navigate wire:current="bg-green-600 text-white shadow-md shadow-green-600/20" href="{{ route('student.my-assessments') }}"
                        class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all {{ request()->routeIs('student.my-assessments') ? 'bg-green-600 text-white shadow-md shadow-green-600/20' : 'text-gray-400 hover:bg-slate-700/50 hover:text-white' }}">
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-                        <span>{{ __('ពិន្ទុការវាយតម្លៃ') }}</span>
+                        <span>{{ __('nav_assessments') }}</span>
                     </a>
                     <a wire:navigate wire:current="bg-green-600 text-white shadow-md shadow-green-600/20" href="{{ route('student.my-attendance') }}"
                        class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all {{ request()->routeIs('student.my-attendance') ? 'bg-green-600 text-white shadow-md shadow-green-600/20' : 'text-gray-400 hover:bg-slate-700/50 hover:text-white' }}">
@@ -404,7 +404,7 @@
             var data = snapshot.val();
             if (data && data.updated_at > window.sharedPageLoadTime) {
                 window.dispatchEvent(new CustomEvent('firebase-message', {
-                    detail: { message: data.message || 'ទិន្នន័យត្រូវបានធ្វើបច្ចុប្បន្នភាព' }
+                    detail: { message: data.message || '{{ __('realtime_data_updated') }}' }
                 }));
             }
         });
@@ -435,7 +435,7 @@
             </div>
             <div class="flex-1 min-w-0">
                 <p class="text-sm font-bold text-gray-800 leading-tight truncate" x-text="msg"></p>
-                <p class="text-[10px] text-gray-500 mt-0.5">សូមរង់ចាំ <span class="text-green-600 font-bold" x-text="timer"></span>វិនាទី</p>
+                <p class="text-[10px] text-gray-500 mt-0.5">{{ __('realtime_wait') }} <span class="text-green-600 font-bold" x-text="timer"></span>{{ __('seconds') }}</p>
             </div>
             <button @click="close()" class="flex-shrink-0 text-gray-400 hover:text-red-500 p-1">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg>

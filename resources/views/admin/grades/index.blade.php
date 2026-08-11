@@ -14,7 +14,7 @@
 
             {{-- Filter Card --}}
             <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-8">
-                <form action="{{ route('admin.grades.index') }}" method="GET" class="space-y-4">
+                <form action="{{ route('admin.grades.index') }}" method="GET" data-admin-realtime-filter class="space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
                         <div class="md:col-span-3">
                             <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">ស្វែងរកមុខវិជ្ជា/សាស្ត្រាចារ្យ</label>
@@ -146,29 +146,4 @@
         </div>
     </div>
 
-    <script>
-    (function() {
-        var form = document.querySelector('form[action="{{ route('admin.grades.index') }}"]');
-        var searchInput = form ? form.querySelector('input[name="search"]') : null;
-        var timer = null;
-
-        if (!form) return;
-
-        // Live search with debounce
-        if (searchInput) {
-            searchInput.addEventListener('input', function() {
-                clearTimeout(timer);
-                timer = setTimeout(function() { form.submit(); }, 500);
-            });
-        }
-
-        // Auto-submit on dropdown change
-        var selects = form.querySelectorAll('select');
-        selects.forEach(function(select) {
-            select.addEventListener('change', function() {
-                form.submit();
-            });
-        });
-    })();
-    </script>
 </x-app-layout>

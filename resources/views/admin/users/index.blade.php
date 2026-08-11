@@ -34,9 +34,18 @@
                                     name="search"
                                     value="{{ request('search') }}"
                                     placeholder="{{ __('ស្វែងរកឈ្មោះ ឬអ៊ីម៉ែល...') }}"
-                                    class="block w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-2xl focus:ring-2 focus:ring-green-500/20 focus:border-green-500 focus:bg-white transition-all duration-200 outline-none"
+                                    autocomplete="off"
+                                    aria-controls="user-results"
+                                    class="block w-full pl-11 pr-20 py-3 bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-2xl focus:ring-2 focus:ring-green-500/20 focus:border-green-500 focus:bg-white transition-all duration-200 outline-none"
                                 >
+                                <div id="live-search-loading" class="hidden absolute inset-y-0 right-11 items-center text-green-600" aria-hidden="true">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                </div>
+                                <button id="clear-live-search" type="button" class="hidden absolute inset-y-0 right-3 items-center text-gray-400 hover:text-gray-700 transition-colors" aria-label="{{ __('សម្អាតការស្វែងរក') }}">
+                                    <i class="fas fa-times"></i>
+                                </button>
                             </div>
+                            <p id="live-search-status" class="sr-only" role="status" aria-live="polite"></p>
                         </form>
                         
                         <div class="hidden md:block h-8 w-px bg-gray-200"></div>
@@ -121,7 +130,7 @@
                         </nav>
                     </div>
 
-                    <div class="mt-8">
+                    <div id="user-results" class="mt-8" aria-live="polite">
                         <div x-show="activeTab === 'admins'" class="space-y-3">
                             @if ($admins->isEmpty())
                                 <div class="bg-gray-100 p-6 rounded-xl text-center text-gray-500 shadow-inner">
@@ -229,7 +238,7 @@
 
                                     <div class="flex-1 min-w-[200px]">
                                         <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">{{ __('មហវិទ្យាល័យ') }}</label>
-                                        <select name="faculty_id" onchange="this.form.submit()" class="w-full border-gray-200 rounded-xl text-sm focus:ring-green-500">
+                                        <select name="faculty_id" onchange="this.form.requestSubmit()" class="w-full border-gray-200 rounded-xl text-sm focus:ring-green-500">
                                             <option value="">{{ __('គ្រប់មហវិទ្យាល័យ') }}</option>
                                             @foreach($faculties as $fac)
                                                 <option value="{{ $fac->id }}" {{ request('faculty_id') == $fac->id ? 'selected' : '' }}>{{ $fac->name_km }}</option>
@@ -239,7 +248,7 @@
 
                                     <div class="flex-1 min-w-[200px]">
                                         <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">{{ __('ដេប៉ាតឺម៉ង់') }}</label>
-                                        <select name="department_id" onchange="this.form.submit()" class="w-full border-gray-200 rounded-xl text-sm focus:ring-green-500">
+                                        <select name="department_id" onchange="this.form.requestSubmit()" class="w-full border-gray-200 rounded-xl text-sm focus:ring-green-500">
                                             <option value="">{{ __('គ្រប់ដេប៉ាតឺម៉ង់') }}</option>
                                             @foreach($departments as $dept)
                                                 <option value="{{ $dept->id }}" {{ request('department_id') == $dept->id ? 'selected' : '' }}>{{ $dept->name_km }}</option>
@@ -374,7 +383,7 @@
                                     
                                     <div class="flex-1 min-w-[200px]">
                                         <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">{{ __('ជំនាន់') }}</label>
-                                        <select name="generation" onchange="this.form.submit()" class="w-full border-gray-200 rounded-xl text-sm focus:ring-green-500">
+                                        <select name="generation" onchange="this.form.requestSubmit()" class="w-full border-gray-200 rounded-xl text-sm focus:ring-green-500">
                                             <option value="">{{ __('គ្រប់ជំនាន់') }}</option>
                                             @foreach($generations as $gen)
                                                 <option value="{{ $gen }}" {{ request('generation') == $gen ? 'selected' : '' }}>
@@ -386,7 +395,7 @@
 
                                     <div class="flex-1 min-w-[200px]">
                                         <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">{{ __('កម្មវិធីសិក្សា') }}</label>
-                                        <select name="program_id" onchange="this.form.submit()" class="w-full border-gray-200 rounded-xl text-sm focus:ring-green-500">
+                                        <select name="program_id" onchange="this.form.requestSubmit()" class="w-full border-gray-200 rounded-xl text-sm focus:ring-green-500">
                                             <option value="">{{ __('គ្រប់កម្មវិធីសិក្សា') }}</option>
                                             @foreach($programs as $prog)
                                                 <option value="{{ $prog->id }}" {{ request('program_id') == $prog->id ? 'selected' : '' }}>
@@ -559,6 +568,8 @@
                                     </div>
                                 @endforeach
                             @endif
+                        </div>
+
                         </div>
                         
 {{-- Global Delete Modal --}}
@@ -1023,15 +1034,176 @@
 
     <script>
     (function() {
-        var searchInput = document.getElementById('live-search');
-        var searchForm = document.getElementById('search-form');
+        if (window.__adminUsersLiveSearchInitialized) return;
+        window.__adminUsersLiveSearchInitialized = true;
+
         var timer = null;
-        if (searchInput && searchForm) {
-            searchInput.addEventListener('input', function() {
-                clearTimeout(timer);
-                timer = setTimeout(function() { searchForm.submit(); }, 400);
+        var activeRequest = null;
+
+        function getActiveTab() {
+            var root = document.getElementById('user-manage-root');
+            if (root && window.Alpine) {
+                var scope = Alpine.$data(root);
+                if (scope && scope.activeTab) return scope.activeTab;
+            }
+
+            var tabInput = document.querySelector('#search-form input[name="tab"]');
+            return tabInput ? tabInput.value : 'admins';
+        }
+
+        function buildResultsUrl(form) {
+            var url = new URL(form.action, window.location.href);
+            var currentParams = new URLSearchParams(window.location.search);
+
+            currentParams.forEach(function(value, key) {
+                url.searchParams.set(key, value);
+            });
+
+            new FormData(form).forEach(function(value, key) {
+                url.searchParams.set(key, value);
+            });
+
+            var activeTab = getActiveTab();
+            url.searchParams.set('tab', activeTab);
+            url.searchParams.delete('adminsPage');
+
+            if (activeTab === 'admins') {
+                ['generation', 'program_id', 'faculty_id', 'department_id'].forEach(function(key) {
+                    url.searchParams.delete(key);
+                });
+            } else if (activeTab === 'professors') {
+                ['generation', 'program_id'].forEach(function(key) {
+                    url.searchParams.delete(key);
+                });
+            } else if (activeTab === 'students') {
+                ['faculty_id', 'department_id'].forEach(function(key) {
+                    url.searchParams.delete(key);
+                });
+            }
+
+            return url;
+        }
+
+        function setResultsLoading(isLoading) {
+            var results = document.getElementById('user-results');
+            if (!results) return;
+            results.setAttribute('aria-busy', isLoading ? 'true' : 'false');
+            results.classList.toggle('opacity-60', isLoading);
+            results.classList.toggle('pointer-events-none', isLoading);
+
+            var searchInput = document.getElementById('live-search');
+            var loadingIcon = document.getElementById('live-search-loading');
+            var clearButton = document.getElementById('clear-live-search');
+            var status = document.getElementById('live-search-status');
+
+            if (searchInput) searchInput.setAttribute('aria-busy', isLoading ? 'true' : 'false');
+            if (loadingIcon) loadingIcon.classList.toggle('hidden', !isLoading);
+            if (loadingIcon) loadingIcon.classList.toggle('flex', isLoading);
+            if (clearButton) clearButton.classList.toggle('hidden', isLoading || !(searchInput && searchInput.value));
+            if (clearButton) clearButton.classList.toggle('flex', !isLoading && !!(searchInput && searchInput.value));
+            if (status) status.textContent = isLoading ? '{{ __('កំពុងស្វែងរក...') }}' : '';
+        }
+
+        function fetchUserResults(url) {
+            var results = document.getElementById('user-results');
+            if (!results) return;
+
+            if (activeRequest) activeRequest.abort();
+            var requestController = new AbortController();
+            activeRequest = requestController;
+            setResultsLoading(true);
+
+            fetch(url.toString(), {
+                method: 'GET',
+                headers: {
+                    'Accept': 'text/html',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                signal: requestController.signal
+            })
+            .then(function(response) {
+                if (!response.ok) throw new Error('Unable to fetch users');
+                return response.text();
+            })
+            .then(function(html) {
+                var documentParser = new DOMParser();
+                var nextDocument = documentParser.parseFromString(html, 'text/html');
+                var nextResults = nextDocument.querySelector('#user-results');
+
+                if (!nextResults) throw new Error('User results were not returned');
+
+                if (window.Alpine && Alpine.destroyTree) Alpine.destroyTree(results);
+                results.innerHTML = nextResults.innerHTML;
+                if (window.Alpine && Alpine.initTree) Alpine.initTree(results);
+
+                var searchInput = document.getElementById('live-search');
+                if (searchInput) {
+                    searchInput.value = url.searchParams.get('search') || '';
+                    var clearButton = document.getElementById('clear-live-search');
+                    if (clearButton) clearButton.classList.toggle('hidden', !searchInput.value);
+                    if (clearButton) clearButton.classList.toggle('flex', !!searchInput.value);
+                }
+                window.history.replaceState({}, '', url.toString());
+            })
+            .catch(function(error) {
+                if (error.name !== 'AbortError') {
+                    // Keep filtering usable if JavaScript fetch is unavailable.
+                    window.location.assign(url.toString());
+                }
+            })
+            .finally(function() {
+                if (activeRequest === requestController) {
+                    activeRequest = null;
+                    setResultsLoading(false);
+                }
             });
         }
+
+        function queueSearch(form) {
+            clearTimeout(timer);
+            timer = setTimeout(function() {
+                fetchUserResults(buildResultsUrl(form));
+            }, 300);
+        }
+
+        document.addEventListener('input', function(event) {
+            if (event.target && event.target.id === 'live-search') {
+                queueSearch(event.target.form);
+            }
+        });
+
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('#clear-live-search')) return;
+
+            var searchInput = document.getElementById('live-search');
+            if (!searchInput) return;
+
+            clearTimeout(timer);
+            searchInput.value = '';
+            searchInput.focus();
+            fetchUserResults(buildResultsUrl(searchInput.form));
+        });
+
+        document.addEventListener('submit', function(event) {
+            var form = event.target;
+            if (!form || !form.matches('#search-form, #professor-filter-form, #student-filter-form')) return;
+
+            event.preventDefault();
+            fetchUserResults(buildResultsUrl(form));
+        });
+
+        document.addEventListener('click', function(event) {
+            var link = event.target.closest('#user-results a');
+            if (!link) return;
+
+            var url = new URL(link.href, window.location.href);
+            if (!url.searchParams.has('adminsPage')) return;
+
+            event.preventDefault();
+            fetchUserResults(url);
+        });
+
+        setResultsLoading(false);
     })();
 
     function printStudentsPdf() {

@@ -44,8 +44,8 @@ class ProfessorSubmissionController extends Controller
             ->with('student.userProfile', 'student.studentProfile')
             ->orderBy('submission_date', 'desc');
 
-        if ($request->has('search') && $request->search !== '') {
-            $search = $request->search;
+        $search = trim((string) $request->input('search', ''));
+        if ($search !== '') {
             $submissions->whereHas('student', function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
                     ->orWhere('student_id_code', 'like', "%{$search}%");
@@ -60,7 +60,7 @@ class ProfessorSubmissionController extends Controller
             }
         }
 
-        $submissions = $submissions->paginate(15);
+        $submissions = $submissions->paginate(15)->withQueryString();
 
         return view('professor.submissions.index', compact('courseOffering', 'assignment', 'submissions'));
     }

@@ -3,10 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\TelegramBotService;
 use Illuminate\Http\Request;
 
 class TelegramController extends Controller
 {
+    public function __construct(private readonly TelegramBotService $telegram)
+    {
+    }
+
     public function handleWebhook(Request $request)
     {
         $secret = config('services.telegram.webhook_secret');
@@ -25,7 +30,7 @@ class TelegramController extends Controller
                 $user->telegram_chat_id = $chatId;
                 $user->save();
 
-                $this->notifyTelegram($chatId, '✅ ការភ្ជាប់គណនីជោគជ័យ! អ្នកនឹងទទួលបានពិន្ទុតាមរយៈ Bot នេះ។');
+                $this->telegram->send($chatId, '✅ ការភ្ជាប់គណនីជោគជ័យ! អ្នកនឹងទទួលបានពិន្ទុតាមរយៈ Bot នេះ។');
             }
         }
     }

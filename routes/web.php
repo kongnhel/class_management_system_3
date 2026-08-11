@@ -34,6 +34,7 @@ use App\Http\Controllers\Student\StudentGradeController;
 use App\Http\Controllers\Student\StudentRoomController;
 use App\Http\Controllers\StudentProfileController;
 use App\Http\Controllers\TelegramController;
+use App\Http\Controllers\professor\ProfessorDashboardController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\File;
@@ -256,7 +257,7 @@ Route::middleware(['auth', 'role:admin', 'throttle:120,1'])->prefix('admin')->na
 
 Route::middleware(['auth', 'role:professor', 'throttle:120,1'])->prefix('professor')->name('professor.')->group(function () {
 
-    Route::get('/dashboard', [ProfessorController::class, 'dashboard'])->name('dashboard');
+    Route::get('/dashboard', ProfessorDashboardController::class)->name('dashboard');
     Route::get('/view-departments', [ProfessorController::class, 'viewDepartments'])->name('view-departments');
     Route::get('/view-programs', [ProfessorController::class, 'viewPrograms'])->name('view-programs');
     Route::get('/view-courses', [ProfessorController::class, 'viewCourses'])->name('view-courses');

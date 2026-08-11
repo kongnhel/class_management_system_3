@@ -56,7 +56,7 @@ class StudentGradeController extends Controller
             $assignmentScore = $items->where('display_type', 'Assignment')->sum('score_obtained');
 
             $isFailed = ($finalExamScore < 24 || $midtermScore < 9 || $assignmentScore < 9 || $attendanceScore < 9);
-            $letterGrade = $isFailed ? 'F' : $this->calculateGrade($totalObtained, 100);
+            $letterGrade = $isFailed ? 'F' : GradingService::getLetterGrade($totalObtained);
 
             // Resolve course info through the first result's assessment relationship
             $firstItem = $items->first();
@@ -103,7 +103,7 @@ class StudentGradeController extends Controller
                 'permission_count' => $perCount,
                 'total_score' => $totalObtained,
                 'grade' => $letterGrade,
-                'grade_points' => $this->gradeToPoints($letterGrade),
+                'grade_points' => GradingService::getGradePoints($letterGrade),
                 'is_failed' => $isFailed,
                 'assessments' => $items,
             ];
@@ -327,19 +327,4 @@ class StudentGradeController extends Controller
         return view('student.my-enrolled-courses', compact('enrollments', 'studentProgram'));
     }
 
-    protected function calculateGrade($score, $maxScore)
-    {
-        $percentage = ($score / $maxScore) * 100;
-        if ($percentage >= 90) return 'A';
-        if ($percentage >= 80) return 'B';
-        if ($percentage >= 70) return 'C';
-        if ($percentage >= 60) return 'D';
-        if ($percentage >= 50) return 'E';
-        return 'F';
-    }
-
-    protected function gradeToPoints($grade)
-    {
-        return match($grade) { 'A' => 4.0, 'B' => 3.0, 'C' => 2.0, 'D' => 1.0, 'E' => 0.5, default => 0.0 };
-    }
 }

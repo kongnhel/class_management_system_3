@@ -17,6 +17,7 @@ use App\Models\Schedule;
 use App\Models\StudentCourseEnrollment;
 use App\Models\User;
 use App\Models\UserProfile;
+use App\Services\TelegramBotService;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
@@ -781,6 +782,8 @@ class ProfessorController extends Controller
 
     public function notifyTelegram($chatId, $message)
     {
+        return app(TelegramBotService::class)->send($chatId, $message);
+
         $token = env('TELEGRAM_BOT_TOKEN');
 
         // ឆែកមើលថាតើមាន Token និង Chat ID ឬអត់មុននឹងផ្ញើ

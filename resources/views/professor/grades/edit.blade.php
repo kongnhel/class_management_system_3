@@ -74,14 +74,18 @@
                     <div class="flex flex-col lg:flex-row items-stretch">
                         {{-- Search --}}
                         <div class="flex-1 p-3 border-b lg:border-b-0 lg:border-r border-slate-100">
-                            <form action="{{ url()->current() }}" method="GET" class="relative">
+                            <form action="{{ url()->current() }}" method="GET" data-admin-realtime-filter class="relative">
                                 <input type="hidden" name="type" value="{{ $type }}">
                                 <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                                 </svg>
                                 <input type="text" name="search" value="{{ $search }}"
                                     placeholder="{{ __('ស្វែងរកឈ្មោះ ឬ អត្តលេខ...') }}"
-                                    class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border-0 rounded-xl text-sm font-medium text-slate-700 placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500/20 focus:bg-white transition-all">
+                                    class="w-full pl-10 pr-10 py-2.5 bg-slate-50 border-0 rounded-xl text-sm font-medium text-slate-700 placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500/20 focus:bg-white transition-all">
+                                <button type="button" data-admin-clear-search aria-label="{{ __('សម្អាតការស្វែងរក') }}"
+                                    class="{{ $search ? '' : 'hidden' }} absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700">
+                                    <i class="fas fa-times"></i>
+                                </button>
                             </form>
                         </div>
 

@@ -35,7 +35,7 @@ class UserController extends Controller
 
     public function manageUsers(Request $request)
     {
-        $search = $request->input('search');
+        $search = trim((string) $request->input('search', ''));
         $generation = $request->input('generation');
         $program_id = $request->input('program_id');
         $faculty_id = $request->input('faculty_id');
@@ -48,12 +48,14 @@ class UserController extends Controller
                     $q->where('name', 'LIKE', "%{$search}%")
                         ->orWhere('email', 'LIKE', "%{$search}%")
                         ->orWhereHas('profile', function ($q2) use ($search) {
-                            $q2->where('full_name_km', 'LIKE', "%{$search}%");
+                            $q2->where('full_name_km', 'LIKE', "%{$search}%")
+                                ->orWhere('full_name_en', 'LIKE', "%{$search}%");
                         });
                 });
             })
             ->orderBy('name')
-            ->paginate(10, ['*'], 'adminsPage');
+            ->paginate(10, ['*'], 'adminsPage')
+            ->withQueryString();
 
         $professors = User::where('role', 'professor')
             ->with(['profile', 'department', 'professorProfile'])
@@ -62,7 +64,12 @@ class UserController extends Controller
                     $q->where('name', 'LIKE', "%{$search}%")
                         ->orWhere('email', 'LIKE', "%{$search}%")
                         ->orWhereHas('profile', function ($q2) use ($search) {
-                            $q2->where('full_name_km', 'LIKE', "%{$search}%");
+                            $q2->where('full_name_km', 'LIKE', "%{$search}%")
+                                ->orWhere('full_name_en', 'LIKE', "%{$search}%");
+                        })
+                        ->orWhereHas('professorProfile', function ($q2) use ($search) {
+                            $q2->where('full_name_km', 'LIKE', "%{$search}%")
+                                ->orWhere('full_name_en', 'LIKE', "%{$search}%");
                         })
                         ->orWhereHas('department', function ($q3) use ($search) {
                             $q3->where('name_km', 'LIKE', "%{$search}%")
@@ -89,8 +96,10 @@ class UserController extends Controller
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'LIKE', "%{$search}%")
                         ->orWhere('email', 'LIKE', "%{$search}%")
+                        ->orWhere('student_id_code', 'LIKE', "%{$search}%")
                         ->orWhereHas('studentProfile', function ($q2) use ($search) {
-                            $q2->where('full_name_km', 'LIKE', "%{$search}%");
+                            $q2->where('full_name_km', 'LIKE', "%{$search}%")
+                                ->orWhere('full_name_en', 'LIKE', "%{$search}%");
                         })
                         ->orWhereHas('program', function ($q3) use ($search) {
                             $q3->where('name_km', 'LIKE', "%{$search}%")

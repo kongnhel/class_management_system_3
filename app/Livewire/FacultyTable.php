@@ -14,8 +14,16 @@ class FacultyTable extends Component
 
     protected $listeners = ['refreshComponent' => '$refresh'];
 
+    protected $queryString = ['search' => ['except' => '']];
+
+    public function mount()
+    {
+        $this->search = trim((string) request()->query('search', ''));
+    }
+
     public function updatedSearch()
     {
+        $this->search = trim($this->search);
         $this->resetPage();
     }
 
@@ -23,7 +31,7 @@ class FacultyTable extends Component
     {
         $query = Faculty::with(['dean', 'departments']);
 
-        if ($this->search) {
+        if ($this->search !== '') {
             $query->where(function ($q) {
                 $q->where('name_km', 'like', "%{$this->search}%")
                     ->orWhere('name_en', 'like', "%{$this->search}%");

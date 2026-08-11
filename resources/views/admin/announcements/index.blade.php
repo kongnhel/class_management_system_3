@@ -27,7 +27,7 @@
 
             {{-- Search Bar --}}
             <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 mb-6">
-                <form method="GET" action="{{ route('admin.announcements.index') }}">
+                <form method="GET" action="{{ route('admin.announcements.index') }}" data-admin-realtime-filter>
                     <div class="flex items-center gap-3">
                         <div class="relative flex-1">
                             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">

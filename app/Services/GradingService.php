@@ -42,6 +42,23 @@ class GradingService
     }
 
     /**
+     * Convert a letter grade from this application's single grade scale to GPA points.
+     */
+    public static function getGradePoints(string $grade): float
+    {
+        return match ($grade) {
+            'A' => 4.0,
+            'B+' => 3.5,
+            'B' => 3.0,
+            'C+' => 2.5,
+            'C' => 2.0,
+            'D+' => 1.5,
+            'D' => 1.0,
+            default => 0.0,
+        };
+    }
+
+    /**
      * Get all grade thresholds (for display/reference).
      */
     public static function getGradeScale(): array

@@ -16,15 +16,21 @@ class DepartmentTable extends Component
 
     protected $queryString = ['search' => ['except' => '']];
 
-    public function updatingSearch()
+    public function mount()
     {
+        $this->search = trim((string) request()->query('search', ''));
+    }
+
+    public function updatedSearch()
+    {
+        $this->search = trim($this->search);
         $this->resetPage();
     }
 
     public function render()
     {
         $departments = Department::with('faculty', 'head')
-            ->when($this->search, function ($query) {
+            ->when($this->search !== '', function ($query) {
                 $query->where(function ($q) {
                     $q->where('name_km', 'like', "%{$this->search}%")
                       ->orWhere('name_en', 'like', "%{$this->search}%")

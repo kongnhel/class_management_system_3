@@ -171,9 +171,9 @@
             $profilePath = $user->userProfile?->profile_picture_url;
             $profileUrl = $profilePath ? asset('storage/' . $profilePath) : null;
             $roleText = match ($user->role) {
-                'admin' => __('អ្នកគ្រប់គ្រង'),
-                'professor' => __('សាស្ត្រាចារ្យ'),
-                'student' => __('និស្សិត'),
+                'admin' => __('role_admin'),
+                'professor' => __('role_professor'),
+                'student' => __('role_student'),
                 default => ''
             };
         @endphp
@@ -277,5 +277,154 @@
 @endauth
 
     @livewireScripts
+
+    <script>
+        (function () {
+            if (window.__adminRealtimeFiltersInitialized) return;
+            window.__adminRealtimeFiltersInitialized = true;
+
+            var activeRequest = null;
+            var debounceTimer = null;
+            var loadingMessage = @json(__('realtime_search_loading'));
+
+            function getLoadingIndicator() {
+                var indicator = document.getElementById('admin-realtime-filter-loading');
+                if (indicator) return indicator;
+
+                indicator = document.createElement('div');
+                indicator.id = 'admin-realtime-filter-loading';
+                indicator.className = 'hidden fixed top-4 right-4 z-[9999] items-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-semibold text-emerald-700 shadow-xl ring-1 ring-emerald-100';
+                indicator.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span></span>';
+                indicator.querySelector('span').textContent = loadingMessage;
+                document.body.appendChild(indicator);
+
+                return indicator;
+            }
+
+            function setLoading(isLoading, form) {
+                var indicator = getLoadingIndicator();
+                indicator.classList.toggle('hidden', !isLoading);
+                indicator.classList.toggle('flex', isLoading);
+
+                if (form) {
+                    form.setAttribute('aria-busy', isLoading ? 'true' : 'false');
+                    form.classList.toggle('opacity-60', isLoading);
+                }
+            }
+
+            function mergeUrlParams(url) {
+                var currentParams = new URLSearchParams(window.location.search);
+                currentParams.forEach(function (value, key) {
+                    if (!url.searchParams.has(key)) url.searchParams.set(key, value);
+                });
+                url.searchParams.delete('page');
+                url.searchParams.delete('adminsPage');
+                return url;
+            }
+
+            function buildUrl(form) {
+                var url = mergeUrlParams(new URL(form.action, window.location.href));
+
+                new FormData(form).forEach(function (value, key) {
+                    url.searchParams.set(key, value);
+                });
+
+                return url;
+            }
+
+            function fetchAdminResults(url, form) {
+                var currentMain = document.querySelector('main');
+                if (!currentMain) return;
+
+                if (activeRequest) activeRequest.abort();
+                var requestController = new AbortController();
+                activeRequest = requestController;
+                setLoading(true, form);
+
+                fetch(url.toString(), {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'text/html',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    signal: requestController.signal
+                })
+                .then(function (response) {
+                    if (!response.ok) throw new Error('Unable to fetch admin results');
+                    return response.text();
+                })
+                .then(function (html) {
+                    var parsed = new DOMParser().parseFromString(html, 'text/html');
+                    var nextMain = parsed.querySelector('main');
+                    if (!nextMain) throw new Error('Admin results were not returned');
+
+                    if (window.Alpine && Alpine.destroyTree) Alpine.destroyTree(currentMain);
+                    currentMain.innerHTML = nextMain.innerHTML;
+                    if (window.Alpine && Alpine.initTree) Alpine.initTree(currentMain);
+                    window.history.replaceState({}, '', url.toString());
+                })
+                .catch(function (error) {
+                    if (error.name !== 'AbortError') window.location.assign(url.toString());
+                })
+                .finally(function () {
+                    if (activeRequest === requestController) {
+                        activeRequest = null;
+                        setLoading(false, form);
+                    }
+                });
+            }
+
+            document.addEventListener('input', function (event) {
+                var input = event.target;
+                var form = input && input.closest('form[data-admin-realtime-filter]');
+                if (!form || input.name !== 'search') return;
+
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(function () {
+                    fetchAdminResults(buildUrl(form), form);
+                }, 350);
+            });
+
+            document.addEventListener('change', function (event) {
+                var control = event.target;
+                var form = control && control.closest('form[data-admin-realtime-filter]');
+                if (!form || control.tagName !== 'SELECT') return;
+
+                fetchAdminResults(buildUrl(form), form);
+            });
+
+            document.addEventListener('submit', function (event) {
+                var form = event.target;
+                if (!form || !form.matches('form[data-admin-realtime-filter]')) return;
+
+                event.preventDefault();
+                clearTimeout(debounceTimer);
+                fetchAdminResults(buildUrl(form), form);
+            });
+
+            document.addEventListener('click', function (event) {
+                var clearButton = event.target.closest('[data-admin-clear-search]');
+                if (clearButton) {
+                    event.preventDefault();
+                    var clearForm = clearButton.closest('form[data-admin-realtime-filter]');
+                    var clearInput = clearForm && clearForm.querySelector('input[name="search"]');
+                    if (clearForm && clearInput) {
+                        clearInput.value = '';
+                        fetchAdminResults(buildUrl(clearForm), clearForm);
+                    }
+                    return;
+                }
+
+                var link = event.target.closest('main a[href]');
+                if (!link || link.hasAttribute('wire:navigate') || link.hasAttribute('wire:click') || link.closest('[wire\\:id]')) return;
+
+                var url = new URL(link.href, window.location.href);
+                if (url.pathname !== window.location.pathname || !url.searchParams.has('page')) return;
+
+                event.preventDefault();
+                fetchAdminResults(mergeUrlParams(url), null);
+            });
+        })();
+    </script>
 </body>
 </html>

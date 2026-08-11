@@ -14,7 +14,7 @@
 
             {{-- Filter Card --}}
             <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-8">
-                <form action="{{ route('admin.attendance.index') }}" method="GET" class="space-y-4">
+                <form action="{{ route('admin.attendance.index') }}" method="GET" data-admin-realtime-filter class="space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
                         <div class="md:col-span-3">
                             <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">ស្វែងរកមុខវិជ្ជា/សាស្ត្រាចារ្យ</label>
@@ -141,37 +141,4 @@
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const form = document.querySelector('form[action="{{ route("admin.attendance.index") }}"]');
-            if (!form) return;
-
-            let debounceTimer;
-
-            form.querySelectorAll('select').forEach(function (select) {
-                select.addEventListener('change', function () {
-                    clearTimeout(debounceTimer);
-                    debounceTimer = setTimeout(function () {
-                        form.submit();
-                    }, 100);
-                });
-            });
-
-            const searchInput = form.querySelector('input[name="search"]');
-            if (searchInput) {
-                searchInput.addEventListener('input', function () {
-                    clearTimeout(debounceTimer);
-                    debounceTimer = setTimeout(function () {
-                        form.submit();
-                    }, 400);
-                });
-                searchInput.addEventListener('keydown', function (e) {
-                    if (e.key === 'Enter') {
-                        clearTimeout(debounceTimer);
-                        form.submit();
-                    }
-                });
-            }
-        });
-    </script>
 </x-app-layout>

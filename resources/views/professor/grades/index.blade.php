@@ -146,8 +146,13 @@
                                 </svg>
                                 <input type="text" id="studentSearch" oninput="filterStudents()"
                                     placeholder="ស្វែងរកឈ្មោះ ឬ អត្តលេខ..."
-                                    class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border-0 rounded-xl text-sm font-medium text-slate-700 placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500/20 focus:bg-white transition-all">
+                                    class="w-full pl-10 pr-10 py-2.5 bg-slate-50 border-0 rounded-xl text-sm font-medium text-slate-700 placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500/20 focus:bg-white transition-all">
+                                <button type="button" id="clearStudentSearch" aria-label="សម្អាតការស្វែងរក"
+                                    class="hidden absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700">
+                                    <i class="fas fa-times"></i>
+                                </button>
                             </div>
+                            <div id="studentSearchStatus" class="hidden mt-2 text-[11px] font-bold text-slate-400"></div>
                         </div>
 
                         {{-- Excel Actions --}}
@@ -722,13 +727,48 @@
         }
 
         function filterStudents() {
-            const query = document.getElementById('studentSearch').value.toLowerCase();
-            document.querySelectorAll('.student-row, .student-card').forEach(row => {
+            const input = document.getElementById('studentSearch');
+            const clearButton = document.getElementById('clearStudentSearch');
+            const status = document.getElementById('studentSearchStatus');
+            if (!input) return;
+
+            const query = input.value.toLowerCase().trim();
+            const rows = document.querySelectorAll('.student-row, .student-card');
+            let visibleCount = 0;
+            const cards = document.querySelectorAll('.student-card');
+            const countTarget = cards.length ? cards : rows;
+
+            rows.forEach(row => {
                 const name = row.dataset.name || '';
                 const id = row.dataset.id || '';
-                row.style.display = (name.includes(query) || id.includes(query)) ? '' : 'none';
+                const matches = name.includes(query) || id.includes(query);
+                row.style.display = matches ? '' : 'none';
             });
+
+            countTarget.forEach(row => {
+                const name = row.dataset.name || '';
+                const id = row.dataset.id || '';
+                if (name.includes(query) || id.includes(query)) visibleCount++;
+            });
+
+            clearButton?.classList.toggle('hidden', query === '');
+            status?.classList.toggle('hidden', query === '');
+            if (status && query !== '') {
+                status.textContent = visibleCount > 0
+                    ? `រកឃើញ ${visibleCount} នាក់`
+                    : 'មិនឃើញលទ្ធផលស្វែងរក';
+                status.classList.toggle('text-rose-500', visibleCount === 0);
+                status.classList.toggle('text-slate-400', visibleCount > 0);
+            }
         }
+
+        document.getElementById('clearStudentSearch')?.addEventListener('click', function () {
+            const input = document.getElementById('studentSearch');
+            if (!input) return;
+            input.value = '';
+            filterStudents();
+            input.focus();
+        });
 
         function sortTable(col) {
             const tbody = document.getElementById('gradeBody');

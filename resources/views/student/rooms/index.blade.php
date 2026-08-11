@@ -18,10 +18,14 @@
                     <div class="relative w-full md:w-96 group">
                         <input type="text" id="searchInput" 
                                placeholder="{{ __('ស្វែងរកលេខបន្ទប់...') }}" 
-                               class="w-full pl-12 pr-6 py-4 bg-white border border-slate-100 rounded-[1.5rem] focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 shadow-xl shadow-slate-200/50 transition-all placeholder-slate-300 font-bold text-slate-700">
+                               class="w-full pl-12 pr-12 py-4 bg-white border border-slate-100 rounded-[1.5rem] focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 shadow-xl shadow-slate-200/50 transition-all placeholder-slate-300 font-bold text-slate-700">
                         <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors">
                             <i class="fas fa-search text-lg"></i>
                         </div>
+                        <button type="button" id="clearRoomSearch" aria-label="{{ __('សម្អាតការស្វែងរក') }}"
+                                class="hidden absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-600 transition-colors">
+                            <i class="fas fa-times"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -104,14 +108,16 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const searchInput = document.getElementById('searchInput');
+        const clearSearch = document.getElementById('clearRoomSearch');
         const roomList = document.getElementById('roomList');
 
-        if (!roomList) return;
+        if (!roomList || !searchInput) return;
 
         const roomCards = Array.from(roomList.querySelectorAll('.room-card'));
 
         searchInput.addEventListener('input', function() {
             const query = this.value.toLowerCase().trim();
+            clearSearch.classList.toggle('hidden', query === '');
             let found = false;
 
             roomCards.forEach(card => {
@@ -143,6 +149,12 @@
                 `;
                 roomList.appendChild(messageDiv);
             }
+        });
+
+        clearSearch.addEventListener('click', function() {
+            searchInput.value = '';
+            searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+            searchInput.focus();
         });
     });
 </script>

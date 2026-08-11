@@ -97,10 +97,14 @@
 
             {{-- Search and Filter --}}
             <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 mb-6">
-                <form action="{{ route('professor.submissions.index', ['offering_id' => $courseOffering->id, 'assignment_id' => $assignment->id]) }}" method="GET" class="flex flex-col md:flex-row gap-4">
-                    <div class="flex-1">
+                <form action="{{ route('professor.submissions.index', ['offering_id' => $courseOffering->id, 'assignment_id' => $assignment->id]) }}" method="GET" data-admin-realtime-filter class="flex flex-col md:flex-row gap-4">
+                    <div class="flex-1 relative">
                         <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('ស្វែងរកនិស្សិត...') }}"
-                            class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
+                            class="w-full px-4 pr-11 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
+                        <button type="button" data-admin-clear-search aria-label="{{ __('សម្អាតការស្វែងរក') }}"
+                            class="{{ request('search') ? '' : 'hidden' }} absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700">
+                            <i class="fas fa-times"></i>
+                        </button>
                     </div>
                     <div class="w-full md:w-48">
                         <select name="status" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">

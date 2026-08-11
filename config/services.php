@@ -50,6 +50,7 @@ return [
 
     'telegram' => [
         'bot_token' => env('TELEGRAM_BOT_TOKEN'),
+        'schedule_bot_token' => env('TELEGRAM_BOT_TOKEN2', env('TELEGRAM_BOT_TOKEN')),
         'webhook_secret' => env('TELEGRAM_WEBHOOK_SECRET'),
         'api_id' => env('TELEGRAM_API_ID'),
         'api_hash' => env('TELEGRAM_API_HASH'),

@@ -20,5 +20,8 @@
         "@alpinejs/collapse": "^3.15.8",
         "@alpinejs/persist": "^3.15.8",
         "marked": "^18.0.6"
+    },
+    "allowScripts": {
+        "esbuild@0.25.12": true
     }
 }

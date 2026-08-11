@@ -85,7 +85,7 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <x-input-label for="name" :value="__('profile_full_name')" class="text-slate-700 font-bold ml-1" />
-                                    <x-text-input id="name" name="name" type="text" class="mt-1.5 block w-full rounded-2xl border-slate-200 bg-slate-50/50 focus:bg-white transition-all shadow-sm" :value="old('name', $user->name)" placeholder="ឈ្មោះពេញ" required autofocus />
+                                    <x-text-input id="name" name="name" type="text" class="mt-1.5 block w-full rounded-2xl border-slate-200 bg-slate-50/50 focus:bg-white transition-all shadow-sm" :value="old('name', $user->name)" :placeholder="__('full_name')" required autofocus />
                                     <x-input-error :messages="$errors->get('name')" class="mt-2" />
                                 </div>
                                 <div>
@@ -96,7 +96,7 @@
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <label class="block text-sm font-bold text-slate-700 ml-1 mb-1.5">លេខសម្គាល់</label>
+                                    <label class="block text-sm font-bold text-slate-700 ml-1 mb-1.5">{{ __('identifier') }}</label>
                                     <input type="text" value="{{ $user->student_id_code }}" readonly disabled
                                            class="mt-1.5 block w-full rounded-2xl border-slate-200 bg-slate-100 text-slate-500 px-4 py-2.5 cursor-not-allowed" />
                                 </div>
@@ -126,18 +126,18 @@
                             <div class="space-y-5">
                                 <div>
                                     <x-input-label for="current_password" :value="__('profile_current_password')" class="text-slate-700 font-bold ml-1" />
-                                    <x-text-input id="current_password" name="current_password" type="password" class="mt-1.5 block w-full rounded-2xl border-slate-200 bg-slate-50/50 shadow-sm" placeholder="ពាក្យសម្ងាត់បច្ចុប្បន្ន" />
+                                    <x-text-input id="current_password" name="current_password" type="password" class="mt-1.5 block w-full rounded-2xl border-slate-200 bg-slate-50/50 shadow-sm" :placeholder="__('current_password')" />
                                     <x-input-error :messages="$errors->updatePassword->get('current_password')" class="mt-2" />
                                 </div>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
                                         <x-input-label for="password" :value="__('profile_new_password')" class="text-slate-700 font-bold ml-1" />
-                                        <x-text-input id="password" name="password" type="password" class="mt-1.5 block w-full rounded-2xl border-slate-200 bg-slate-50/50 shadow-sm" placeholder="ពាក្យសម្ងាត់ថ្មី" />
+                                        <x-text-input id="password" name="password" type="password" class="mt-1.5 block w-full rounded-2xl border-slate-200 bg-slate-50/50 shadow-sm" :placeholder="__('new_password')" />
                                         <x-input-error :messages="$errors->updatePassword->get('password')" class="mt-2" />
                                     </div>
                                     <div>
                                         <x-input-label for="password_confirmation" :value="__('profile_confirm_password')" class="text-slate-700 font-bold ml-1" />
-                                        <x-text-input id="password_confirmation" name="password_confirmation" type="password" class="mt-1.5 block w-full rounded-2xl border-slate-200 bg-slate-50/50 shadow-sm" placeholder="បញ្ជាក់ពាក្យសម្ងាត់ថ្មី" />
+                                        <x-text-input id="password_confirmation" name="password_confirmation" type="password" class="mt-1.5 block w-full rounded-2xl border-slate-200 bg-slate-50/50 shadow-sm" :placeholder="__('confirm_new_password')" />
                                     </div>
                                 </div>
                             </div>

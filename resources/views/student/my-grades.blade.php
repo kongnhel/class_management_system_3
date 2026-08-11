@@ -33,7 +33,7 @@
             {{-- Filter Bar --}}
             @if($academicYears->count() > 1 || $semesters->count() > 1)
             <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm mb-6">
-                <form action="{{ route('student.my-grades') }}" method="GET" class="flex flex-wrap items-end gap-4">
+                <form action="{{ route('student.my-grades') }}" method="GET" data-admin-realtime-filter class="flex flex-wrap items-end gap-4">
                     <div class="flex-1 min-w-[180px]">
                         <label class="block text-xs font-bold text-slate-500 mb-1.5 uppercase">{{ __('ឆ្នាំសិក្សា') }}</label>
                         <select name="academic_year" class="w-full border-slate-200 rounded-xl text-sm focus:ring-emerald-500 focus:border-emerald-500">
