@@ -753,19 +753,7 @@ class ProfessorController extends Controller
             $student->rank = $index + 1;
             $ts = $student->temp_total;
 
-            if ($ts >= 85) {
-                $student->letterGrade = 'A';
-            } elseif ($ts >= 80) {
-                $student->letterGrade = 'B+';
-            } elseif ($ts >= 70) {
-                $student->letterGrade = 'B';
-            } elseif ($ts >= 65) {
-                $student->letterGrade = 'C+';
-            } elseif ($ts >= 50) {
-                $student->letterGrade = 'C';
-            } else {
-                $student->letterGrade = 'F';
-            }
+            $student->letterGrade = \App\Services\GradingService::getLetterGrade($ts);
         }
 
         // ៥. បង្កើត HTML សម្រាប់ Word

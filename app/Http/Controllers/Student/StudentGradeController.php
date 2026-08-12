@@ -43,22 +43,7 @@ class StudentGradeController extends Controller
         $filteredResults = $allExamResults->whereIn('course_offering_id', $filteredOfferingIds);
 
         $courseGrades = $filteredResults->groupBy('course_id')->map(function ($items, $courseId) use ($user) {
-            $attendanceScore = $user->getAttendanceScoreByCourse($courseId);
-            $absCount = \App\Models\AttendanceRecord::where('student_user_id', $user->id)->where('course_offering_id', $courseId)->where('status', 'absent')->count();
-            $perCount = \App\Models\AttendanceRecord::where('student_user_id', $user->id)->where('course_offering_id', $courseId)->where('status', 'permission')->count();
-
-            $nonQuiz = $items->where('assessment_type', '!=', 'quiz')->sum('score_obtained');
-            $quizBonus = $items->where('assessment_type', 'quiz')->sum('score_obtained');
-            $totalObtained = min($attendanceScore + $nonQuiz + $quizBonus, 100);
-
-            $finalExamScore = $items->where('display_type', 'Final')->sum('score_obtained');
-            $midtermScore = $items->where('display_type', 'Midterm')->sum('score_obtained');
-            $assignmentScore = $items->where('display_type', 'Assignment')->sum('score_obtained');
-
-            $isFailed = ($finalExamScore < 24 || $midtermScore < 9 || $assignmentScore < 9 || $attendanceScore < 9);
-            $letterGrade = $isFailed ? 'F' : GradingService::getLetterGrade($totalObtained);
-
-            // Resolve course info through the first result's assessment relationship
+            // Attendance is stored per course offering, not per course.
             $firstItem = $items->first();
             $offering = match($firstItem->assessment_type) {
                 'assignment' => $firstItem->assignment?->courseOffering,
@@ -66,11 +51,23 @@ class StudentGradeController extends Controller
                 'quiz' => $firstItem->quiz?->courseOffering,
                 default => null,
             };
+            $offeringId = $offering?->id;
+            $attendanceScore = $offeringId ? $user->getAttendanceScoreByCourse($offeringId) : 0;
+            $absCount = $offeringId ? \\App\\Models\\AttendanceRecord::where('student_user_id', $user->id)->where('course_offering_id', $offeringId)->where('status', 'absent')->count() : 0;
+            $perCount = $offeringId ? \\App\\Models\\AttendanceRecord::where('student_user_id', $user->id)->where('course_offering_id', $offeringId)->where('status', 'permission')->count() : 0;
+
+            $nonQuiz = $items->where('assessment_type', '!=', 'quiz')->sum('score_obtained');
+            $quizBonus = $items->where('assessment_type', 'quiz')->sum('score_obtained');
+            $totalObtained = min($attendanceScore + $nonQuiz + $quizBonus, 100);
+            $letterGrade = GradingService::getLetterGrade($totalObtained);
+            $isFailed = ! GradingService::isPassing($letterGrade);
             $course = $offering?->course;
 
             // Get course_offering_id for this course for ranking
-            $offeringId = $offering?->id ?? $courseId;
-            $enrollments = StudentCourseEnrollment::where('course_offering_id', $offeringId)->get();
+            $offeringId = $offering?->id;
+            $enrollments = $offeringId
+                ? StudentCourseEnrollment::where('course_offering_id', $offeringId)->get()
+                : collect();
             $rankings = $enrollments->map(function ($enrol) use ($offeringId) {
                 $student = User::find($enrol->student_user_id);
                 $att = $student ? $student->getAttendanceScoreByCourse($offeringId) : 0;
@@ -138,7 +135,7 @@ class StudentGradeController extends Controller
         $rankIndex = $rankings->search(fn ($r) => $r['id'] == $user->id);
         $overallRank = ($rankIndex !== false) ? $rankIndex + 1 : '-';
         $totalClassmates = $rankings->count();
-        $overallGrade = $averageScore >= 90 ? 'A' : ($averageScore >= 80 ? 'B' : ($averageScore >= 70 ? 'C' : ($averageScore >= 60 ? 'D' : ($averageScore >= 50 ? 'E' : 'F'))));
+        $overallGrade = GradingService::getLetterGrade($averageScore);
         $totalFinalScore = round($averageScore, 1);
 
         $academicYears = CourseOffering::whereIn('id', $enrolledOfferingIds)->pluck('academic_year')->unique()->filter()->values();

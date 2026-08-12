@@ -69,12 +69,7 @@
                     
                     {{-- គណនានិទ្ទេស --}}
                     @php
-                        $grade = 'F';
-                        if ($rowTotal >= 85) $grade = 'A';
-                        elseif ($rowTotal >= 80) $grade = 'B+';
-                        elseif ($rowTotal >= 70) $grade = 'B';
-                        elseif ($rowTotal >= 65) $grade = 'C+';
-                        elseif ($rowTotal >= 50) $grade = 'C';
+                        $grade = \App\Services\GradingService::getLetterGrade($rowTotal);
                     @endphp
                     <td style="font-weight: bold; {{ $grade == 'F' ? 'color: red;' : '' }}">
                         {{ $grade }}

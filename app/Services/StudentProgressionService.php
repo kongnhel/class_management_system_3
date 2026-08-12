@@ -162,8 +162,9 @@ class StudentProgressionService
                 }
             }
 
-            $courseTotal = $totalScore + $attendanceScore;
-            $isFailed = ($finalExamScore < 24 || $midtermScore < 9 || $assignmentScore < 9 || $attendanceScore < 9 || $courseTotal < 50);
+            $courseTotal = min($totalScore + $attendanceScore, 100);
+            $letterGrade = GradingService::getLetterGrade($courseTotal);
+            $isFailed = ! GradingService::isPassing($letterGrade);
 
             if ($isFailed) {
                 $hasF = true;

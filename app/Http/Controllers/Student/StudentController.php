@@ -134,7 +134,8 @@ class StudentController extends Controller
                 $nonQuiz = $items->where('assessment_type', '!=', 'quiz')->sum('score_obtained');
                 $quiz = $items->where('assessment_type', 'quiz')->sum('score_obtained');
                 $total = min($att + $nonQuiz + $quiz, 100);
-                $grade = $total >= 50 ? 'P' : 'F';
+                $letterGrade = \App\Services\GradingService::getLetterGrade($total);
+                $grade = \App\Services\GradingService::isPassing($letterGrade) ? 'P' : 'F';
                 return ['total' => $total, 'grade' => $grade, 'credits' => $items->first()['credits'] ?? 3];
             });
 
@@ -142,7 +143,7 @@ class StudentController extends Controller
             $totalCredits = $courseGrades->sum('credits');
             $weightedPoints = $courseGrades->sum(fn ($g) => ($g['grade'] === 'P' ? 2.0 : 0.0) * $g['credits']);
             $gpa = $totalCredits > 0 ? round($weightedPoints / $totalCredits, 2) : 0;
-            $overallGrade = $averageScore >= 90 ? 'A' : ($averageScore >= 80 ? 'B' : ($averageScore >= 70 ? 'C' : ($averageScore >= 60 ? 'D' : ($averageScore >= 50 ? 'E' : 'F'))));
+            $overallGrade = \App\Services\GradingService::getLetterGrade($averageScore);
 
             // Rank
             $peerIds = StudentCourseEnrollment::whereIn('course_offering_id', $enrolledOfferingIds)->pluck('student_user_id')->unique();

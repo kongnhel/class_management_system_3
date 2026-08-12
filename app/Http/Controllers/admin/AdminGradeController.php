@@ -141,8 +141,8 @@ class AdminGradeController extends Controller
                 return $r ? (float) $r->score_obtained : 0;
             });
 
-            $isFailed = ($finalExamScore < 24 || $midtermScore < 9 || $assignmentScore < 9 || $attendanceScore < 9);
-            $letterGrade = $isFailed ? 'F' : GradingService::getLetterGrade($totalScore);
+            $letterGrade = GradingService::getLetterGrade($totalScore);
+            $isFailed = ! GradingService::isPassing($letterGrade);
 
             $student->temp_total = (float) $totalScore;
             $student->letterGrade = $letterGrade;
@@ -240,8 +240,8 @@ class AdminGradeController extends Controller
                 return $r ? (float) $r->score_obtained : 0;
             });
 
-            $isFailed = ($finalExamScore < 24 || $midtermScore < 9 || $assignmentScore < 9 || $attendanceScore < 9);
-            $letterGrade = $isFailed ? 'F' : GradingService::getLetterGrade($totalScore);
+            $letterGrade = GradingService::getLetterGrade($totalScore);
+            $isFailed = ! GradingService::isPassing($letterGrade);
 
             $student->temp_total = (float) $totalScore;
             $student->letterGrade = $letterGrade;
