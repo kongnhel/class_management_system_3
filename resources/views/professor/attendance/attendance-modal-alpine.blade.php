@@ -207,6 +207,9 @@
                     <button @click="closeModal()" class="flex-1 px-4 py-3 rounded-xl font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors text-sm">
                         បិទផ្ទាំង
                     </button>
+                    <button @click="openCardScanner()" class="flex-1 relative px-4 py-3 rounded-xl font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all active:scale-95 text-sm">
+                        ស្កែនកាតសិស្ស
+                    </button>
                     <button @click="showConfirm = true" class="flex-[2] relative px-4 py-3 rounded-xl font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-200 transition-all active:scale-95 text-sm">
                         បញ្ចប់ និងរក្សាទុក
                     </button>
@@ -271,6 +274,7 @@ function attendanceModal() {
         isReadOnly: false,
         courseOfferingId: null,
         scheduleId: null,
+        sessionId: null,
         courseName: '...',
         qrSvg: '',
         students: [],
@@ -280,6 +284,7 @@ function attendanceModal() {
         qrInterval: null,
         qrTimeLeft: 15,
         qrDuration: 15,
+        cardScanner: null,
 
         async open(courseOfferingId, scheduleId, readOnly = false) {
             this.courseOfferingId = courseOfferingId;
@@ -304,6 +309,7 @@ function attendanceModal() {
                     if (data.success) {
                         this.qrSvg = data.qr_svg;
                         this.courseName = data.course_name;
+                        this.sessionId = data.session_id;
                         this.qrDuration = data.expires_in || 15;
                     }
                 } catch (e) {
@@ -317,6 +323,57 @@ function attendanceModal() {
 
             this.fetchStudents();
             this.startPolling();
+        },
+
+        async openCardScanner() {
+            if (!this.isOpen || this.isReadOnly || ! this.courseOfferingId) return;
+
+            if (! document.getElementById('attendance-card-scanner')) {
+                const scanner = document.createElement('div');
+                scanner.id = 'attendance-card-scanner';
+                scanner.className = 'fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/90 p-4';
+                scanner.innerHTML = '<div class="w-full max-w-md rounded-3xl bg-white p-4"><div class="mb-3 flex items-center justify-between"><h3 class="font-black text-slate-800">ស្កែនកាតសិស្ស</h3><button type="button" id="close-card-scanner" class="rounded-lg bg-slate-100 px-3 py-2 text-sm font-bold">បិទ</button></div><div id="card-scanner-reader" class="aspect-square overflow-hidden rounded-2xl bg-black"></div><p id="card-scanner-status" class="mt-3 text-center text-xs text-slate-500">សូមបង្ហាញកាតសិស្សទៅកាមេរ៉ា</p></div>';
+                document.body.appendChild(scanner);
+                document.getElementById('close-card-scanner').addEventListener('click', () => this.closeCardScanner());
+            }
+
+            if (typeof Html5Qrcode === 'undefined') {
+                document.getElementById('card-scanner-status').textContent = 'QR scanner is unavailable.';
+                return;
+            }
+
+            this.cardScanner = new Html5Qrcode('card-scanner-reader');
+            await this.cardScanner.start(
+                { facingMode: 'environment' },
+                { fps: 10, qrbox: { width: 240, height: 240 } },
+                (decodedText) => this.submitCardScan(decodedText),
+                () => {}
+            );
+        },
+
+        async submitCardScan(decodedText) {
+            if (! this.cardScanner) return;
+
+            await this.cardScanner.stop();
+            const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            const response = await fetch("{{ route('professor.attendance.card-scan') }}", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': token, 'Accept': 'application/json' },
+                body: JSON.stringify({ card_token: decodedText, session_id: this.sessionId })
+            });
+            const data = await response.json();
+            const status = document.getElementById('card-scanner-status');
+            if (status) status.textContent = data.message || 'Scan complete.';
+            if (data.success) await this.fetchStudents();
+            setTimeout(() => this.closeCardScanner(), 900);
+        },
+
+        async closeCardScanner() {
+            if (this.cardScanner) {
+                try { await this.cardScanner.stop(); } catch (e) {}
+                this.cardScanner = null;
+            }
+            document.getElementById('attendance-card-scanner')?.remove();
         },
 
         async refreshQr() {
@@ -427,6 +484,7 @@ function attendanceModal() {
         },
 
         closeModal() {
+            this.closeCardScanner();
             this.isOpen = false;
             this.stopPolling();
             this.courseOfferingId = null;

@@ -1178,5 +1178,6 @@
     "អត្រាវត្តមានសរុប": "Overall Attendance Rate",
     "កាលបរិច្ឆេទ៖": "Date:",
     "បញ្ជីវត្តមាននិស្សិត": "Student Attendance List",
-    "វត្តមានតិចជាង ៧៥% បង្ហាញជាពណ៌ក្រហម": "Attendance below 75% is shown in red"
+    "វត្តមានតិចជាង ៧៥% បង្ហាញជាពណ៌ក្រហម": "Attendance below 75% is shown in red",
+    "nav_attendance_card": "Attendance Card"
 }

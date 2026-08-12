@@ -32,6 +32,7 @@ use App\Http\Controllers\Student\StudentAttendanceController;
 use App\Http\Controllers\Student\StudentController;
 use App\Http\Controllers\Student\StudentGradeController;
 use App\Http\Controllers\Student\StudentRoomController;
+use App\Http\Controllers\Student\AttendanceCardController;
 use App\Http\Controllers\StudentProfileController;
 use App\Http\Controllers\TelegramController;
 use App\Http\Controllers\professor\ProfessorDashboardController;
@@ -412,6 +413,10 @@ Route::middleware(['auth', 'role:student', 'throttle:120,1'])->prefix('student')
     Route::patch('/announcements/{id}/read', [NotificationController::class, 'markAnnouncementAsRead'])->name('announcements.read');
     Route::patch('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
     Route::get('/my-attendance', [StudentAttendanceController::class, 'myAttendance'])->name('my-attendance');
+    Route::get('/attendance-card', [AttendanceCardController::class, 'show'])->name('attendance-card');
+    Route::post('/attendance-card', [AttendanceCardController::class, 'create'])->middleware('throttle:5,1')->name('attendance-card.create');
+    Route::post('/attendance-card/revoke', [AttendanceCardController::class, 'revoke'])->name('attendance-card.revoke');
+    Route::get('/attendance-card/qr', [AttendanceCardController::class, 'qr'])->name('attendance-card.qr');
 
     Route::middleware('class.leader')->group(function () {
         Route::get('/class-leader/course/{courseOffering}/attendance', [StudentAttendanceController::class, 'leaderAttendance'])
@@ -431,6 +436,11 @@ Route::middleware(['auth', 'role:student', 'throttle:120,1'])->prefix('student')
     Route::post('/process-scan', [AttendanceController::class, 'processScan'])
         ->name('process-scan');
 
+});
+
+Route::middleware(['auth', 'role:professor', 'throttle:60,1'])->group(function () {
+    Route::post('/professor/attendance/card-scan', [AttendanceController::class, 'processCardScan'])
+        ->name('professor.attendance.card-scan');
 });
 
 Route::middleware(['auth', 'role:professor'])->group(function () {

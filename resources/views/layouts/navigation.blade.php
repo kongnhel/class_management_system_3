@@ -290,6 +290,11 @@
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         <span>{{ __('nav_my_attendance') }}</span>
                     </a>
+                    <a wire:navigate wire:current="bg-green-600 text-white shadow-md shadow-green-600/20" href="{{ route('student.attendance-card') }}"
+                       class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all {{ request()->routeIs('student.attendance-card*') ? 'bg-green-600 text-white shadow-md shadow-green-600/20' : 'text-gray-400 hover:bg-slate-700/50 hover:text-white' }}">
+                        <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.5a2 2 0 012 2v3.5a2 2 0 01-2 2H5a2 2 0 01-2-2V5zm0 10.5a2 2 0 012-2h3.5a2 2 0 012 2V19a2 2 0 01-2 2H5a2 2 0 01-2-2v-3.5zM13.5 5a2 2 0 012-2H19a2 2 0 012 2v3.5a2 2 0 01-2 2h-3.5a2 2 0 01-2-2V5zM15 15h.01M18 15h.01M15 18h.01M18 18h.01"/></svg>
+                        <span>{{ __('nav_attendance_card') }}</span>
+                    </a>
                     <a wire:navigate wire:current="bg-green-600 text-white shadow-md shadow-green-600/20" href="{{ route('student.my-schedule') }}"
                        class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all {{ request()->routeIs('student.my-schedule') ? 'bg-green-600 text-white shadow-md shadow-green-600/20' : 'text-gray-400 hover:bg-slate-700/50 hover:text-white' }}">
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>

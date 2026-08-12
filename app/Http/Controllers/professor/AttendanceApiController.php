@@ -129,13 +129,11 @@ class AttendanceApiController extends Controller
                 }
 
                 $remarks = trim((string) $record->remarks);
-                $source = 'qr';
-                if (strcasecmp($remarks, 'System Auto-Absent') === 0) {
-                    $source = 'system';
-                } elseif (strcasecmp($remarks, 'QR Scan') === 0) {
-                    $source = 'qr';
-                } elseif ($remarks !== '' || $record->created_at->lt(now()->subMinutes(5))) {
-                    $source = 'manual';
+                $source = $record->source;
+                if (! $source) {
+                    $source = strcasecmp($remarks, 'System Auto-Absent') === 0
+                        ? 'system'
+                        : (in_array(strtolower($remarks), ['qr scan', 'qr card scan'], true) ? 'qr' : 'manual');
                 }
 
                 return [
@@ -162,7 +160,7 @@ class AttendanceApiController extends Controller
                 'permission' => $attendances->where('status', 'permission')->count(),
                 'absent' => $attendances->where('status', 'absent')->count(),
                 'manual' => $attendances->where('source', 'manual')->count(),
-                'qr' => $attendances->where('source', 'qr')->count(),
+                'qr' => $attendances->whereIn('source', ['qr', 'qr_card'])->count(),
             ],
         ]);
     }
@@ -266,6 +264,7 @@ class AttendanceApiController extends Controller
                 'course_offering_id' => $offering->id,
                 'date' => $today,
                 'status' => 'absent',
+                'source' => 'system',
                 'remarks' => 'System Auto-Absent',
                 'created_at' => $timestamp,
                 'updated_at' => $timestamp,

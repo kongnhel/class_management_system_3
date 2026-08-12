@@ -17,6 +17,7 @@ class AttendanceRecord extends Model
         'course_offering_id',
         'date',
         'status',
+        'source',
         // 'notes',
         'remarks',
 

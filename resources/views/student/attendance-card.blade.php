@@ -1,0 +1,53 @@
+<x-app-layout>
+    <div class="min-h-screen bg-slate-50 py-8 px-4">
+        <div class="max-w-xl mx-auto">
+            <div class="mb-6">
+                <h1 class="text-2xl font-black text-slate-900">Attendance ID Card</h1>
+                <p class="text-sm text-slate-500 mt-1">Save this card on your phone and show it to your professor when attendance is open.</p>
+            </div>
+
+            @if (session('success'))
+                <div class="mb-4 rounded-xl bg-emerald-50 border border-emerald-200 px-4 py-3 text-sm font-semibold text-emerald-700">{{ session('success') }}</div>
+            @endif
+
+            @if ($card && ! $card->revoked_at)
+                <div class="bg-white rounded-3xl shadow-xl border border-slate-200 p-6 text-center">
+                    <div class="rounded-2xl bg-slate-900 p-5 text-white">
+                        <p class="text-xs font-bold uppercase tracking-[0.25em] text-emerald-300">NMU Attendance</p>
+                        <h2 class="mt-3 text-xl font-black">{{ $user->studentProfile?->full_name_km ?? $user->name }}</h2>
+                        <p class="mt-1 text-sm text-slate-300">{{ $user->student_id_code }}</p>
+                        <div class="mt-5 rounded-2xl bg-white p-3">
+                            <img src="{{ route('student.attendance-card.qr') }}" alt="Attendance card QR code" class="mx-auto w-full max-w-xs">
+                        </div>
+                    </div>
+                    <p class="mt-4 text-xs text-slate-500">This QR card identifies you for an active professor attendance session. It does not replace the professor's session validation.</p>
+                    <div class="mt-5 flex gap-3">
+                        <button type="button" onclick="window.print()" class="flex-1 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-bold text-white hover:bg-emerald-700">Save / Print</button>
+                        <form method="POST" action="{{ route('student.attendance-card.revoke') }}" class="flex-1">
+                            @csrf
+                            <button type="submit" class="w-full rounded-xl bg-rose-50 px-4 py-3 text-sm font-bold text-rose-600 hover:bg-rose-100">Revoke Card</button>
+                        </form>
+                    </div>
+                </div>
+            @else
+                <div class="bg-white rounded-3xl shadow-xl border border-slate-200 p-6">
+                    <h2 class="text-lg font-black text-slate-900">Create your attendance card</h2>
+                    <p class="mt-2 text-sm leading-6 text-slate-600">Create a private QR card once, then save it to your phone. You can revoke it and generate a new one if your phone is lost.</p>
+                    <form method="POST" action="{{ route('student.attendance-card.create') }}" class="mt-6">
+                        @csrf
+                        <button type="submit" class="w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-bold text-white hover:bg-emerald-700">Create Attendance Card</button>
+                    </form>
+                </div>
+            @endif
+        </div>
+    </div>
+
+    <style>
+        @media print {
+            body * { visibility: hidden; }
+            .max-w-xl, .max-w-xl * { visibility: visible; }
+            .max-w-xl { position: absolute; inset: 0; margin: 0 auto; }
+            button, form, p.text-xs { display: none !important; }
+        }
+    </style>
+</x-app-layout>

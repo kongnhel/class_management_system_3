@@ -32,6 +32,11 @@ class User extends Authenticatable
         'last_login_at',
     ];
 
+    public function attendanceCard()
+    {
+        return $this->hasOne(AttendanceCard::class);
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *
