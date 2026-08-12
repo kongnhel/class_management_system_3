@@ -708,7 +708,7 @@
                                     <h4 class="text-sm font-bold text-gray-700 mb-3"><i class="fas fa-id-card mr-1.5 text-orange-500"></i> ព័ត៌មានផ្ទាល់ខ្លួន</h4>
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div>
-                                            <label class="block text-xs font-bold text-gray-500 mb-1.5">ឈ្មោះពេញ (ខ្មែរ)</label>
+                                            <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('ឈ្មោះពេញ (ខ្មែរ)') }}</label>
                                             <input type="text" x-model="editForm.full_name_km" placeholder="បញ្ចូលឈ្មោះពេញជាភាសាខ្មែរ" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
                                         </div>
                                         <div>
