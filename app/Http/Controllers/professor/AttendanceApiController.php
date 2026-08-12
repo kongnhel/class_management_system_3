@@ -128,14 +128,13 @@ class AttendanceApiController extends Controller
                     if (!empty($pic) && $pic !== 'null') { $profilePic = $pic; break; }
                 }
 
+                $remarks = trim((string) $record->remarks);
                 $source = 'qr';
-                if ($record->remarks === 'System Auto-Absent') {
+                if (strcasecmp($remarks, 'System Auto-Absent') === 0) {
                     $source = 'system';
-                } elseif ($record->remarks === 'QR Scan') {
+                } elseif (strcasecmp($remarks, 'QR Scan') === 0) {
                     $source = 'qr';
-                } elseif (!empty($record->remarks)) {
-                    $source = 'manual';
-                } elseif ($record->created_at->lt(now()->subMinutes(5))) {
+                } elseif ($remarks !== '' || $record->created_at->lt(now()->subMinutes(5))) {
                     $source = 'manual';
                 }
 
@@ -190,8 +189,8 @@ class AttendanceApiController extends Controller
             ]);
         }
 
-        $startTime = Carbon::parse($schedule->start_time);
-        $endTime = Carbon::parse($schedule->end_time);
+        $startTime = Carbon::parse($schedule->start_time, 'Asia/Phnom_Penh');
+        $endTime = Carbon::parse($schedule->end_time, 'Asia/Phnom_Penh');
         $windowStart = $startTime->copy()->subMinutes(5);
         $windowEnd = $endTime->copy()->addMinutes(10);
 

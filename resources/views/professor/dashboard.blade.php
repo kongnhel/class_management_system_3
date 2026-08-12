@@ -516,6 +516,16 @@
         return data;
       }
 
+      async function checkAttendanceAvailability(courseOfferingId) {
+        return await fetch("{{ route('professor.attendance.api.check-availability') }}?course_offering_id=" + encodeURIComponent(courseOfferingId), {
+          headers: { 'Accept': 'application/json' }
+        }).then(async (res) => {
+          const data = await res.json();
+          if (!res.ok) throw new Error(data?.message || `Server error (${res.status}).`);
+          return data;
+        });
+      }
+
       async function precheckAttendance(courseOfferingId, sessionId) {
         return await postJson("{{ route('professor.attendance.precheck') }}", {
           course_offering_id: courseOfferingId,
@@ -570,6 +580,11 @@
         });
 
         try {
+            const availability = await checkAttendanceAvailability(courseOfferingId);
+            if (!availability?.available) {
+                throw new Error(availability?.message || 'Attendance is not available at this time.');
+            }
+
             const pre = await precheckAttendance(courseOfferingId, sessionId);
 
             if (pre?.checked_in) {
