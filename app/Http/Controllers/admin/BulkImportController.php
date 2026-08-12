@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpSpreadsheet\Shared\Date as ExcelDate;
 
 class BulkImportController extends Controller
 {
@@ -183,7 +184,7 @@ class BulkImportController extends Controller
                         'gender' => $gender,
                         'phone_number' => !empty($rowData['phone']) ? $rowData['phone'] : null,
                         'address' => !empty($rowData['address']) ? $rowData['address'] : null,
-                        'date_of_birth' => !empty($rowData['date_of_birth']) ? $rowData['date_of_birth'] : null,
+                        'date_of_birth' => $this->normalizeDateOfBirth($rowData['date_of_birth'] ?? null),
                     ];
 
                     if ($request->role === 'student') {
@@ -213,6 +214,37 @@ class BulkImportController extends Controller
 
             return redirect()->route('admin.import.index')
                 ->with('error', 'Import failed: '.$e->getMessage());
+        }
+    }
+
+    private function normalizeDateOfBirth(mixed $value): ?string
+    {
+        if ($value === null || trim((string) $value) === '') {
+            return null;
+        }
+
+        if (is_numeric($value)) {
+            try {
+                return ExcelDate::excelToDateTimeObject((float) $value)->format('Y-m-d');
+            } catch (\Throwable $e) {
+                throw new \InvalidArgumentException('ថ្ងៃខែឆ្នាំកំណើតក្នុង Excel មិនត្រឹមត្រូវ។');
+            }
+        }
+
+        $value = trim((string) $value);
+        $formats = ['Y-m-d', 'd/m/Y', 'd-m-Y', 'm/d/Y', 'm-d-Y', 'd.m.Y'];
+
+        foreach ($formats as $format) {
+            $date = \DateTimeImmutable::createFromFormat('!'.$format, $value);
+            if ($date && $date->format($format) === $value) {
+                return $date->format('Y-m-d');
+            }
+        }
+
+        try {
+            return (new \DateTimeImmutable($value))->format('Y-m-d');
+        } catch (\Throwable $e) {
+            throw new \InvalidArgumentException('ថ្ងៃខែឆ្នាំកំណើតក្នុង Excel មិនត្រឹមត្រូវ។');
         }
     }
 
