@@ -113,7 +113,7 @@
                         <input
                             type="text"
                             x-model="search"
-                            @input="filterRows()"
+                            @compositionstart="isComposing = true" @compositionend="isComposing = false; filterRows()" @input="if (!isComposing && !$event.isComposing) filterRows()"
                             placeholder="ស្វែងរកឈ្មោះសិស្ស..."
                             class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-gray-50"
                         >
@@ -319,6 +319,7 @@
         function attendanceFilters() {
             return {
                 search: '',
+                isComposing: false,
                 courseFilter: '',
                 statusFilter: '',
                 dateFilter: '',

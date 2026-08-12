@@ -285,6 +285,7 @@
 
             var activeRequest = null;
             var debounceTimer = null;
+            var composingInputs = new WeakSet();
             var loadingMessage = @json(__('realtime_search_loading'));
 
             function getLoadingIndicator() {
@@ -374,15 +375,36 @@
                 });
             }
 
-            document.addEventListener('input', function (event) {
+            document.addEventListener('compositionstart', function (event) {
+                var input = event.target;
+                if (input && input.name === 'search' && input.closest('form[data-admin-realtime-filter]')) {
+                    composingInputs.add(input);
+                    clearTimeout(debounceTimer);
+                }
+            });
+
+            document.addEventListener('compositionend', function (event) {
                 var input = event.target;
                 var form = input && input.closest('form[data-admin-realtime-filter]');
                 if (!form || input.name !== 'search') return;
 
+                composingInputs.delete(input);
                 clearTimeout(debounceTimer);
                 debounceTimer = setTimeout(function () {
                     fetchAdminResults(buildUrl(form), form);
-                }, 350);
+                }, 600);
+            });
+
+            document.addEventListener('input', function (event) {
+                var input = event.target;
+                var form = input && input.closest('form[data-admin-realtime-filter]');
+                if (!form || input.name !== 'search') return;
+                if (event.isComposing || composingInputs.has(input)) return;
+
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(function () {
+                    fetchAdminResults(buildUrl(form), form);
+                }, 600);
             });
 
             document.addEventListener('change', function (event) {

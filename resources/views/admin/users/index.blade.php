@@ -1039,6 +1039,8 @@
 
         var timer = null;
         var activeRequest = null;
+        var isComposing = false;
+        var pendingSearchForm = null;
 
         function getActiveTab() {
             var root = document.getElementById('user-manage-root');
@@ -1160,14 +1162,32 @@
         }
 
         function queueSearch(form) {
+            pendingSearchForm = form;
             clearTimeout(timer);
             timer = setTimeout(function() {
-                fetchUserResults(buildResultsUrl(form));
-            }, 300);
+                if (!isComposing && pendingSearchForm) {
+                    fetchUserResults(buildResultsUrl(pendingSearchForm));
+                }
+            }, 600);
         }
+
+        document.addEventListener('compositionstart', function(event) {
+            if (event.target && event.target.id === 'live-search') {
+                isComposing = true;
+                clearTimeout(timer);
+            }
+        });
+
+        document.addEventListener('compositionend', function(event) {
+            if (event.target && event.target.id === 'live-search') {
+                isComposing = false;
+                queueSearch(event.target.form);
+            }
+        });
 
         document.addEventListener('input', function(event) {
             if (event.target && event.target.id === 'live-search') {
+                if (event.isComposing || isComposing) return;
                 queueSearch(event.target.form);
             }
         });
