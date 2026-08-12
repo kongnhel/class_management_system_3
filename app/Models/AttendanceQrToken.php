@@ -14,6 +14,7 @@ class AttendanceQrToken extends Model
     // ចំណុចសំខាន់៖ ត្រូវតែមានឈ្មោះ Field ទាំងនេះ
     protected $fillable = [
         'course_offering_id',
+        'attendance_session_id',
         'token_code',
         'expires_at',
     ];
@@ -21,4 +22,9 @@ class AttendanceQrToken extends Model
     protected $casts = [
         'expires_at' => 'datetime',
     ];
+
+    public function attendanceSession()
+    {
+        return $this->belongsTo(AttendanceSession::class);
+    }
 }

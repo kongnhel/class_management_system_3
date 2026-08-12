@@ -5,46 +5,68 @@ namespace App\Http\Controllers\professor;
 use App\Http\Controllers\Controller;
 use App\Models\AttendanceQrToken;
 use App\Models\AttendanceRecord;
+use App\Models\AttendanceSession;
 use App\Models\CourseOffering;
 use App\Models\Schedule;
 use App\Models\StudentCourseEnrollment;
+use App\Services\AttendanceSessionService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class AttendanceApiController extends Controller
 {
+    public function __construct(private readonly AttendanceSessionService $attendanceSessions) {}
+
     public function startSession(Request $request)
     {
         $request->validate([
             'course_offering_id' => 'required|exists:course_offerings,id',
+            'schedule_id' => 'required|integer|exists:schedules,id',
         ]);
 
-        $courseOfferingId = $request->course_offering_id;
+        $offering = $this->attendanceSessions->ownedOffering($request->integer('course_offering_id'), $request->user()->id);
+        $schedule = $this->attendanceSessions->scheduledToday($offering, $request->integer('schedule_id'));
+        $this->attendanceSessions->assertWithinAttendanceWindow($schedule);
 
-        AttendanceQrToken::where('course_offering_id', $courseOfferingId)->delete();
+        $now = Carbon::now('Asia/Phnom_Penh');
+        $session = DB::transaction(function () use ($offering, $schedule, $request, $now) {
+            $session = AttendanceSession::where('course_offering_id', $offering->id)
+                ->whereDate('attendance_date', $now->toDateString())
+                ->lockForUpdate()
+                ->first();
 
-        $token = Str::random(40);
+            if ($session && $session->closed_at) {
+                abort(422, 'Attendance for this course has already been closed today.');
+            }
 
-        AttendanceQrToken::create([
-            'course_offering_id' => $courseOfferingId,
-            'token_code' => $token,
-            'expires_at' => now()->addSeconds(15),
-        ]);
+            return $session ?? AttendanceSession::create([
+                'course_offering_id' => $offering->id,
+                'schedule_id' => $schedule->id,
+                'professor_id' => $request->user()->id,
+                'attendance_date' => $now->toDateString(),
+                'started_at' => $now,
+            ]);
+        });
+
+        $token = $this->replaceToken($session);
 
         $qrSvg = (string) QrCode::size(300)
             ->margin(2)
             ->generate($token);
 
-        $courseOffering = CourseOffering::with('course')->find($courseOfferingId);
-        $courseName = $courseOffering ? ($courseOffering->course->title_en ?? 'N/A') : 'N/A';
+        $offering->loadMissing('course');
+        $courseName = $offering->course?->title_en ?? 'N/A';
 
         return response()->json([
             'success' => true,
             'qr_svg' => $qrSvg,
             'course_name' => $courseName,
-            'expires_at' => now()->addSeconds(15)->toISOString(),
+            'session_id' => $session->id,
+            'expires_at' => $token->expires_at->toISOString(),
+            'expires_in' => 15,
         ]);
     }
 
@@ -52,19 +74,22 @@ class AttendanceApiController extends Controller
     {
         $request->validate([
             'course_offering_id' => 'required|exists:course_offerings,id',
+            'schedule_id' => 'required|integer|exists:schedules,id',
         ]);
 
-        $courseOfferingId = $request->course_offering_id;
+        $offering = $this->attendanceSessions->ownedOffering($request->integer('course_offering_id'), $request->user()->id);
+        $schedule = $this->attendanceSessions->scheduledToday($offering, $request->integer('schedule_id'));
+        $this->attendanceSessions->assertWithinAttendanceWindow($schedule);
+        $session = AttendanceSession::where('course_offering_id', $offering->id)
+            ->whereDate('attendance_date', Carbon::now('Asia/Phnom_Penh')->toDateString())
+            ->whereNull('closed_at')
+            ->firstOrFail();
 
-        AttendanceQrToken::where('course_offering_id', $courseOfferingId)->delete();
+        if ($session->schedule_id !== $schedule->id || $session->professor_id !== $request->user()->id) {
+            abort(403, 'This attendance session is not available to you.');
+        }
 
-        $token = Str::random(40);
-
-        AttendanceQrToken::create([
-            'course_offering_id' => $courseOfferingId,
-            'token_code' => $token,
-            'expires_at' => now()->addSeconds(15),
-        ]);
+        $token = $this->replaceToken($session);
 
         $qrSvg = (string) QrCode::size(300)
             ->margin(2)
@@ -73,13 +98,15 @@ class AttendanceApiController extends Controller
         return response()->json([
             'success' => true,
             'qr_svg' => $qrSvg,
-            'expires_at' => now()->addSeconds(15)->toISOString(),
+            'expires_at' => $token->expires_at->toISOString(),
+            'expires_in' => 15,
         ]);
     }
 
     public function getStudents(Request $request, $courseOfferingId)
     {
-        $today = now()->toDateString();
+        $this->attendanceSessions->ownedOffering((int) $courseOfferingId, $request->user()->id);
+        $today = Carbon::now('Asia/Phnom_Penh')->toDateString();
 
         $attendances = AttendanceRecord::where('course_offering_id', $courseOfferingId)
             ->whereDate('date', $today)
@@ -104,6 +131,8 @@ class AttendanceApiController extends Controller
                 $source = 'qr';
                 if ($record->remarks === 'System Auto-Absent') {
                     $source = 'system';
+                } elseif ($record->remarks === 'QR Scan') {
+                    $source = 'qr';
                 } elseif (!empty($record->remarks)) {
                     $source = 'manual';
                 } elseif ($record->created_at->lt(now()->subMinutes(5))) {
@@ -145,11 +174,11 @@ class AttendanceApiController extends Controller
             'course_offering_id' => 'required|exists:course_offerings,id',
         ]);
 
-        $courseOfferingId = $request->course_offering_id;
+        $offering = $this->attendanceSessions->ownedOffering($request->integer('course_offering_id'), $request->user()->id);
         $now = Carbon::now('Asia/Phnom_Penh');
         $todayName = $now->format('l');
 
-        $schedule = Schedule::where('course_offering_id', $courseOfferingId)
+        $schedule = Schedule::where('course_offering_id', $offering->id)
             ->where('day_of_week', $todayName)
             ->first();
 
@@ -210,39 +239,65 @@ class AttendanceApiController extends Controller
             'course_offering_id' => 'required|exists:course_offerings,id',
         ]);
 
-        $courseOfferingId = $request->course_offering_id;
-        $today = now()->toDateString();
+        $offering = $this->attendanceSessions->ownedOffering($request->integer('course_offering_id'), $request->user()->id);
+        $today = Carbon::now('Asia/Phnom_Penh')->toDateString();
 
-        $enrolledStudents = StudentCourseEnrollment::where('course_offering_id', $courseOfferingId)
-            ->pluck('student_user_id');
+        $absentCount = DB::transaction(function () use ($offering, $today, $request) {
+            $session = AttendanceSession::where('course_offering_id', $offering->id)
+                ->whereDate('attendance_date', $today)
+                ->lockForUpdate()
+                ->firstOrFail();
 
-        $absentCount = 0;
-
-        foreach ($enrolledStudents as $studentId) {
-            $hasRecord = AttendanceRecord::where('student_user_id', $studentId)
-                ->where('course_offering_id', $courseOfferingId)
-                ->where('date', $today)
-                ->exists();
-
-            if (! $hasRecord) {
-                AttendanceRecord::create([
-                    'student_user_id' => $studentId,
-                    'user_id' => $studentId,
-                    'course_offering_id' => $courseOfferingId,
-                    'date' => $today,
-                    'status' => 'absent',
-                    'remarks' => 'System Auto-Absent',
-                ]);
-                $absentCount++;
+            if ($session->professor_id !== $request->user()->id) {
+                abort(403, 'This attendance session is not available to you.');
             }
-        }
+            if ($session->closed_at) {
+                abort(422, 'Attendance has already been closed.');
+            }
 
-        AttendanceQrToken::where('course_offering_id', $courseOfferingId)->delete();
+            $enrolledIds = StudentCourseEnrollment::where('course_offering_id', $offering->id)->pluck('student_user_id');
+            $recordedIds = AttendanceRecord::where('course_offering_id', $offering->id)
+                ->whereDate('date', $today)
+                ->pluck('student_user_id');
+            $absentIds = $enrolledIds->diff($recordedIds);
+            $timestamp = now();
+            $rows = $absentIds->map(fn ($studentId) => [
+                'student_user_id' => $studentId,
+                'user_id' => $studentId,
+                'course_offering_id' => $offering->id,
+                'date' => $today,
+                'status' => 'absent',
+                'remarks' => 'System Auto-Absent',
+                'created_at' => $timestamp,
+                'updated_at' => $timestamp,
+            ])->all();
+
+            if ($rows) {
+                AttendanceRecord::insert($rows);
+            }
+
+            $session->update(['closed_at' => Carbon::now('Asia/Phnom_Penh')]);
+            AttendanceQrToken::where('attendance_session_id', $session->id)->delete();
+
+            return count($rows);
+        });
 
         return response()->json([
             'success' => true,
             'message' => "ការស្រង់វត្តមានត្រូវបានបញ្ចប់! សិស្ស $absentCount នាក់ត្រូវបានដាក់ថាអវត្តមាន។",
             'absent_count' => $absentCount,
+        ]);
+    }
+
+    private function replaceToken(AttendanceSession $session): AttendanceQrToken
+    {
+        AttendanceQrToken::where('attendance_session_id', $session->id)->delete();
+
+        return AttendanceQrToken::create([
+            'course_offering_id' => $session->course_offering_id,
+            'attendance_session_id' => $session->id,
+            'token_code' => Str::random(40),
+            'expires_at' => now()->addSeconds(15),
         ]);
     }
 }

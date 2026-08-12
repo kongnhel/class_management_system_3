@@ -5,6 +5,7 @@ namespace App\Http\Controllers\professor;
 use App\Http\Controllers\Controller;
 use App\Models\AttendanceProfessor;
 use App\Models\AttendanceRecord;
+use App\Services\AttendanceSessionService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,6 +13,8 @@ use Illuminate\Validation\Rule;
 
 class ProfessorAttendanceController extends Controller
 {
+    public function __construct(private readonly AttendanceSessionService $attendanceSessions) {}
+
     /**
      * Store a newly created attendance record in storage.
      */
@@ -29,6 +32,8 @@ class ProfessorAttendanceController extends Controller
             'date.required' => 'កាលបរិច្ឆេទតម្រូវឱ្យបញ្ចូល។',
             'status.required' => 'ស្ថានភាពវត្តមានតម្រូវឱ្យបញ្ចូល។',
         ]);
+
+        $this->attendanceSessions->ownedOffering($request->integer('course_offering_id'), $request->user()->id);
 
         // Get student IDs from either single or multiple selection
         $studentIds = [];
@@ -89,6 +94,9 @@ class ProfessorAttendanceController extends Controller
             'status.required' => 'ស្ថានភាពវត្តមានតម្រូវឱ្យបញ្ចូល។',
         ]);
 
+        $offering = $this->attendanceSessions->ownedOffering($request->integer('course_offering_id'), $request->user()->id);
+        abort_unless($attendance->course_offering_id === $offering->id, 403);
+
         $attendance->update($request->only(['course_offering_id', 'student_user_id', 'date', 'status', 'remarks']));
 
         return redirect()->route('professor.manage-attendance', ['offering_id' => $attendance->course_offering_id])
@@ -100,6 +108,7 @@ class ProfessorAttendanceController extends Controller
      */
     public function destroyAttendance(AttendanceRecord $attendance)
     {
+        $this->attendanceSessions->ownedOffering($attendance->course_offering_id, request()->user()->id);
         $courseOfferingId = $attendance->course_offering_id;
         $attendance->delete();
 
@@ -181,6 +190,10 @@ class ProfessorAttendanceController extends Controller
             'lng' => 'required|numeric|between:-180,180',
         ]);
 
+        $offering = $this->attendanceSessions->ownedOffering($request->integer('course_offering_id'), $request->user()->id);
+        $schedule = $this->attendanceSessions->scheduledToday($offering, $request->integer('session_id'));
+        $this->attendanceSessions->assertWithinAttendanceWindow($schedule);
+
         $professorId = auth()->id();
         $now = Carbon::now('Asia/Phnom_Penh');
         $today = $now->toDateString();
@@ -242,6 +255,9 @@ class ProfessorAttendanceController extends Controller
             'course_offering_id' => 'required|exists:course_offerings,id',
             'session_id' => 'required|integer',
         ]);
+
+        $offering = $this->attendanceSessions->ownedOffering($request->integer('course_offering_id'), $request->user()->id);
+        $this->attendanceSessions->scheduledToday($offering, $request->integer('session_id'));
 
         $exists = AttendanceProfessor::where([
             'professor_id' => auth()->id(),

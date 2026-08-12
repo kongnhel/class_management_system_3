@@ -482,12 +482,12 @@
         return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
       }
 
-      async function openAttendanceListOnly(courseOfferingId) {
-        window.dispatchEvent(new CustomEvent('open-attendance', { detail: { courseOfferingId, readOnly: true } }));
+      async function openAttendanceListOnly(courseOfferingId, scheduleId) {
+        window.dispatchEvent(new CustomEvent('open-attendance', { detail: { courseOfferingId, scheduleId, readOnly: true } }));
       }
 
-      async function openAttendanceList(courseOfferingId) {
-        window.dispatchEvent(new CustomEvent('open-attendance', { detail: { courseOfferingId, readOnly: false } }));
+      async function openAttendanceList(courseOfferingId, scheduleId) {
+        window.dispatchEvent(new CustomEvent('open-attendance', { detail: { courseOfferingId, scheduleId, readOnly: false } }));
       }
 
       async function postJson(url, payload) {
@@ -574,7 +574,7 @@
 
             if (pre?.checked_in) {
                 Swal.close();
-                await openAttendanceList(courseOfferingId);
+                await openAttendanceList(courseOfferingId, sessionId);
                 if (scanBtn) scanBtn.disabled = false;
                 return;
             }
@@ -591,7 +591,7 @@
                     text: data.message || 'ចុះវត្តមានបានសម្រេច!',
                     confirmButtonColor: '#4f46e5'
                 });
-                await openAttendanceList(courseOfferingId);
+                await openAttendanceList(courseOfferingId, sessionId);
             } else {
                 Swal.fire({ icon: 'error', title: 'បរាជ័យ', text: data?.message || 'ទីតាំងមិនត្រឹមត្រូវ' });
             }

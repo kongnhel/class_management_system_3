@@ -1,4 +1,4 @@
-<div x-data="attendanceModal()" x-on:open-attendance.window="open($event.detail.courseOfferingId, $event.detail.readOnly || false)"
+<div x-data="attendanceModal()" x-on:open-attendance.window="open($event.detail.courseOfferingId, $event.detail.scheduleId, $event.detail.readOnly || false)"
      x-show="isOpen" x-cloak
      class="fixed inset-0 z-[60]" style="display: none;">
 
@@ -270,6 +270,7 @@ function attendanceModal() {
         closing: false,
         isReadOnly: false,
         courseOfferingId: null,
+        scheduleId: null,
         courseName: '...',
         qrSvg: '',
         students: [],
@@ -277,10 +278,12 @@ function attendanceModal() {
         counts: { present: 0, permission: 0, absent: 0, manual: 0, qr: 0 },
         pollInterval: null,
         qrInterval: null,
-        qrTimeLeft: 10,
+        qrTimeLeft: 15,
+        qrDuration: 15,
 
-        async open(courseOfferingId, readOnly = false) {
+        async open(courseOfferingId, scheduleId, readOnly = false) {
             this.courseOfferingId = courseOfferingId;
+            this.scheduleId = scheduleId;
             this.isOpen = true;
             this.showConfirm = false;
             this.isReadOnly = readOnly;
@@ -295,12 +298,13 @@ function attendanceModal() {
                             'X-CSRF-TOKEN': token,
                             'Accept': 'application/json'
                         },
-                        body: JSON.stringify({ course_offering_id: courseOfferingId })
+                        body: JSON.stringify({ course_offering_id: courseOfferingId, schedule_id: scheduleId })
                     });
                     const data = await res.json();
                     if (data.success) {
                         this.qrSvg = data.qr_svg;
                         this.courseName = data.course_name;
+                        this.qrDuration = data.expires_in || 15;
                     }
                 } catch (e) {
                     console.error('Failed to start session:', e);
@@ -326,11 +330,12 @@ function attendanceModal() {
                         'X-CSRF-TOKEN': token,
                         'Accept': 'application/json'
                     },
-                    body: JSON.stringify({ course_offering_id: this.courseOfferingId })
+                    body: JSON.stringify({ course_offering_id: this.courseOfferingId, schedule_id: this.scheduleId })
                 });
                 const data = await res.json();
                 if (data.success) {
                     this.qrSvg = data.qr_svg;
+                    this.qrDuration = data.expires_in || 15;
                 }
             } catch (e) {
                 console.error('Failed to refresh QR:', e);
@@ -367,13 +372,13 @@ function attendanceModal() {
 
         startQrCountdown() {
             if (this.qrInterval) clearInterval(this.qrInterval);
-            this.qrTimeLeft = 10;
+            this.qrTimeLeft = this.qrDuration;
             this.qrInterval = setInterval(() => {
                 if (!this.isOpen) { clearInterval(this.qrInterval); return; }
                 if (this.qrTimeLeft > 1) {
                     this.qrTimeLeft--;
                 } else {
-                    this.qrTimeLeft = 10;
+                    this.qrTimeLeft = this.qrDuration;
                     this.refreshQr();
                 }
             }, 1000);
@@ -425,6 +430,7 @@ function attendanceModal() {
             this.isOpen = false;
             this.stopPolling();
             this.courseOfferingId = null;
+            this.scheduleId = null;
             this.qrSvg = '';
             this.students = [];
         }
