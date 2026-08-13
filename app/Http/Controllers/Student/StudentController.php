@@ -7,7 +7,6 @@ use App\Models\Announcement;
 use App\Models\CourseOffering;
 use App\Models\Schedule;
 use App\Models\StudentCourseEnrollment;
-use App\Services\GradingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -85,6 +84,7 @@ class StudentController extends Controller
             $n->content = $n->data['message'] ?? 'អ្នកមានការជូនដំណឹងថ្មី។';
             $n->sender_name = $n->data['from_user_name'] ?? 'ប្រព័ន្ធ';
             $n->is_read = $n->read_at !== null;
+
             return $n;
         });
         $combinedFeed = $allAnnouncements->merge($allNotifications)->sortByDesc('created_at');
@@ -113,13 +113,15 @@ class StudentController extends Controller
 
         // Map each result to its course_offering_id and course_id
         $resultsWithCourse = $allExamResults->map(function ($result) {
-            $assessment = match($result->assessment_type) {
+            $assessment = match ($result->assessment_type) {
                 'assignment' => $result->assignment,
                 'exam' => $result->exam,
                 'quiz' => $result->quiz,
                 default => null,
             };
+
             return [
+                'assessment_id' => $result->assessment_id,
                 'score_obtained' => $result->score_obtained,
                 'assessment_type' => $result->assessment_type,
                 'course_id' => $assessment?->courseOffering?->course_id,
@@ -135,7 +137,25 @@ class StudentController extends Controller
                 $quiz = $items->where('assessment_type', 'quiz')->sum('score_obtained');
                 $total = min($att + $nonQuiz + $quiz, 100);
                 $letterGrade = \App\Services\GradingService::getLetterGrade($total);
-                $grade = \App\Services\GradingService::isPassing($letterGrade) ? 'P' : 'F';
+
+                // Check if student failed any individual non-quiz assessment
+                $isFailedByGrade = ! \App\Services\GradingService::isPassing($letterGrade);
+                $isFailedByAssessment = false;
+                foreach ($items->where('assessment_type', '!=', 'quiz') as $item) {
+                    $assessment = match ($item['assessment_type']) {
+                        'assignment' => \App\Models\Assignment::find($item['assessment_id'] ?? null),
+                        'exam' => \App\Models\Exam::find($item['assessment_id'] ?? null),
+                        default => null,
+                    };
+                    if ($assessment && $assessment->max_score > 0 && ($item['score_obtained'] / $assessment->max_score) < 0.5) {
+                        $isFailedByAssessment = true;
+                        break;
+                    }
+                }
+                $isFailed = $isFailedByGrade || $isFailedByAssessment;
+
+                $grade = \App\Services\GradingService::isPassing($letterGrade) && ! $isFailedByAssessment ? 'P' : 'F';
+
                 return ['total' => $total, 'grade' => $grade, 'credits' => $items->first()['credits'] ?? 3];
             });
 
@@ -149,7 +169,9 @@ class StudentController extends Controller
             $peerIds = StudentCourseEnrollment::whereIn('course_offering_id', $enrolledOfferingIds)->pluck('student_user_id')->unique();
             $rankings = $peerIds->map(function ($peerId) use ($enrolledOfferingIds) {
                 $peer = \App\Models\User::find($peerId);
-                if (!$peer) return ['id' => $peerId, 'total' => 0];
+                if (! $peer) {
+                    return ['id' => $peerId, 'total' => 0];
+                }
                 $assessQuery = function ($q) use ($enrolledOfferingIds) {
                     $q->select('id')->from('assignments')->whereIn('course_offering_id', $enrolledOfferingIds)
                         ->union(DB::table('quizzes')->select('id')->whereIn('course_offering_id', $enrolledOfferingIds))
@@ -160,6 +182,7 @@ class StudentController extends Controller
                 $quiz = \App\Models\ExamResult::where('student_user_id', $peerId)->where('assessment_type', 'quiz')
                     ->whereIn('assessment_id', $assessQuery)->sum('score_obtained');
                 $att = $peer->getAttendanceScoreByCourse($enrolledOfferingIds->first());
+
                 return ['id' => $peerId, 'total' => min((float) $nonQuiz + (float) $quiz + (float) $att, 100)];
             })->sortByDesc('total')->values();
             $totalClassmates = $rankings->count();
@@ -179,6 +202,7 @@ class StudentController extends Controller
     {
         $request->validate(['telegram_chat_id' => 'required|numeric']);
         auth()->user()->update(['telegram_chat_id' => $request->telegram_chat_id]);
+
         return back()->with('success', 'អបអរសាទរ! គណនី Telegram របស់អ្នកត្រូវបានភ្ជាប់ហើយ។');
     }
 

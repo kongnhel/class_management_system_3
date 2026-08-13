@@ -127,6 +127,7 @@ class AdminGradeController extends Controller
             // Failing logic (matching student flow)
             $finalExamScore = $exams->sum(function ($e) use ($allResults, $student) {
                 $r = $allResults->where('assessment_id', $e->id)->where('student_user_id', $student->id)->where('assessment_type', 'exam')->first();
+
                 return $r ? (float) $r->score_obtained : 0;
             });
             $midtermScore = $exams->sum(function ($e) use ($allResults, $student) {
@@ -134,19 +135,26 @@ class AdminGradeController extends Controller
                 $titleEn = strtolower($e->title_en ?? '');
                 $titleKm = strtolower($e->title_km ?? '');
                 $isMidterm = str_contains($titleEn, 'midterm') || str_contains($titleEn, 'ពាក់កណ្ដាល់') || str_contains($titleKm, 'ពាក់កណ្ដាល់');
+
                 return $isMidterm ? ($r ? (float) $r->score_obtained : 0) : 0;
             });
             $assignmentScore = $assignments->sum(function ($a) use ($allResults, $student) {
                 $r = $allResults->where('assessment_id', $a->id)->where('student_user_id', $student->id)->where('assessment_type', 'assignment')->first();
+
                 return $r ? (float) $r->score_obtained : 0;
             });
 
             $letterGrade = GradingService::getLetterGrade($totalScore);
-            $isFailed = ! GradingService::isPassing($letterGrade);
+            $isFailedByGrade = ! GradingService::isPassing($letterGrade);
+            $isFailedByAssessment = GradingService::hasFailedAnyAssessment(
+                $gradebook[$student->id] ?? [],
+                $assessments
+            );
+            $isFailed = $isFailedByGrade || $isFailedByAssessment;
 
             $student->temp_total = (float) $totalScore;
             $student->letterGrade = $letterGrade;
-            $student->isPassing = !$isFailed;
+            $student->isPassing = ! $isFailed;
 
             return $student;
         });
@@ -226,6 +234,7 @@ class AdminGradeController extends Controller
 
             $finalExamScore = $exams->sum(function ($e) use ($allResults, $student) {
                 $r = $allResults->where('assessment_id', $e->id)->where('student_user_id', $student->id)->where('assessment_type', 'exam')->first();
+
                 return $r ? (float) $r->score_obtained : 0;
             });
             $midtermScore = $exams->sum(function ($e) use ($allResults, $student) {
@@ -233,19 +242,26 @@ class AdminGradeController extends Controller
                 $titleEn = strtolower($e->title_en ?? '');
                 $titleKm = strtolower($e->title_km ?? '');
                 $isMidterm = str_contains($titleEn, 'midterm') || str_contains($titleEn, 'ពាក់កណ្ដាល់') || str_contains($titleKm, 'ពាក់កណ្ដាល់');
+
                 return $isMidterm ? ($r ? (float) $r->score_obtained : 0) : 0;
             });
             $assignmentScore = $assignments->sum(function ($a) use ($allResults, $student) {
                 $r = $allResults->where('assessment_id', $a->id)->where('student_user_id', $student->id)->where('assessment_type', 'assignment')->first();
+
                 return $r ? (float) $r->score_obtained : 0;
             });
 
             $letterGrade = GradingService::getLetterGrade($totalScore);
-            $isFailed = ! GradingService::isPassing($letterGrade);
+            $isFailedByGrade = ! GradingService::isPassing($letterGrade);
+            $isFailedByAssessment = GradingService::hasFailedAnyAssessment(
+                $gradebook[$student->id] ?? [],
+                $assessments
+            );
+            $isFailed = $isFailedByGrade || $isFailedByAssessment;
 
             $student->temp_total = (float) $totalScore;
             $student->letterGrade = $letterGrade;
-            $student->isPassing = !$isFailed;
+            $student->isPassing = ! $isFailed;
 
             return $student;
         });

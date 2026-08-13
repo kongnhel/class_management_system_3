@@ -230,21 +230,17 @@
                     <td class="col-total">{{ number_format($rowTotal, 1) }}</td>
 
                     @php
-                        $grade = 'F';
-                        if ($rowTotal >= 85) $grade = 'A';
-                        elseif ($rowTotal >= 80) $grade = 'B+';
-                        elseif ($rowTotal >= 70) $grade = 'B';
-                        elseif ($rowTotal >= 65) $grade = 'C+';
-                        elseif ($rowTotal >= 50) $grade = 'C';
-                        
+                        $grade = \App\Services\GradingService::getLetterGrade($rowTotal);
+
                         $gradeClass = match(true) {
                             $grade === 'A' => 'grade-a',
                             in_array($grade, ['B+', 'B']) => 'grade-b',
                             in_array($grade, ['C+', 'C']) => 'grade-c',
                             default => 'grade-f'
                         };
-                        
-                        $isPassing = $rowTotal >= 50;
+
+                        // Use isPassing from controller (includes assessment-level check)
+                        $isPassing = $student->isPassing;
                     @endphp
                     <td class="col-grade {{ $gradeClass }}">{{ $grade }}</td>
                     <td class="col-rank">{{ $index + 1 }}</td>

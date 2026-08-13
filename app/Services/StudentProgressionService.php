@@ -164,7 +164,22 @@ class StudentProgressionService
 
             $courseTotal = min($totalScore + $attendanceScore, 100);
             $letterGrade = GradingService::getLetterGrade($courseTotal);
-            $isFailed = ! GradingService::isPassing($letterGrade);
+            $isFailedByGrade = ! GradingService::isPassing($letterGrade);
+
+            // Check if student failed any individual non-quiz assessment
+            $isFailedByAssessment = false;
+            foreach ($examResults->where('assessment_type', '!=', 'quiz') as $result) {
+                $assessment = match ($result->assessment_type) {
+                    'assignment' => \App\Models\Assignment::find($result->assessment_id),
+                    default => \App\Models\Exam::find($result->assessment_id),
+                };
+                if ($assessment && $assessment->max_score > 0 && ($result->score_obtained / $assessment->max_score) < 0.5) {
+                    $isFailedByAssessment = true;
+                    break;
+                }
+            }
+
+            $isFailed = $isFailedByGrade || $isFailedByAssessment;
 
             if ($isFailed) {
                 $hasF = true;

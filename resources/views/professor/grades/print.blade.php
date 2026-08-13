@@ -102,8 +102,8 @@
         $passCount = 0;
         $failCount = 0;
         foreach ($students as $student) {
-            $grade = \App\Services\GradingService::getLetterGrade($student->temp_total);
-            if (\App\Services\GradingService::isPassing($grade)) { $passCount++; } else { $failCount++; }
+            // Use isPassing from controller (includes assessment-level check)
+            if ($student->isPassing) { $passCount++; } else { $failCount++; }
         }
 
         function toKhmerNums($n) {

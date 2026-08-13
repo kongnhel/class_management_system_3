@@ -11,7 +11,6 @@ use App\Models\ExamResult;
 use App\Models\GradingCategory;
 use App\Models\Quiz;
 use App\Models\StudentCourseEnrollment;
-use App\Models\User;
 use App\Services\GradingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -103,6 +102,12 @@ class ProfessorGradeController extends Controller
         foreach ($students as $index => $student) {
             $student->rank = $index + 1;
             $student->letterGrade = GradingService::getLetterGrade($student->temp_total);
+            $isFailedByGrade = ! GradingService::isPassing($student->letterGrade);
+            $isFailedByAssessment = GradingService::hasFailedAnyAssessment(
+                $gradebook[$student->id] ?? [],
+                $assessments
+            );
+            $student->isPassing = ! ($isFailedByGrade || $isFailedByAssessment);
         }
 
         return view('professor.grades.index', compact('courseOffering', 'students', 'assessments', 'gradebook'));
@@ -149,10 +154,15 @@ class ProfessorGradeController extends Controller
             foreach ($assessments as $a) {
                 $type = ($a instanceof Assignment) ? 'assignment' : (($a instanceof Quiz) ? 'quiz' : 'exam');
                 $score = $gradebook[$student->id][$type.'_'.$a->id] ?? 0;
-                if ($type === 'quiz') { $quizBonus += $score; } else { $baseScore += $score; }
+                if ($type === 'quiz') {
+                    $quizBonus += $score;
+                } else {
+                    $baseScore += $score;
+                }
             }
             $total = min($baseScore + $quizBonus, 100);
             $student->temp_total = $total;
+
             return $student;
         })->sortByDesc('temp_total')->values();
 
@@ -188,9 +198,10 @@ class ProfessorGradeController extends Controller
 
             $headerMap = [];
             for ($col = 'D'; $col <= $highestColumn; $col++) {
-                $cellValue = trim($sheet->getCell($col . '8')->getValue() ?? '');
+                $cellValue = trim($sheet->getCell($col.'8')->getValue() ?? '');
                 if ($cellValue === '' || $cellValue === 'វត្តមាន' || $cellValue === 'ពិន្ទុសរុប' || $cellValue === 'ចំណាត់ថ្នាក់') {
                     $headerMap[$col] = $cellValue;
+
                     continue;
                 }
                 // Match header to assessment
@@ -245,7 +256,7 @@ class ProfessorGradeController extends Controller
 
             // Read data rows starting from row 10
             for ($row = 10; $row <= $highestRow; $row++) {
-                $nameCell = trim($sheet->getCell('B' . $row)->getValue() ?? '');
+                $nameCell = trim($sheet->getCell('B'.$row)->getValue() ?? '');
                 if ($nameCell === '' || $nameCell === 'មធ្យមភាគរួម' || $nameCell === 'អ្នកប្រឡងជាប់ / ធ្លាក់') {
                     continue;
                 }
@@ -254,6 +265,7 @@ class ProfessorGradeController extends Controller
                 $studentId = $enrolledStudents->get($nameCell);
                 if (! $studentId) {
                     $skipped++;
+
                     continue;
                 }
 
@@ -266,7 +278,7 @@ class ProfessorGradeController extends Controller
                         continue;
                     }
 
-                    $score = $sheet->getCell($col . $row)->getValue();
+                    $score = $sheet->getCell($col.$row)->getValue();
                     if ($score === null || $score === '' || ! is_numeric($score)) {
                         continue;
                     }
@@ -328,7 +340,7 @@ class ProfessorGradeController extends Controller
         $titleKm = $request->input('title_km');
 
         // Auto-assign grading category by matching assessment type to category name
-        $typeToCategory = match($type) {
+        $typeToCategory = match ($type) {
             'quiz' => 'Quiz',
             'assignment' => 'Assignment',
             'exam' => str_contains(strtolower($titleEn), 'final') ? 'Final Exam' :
@@ -655,7 +667,7 @@ class ProfessorGradeController extends Controller
             $rows = array_slice($importData, 1);
         } else {
             $handle = fopen($file->getRealPath(), 'r');
-            if (!$handle) {
+            if (! $handle) {
                 return back()->with('error', 'មិនអាចបើកឯកសារបាន។');
             }
 
@@ -704,7 +716,7 @@ class ProfessorGradeController extends Controller
             return back()->with('success', 'បញ្ចូលពិន្ទុជោគជ័យ!');
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Import grades error: ' . $e->getMessage());
+            Log::error('Import grades error: '.$e->getMessage());
 
             return back()->with('error', 'មានបញ្ហាក្នុងការបញ្ចូលទិន្នន័យ។');
         }
@@ -823,11 +835,11 @@ class ProfessorGradeController extends Controller
             ->leftJoin('student_profiles as sp', 'u.id', '=', 'sp.user_id')
             ->leftJoin('exams as e', function ($join) {
                 $join->on('er.assessment_id', '=', 'e.id')
-                     ->where('er.assessment_type', '=', 'exam');
+                    ->where('er.assessment_type', '=', 'exam');
             })
             ->leftJoin('assignments as a', function ($join) {
                 $join->on('er.assessment_id', '=', 'a.id')
-                     ->where('er.assessment_type', '=', 'assignment');
+                    ->where('er.assessment_type', '=', 'assignment');
             })
             ->leftJoin('course_offerings as co_exam', 'e.course_offering_id', '=', 'co_exam.id')
             ->leftJoin('courses as c_exam', 'co_exam.course_id', '=', 'c_exam.id')
@@ -835,11 +847,11 @@ class ProfessorGradeController extends Controller
             ->leftJoin('courses as c_assign', 'co_assign.course_id', '=', 'c_assign.id')
             ->where(function ($q) use ($user) {
                 $q->where('co_exam.lecturer_user_id', $user->id)
-                  ->orWhere('co_assign.lecturer_user_id', $user->id);
+                    ->orWhere('co_assign.lecturer_user_id', $user->id);
             })
             ->select(
                 'u.name as student_name',
-                DB::raw("COALESCE(sp.profile_picture_url, up.profile_picture_url) as profile_pic"),
+                DB::raw('COALESCE(sp.profile_picture_url, up.profile_picture_url) as profile_pic'),
                 DB::raw("CASE WHEN er.assessment_type = 'exam' THEN c_exam.title_km ELSE c_assign.title_km END as course_title_km"),
                 'er.assessment_type',
                 'er.score_obtained as score',
@@ -909,11 +921,16 @@ class ProfessorGradeController extends Controller
                     ->first();
                 $score = $scoreRecord ? (float) $scoreRecord->score_obtained : 0;
                 $gradebook[$student->id][$type.'_'.$assessment->id] = $score;
-                if ($type === 'quiz') { $quizBonus += $score; } else { $baseScore += $score; }
+                if ($type === 'quiz') {
+                    $quizBonus += $score;
+                } else {
+                    $baseScore += $score;
+                }
             }
 
             $totalScore = min($baseScore + $quizBonus, 100);
             $student->temp_total = (float) $totalScore;
+
             return $student;
         });
 
@@ -921,6 +938,12 @@ class ProfessorGradeController extends Controller
         foreach ($students as $index => $student) {
             $student->rank = $index + 1;
             $student->letterGrade = GradingService::getLetterGrade($student->temp_total);
+            $isFailedByGrade = ! GradingService::isPassing($student->letterGrade);
+            $isFailedByAssessment = GradingService::hasFailedAnyAssessment(
+                $gradebook[$student->id] ?? [],
+                $assessments
+            );
+            $student->isPassing = ! ($isFailedByGrade || $isFailedByAssessment);
         }
 
         return view('professor.grades.print', compact('courseOffering', 'students', 'assessments', 'gradebook'));

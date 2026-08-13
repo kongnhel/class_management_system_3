@@ -33,7 +33,7 @@
                                     <p class="text-2xl font-black text-emerald-600">{{ number_format($courseData['total_score'], 1) }}</p>
                                     <p class="text-[10px] font-bold text-gray-400 uppercase">សរុប</p>
                                 </div>
-                                <div class="w-12 h-12 rounded-xl flex flex-col items-center justify-center text-sm font-black {{ \App\Services\GradingService::isPassing($courseData['letter_grade']) ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-rose-50 text-rose-600 border border-rose-100' }}">
+                                <div class="w-12 h-12 rounded-xl flex flex-col items-center justify-center text-sm font-black {{ !$courseData['is_failed'] ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-rose-50 text-rose-600 border border-rose-100' }}">
                                     <span class="text-[8px] uppercase opacity-60 leading-none mb-0.5">និទ្ទេស</span>
                                     {{ $courseData['letter_grade'] }}
                                 </div>

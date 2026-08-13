@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Student;
 use App\Http\Controllers\Controller;
 use App\Models\CourseOffering;
 use App\Models\ExamResult;
-use App\Models\GradingCategory;
 use App\Models\Quiz;
 use App\Models\StudentCourseEnrollment;
 use App\Models\User;
@@ -45,7 +44,7 @@ class StudentGradeController extends Controller
         $courseGrades = $filteredResults->groupBy('course_id')->map(function ($items, $courseId) use ($user) {
             // Attendance is stored per course offering, not per course.
             $firstItem = $items->first();
-            $offering = match($firstItem->assessment_type) {
+            $offering = match ($firstItem->assessment_type) {
                 'assignment' => $firstItem->assignment?->courseOffering,
                 'exam' => $firstItem->exam?->courseOffering,
                 'quiz' => $firstItem->quiz?->courseOffering,
@@ -53,14 +52,24 @@ class StudentGradeController extends Controller
             };
             $offeringId = $offering?->id;
             $attendanceScore = $offeringId ? $user->getAttendanceScoreByCourse($offeringId) : 0;
-            $absCount = $offeringId ? \\App\\Models\\AttendanceRecord::where('student_user_id', $user->id)->where('course_offering_id', $offeringId)->where('status', 'absent')->count() : 0;
-            $perCount = $offeringId ? \\App\\Models\\AttendanceRecord::where('student_user_id', $user->id)->where('course_offering_id', $offeringId)->where('status', 'permission')->count() : 0;
+            $absCount = $offeringId ? \App\Models\AttendanceRecord::where('student_user_id', $user->id)->where('course_offering_id', $offeringId)->where('status', 'absent')->count() : 0;
+            $perCount = $offeringId ? \App\Models\AttendanceRecord::where('student_user_id', $user->id)->where('course_offering_id', $offeringId)->where('status', 'permission')->count() : 0;
 
             $nonQuiz = $items->where('assessment_type', '!=', 'quiz')->sum('score_obtained');
             $quizBonus = $items->where('assessment_type', 'quiz')->sum('score_obtained');
             $totalObtained = min($attendanceScore + $nonQuiz + $quizBonus, 100);
             $letterGrade = GradingService::getLetterGrade($totalObtained);
-            $isFailed = ! GradingService::isPassing($letterGrade);
+            $isFailedByGrade = ! GradingService::isPassing($letterGrade);
+
+            // Check if student failed any individual non-quiz assessment
+            $gradebookRow = [];
+            foreach ($items as $item) {
+                $type = $item->assessment_type;
+                $key = $type.'_'.$item->assessment_id;
+                $gradebookRow[$key] = $item->score_obtained;
+            }
+            $isFailedByAssessment = GradingService::hasFailedAnyAssessment($gradebookRow, $items);
+            $isFailed = $isFailedByGrade || $isFailedByAssessment;
             $course = $offering?->course;
 
             // Get course_offering_id for this course for ranking
@@ -80,6 +89,7 @@ class StudentGradeController extends Controller
                     ->whereIn('assessment_id', function ($q) use ($offeringId) {
                         $q->select('id')->from('quizzes')->where('course_offering_id', $offeringId);
                     })->sum('score_obtained');
+
                 return ['id' => $enrol->student_user_id, 'total' => min((float) $att + (float) $nonQuiz + (float) $quiz, 100)];
             })->sortByDesc('total')->values();
 
@@ -114,7 +124,9 @@ class StudentGradeController extends Controller
         $peerIds = StudentCourseEnrollment::whereIn('course_offering_id', $filteredOfferingIds)->pluck('student_user_id')->unique();
         $rankings = $peerIds->map(function ($peerId) use ($filteredOfferingIds) {
             $peer = User::find($peerId);
-            if (!$peer) return ['id' => $peerId, 'total' => 0];
+            if (! $peer) {
+                return ['id' => $peerId, 'total' => 0];
+            }
             $total = 0;
             foreach ($filteredOfferingIds as $offeringId) {
                 $nonQuiz = ExamResult::where('student_user_id', $peerId)->where('assessment_type', '!=', 'quiz')
@@ -129,6 +141,7 @@ class StudentGradeController extends Controller
                 $att = $peer->getAttendanceScoreByCourse($offeringId);
                 $total += min((float) $nonQuiz + (float) $quiz + (float) $att, 100);
             }
+
             return ['id' => $peerId, 'total' => $total];
         })->sortByDesc('total')->values();
 
@@ -142,8 +155,13 @@ class StudentGradeController extends Controller
         $semesters = CourseOffering::whereIn('id', $enrolledOfferingIds)->pluck('semester')->unique()->filter()->values();
 
         $grades = $courseGrades->filter(function ($g) use ($currentYear, $currentSemester) {
-            if ($currentYear && $g->academic_year !== $currentYear) return false;
-            if ($currentSemester && $g->semester !== $currentSemester) return false;
+            if ($currentYear && $g->academic_year !== $currentYear) {
+                return false;
+            }
+            if ($currentSemester && $g->semester !== $currentSemester) {
+                return false;
+            }
+
             return true;
         })->values();
 
@@ -193,6 +211,7 @@ class StudentGradeController extends Controller
             ->whereHas('courseOffering.course')
             ->with(['courseOffering.course', 'courseOffering.lecturer'])
             ->get();
+
         return view('student.my-enrolled-courses', compact('student', 'enrollments'));
     }
 
@@ -239,6 +258,21 @@ class StudentGradeController extends Controller
             $totalScore = min($att + $nonQuiz + $quizBonus, 100);
             $letterGrade = GradingService::getLetterGrade($totalScore);
 
+            // Check if student failed any individual non-quiz assessment
+            $isFailedByGrade = ! GradingService::isPassing($letterGrade);
+            $isFailedByAssessment = false;
+            foreach ($scored as $item) {
+                if ($item['type'] === 'quiz') {
+                    continue;
+                }
+                $maxScore = (float) ($item['max_score'] ?? 100);
+                if ($maxScore > 0 && ($item['score'] / $maxScore) < 0.5) {
+                    $isFailedByAssessment = true;
+                    break;
+                }
+            }
+            $isFailed = $isFailedByGrade || $isFailedByAssessment;
+
             return [
                 'offering' => $offering,
                 'course_name' => $offering->course->title_km ?? $offering->course->title_en,
@@ -247,6 +281,7 @@ class StudentGradeController extends Controller
                 'quiz_bonus' => $quizBonus,
                 'total_score' => $totalScore,
                 'letter_grade' => $letterGrade,
+                'is_failed' => $isFailed,
             ];
         })->values();
 
@@ -256,6 +291,7 @@ class StudentGradeController extends Controller
     public function availablePrograms()
     {
         $programs = \App\Models\Program::with('department')->get();
+
         return view('student.available-programs', compact('programs'));
     }
 
@@ -267,6 +303,7 @@ class StudentGradeController extends Controller
             ->whereHas('targetPrograms', fn ($q) => $q->where('program_id', $user->program_id)->where('generation', $user->generation))
             ->whereHas('course')
             ->where('end_date', '>=', now())->whereNotIn('id', $enrolledIds)->get();
+
         return view('student.available-courses', compact('courses'));
     }
 
@@ -287,8 +324,11 @@ class StudentGradeController extends Controller
         abort_unless($eligible, 403);
 
         $exists = StudentCourseEnrollment::where('student_user_id', $user->id)->where('course_offering_id', $request->course_offering_id)->exists();
-        if ($exists) return back()->with('error', 'អ្នកបានចុះឈ្មោះរួចហើយ។');
+        if ($exists) {
+            return back()->with('error', 'អ្នកបានចុះឈ្មោះរួចហើយ។');
+        }
         StudentCourseEnrollment::create(['student_user_id' => $user->id, 'course_offering_id' => $request->course_offering_id, 'enrollment_date' => now(), 'status' => 'enrolled']);
+
         return back()->with('success', 'ចុះឈ្មោះជោគជ័យ!');
     }
 
@@ -306,11 +346,12 @@ class StudentGradeController extends Controller
         $enrolled = 0;
         foreach ($offerings as $offering) {
             $exists = StudentCourseEnrollment::where('student_user_id', $user->id)->where('course_offering_id', $offering->id)->exists();
-            if (!$exists) {
+            if (! $exists) {
                 StudentCourseEnrollment::create(['student_user_id' => $user->id, 'course_offering_id' => $offering->id, 'enrollment_date' => now(), 'status' => 'enrolled']);
                 $enrolled++;
             }
         }
+
         return back()->with('success', "ចុះឈ្មោះបាន {$enrolled} មុខវិជ្ជា!");
     }
 
@@ -321,7 +362,7 @@ class StudentGradeController extends Controller
             ->whereHas('courseOffering.course')
             ->with(['courseOffering.course', 'courseOffering.lecturer'])->paginate(10);
         $studentProgram = $user->program;
+
         return view('student.my-enrolled-courses', compact('enrollments', 'studentProgram'));
     }
-
 }

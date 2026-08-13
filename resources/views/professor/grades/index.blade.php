@@ -67,8 +67,8 @@
             $totalMax += 100;
             if ($rowTotal > $highestScore) $highestScore = $rowTotal;
             if ($rowTotal < $lowestScore) $lowestScore = $rowTotal;
-            $grade = \App\Services\GradingService::getLetterGrade($rowTotal);
-            if (\App\Services\GradingService::isPassing($grade)) {
+            // Use isPassing from controller (includes assessment-level check)
+            if ($student->isPassing) {
                 $passCount++;
             } else {
                 $failCount++;
@@ -279,7 +279,7 @@
                                         <p class="text-xs text-slate-400 font-bold tracking-wider">{{ $student->student_id_code }}</p>
                                     </div>
                                 </div>
-                                <div class="h-12 w-12 rounded-2xl flex flex-col items-center justify-center text-sm font-black {{ \App\Services\GradingService::isPassing($grade) ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-rose-50 text-rose-600 border border-rose-100' }}">
+                                <div class="h-12 w-12 rounded-2xl flex flex-col items-center justify-center text-sm font-black {{ $student->isPassing ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-rose-50 text-rose-600 border border-rose-100' }}">
                                      <span class="text-[10px] uppercase mb-0.5 opacity-70">{{ __('និទ្ទេស') }}</span>
                                      {{ $grade }}
                                 </div>
@@ -503,7 +503,8 @@
                                     }
                                     $rowTotal = min($baseScore + $quizBonus, 100);
                                     $grade = \App\Services\GradingService::getLetterGrade($rowTotal);
-                                    $isPassing = \App\Services\GradingService::isPassing($grade);
+                                    // Use isPassing from controller (includes assessment-level check)
+                                    $isPassing = $student->isPassing;
                                 @endphp
                                 <tr class="hover:bg-slate-50/50 transition-colors duration-150 group student-row"
                                     data-name="{{ mb_strtolower($student->profile->full_name_km ?? $student->name ?? '', 'UTF-8') }}"

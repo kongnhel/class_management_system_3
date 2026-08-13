@@ -4,21 +4,23 @@ namespace App\Exports;
 
 use App\Models\Assignment;
 use App\Models\CourseOffering;
-use App\Models\Exam;
 use App\Models\Quiz;
 use App\Services\GradingService;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithDrawings;
 use Maatwebsite\Excel\Concerns\WithStyles;
-use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class ProfessorGradeExcelExport implements FromCollection, WithStyles, WithDrawings
+class ProfessorGradeExcelExport implements FromCollection, WithDrawings, WithStyles
 {
     protected CourseOffering $courseOffering;
+
     protected Collection $students;
+
     protected Collection $assessments;
+
     protected array $gradebook;
 
     public function __construct(CourseOffering $courseOffering, Collection $students, Collection $assessments, array $gradebook)
@@ -37,11 +39,11 @@ class ProfessorGradeExcelExport implements FromCollection, WithStyles, WithDrawi
     public function drawings(): array
     {
         $logoPath = public_path('assets/image/nmu_Logo.png');
-        if (!file_exists($logoPath)) {
+        if (! file_exists($logoPath)) {
             return [];
         }
 
-        $logo = new Drawing();
+        $logo = new Drawing;
         $logo->setName('NMU Logo');
         $logo->setDescription('National Meanchey University Logo');
         $logo->setPath($logoPath);
@@ -59,6 +61,7 @@ class ProfessorGradeExcelExport implements FromCollection, WithStyles, WithDrawi
     {
         $assessmentCount = $this->assessments->count();
         $totalCols = 4 + $assessmentCount + 3; // 4 info + assessments + attendance + total + grade
+
         return $this->colLetter($totalCols - 1);
     }
 
@@ -112,7 +115,7 @@ class ProfessorGradeExcelExport implements FromCollection, WithStyles, WithDrawi
         $sheet->mergeCells('A7:B7');
         $facultyName = $this->courseOffering->course->department->faculty->name_km
             ?? 'មហាវិទ្យាល័យ';
-        $sheet->setCellValue('A7', 'ទីតាំង៖ ' . $facultyName);
+        $sheet->setCellValue('A7', 'ទីតាំង៖ '.$facultyName);
         $sheet->getStyle('A7')->applyFromArray([
             'font' => ['name' => $khmerFont, 'size' => 8],
             'alignment' => ['horizontal' => 'left'],
@@ -149,7 +152,7 @@ class ProfessorGradeExcelExport implements FromCollection, WithStyles, WithDrawi
             $name = $a->title_km ?? $a->title_en ?? 'Assessment';
             $type = ($a instanceof Assignment) ? 'កិច្ចការ' : (($a instanceof Quiz) ? 'ឃ្វីស' : 'ប្រឡង');
             $maxScore = $a->max_score ?? $a->max_points ?? 100;
-            $headers[] = $name . "\n(" . $maxScore . " ពិន្ទុ)";
+            $headers[] = $name."\n(".$maxScore.' ពិន្ទុ)';
         }
         $headers[] = 'វត្តមាន';
         $headers[] = 'ពិន្ទុសរុប';
@@ -201,8 +204,8 @@ class ProfessorGradeExcelExport implements FromCollection, WithStyles, WithDrawi
 
             foreach ($this->assessments as $a) {
                 $type = ($a instanceof Assignment) ? 'assignment' : (($a instanceof Quiz) ? 'quiz' : 'exam');
-                $score = $this->gradebook[$student->id][$type . '_' . $a->id] ?? 0;
-                $sheet->setCellValue($this->colLetter($colOffset) . $rowNum, $score > 0 ? $score : '');
+                $score = $this->gradebook[$student->id][$type.'_'.$a->id] ?? 0;
+                $sheet->setCellValue($this->colLetter($colOffset).$rowNum, $score > 0 ? $score : '');
                 $colOffset++;
                 if ($type === 'quiz') {
                     $quizBonus += $score;
@@ -212,14 +215,14 @@ class ProfessorGradeExcelExport implements FromCollection, WithStyles, WithDrawi
             }
 
             // វត្តមាន (Attendance)
-            $sheet->setCellValue($this->colLetter($colOffset) . $rowNum, $attendanceScore > 0 ? $attendanceScore : '');
+            $sheet->setCellValue($this->colLetter($colOffset).$rowNum, $attendanceScore > 0 ? $attendanceScore : '');
             $colOffset++;
             // ពិន្ទុសរុប (Total)
             $total = min($baseScore + $quizBonus, 100);
-            $sheet->setCellValue($this->colLetter($colOffset) . $rowNum, round($total, 1));
+            $sheet->setCellValue($this->colLetter($colOffset).$rowNum, round($total, 1));
             $colOffset++;
             // ចំណាត់ថ្នាក់ (Grade)
-            $sheet->setCellValue($this->colLetter($colOffset) . $rowNum, GradingService::getLetterGrade($total));
+            $sheet->setCellValue($this->colLetter($colOffset).$rowNum, GradingService::getLetterGrade($total));
 
             // Style data row
             $sheet->getStyle("A{$rowNum}:{$lastCol}{$rowNum}")->applyFromArray([
@@ -242,25 +245,42 @@ class ProfessorGradeExcelExport implements FromCollection, WithStyles, WithDrawi
         $gradeCol = $this->colLetter(6 + $assessmentCount);
 
         // Calculate stats
-        $totals = $this->students->map(function ($s) {
+        $totals = $this->students->mapWithKeys(function ($s) {
             $att = $s->getAttendanceScoreByCourse($this->courseOffering->id);
             $base = $att;
             $quiz = 0;
             foreach ($this->assessments as $a) {
                 $type = ($a instanceof Assignment) ? 'assignment' : (($a instanceof Quiz) ? 'quiz' : 'exam');
-                $score = $this->gradebook[$s->id][$type . '_' . $a->id] ?? 0;
+                $score = $this->gradebook[$s->id][$type.'_'.$a->id] ?? 0;
                 if ($type === 'quiz') {
                     $quiz += $score;
                 } else {
                     $base += $score;
                 }
             }
-            return min($base + $quiz, 100);
+
+            return [$s->id => min($base + $quiz, 100)];
         });
 
         $avgTotal = $totals->count() > 0 ? round($totals->avg(), 1) : 0;
-        $passCount = $totals->filter(fn ($t) => $t >= 45)->count();
-        $failCount = $totals->count() - $passCount;
+
+        // Count pass/fail using GradingService + assessment-level check
+        $passCount = 0;
+        $failCount = 0;
+        foreach ($this->students as $student) {
+            $totalScore = $totals[$student->id] ?? 0;
+            $letterGrade = \App\Services\GradingService::getLetterGrade($totalScore);
+            $isFailedByGrade = ! \App\Services\GradingService::isPassing($letterGrade);
+            $isFailedByAssessment = \App\Services\GradingService::hasFailedAnyAssessment(
+                $this->gradebook[$student->id] ?? [],
+                $this->assessments
+            );
+            if ($isFailedByGrade || $isFailedByAssessment) {
+                $failCount++;
+            } else {
+                $passCount++;
+            }
+        }
 
         // Average row
         $sheet->mergeCells("A{$footerRow}:D{$footerRow}");

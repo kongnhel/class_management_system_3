@@ -243,8 +243,8 @@ class ProfessorController extends Controller
             ->firstOrFail();
 
         $students = $courseOffering->studentCourseEnrollments
-            ->filter(fn($enrollment) => $enrollment->student)
-            ->map(fn($enrollment) => [
+            ->filter(fn ($enrollment) => $enrollment->student)
+            ->map(fn ($enrollment) => [
                 'id' => $enrollment->student->id,
                 'name' => $enrollment->student->studentProfile?->full_name_km ?? $enrollment->student->name,
             ])
@@ -364,7 +364,7 @@ class ProfessorController extends Controller
 
         $semester = $courseOfferings->first()?->semester ?? 'ឆមាសទី១';
         $semesterNum = str_replace('ឆមាសទី', '', $semester);
-        $academicYear = $courseOfferings->first()?->academic_year ?? date('Y') . '-' . (date('Y') + 1);
+        $academicYear = $courseOfferings->first()?->academic_year ?? date('Y').'-'.(date('Y') + 1);
 
         return view('professor.my-schedule', compact('user', 'courseOfferings', 'semester', 'semesterNum', 'academicYear'));
     }
@@ -754,6 +754,12 @@ class ProfessorController extends Controller
             $ts = $student->temp_total;
 
             $student->letterGrade = \App\Services\GradingService::getLetterGrade($ts);
+            $isFailedByGrade = ! \App\Services\GradingService::isPassing($student->letterGrade);
+            $isFailedByAssessment = \App\Services\GradingService::hasFailedAnyAssessment(
+                $gradebook[$student->id] ?? [],
+                $assessments
+            );
+            $student->isPassing = ! ($isFailedByGrade || $isFailedByAssessment);
         }
 
         // ៥. បង្កើត HTML សម្រាប់ Word
