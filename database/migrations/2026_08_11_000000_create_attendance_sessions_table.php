@@ -21,10 +21,16 @@ return new class extends Migration
             $table->unique(['course_offering_id', 'attendance_date'], 'unique_attendance_session_per_day');
         });
 
-        Schema::table('attendance_qr_tokens', function (Blueprint $table) {
-            $table->foreignId('attendance_session_id')->nullable()->after('course_offering_id')
-                ->constrained('attendance_sessions')->nullOnDelete();
-        });
+        if (Schema::hasTable('attendance_qr_tokens') && ! Schema::hasColumn('attendance_qr_tokens', 'attendance_session_id')) {
+            Schema::table('attendance_qr_tokens', function (Blueprint $table) {
+                $table->unsignedBigInteger('attendance_session_id')->nullable()->after('course_offering_id');
+            });
+
+            Schema::table('attendance_qr_tokens', function (Blueprint $table) {
+                $table->foreign('attendance_session_id', 'attendance_qr_tokens_session_fk')
+                    ->references('id')->on('attendance_sessions')->nullOnDelete();
+            });
+        }
     }
 
     public function down(): void
