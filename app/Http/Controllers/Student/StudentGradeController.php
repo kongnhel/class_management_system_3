@@ -62,13 +62,22 @@ class StudentGradeController extends Controller
             $isFailedByGrade = ! GradingService::isPassing($letterGrade);
 
             // Check if student failed any individual non-quiz assessment
-            $gradebookRow = [];
+            $isFailedByAssessment = false;
             foreach ($items as $item) {
-                $type = $item->assessment_type;
-                $key = $type.'_'.$item->assessment_id;
-                $gradebookRow[$key] = $item->score_obtained;
+                if ($item->assessment_type === 'quiz') {
+                    continue;
+                }
+                $assessment = match ($item->assessment_type) {
+                    'assignment' => $item->assignment,
+                    'exam' => $item->exam,
+                    default => null,
+                };
+                $maxScore = (float) ($assessment->max_score ?? 100);
+                if ($maxScore > 0 && ($item->score_obtained / $maxScore) < 0.5) {
+                    $isFailedByAssessment = true;
+                    break;
+                }
             }
-            $isFailedByAssessment = GradingService::hasFailedAnyAssessment($gradebookRow, $items);
             $isFailed = $isFailedByGrade || $isFailedByAssessment;
             $course = $offering?->course;
 
