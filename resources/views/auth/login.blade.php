@@ -78,11 +78,11 @@
                         <div class="flex-1 h-px bg-gray-200"></div>
                     </div>
 
-                    <button onclick="loginWithGoogle()" 
+                    <!-- <button onclick="loginWithGoogle()" 
                             class="w-full py-3.5 bg-white border border-gray-200 hover:border-gray-300 text-gray-700 font-bold rounded-xl flex items-center justify-center gap-3 transition-all text-sm shadow-sm">
                         <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5">
                         ចូលជាមួយ Google
-                    </button>
+                    </button> -->
                 </div>
 
                 {{-- Register Link --}}
