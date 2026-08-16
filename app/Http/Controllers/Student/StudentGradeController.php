@@ -40,17 +40,53 @@ class StudentGradeController extends Controller
         }
 
         $filteredResults = $allExamResults->whereIn('course_offering_id', $filteredOfferingIds);
+        $courseOfferings = CourseOffering::whereIn('id', $filteredOfferingIds)
+            ->with(['course', 'assignments', 'exams', 'quizzes'])
+            ->get();
 
-        $courseGrades = $filteredResults->groupBy('course_id')->map(function ($items, $courseId) use ($user) {
-            // Attendance is stored per course offering, not per course.
-            $firstItem = $items->first();
-            $offering = match ($firstItem->assessment_type) {
-                'assignment' => $firstItem->assignment?->courseOffering,
-                'exam' => $firstItem->exam?->courseOffering,
-                'quiz' => $firstItem->quiz?->courseOffering,
-                default => null,
+        $courseGrades = $courseOfferings->map(function ($offering) use ($filteredResults, $user) {
+            $courseId = $offering->course_id;
+            $items = $filteredResults->where('course_offering_id', $offering->id)->values();
+            // Build the breakdown from every assessment in the offering, not only
+            // assessments that already have an ExamResult. This keeps score boxes
+            // visible when a professor has not entered a result yet.
+            $resultFor = function (string $type, int $assessmentId) use ($items) {
+                return $items->first(fn ($result) =>
+                    $result->assessment_type === $type && (int) $result->assessment_id === $assessmentId
+                );
             };
-            $offeringId = $offering?->id;
+
+            $assessmentItems = collect();
+            foreach ($offering->assignments as $assessment) {
+                $result = $resultFor('assignment', $assessment->id);
+                $assessmentItems->push($result ?: (new \App\Models\ExamResult([
+                    'assessment_id' => $assessment->id,
+                    'assessment_type' => 'assignment',
+                    'student_user_id' => $user->id,
+                    'score_obtained' => 0,
+                ]))->setRelation('assignment', $assessment));
+            }
+            foreach ($offering->exams as $assessment) {
+                $result = $resultFor('exam', $assessment->id);
+                $assessmentItems->push($result ?: (new \App\Models\ExamResult([
+                    'assessment_id' => $assessment->id,
+                    'assessment_type' => 'exam',
+                    'student_user_id' => $user->id,
+                    'score_obtained' => 0,
+                ]))->setRelation('exam', $assessment));
+            }
+            foreach ($offering->quizzes as $assessment) {
+                $result = $resultFor('quiz', $assessment->id);
+                $assessmentItems->push($result ?: (new \App\Models\ExamResult([
+                    'assessment_id' => $assessment->id,
+                    'assessment_type' => 'quiz',
+                    'student_user_id' => $user->id,
+                    'score_obtained' => 0,
+                ]))->setRelation('quiz', $assessment));
+            }
+
+            $items = $assessmentItems;
+            $offeringId = $offering->id;
             $attendanceScore = $offeringId ? $user->getAttendanceScoreByCourse($offeringId) : 0;
             $absCount = $offeringId ? \App\Models\AttendanceRecord::where('student_user_id', $user->id)->where('course_offering_id', $offeringId)->where('status', 'absent')->count() : 0;
             $perCount = $offeringId ? \App\Models\AttendanceRecord::where('student_user_id', $user->id)->where('course_offering_id', $offeringId)->where('status', 'permission')->count() : 0;
@@ -59,6 +95,7 @@ class StudentGradeController extends Controller
             $quizBonus = $items->where('assessment_type', 'quiz')->sum('score_obtained');
             $totalObtained = min($attendanceScore + $nonQuiz + $quizBonus, 100);
             $letterGrade = GradingService::getLetterGrade($totalObtained);
+<<<<<<< HEAD
             $isFailedByGrade = ! GradingService::isPassing($letterGrade);
 
             // Check if student failed any individual non-quiz assessment
@@ -81,6 +118,10 @@ class StudentGradeController extends Controller
             $isFailed = $isFailedByGrade || $isFailedByAssessment;
             $effectiveLetterGrade = GradingService::getEffectiveLetterGrade($letterGrade, $isFailedByAssessment);
             $course = $offering?->course;
+=======
+            $isFailed = ! GradingService::isPassing($letterGrade);
+            $course = $offering->course;
+>>>>>>> 7ce0eb5c34478ec3e72f0dffa95fa79b0581fffb
 
             // Get course_offering_id for this course for ranking
             $offeringId = $offering?->id;

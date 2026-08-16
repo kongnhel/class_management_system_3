@@ -72,17 +72,6 @@
                         </button>
                     </form>
 
-                    <div class="flex items-center gap-4 my-6">
-                        <div class="flex-1 h-px bg-gray-200"></div>
-                        <span class="text-xs font-bold text-gray-400 uppercase">ឬ</span>
-                        <div class="flex-1 h-px bg-gray-200"></div>
-                    </div>
-
-                    <button onclick="loginWithGoogle()" 
-                            class="w-full py-3.5 bg-white border border-gray-200 hover:border-gray-300 text-gray-700 font-bold rounded-xl flex items-center justify-center gap-3 transition-all text-sm shadow-sm">
-                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5">
-                        ចូលជាមួយ Google
-                    </button>
                 </div>
 
                 {{-- Register Link --}}
@@ -113,62 +102,4 @@
         }
     </script>
 
-    {{-- Firebase Google Login --}}
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-        const firebaseConfig = {
-            apiKey: "{{ config('services.firebase.api_key') }}",
-            authDomain: "{{ config('services.firebase.auth_domain') }}",
-            projectId: "{{ config('services.firebase.project_id') }}",
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const provider = new GoogleAuthProvider();
-
-        window.loginWithGoogle = () => {
-            const btn = event?.currentTarget;
-            if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; }
-            
-            signInWithPopup(auth, provider).then(async (result) => {
-                const idToken = await result.user.getIdToken();
-                return fetch('{{ route("auth.google.callback") }}', {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json', 
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}' 
-                    },
-                    body: JSON.stringify({ 
-                        id_token: idToken
-                    })
-                });
-            }).then(async (res) => {
-                const data = await res.json().catch(() => ({ status: 'error', message: 'មានបញ្ហាក្នុងការទាក់ទងនឹង server។' }));
-                if (data.status === 'success') {
-                    window.location.href = "/dashboard";
-                } else {
-                    showToast(data.message || 'បរាជ័យក្នុងការចូល', 'error');
-                    if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
-                }
-            }).catch(error => {
-                console.error('Google login error:', error);
-                let msg = 'មិនអាចចូលជាមួយ Google បានទេ។';
-                if (error.code === 'auth/popup-closed-by-user') {
-                    msg = 'បង្អួចបានបិទមុនពេលចូលបានសម្រេច។';
-                } else if (error.code === 'auth/popup-blocked') {
-                    msg = 'បង្អួចផុតត្រូវបានបិទ។ សូមអនុញ្ញាត popup សម្រាប់ទំព័រនេះ។';
-                } else if (error.code === 'auth/unauthorized-domain') {
-                    msg = 'Domain នេះមិនទាន់បានអនុញ្ញាតនៅក្នុង Firebase Console ទេ។';
-                } else if (error.code === 'auth/network-request-failed') {
-                    msg = 'មានបញ្ហាបណ្តាញអ៊ីនធឺណិត។ សូមព្យាយាមម្តងទៀត។';
-                } else if (error.message) {
-                    msg = error.message;
-                }
-                showToast(msg, 'error');
-                if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
-            });
-        };
-    </script>
 </x-guest-layout>
