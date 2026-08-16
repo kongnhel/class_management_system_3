@@ -753,12 +753,13 @@ class ProfessorController extends Controller
             $student->rank = $index + 1;
             $ts = $student->temp_total;
 
-            $student->letterGrade = \App\Services\GradingService::getLetterGrade($ts);
-            $isFailedByGrade = ! \App\Services\GradingService::isPassing($student->letterGrade);
+            $letterGrade = \App\Services\GradingService::getLetterGrade($ts);
+            $isFailedByGrade = ! \App\Services\GradingService::isPassing($letterGrade);
             $isFailedByAssessment = \App\Services\GradingService::hasFailedAnyAssessment(
                 $gradebook[$student->id] ?? [],
                 $assessments
             );
+            $student->letterGrade = \App\Services\GradingService::getEffectiveLetterGrade($letterGrade, $isFailedByAssessment);
             $student->isPassing = ! ($isFailedByGrade || $isFailedByAssessment);
         }
 

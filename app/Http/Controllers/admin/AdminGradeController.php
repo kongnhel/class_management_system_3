@@ -153,7 +153,7 @@ class AdminGradeController extends Controller
             $isFailed = $isFailedByGrade || $isFailedByAssessment;
 
             $student->temp_total = (float) $totalScore;
-            $student->letterGrade = $letterGrade;
+            $student->letterGrade = GradingService::getEffectiveLetterGrade($letterGrade, $isFailedByAssessment);
             $student->isPassing = ! $isFailed;
 
             return $student;
@@ -260,7 +260,7 @@ class AdminGradeController extends Controller
             $isFailed = $isFailedByGrade || $isFailedByAssessment;
 
             $student->temp_total = (float) $totalScore;
-            $student->letterGrade = $letterGrade;
+            $student->letterGrade = GradingService::getEffectiveLetterGrade($letterGrade, $isFailedByAssessment);
             $student->isPassing = ! $isFailed;
 
             return $student;

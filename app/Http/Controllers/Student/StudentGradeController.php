@@ -79,6 +79,7 @@ class StudentGradeController extends Controller
                 }
             }
             $isFailed = $isFailedByGrade || $isFailedByAssessment;
+            $effectiveLetterGrade = GradingService::getEffectiveLetterGrade($letterGrade, $isFailedByAssessment);
             $course = $offering?->course;
 
             // Get course_offering_id for this course for ranking
@@ -118,8 +119,8 @@ class StudentGradeController extends Controller
                 'absent_count' => $absCount,
                 'permission_count' => $perCount,
                 'total_score' => $totalObtained,
-                'grade' => $letterGrade,
-                'grade_points' => GradingService::getGradePoints($letterGrade),
+                'grade' => $effectiveLetterGrade,
+                'grade_points' => GradingService::getGradePoints($effectiveLetterGrade),
                 'is_failed' => $isFailed,
                 'assessments' => $items,
             ];
@@ -281,6 +282,7 @@ class StudentGradeController extends Controller
                 }
             }
             $isFailed = $isFailedByGrade || $isFailedByAssessment;
+            $effectiveLetterGrade = GradingService::getEffectiveLetterGrade($letterGrade, $isFailedByAssessment);
 
             return [
                 'offering' => $offering,
@@ -289,7 +291,7 @@ class StudentGradeController extends Controller
                 'attendance_score' => $att,
                 'quiz_bonus' => $quizBonus,
                 'total_score' => $totalScore,
-                'letter_grade' => $letterGrade,
+                'letter_grade' => $effectiveLetterGrade,
                 'is_failed' => $isFailed,
             ];
         })->values();

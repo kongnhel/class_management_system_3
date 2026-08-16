@@ -101,12 +101,13 @@ class ProfessorGradeController extends Controller
 
         foreach ($students as $index => $student) {
             $student->rank = $index + 1;
-            $student->letterGrade = GradingService::getLetterGrade($student->temp_total);
-            $isFailedByGrade = ! GradingService::isPassing($student->letterGrade);
+            $letterGrade = GradingService::getLetterGrade($student->temp_total);
+            $isFailedByGrade = ! GradingService::isPassing($letterGrade);
             $isFailedByAssessment = GradingService::hasFailedAnyAssessment(
                 $gradebook[$student->id] ?? [],
                 $assessments
             );
+            $student->letterGrade = GradingService::getEffectiveLetterGrade($letterGrade, $isFailedByAssessment);
             $student->isPassing = ! ($isFailedByGrade || $isFailedByAssessment);
         }
 
@@ -937,12 +938,13 @@ class ProfessorGradeController extends Controller
         $students = $students->sortByDesc('temp_total')->values();
         foreach ($students as $index => $student) {
             $student->rank = $index + 1;
-            $student->letterGrade = GradingService::getLetterGrade($student->temp_total);
-            $isFailedByGrade = ! GradingService::isPassing($student->letterGrade);
+            $letterGrade = GradingService::getLetterGrade($student->temp_total);
+            $isFailedByGrade = ! GradingService::isPassing($letterGrade);
             $isFailedByAssessment = GradingService::hasFailedAnyAssessment(
                 $gradebook[$student->id] ?? [],
                 $assessments
             );
+            $student->letterGrade = GradingService::getEffectiveLetterGrade($letterGrade, $isFailedByAssessment);
             $student->isPassing = ! ($isFailedByGrade || $isFailedByAssessment);
         }
 

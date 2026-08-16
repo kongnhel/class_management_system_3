@@ -67,6 +67,14 @@ class GradingService
     }
 
     /**
+     * Get the effective letter grade, overriding to 'F' if the student failed any non-quiz assessment.
+     */
+    public static function getEffectiveLetterGrade(string $letterGrade, bool $isFailedByAssessment): string
+    {
+        return $isFailedByAssessment ? 'F' : $letterGrade;
+    }
+
+    /**
      * Check if a student has failed any non-quiz assessment (score < 50% of max_score).
      * Quizzes are treated as bonus and excluded from this check.
      */
