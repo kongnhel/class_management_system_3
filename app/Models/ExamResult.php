@@ -66,12 +66,19 @@ class ExamResult extends Model
     {
         if ($this->assessment_type === 'assignment') return 'Assignment';
         if ($this->assessment_type === 'quiz') return 'Quiz';
-        $title = match($this->assessment_type) {
-            'exam' => $this->exam?->title_en ?? '',
-            default => '',
-        };
-        if (str_contains($title, 'Final')) return 'Final';
-        if (str_contains($title, 'Midterm')) return 'Midterm';
+
+        if ($this->assessment_type === 'exam') {
+            $titleEn = strtolower($this->exam?->title_en ?? '');
+            $titleKm = strtolower($this->exam?->title_km ?? '');
+
+            if (str_contains($titleEn, 'final') || str_contains($titleKm, 'ប្រចាំឆមាស') || str_contains($titleKm, 'ចុងក្រោយ')) {
+                return 'Final';
+            }
+            if (str_contains($titleEn, 'midterm') || str_contains($titleKm, 'ពាក់កណ្ដាល់') || str_contains($titleKm, 'ពាក់កណ្តាល់')) {
+                return 'Midterm';
+            }
+        }
+
         return 'Exam';
     }
 
