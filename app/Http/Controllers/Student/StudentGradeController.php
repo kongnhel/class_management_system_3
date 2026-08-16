@@ -95,8 +95,38 @@ class StudentGradeController extends Controller
             $quizBonus = $items->where('assessment_type', 'quiz')->sum('score_obtained');
             $totalObtained = min($attendanceScore + $nonQuiz + $quizBonus, 100);
             $letterGrade = GradingService::getLetterGrade($totalObtained);
+<<<<<<< HEAD
             $isFailed = ! GradingService::isPassing($letterGrade);
             $course = $offering->course;
+=======
+// <<<<<<< HEAD
+            $isFailedByGrade = ! GradingService::isPassing($letterGrade);
+
+            // Check if student failed any individual non-quiz assessment
+            $isFailedByAssessment = false;
+            foreach ($items as $item) {
+                if ($item->assessment_type === 'quiz') {
+                    continue;
+                }
+                $assessment = match ($item->assessment_type) {
+                    'assignment' => $item->assignment,
+                    'exam' => $item->exam,
+                    default => null,
+                };
+                $maxScore = (float) ($assessment->max_score ?? 100);
+                if ($maxScore > 0 && ($item->score_obtained / $maxScore) < 0.5) {
+                    $isFailedByAssessment = true;
+                    break;
+                }
+            }
+            $isFailed = $isFailedByGrade || $isFailedByAssessment;
+            $effectiveLetterGrade = GradingService::getEffectiveLetterGrade($letterGrade, $isFailedByAssessment);
+            $course = $offering?->course;
+// =======
+            $isFailed = ! GradingService::isPassing($letterGrade);
+            $course = $offering->course;
+// >>>>>>> 7ce0eb5c34478ec3e72f0dffa95fa79b0581fffb
+>>>>>>> 83fe6e76e7987c87cf6391303172827520c523a7
 
             // Get course_offering_id for this course for ranking
             $offeringId = $offering->id;
