@@ -95,7 +95,7 @@ class StudentGradeController extends Controller
             $quizBonus = $items->where('assessment_type', 'quiz')->sum('score_obtained');
             $totalObtained = min($attendanceScore + $nonQuiz + $quizBonus, 100);
             $letterGrade = GradingService::getLetterGrade($totalObtained);
-<<<<<<< HEAD
+// <<<<<<< HEAD
             $isFailedByGrade = ! GradingService::isPassing($letterGrade);
 
             // Check if student failed any individual non-quiz assessment
@@ -118,10 +118,10 @@ class StudentGradeController extends Controller
             $isFailed = $isFailedByGrade || $isFailedByAssessment;
             $effectiveLetterGrade = GradingService::getEffectiveLetterGrade($letterGrade, $isFailedByAssessment);
             $course = $offering?->course;
-=======
+// =======
             $isFailed = ! GradingService::isPassing($letterGrade);
             $course = $offering->course;
->>>>>>> 7ce0eb5c34478ec3e72f0dffa95fa79b0581fffb
+// >>>>>>> 7ce0eb5c34478ec3e72f0dffa95fa79b0581fffb
 
             // Get course_offering_id for this course for ranking
             $offeringId = $offering?->id;
