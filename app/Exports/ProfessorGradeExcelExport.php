@@ -270,12 +270,7 @@ class ProfessorGradeExcelExport implements FromCollection, WithDrawings, WithSty
         foreach ($this->students as $student) {
             $totalScore = $totals[$student->id] ?? 0;
             $letterGrade = \App\Services\GradingService::getLetterGrade($totalScore);
-            $isFailedByGrade = ! \App\Services\GradingService::isPassing($letterGrade);
-            $isFailedByAssessment = \App\Services\GradingService::hasFailedAnyAssessment(
-                $this->gradebook[$student->id] ?? [],
-                $this->assessments
-            );
-            if ($isFailedByGrade || $isFailedByAssessment) {
+            if (! \App\Services\GradingService::isPassing($letterGrade)) {
                 $failCount++;
             } else {
                 $passCount++;

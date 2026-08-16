@@ -66,37 +66,5 @@ class GradingService
         return static::$gradeScale;
     }
 
-    /**
-     * Get the effective letter grade, overriding to 'F' if the student failed any non-quiz assessment.
-     */
-    public static function getEffectiveLetterGrade(string $letterGrade, bool $isFailedByAssessment): string
-    {
-        return $isFailedByAssessment ? 'F' : $letterGrade;
-    }
 
-    /**
-     * Check if a student has failed any non-quiz assessment (score < 50% of max_score).
-     * Quizzes are treated as bonus and excluded from this check.
-     */
-    public static function hasFailedAnyAssessment(array $gradebookRow, iterable $assessments): bool
-    {
-        foreach ($assessments as $assessment) {
-            $type = ($assessment instanceof \App\Models\Assignment) ? 'assignment' :
-                   (($assessment instanceof \App\Models\Quiz) ? 'quiz' : 'exam');
-
-            if ($type === 'quiz') {
-                continue;
-            }
-
-            $key = $type.'_'.$assessment->id;
-            $score = $gradebookRow[$key] ?? 0;
-            $maxScore = (float) ($assessment->max_score ?? 100);
-
-            if ($maxScore > 0 && ($score / $maxScore) < 0.5) {
-                return true;
-            }
-        }
-
-        return false;
-    }
 }

@@ -145,16 +145,9 @@ class AdminGradeController extends Controller
             });
 
             $letterGrade = GradingService::getLetterGrade($totalScore);
-            $isFailedByGrade = ! GradingService::isPassing($letterGrade);
-            $isFailedByAssessment = GradingService::hasFailedAnyAssessment(
-                $gradebook[$student->id] ?? [],
-                $assessments
-            );
-            $isFailed = $isFailedByGrade || $isFailedByAssessment;
-
             $student->temp_total = (float) $totalScore;
-            $student->letterGrade = GradingService::getEffectiveLetterGrade($letterGrade, $isFailedByAssessment);
-            $student->isPassing = ! $isFailed;
+            $student->letterGrade = $letterGrade;
+            $student->isPassing = GradingService::isPassing($letterGrade);
 
             return $student;
         });
@@ -252,16 +245,9 @@ class AdminGradeController extends Controller
             });
 
             $letterGrade = GradingService::getLetterGrade($totalScore);
-            $isFailedByGrade = ! GradingService::isPassing($letterGrade);
-            $isFailedByAssessment = GradingService::hasFailedAnyAssessment(
-                $gradebook[$student->id] ?? [],
-                $assessments
-            );
-            $isFailed = $isFailedByGrade || $isFailedByAssessment;
-
             $student->temp_total = (float) $totalScore;
-            $student->letterGrade = GradingService::getEffectiveLetterGrade($letterGrade, $isFailedByAssessment);
-            $student->isPassing = ! $isFailed;
+            $student->letterGrade = $letterGrade;
+            $student->isPassing = GradingService::isPassing($letterGrade);
 
             return $student;
         });

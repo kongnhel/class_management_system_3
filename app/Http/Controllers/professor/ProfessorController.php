@@ -754,13 +754,8 @@ class ProfessorController extends Controller
             $ts = $student->temp_total;
 
             $letterGrade = \App\Services\GradingService::getLetterGrade($ts);
-            $isFailedByGrade = ! \App\Services\GradingService::isPassing($letterGrade);
-            $isFailedByAssessment = \App\Services\GradingService::hasFailedAnyAssessment(
-                $gradebook[$student->id] ?? [],
-                $assessments
-            );
-            $student->letterGrade = \App\Services\GradingService::getEffectiveLetterGrade($letterGrade, $isFailedByAssessment);
-            $student->isPassing = ! ($isFailedByGrade || $isFailedByAssessment);
+            $student->letterGrade = $letterGrade;
+            $student->isPassing = \App\Services\GradingService::isPassing($letterGrade);
         }
 
         // ៥. បង្កើត HTML សម្រាប់ Word

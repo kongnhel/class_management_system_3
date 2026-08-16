@@ -138,23 +138,7 @@ class StudentController extends Controller
                 $total = min($att + $nonQuiz + $quiz, 100);
                 $letterGrade = \App\Services\GradingService::getLetterGrade($total);
 
-                // Check if student failed any individual non-quiz assessment
-                $isFailedByGrade = ! \App\Services\GradingService::isPassing($letterGrade);
-                $isFailedByAssessment = false;
-                foreach ($items->where('assessment_type', '!=', 'quiz') as $item) {
-                    $assessment = match ($item['assessment_type']) {
-                        'assignment' => \App\Models\Assignment::find($item['assessment_id'] ?? null),
-                        'exam' => \App\Models\Exam::find($item['assessment_id'] ?? null),
-                        default => null,
-                    };
-                    if ($assessment && $assessment->max_score > 0 && ($item['score_obtained'] / $assessment->max_score) < 0.5) {
-                        $isFailedByAssessment = true;
-                        break;
-                    }
-                }
-                $isFailed = $isFailedByGrade || $isFailedByAssessment;
-
-                $grade = \App\Services\GradingService::isPassing($letterGrade) && ! $isFailedByAssessment ? 'P' : 'F';
+                $grade = \App\Services\GradingService::isPassing($letterGrade) ? 'P' : 'F';
 
                 return ['total' => $total, 'grade' => $grade, 'credits' => $items->first()['credits'] ?? 3];
             });
