@@ -15,7 +15,13 @@ class AttendanceCardController extends Controller
         $user = request()->user();
         $card = $user->attendanceCard;
 
-        return view('student.attendance-card', compact('user', 'card'));
+        $photoUrl = $user->studentProfile?->profile_picture_url
+            ?? $user->avatar
+            ?? $user->profile?->profile_picture_url
+            ?? '';
+        $photoCenter = false;
+
+        return view('student.attendance-card', compact('user', 'card', 'photoUrl', 'photoCenter'));
     }
 
     public function create()

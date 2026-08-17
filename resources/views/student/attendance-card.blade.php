@@ -14,13 +14,26 @@
                 <div class="bg-white rounded-3xl shadow-xl border border-slate-200 p-6 text-center">
                     <div id="attendance-card-image" class="rounded-2xl bg-slate-900 p-5 text-white">
                         <p class="text-xs font-bold uppercase tracking-[0.25em] text-emerald-300">NMU Attendance</p>
+                        @if($photoUrl)
+                            <div class="mt-3 mx-auto w-20 h-20 rounded-full overflow-hidden ring-4 ring-emerald-400/40 border-2 border-white shadow-xl">
+                                <img src="{{ $photoUrl }}" alt="Student photo" class="w-full h-full object-cover">
+                            </div>
+                        @endif
                         <h2 class="mt-3 text-xl font-black">{{ $user->studentProfile?->full_name_km ?? $user->name }}</h2>
                         <p class="mt-1 text-sm text-slate-300">{{ $user->student_id_code }}</p>
                         <div class="mt-5 rounded-2xl bg-white p-3">
-                            <img src="{{ route('student.attendance-card.qr') }}" alt="Attendance card QR code" class="mx-auto w-full max-w-xs">
+                            <div class="relative mx-auto w-full max-w-xs">
+                                <img src="{{ route('student.attendance-card.qr') }}" alt="Attendance card QR code" class="mx-auto w-full">
+                                @if($photoCenter)
+                                    <img src="{{ $photoUrl }}" alt="" class="absolute inset-0 m-auto w-16 h-16 rounded-full border-4 border-white shadow-lg object-cover">
+                                @endif
+                            </div>
                         </div>
                     </div>
                     <p class="mt-4 text-xs text-slate-500">This QR card identifies you for an active professor attendance session. It does not replace the professor's session validation.</p>
+                    @if($photoUrl && ! $photoCenter)
+                        <a href="{{ route('student.profile.edit') }}" wire:navigate class="mt-3 inline-block text-[11px] font-bold text-emerald-600 hover:text-emerald-700">ផ្លាស់ប្តូររូបភាពកាត</a>
+                    @endif
                     <div class="mt-5 flex gap-3">
                         <button type="button" onclick="downloadAttendanceCard('png')" class="flex-1 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-bold text-white hover:bg-emerald-700">Save PNG</button>
                         <button type="button" onclick="downloadAttendanceCard('jpg')" class="flex-1 rounded-xl bg-blue-600 px-4 py-3 text-sm font-bold text-white hover:bg-blue-700">Save JPG</button>
