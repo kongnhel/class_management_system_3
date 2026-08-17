@@ -1,7 +1,7 @@
 name: Manual Deploy to Windows IIS
 
 on: 
-  workflow_dispatch:
+  workflow_dispatch: # This creates the manual button!
 
 jobs:
   deploy:
