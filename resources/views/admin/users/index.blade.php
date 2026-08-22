@@ -1087,16 +1087,16 @@
         }
 
         function setResultsLoading(isLoading) {
-            var results = document.getElementById('user-results');
-            if (!results) return;
-            results.setAttribute('aria-busy', isLoading ? 'true' : 'false');
-            results.classList.toggle('opacity-60', isLoading);
-            results.classList.toggle('pointer-events-none', isLoading);
+                    var results = document.getElementById('user-results');
+                    if (!results) return;
+                    results.setAttribute('aria-busy', isLoading ? 'true' : 'false');
+                    // Do NOT gray out or disable the results while searching — the input
+                    // and list must stay fully interactive.
 
-            var searchInput = document.getElementById('live-search');
-            var loadingIcon = document.getElementById('live-search-loading');
-            var clearButton = document.getElementById('clear-live-search');
-            var status = document.getElementById('live-search-status');
+                    var searchInput = document.getElementById('live-search');
+                    var loadingIcon = document.getElementById('live-search-loading');
+                    var clearButton = document.getElementById('clear-live-search');
+                    var status = document.getElementById('live-search-status');
 
             if (searchInput) searchInput.setAttribute('aria-busy', isLoading ? 'true' : 'false');
             if (loadingIcon) loadingIcon.classList.toggle('hidden', !isLoading);

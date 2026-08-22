@@ -307,9 +307,10 @@
                 indicator.classList.toggle('hidden', !isLoading);
                 indicator.classList.toggle('flex', isLoading);
 
+                // Do NOT gray out or disable the form. The search input must stay
+                // fully active/typeable while the request is in flight.
                 if (form) {
                     form.setAttribute('aria-busy', isLoading ? 'true' : 'false');
-                    form.classList.toggle('opacity-60', isLoading);
                 }
             }
 
