@@ -367,19 +367,24 @@
                     var oldInput = currentMain.querySelector('input[name="search"]');
                     var typedValue = oldInput ? oldInput.value : '';
                     var restoreFocus = oldInput && document.activeElement === oldInput;
+                    var caretPos = typedValue.length;
 
                     if (window.Alpine && Alpine.destroyTree) Alpine.destroyTree(currentMain);
                     currentMain.innerHTML = nextMain.innerHTML;
                     if (window.Alpine && Alpine.initTree) Alpine.initTree(currentMain);
 
-                    if (typedValue !== '') {
-                        var newInput = document.querySelector('main input[name="search"]');
-                        if (newInput && newInput.value === '') {
+                    var newInput = document.querySelector('main input[name="search"]');
+                    if (newInput) {
+                        // Always restore the live-typed value. The server re-renders
+                        // the input from the request's 'search' param, which is an
+                        // older snapshot — the user may have kept typing since the
+                        // fetch fired.
+                        if (typedValue !== '') {
                             newInput.value = typedValue;
                         }
-                        if (restoreFocus && newInput) {
+                        if (restoreFocus) {
                             newInput.focus();
-                            try { newInput.setSelectionRange(typedValue.length, typedValue.length); } catch (e) {}
+                            try { newInput.setSelectionRange(caretPos, caretPos); } catch (e) {}
                         }
                     }
                     window.history.replaceState({}, '', url.toString());
