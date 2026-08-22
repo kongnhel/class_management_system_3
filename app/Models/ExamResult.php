@@ -73,6 +73,10 @@ class ExamResult extends Model
             $titleEn = strtolower($this->exam?->title_en ?? '');
             $titleKm = strtolower($this->exam?->title_km ?? '');
 
+            if ($titleEn === '' && $titleKm === '' && $this->exam?->max_score <= 15) {
+                return 'Midterm';
+            }
+
             if (str_contains($titleEn, 'final') || str_contains($titleKm, 'ប្រចាំឆមាស') || str_contains($titleKm, 'ចុងក្រោយ')) {
                 return 'Final';
             }
