@@ -1135,17 +1135,20 @@
                 if (!nextResults) throw new Error('User results were not returned');
 
                 if (window.Alpine && Alpine.destroyTree) Alpine.destroyTree(results);
-                results.innerHTML = nextResults.innerHTML;
-                if (window.Alpine && Alpine.initTree) Alpine.initTree(results);
+                                results.innerHTML = nextResults.innerHTML;
+                                if (window.Alpine && Alpine.initTree) Alpine.initTree(results);
 
-                var searchInput = document.getElementById('live-search');
-                if (searchInput) {
-                    searchInput.value = url.searchParams.get('search') || '';
-                    var clearButton = document.getElementById('clear-live-search');
-                    if (clearButton) clearButton.classList.toggle('hidden', !searchInput.value);
-                    if (clearButton) clearButton.classList.toggle('flex', !!searchInput.value);
-                }
-                window.history.replaceState({}, '', url.toString());
+                                // Do NOT overwrite the search input value. The input is the
+                                // user's live typing — resetting it from the URL would yank
+                                // characters they typed while this request was in flight.
+                                var searchInput = document.getElementById('live-search');
+                                var clearButton = document.getElementById('clear-live-search');
+                                if (searchInput) {
+                                    var typed = searchInput.value;
+                                    if (clearButton) clearButton.classList.toggle('hidden', !typed);
+                                    if (clearButton) clearButton.classList.toggle('flex', !!typed);
+                                }
+                                window.history.replaceState({}, '', url.toString());
             })
             .catch(function(error) {
                 if (error.name !== 'AbortError') {
@@ -1162,14 +1165,14 @@
         }
 
         function queueSearch(form) {
-            pendingSearchForm = form;
-            clearTimeout(timer);
-            timer = setTimeout(function() {
-                if (!isComposing && pendingSearchForm) {
-                    fetchUserResults(buildResultsUrl(pendingSearchForm));
+                    pendingSearchForm = form;
+                    clearTimeout(timer);
+                    timer = setTimeout(function() {
+                        if (!isComposing && pendingSearchForm) {
+                            fetchUserResults(buildResultsUrl(pendingSearchForm));
+                        }
+                    }, 350);
                 }
-            }, 600);
-        }
 
         document.addEventListener('compositionstart', function(event) {
             if (event.target && event.target.id === 'live-search') {

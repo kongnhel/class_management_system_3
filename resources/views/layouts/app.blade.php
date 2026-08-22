@@ -359,9 +359,22 @@
                     var nextMain = parsed.querySelector('main');
                     if (!nextMain) throw new Error('Admin results were not returned');
 
+                    // Capture the live-typed search value before replacing <main>,
+                    // so the input isn't torn down mid-typing and the user's characters
+                    // don't get yanked. Restore it onto the freshly-rendered input.
+                    var oldInput = currentMain.querySelector('input[name="search"]');
+                    var typedValue = oldInput ? oldInput.value : '';
+
                     if (window.Alpine && Alpine.destroyTree) Alpine.destroyTree(currentMain);
                     currentMain.innerHTML = nextMain.innerHTML;
                     if (window.Alpine && Alpine.initTree) Alpine.initTree(currentMain);
+
+                    if (typedValue !== '') {
+                        var newInput = document.querySelector('main input[name="search"]');
+                        if (newInput && newInput.value === '') {
+                            newInput.value = typedValue;
+                        }
+                    }
                     window.history.replaceState({}, '', url.toString());
                 })
                 .catch(function (error) {
@@ -392,7 +405,7 @@
                 clearTimeout(debounceTimer);
                 debounceTimer = setTimeout(function () {
                     fetchAdminResults(buildUrl(form), form);
-                }, 600);
+                }, 350);
             });
 
             document.addEventListener('input', function (event) {
@@ -404,7 +417,7 @@
                 clearTimeout(debounceTimer);
                 debounceTimer = setTimeout(function () {
                     fetchAdminResults(buildUrl(form), form);
-                }, 600);
+                }, 350);
             });
 
             document.addEventListener('change', function (event) {
