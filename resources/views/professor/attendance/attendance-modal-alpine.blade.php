@@ -285,6 +285,7 @@ function attendanceModal() {
         qrTimeLeft: 15,
         qrDuration: 15,
         cardScanner: null,
+        _scanCooldown: false,
 
         async open(courseOfferingId, scheduleId, readOnly = false) {
             this.courseOfferingId = courseOfferingId;
@@ -354,18 +355,55 @@ function attendanceModal() {
         async submitCardScan(decodedText) {
             if (! this.cardScanner) return;
 
-            await this.cardScanner.stop();
             const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-            const response = await fetch("{{ route('professor.attendance.card-scan') }}", {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': token, 'Accept': 'application/json' },
-                body: JSON.stringify({ card_token: decodedText, session_id: this.sessionId })
-            });
-            const data = await response.json();
-            const status = document.getElementById('card-scanner-status');
-            if (status) status.textContent = data.message || 'Scan complete.';
-            if (data.success) await this.fetchStudents();
-            setTimeout(() => this.closeCardScanner(), 900);
+
+            if (this._scanCooldown) return;
+            this._scanCooldown = true;
+
+            try {
+                const response = await fetch("{{ route('professor.attendance.card-scan') }}", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': token, 'Accept': 'application/json' },
+                    body: JSON.stringify({ card_token: decodedText, session_id: this.sessionId })
+                });
+                const data = await response.json();
+                const status = document.getElementById('card-scanner-status');
+                if (status) {
+                    status.textContent = data.message || 'Scan complete.';
+                    status.classList.toggle('text-emerald-600', !!data.success);
+                    status.classList.toggle('text-rose-600', !data.success);
+                }
+                if (data.success) {
+                    this.playScanSound();
+                    await this.fetchStudents();
+                }
+            } catch (e) {
+                const status = document.getElementById('card-scanner-status');
+                if (status) { status.textContent = 'ការស្កែនបរាជ័យ។'; status.classList.remove('text-emerald-600'); status.classList.add('text-rose-600'); }
+            } finally {
+                // keep the scanner camera open for the next student
+                setTimeout(() => { this._scanCooldown = false; }, 1200);
+            }
+        },
+
+        playScanSound() {
+            try {
+                const ctx = this._audioCtx || (this._audioCtx = new (window.AudioContext || window.webkitAudioContext)());
+                const play = (freq, start, dur) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.value = freq;
+                    gain.gain.setValueAtTime(0.001, ctx.currentTime + start);
+                    gain.gain.exponentialRampToValueAtTime(0.4, ctx.currentTime + start + 0.02);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + start + dur);
+                    osc.connect(gain).connect(ctx.destination);
+                    osc.start(ctx.currentTime + start);
+                    osc.stop(ctx.currentTime + start + dur + 0.05);
+                };
+                play(880, 0, 0.18);
+                play(1320, 0.18, 0.25);
+            } catch (e) { /* audio unavailable */ }
         },
 
         async closeCardScanner() {
