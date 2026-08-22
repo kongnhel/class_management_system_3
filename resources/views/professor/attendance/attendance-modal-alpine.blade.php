@@ -20,13 +20,12 @@
                 <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
 
-            {{-- === LEFT PANEL: QR Presenter === --}}
-            <div x-show="!isReadOnly" class="w-full lg:w-5/12 bg-slate-900 relative overflow-hidden flex flex-col items-center justify-center p-4 lg:p-10 shrink-0">
+            {{-- === LEFT PANEL: QR + Card Scanner side by side === --}}
+            <div x-show="!isReadOnly" class="w-full lg:w-6/12 bg-slate-900 relative overflow-hidden flex flex-col items-center justify-center p-4 lg:p-6 shrink-0">
                 <div class="absolute inset-0 bg-gradient-to-br from-emerald-900 via-slate-900 to-slate-950"></div>
-                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full opacity-10" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/%3E%3C/svg%3E');"></div>
 
-                <div class="relative z-10 flex flex-col items-center w-full max-w-md mx-auto">
-                    <div class="text-center mb-4 lg:mb-6">
+                <div class="relative z-10 flex flex-col items-center w-full max-w-3xl mx-auto">
+                    <div class="text-center mb-4">
                         <div class="inline-flex items-center gap-2 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 mb-2">
                             <span class="relative flex h-2 w-2">
                               <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -34,56 +33,46 @@
                             </span>
                             <span class="text-[10px] font-bold tracking-widest uppercase text-emerald-400">Live Attendance</span>
                         </div>
-                        <h2 class="text-xl lg:text-4xl font-black text-white tracking-tight mb-1">ស្កែនវត្តមាន</h2>
+                        <h2 class="text-xl lg:text-3xl font-black text-white tracking-tight mb-1">ស្កែនវត្តមាន</h2>
                         <p class="text-emerald-300 text-xs lg:text-sm font-bold uppercase truncate max-w-[250px] lg:max-w-none" x-text="courseName"></p>
                     </div>
 
-                    {{-- Mode Toggle --}}
-                    <div class="grid grid-cols-2 gap-2 w-full max-w-xs mb-4 p-1 rounded-xl bg-slate-800/70">
-                        <button type="button" @click="switchMode('qr')"
-                                :class="mode === 'qr' ? 'bg-emerald-600 text-white shadow' : 'text-slate-300 hover:bg-slate-700/50'"
-                                class="px-3 py-2 rounded-lg text-xs font-bold transition-all">
-                            QR (សិស្សស្កែន)
-                        </button>
-                        <button type="button" @click="switchMode('card')"
-                                :class="mode === 'card' ? 'bg-blue-600 text-white shadow' : 'text-slate-300 hover:bg-slate-700/50'"
-                                class="px-3 py-2 rounded-lg text-xs font-bold transition-all">
-                            កាតសិស្ស
-                        </button>
-                    </div>
+                    {{-- Two scan options side by side --}}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full items-start">
 
-                    {{-- QR Code Box --}}
-                    <div x-show="mode === 'qr'" class="w-full max-w-xs">
-                        <div class="relative group mx-auto">
-                            <div class="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-purple-500 rounded-2xl blur opacity-30"></div>
-                            <div class="relative bg-white p-2 lg:p-4 rounded-xl lg:rounded-2xl shadow-2xl">
-                                <div class="relative rounded-lg w-[140px] h-[140px] lg:w-[240px] lg:h-[240px] bg-white flex items-center justify-center [&_svg]:w-full [&_svg]:h-full">
-                                    <div x-html="qrSvg"></div>
-                                    <div class="scan-line"></div>
+                        {{-- Left: QR Code (student scans) --}}
+                        <div class="flex flex-col items-center">
+                            <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">QR · សិស្សស្កែន</p>
+                            <div class="relative group w-full">
+                                <div class="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-purple-500 rounded-2xl blur opacity-30"></div>
+                                <div class="relative bg-white p-2 rounded-xl lg:rounded-2xl shadow-2xl">
+                                    <div class="relative rounded-lg w-full aspect-square bg-white flex items-center justify-center [&_svg]:w-full [&_svg]:h-full">
+                                        <div x-html="qrSvg"></div>
+                                        <div class="scan-line"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-3 w-full">
+                                <div class="flex items-center justify-between text-slate-400 text-[10px] font-medium mb-1.5 px-1">
+                                    <span>QR ប្តូរថ្មី</span>
+                                    <span class="font-mono text-white font-bold"><span x-text="qrTimeLeft">10</span>s</span>
+                                </div>
+                                <div class="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
+                                    <div class="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 transition-all duration-1000 ease-linear"
+                                         :style="'width: ' + (qrTimeLeft / 10 * 100) + '%'"></div>
                                 </div>
                             </div>
                         </div>
 
-                        {{-- Countdown Timer --}}
-                        <div class="mt-4 w-full">
-                            <div class="flex items-center justify-between text-slate-400 text-[10px] lg:text-sm font-medium mb-1.5 px-1">
-                                <span>QR ប្តូរថ្មី</span>
-                                <span class="font-mono text-white font-bold"><span x-text="qrTimeLeft">10</span>s</span>
+                        {{-- Right: Student Card scanner (professor scans) --}}
+                        <div class="flex flex-col items-center">
+                            <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">Student Card · ស្កែនកាត</p>
+                            <div class="relative rounded-2xl overflow-hidden bg-black aspect-square shadow-inner w-full">
+                                <div id="card-scanner-reader" class="w-full h-full absolute inset-0"></div>
                             </div>
-                            <div class="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
-                                <div class="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 transition-all duration-1000 ease-linear"
-                                     :style="'width: ' + (qrTimeLeft / 10 * 100) + '%'"></div>
-                            </div>
+                            <p id="card-scanner-status" class="mt-3 text-center text-xs text-slate-300">សូមបង្ហាញកាតសិស្សទៅកាមេរ៉ា</p>
+                            <p class="mt-1 text-center text-[10px] text-slate-400">បន្តស្កែនសិស្សបន្ទាប់ដោយស្វ័យប្រវត្តិ</p>
                         </div>
-                    </div>
-
-                    {{-- Student Card Scanner (inline, no popup) --}}
-                    <div x-show="mode === 'card'" class="w-full max-w-xs">
-                        <div class="relative rounded-2xl overflow-hidden bg-black aspect-square shadow-inner">
-                            <div id="card-scanner-reader" class="w-full h-full absolute inset-0"></div>
-                        </div>
-                        <p id="card-scanner-status" class="mt-3 text-center text-xs text-slate-300">សូមបង្ហាញកាតសិស្សទៅកាមេរ៉ា</p>
-                        <p class="mt-1 text-center text-[10px] text-slate-400">បើកដោយស្វ័យប្រវត្តិ ហើយបន្តស្កែនសិស្សបន្ទាប់</p>
                     </div>
                 </div>
             </div>
@@ -298,7 +287,6 @@ function attendanceModal() {
         scheduleId: null,
         sessionId: null,
         courseName: '...',
-        mode: 'qr', // 'qr' or 'card'
         qrSvg: '',
         students: [],
         totalEnrolled: 0,
@@ -348,17 +336,10 @@ function attendanceModal() {
 
             this.fetchStudents();
             this.startPolling();
-        },
 
-        async switchMode(to) {
-            if (to === this.mode) return;
-            if (to === 'card') {
-                this.mode = 'card';
+            if (!readOnly) {
                 await this.$nextTick();
                 this.startCardScanner();
-            } else {
-                await this.closeCardScanner();
-                this.mode = 'qr';
             }
         },
 
@@ -567,7 +548,6 @@ function attendanceModal() {
             this.closeCardScanner();
             this.isOpen = false;
             this.stopPolling();
-            this.mode = 'qr';
             this.courseOfferingId = null;
             this.scheduleId = null;
             this.qrSvg = '';
