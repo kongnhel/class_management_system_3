@@ -9,6 +9,8 @@ class ExamResult extends Model
 {
     use HasFactory;
 
+    protected $table = 'exam_results';
+
     protected $fillable = ['assessment_id', 'assessment_type', 'student_user_id', 'score_obtained', 'notes', 'recorded_at'];
 
     protected $casts = [
