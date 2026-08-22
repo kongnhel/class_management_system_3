@@ -69,7 +69,6 @@
                                         <div class="relative rounded-2xl overflow-hidden bg-black aspect-square shadow-inner w-full">
                                             <div id="card-scanner-reader" class="w-full h-full absolute inset-0"></div>
                                         </div>
-                                        <p id="card-scanner-status" class="mt-2 text-center text-xs text-slate-300">សូមបង្ហាញកាតសិស្ស</p>
                                     </div>
                                 </div>
                             </div>
@@ -346,8 +345,6 @@ function attendanceModal() {
             if (this.inlineScannerRunning) return;
 
             if (typeof Html5Qrcode === 'undefined') {
-                const status = document.getElementById('card-scanner-status');
-                if (status) status.textContent = 'QR scanner is unavailable.';
                 return;
             }
 
@@ -368,8 +365,6 @@ function attendanceModal() {
             } catch (e) {
                 console.error('Failed to start card scanner:', e);
                 this.inlineScannerRunning = false;
-                const status = document.getElementById('card-scanner-status');
-                if (status) status.textContent = 'មិនអាចបើកកាមេរ៉ាបានទេ។';
             }
         },
 
@@ -388,19 +383,12 @@ function attendanceModal() {
                     body: JSON.stringify({ card_token: decodedText, session_id: this.sessionId })
                 });
                 const data = await response.json();
-                const status = document.getElementById('card-scanner-status');
-                if (status) {
-                    status.textContent = data.message || 'Scan complete.';
-                    status.classList.toggle('text-emerald-600', !!data.success);
-                    status.classList.toggle('text-rose-600', !data.success);
-                }
                 if (data.success) {
                     this.playScanSound();
                     await this.fetchStudents();
                 }
             } catch (e) {
-                const status = document.getElementById('card-scanner-status');
-                if (status) { status.textContent = 'ការស្កែនបរាជ័យ។'; status.classList.remove('text-emerald-600'); status.classList.add('text-rose-600'); }
+                // failed scan: no visible status bar, just ignore
             } finally {
                 // keep the scanner camera open for the next student
                 setTimeout(() => { this._scanCooldown = false; }, 1200);
