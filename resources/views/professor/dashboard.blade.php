@@ -517,12 +517,8 @@
       }
 
       async function checkAttendanceAvailability(courseOfferingId) {
-        return await fetch("{{ route('professor.attendance.api.check-availability') }}?course_offering_id=" + encodeURIComponent(courseOfferingId), {
-          headers: { 'Accept': 'application/json' }
-        }).then(async (res) => {
-          const data = await res.json();
-          if (!res.ok) throw new Error(data?.message || `Server error (${res.status}).`);
-          return data;
+        return await postJson("{{ route('professor.attendance.api.check-availability') }}", {
+          course_offering_id: courseOfferingId
         });
       }
 
