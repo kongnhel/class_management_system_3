@@ -1,0 +1,12 @@
+name: Manual Deploy to Windows IIS
+
+on: 
+  workflow_dispatch: # This creates the manual button!
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Run Deployment Script
+        run: C:\deploy.bat
