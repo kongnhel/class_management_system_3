@@ -360,31 +360,26 @@
                     var nextMain = parsed.querySelector('main');
                     if (!nextMain) throw new Error('Admin results were not returned');
 
-                    // Capture the live-typed search value AND focus before replacing
-                    // <main>. The input is destroyed on swap, so without restoring
-                    // focus the user would have to click back into the box to keep
-                    // typing after a pause.
+                    // Capture whether the search input was focused before replacing <main>.
+                    // The input is destroyed on swap, so without re-applying focus the
+                    // user would have to click back into the box to keep typing.
+                    // NOTE: do NOT restore the old value here — the freshly-rendered
+                    // input already carries the value that was sent with the request.
+                    // Re-writing an earlier snapshot would undo any characters the user
+                    // typed or deleted during the debounce delay.
                     var oldInput = currentMain.querySelector('input[name="search"]');
-                    var typedValue = oldInput ? oldInput.value : '';
                     var restoreFocus = oldInput && document.activeElement === oldInput;
-                    var caretPos = typedValue.length;
 
                     if (window.Alpine && Alpine.destroyTree) Alpine.destroyTree(currentMain);
                     currentMain.innerHTML = nextMain.innerHTML;
                     if (window.Alpine && Alpine.initTree) Alpine.initTree(currentMain);
 
-                    var newInput = document.querySelector('main input[name="search"]');
-                    if (newInput) {
-                        // Always restore the live-typed value. The server re-renders
-                        // the input from the request's 'search' param, which is an
-                        // older snapshot — the user may have kept typing since the
-                        // fetch fired.
-                        if (typedValue !== '') {
-                            newInput.value = typedValue;
-                        }
-                        if (restoreFocus) {
+                    if (restoreFocus) {
+                        var newInput = document.querySelector('main input[name="search"]');
+                        if (newInput) {
                             newInput.focus();
-                            try { newInput.setSelectionRange(caretPos, caretPos); } catch (e) {}
+                            var end = (newInput.value || '').length;
+                            try { newInput.setSelectionRange(end, end); } catch (e) {}
                         }
                     }
                     window.history.replaceState({}, '', url.toString());
