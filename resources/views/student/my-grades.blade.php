@@ -64,6 +64,7 @@
             </div>
             @endif
 
+            <div data-admin-results>
             {{-- 1. Overview Cards --}}
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
                 {{-- Rank --}}
@@ -282,6 +283,7 @@
                         {{ $grades->withQueryString()->links('pagination::tailwind') }}
                     </div>
                 @endif
+            </div>
             </div>
         </div>
     </div>

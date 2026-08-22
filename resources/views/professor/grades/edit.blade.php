@@ -182,6 +182,7 @@
                 @csrf
                 <input type="hidden" name="assessment_type" value="{{ $type }}">
 
+                <div data-admin-results>
                 <div class="bg-white shadow-sm border border-slate-200 rounded-[2rem] overflow-hidden mb-12">
                     <table class="w-full text-left border-collapse">
                         <thead class="hidden md:table-header-group">
@@ -255,6 +256,7 @@
                             @endforelse
                         </tbody>
                     </table>
+                </div>
                 </div>
             </form>
 
@@ -337,7 +339,7 @@
 
     <script>
         const maxScore = {{ $assessment->max_score }};
-        const totalStudents = {{ count($students) }};
+        let totalStudents = {{ count($students) }};
         let hasUnsavedChanges = false;
         let currentFilter = 'all';
         let isInitialized = false;
@@ -486,5 +488,16 @@
             updateStats(false);
             isInitialized = true;
         });
+
+        // --- Re-sync after realtime search swaps the results container ---
+        const resultsRoot = document.querySelector('[data-admin-results]');
+        if (resultsRoot) {
+            new MutationObserver(function () {
+                totalStudents = document.querySelectorAll('.score-input').length;
+                document.querySelectorAll('.score-input').forEach(function (i) { validateScore(i); });
+                setFilter('all');
+                updateStats(false);
+            }).observe(resultsRoot, { childList: true, subtree: true });
+        }
     </script>
 </x-app-layout>

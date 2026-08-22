@@ -28,6 +28,7 @@
     </div>
     </form>
 
+    <div data-admin-results>
     @if ($faculties->isEmpty())
         {{-- Empty State --}}
         <div class="bg-white rounded-2xl border border-gray-200 p-12 text-center">
@@ -159,6 +160,7 @@
             {{ $faculties->links('pagination::tailwind') }}
         </div>
     @endif
+    </div>
 
     {{-- DELETE MODAL --}}
     <div id="delete-modal" class="fixed inset-0 z-50 overflow-y-auto hidden" x-data x-cloak>

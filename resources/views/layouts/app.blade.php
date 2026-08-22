@@ -335,8 +335,8 @@
             }
 
             function fetchAdminResults(url, form) {
-                var currentMain = document.querySelector('main');
-                if (!currentMain) return;
+                var container = document.querySelector('[data-admin-results]');
+                if (!container) return;
 
                 if (activeRequest) activeRequest.abort();
                 var requestController = new AbortController();
@@ -357,31 +357,15 @@
                 })
                 .then(function (html) {
                     var parsed = new DOMParser().parseFromString(html, 'text/html');
-                    var nextMain = parsed.querySelector('main');
-                    if (!nextMain) throw new Error('Admin results were not returned');
+                    var nextContainer = parsed.querySelector('[data-admin-results]')
+                                    || parsed.querySelector('main');
+                    if (!nextContainer) throw new Error('Admin results were not returned');
 
-                    // Capture whether the search input was focused before replacing <main>.
-                    // The input is destroyed on swap, so without re-applying focus the
-                    // user would have to click back into the box to keep typing.
-                    // NOTE: do NOT restore the old value here — the freshly-rendered
-                    // input already carries the value that was sent with the request.
-                    // Re-writing an earlier snapshot would undo any characters the user
-                    // typed or deleted during the debounce delay.
-                    var oldInput = currentMain.querySelector('input[name="search"]');
-                    var restoreFocus = oldInput && document.activeElement === oldInput;
-
-                    if (window.Alpine && Alpine.destroyTree) Alpine.destroyTree(currentMain);
-                    currentMain.innerHTML = nextMain.innerHTML;
-                    if (window.Alpine && Alpine.initTree) Alpine.initTree(currentMain);
-
-                    if (restoreFocus) {
-                        var newInput = document.querySelector('main input[name="search"]');
-                        if (newInput) {
-                            newInput.focus();
-                            var end = (newInput.value || '').length;
-                            try { newInput.setSelectionRange(end, end); } catch (e) {}
-                        }
-                    }
+                    // Replace ONLY the results container. The search input lives
+                    // outside it, so its value, focus and caret are never touched.
+                    if (window.Alpine && Alpine.destroyTree) Alpine.destroyTree(container);
+                    container.innerHTML = nextContainer.innerHTML;
+                    if (window.Alpine && Alpine.initTree) Alpine.initTree(container);
                     window.history.replaceState({}, '', url.toString());
                 })
                 .catch(function (error) {

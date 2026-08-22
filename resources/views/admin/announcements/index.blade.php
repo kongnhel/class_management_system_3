@@ -55,6 +55,7 @@
                 </form>
             </div>
 
+            <div data-admin-results>
             {{-- Desktop Table --}}
             <div class="hidden md:block bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
                 <table class="w-full text-sm">
@@ -199,6 +200,7 @@
                 {{ $announcements->links() }}
             </div>
             @endif
+            </div>
 
         </div>
     </div>

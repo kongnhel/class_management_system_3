@@ -50,6 +50,7 @@
                 </div>
             @endif
 
+            <div data-admin-results>
             {{-- Stats Cards --}}
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
@@ -213,6 +214,7 @@
                         {{ $submissions->appends(['search' => request('search'), 'status' => request('status')])->links() }}
                     </div>
                 @endif
+            </div>
             </div>
         </div>
     </div>

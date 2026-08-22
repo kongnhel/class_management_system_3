@@ -58,6 +58,7 @@
 
                 {{-- Content --}}
                 <div class="p-6 lg:p-8">
+                    <div data-admin-results>
                     <div class="space-y-12">
                         @php
                             $filteredGrouped = $coursesGrouped;
@@ -205,6 +206,7 @@
                                 </a>
                             </div>
                         @endforelse
+                    </div>
                     </div>
                 </div>
             </div>

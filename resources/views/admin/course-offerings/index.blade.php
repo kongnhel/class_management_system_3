@@ -150,6 +150,7 @@
 
             {{-- Content --}}
             <div x-data="{ viewMode: '{{ request('view', 'grid') }}' }" @view-changed.window="viewMode = $event.detail">
+                <div data-admin-results>
 
                 {{-- GRID VIEW --}}
                 <div x-show="viewMode === 'grid'" x-cloak>
@@ -339,6 +340,7 @@
 
                 {{-- Pagination --}}
                 <div class="mt-8 no-print">{{ $courseOfferings->links() }}</div>
+                </div>
             </div>
         </div>
     </div>

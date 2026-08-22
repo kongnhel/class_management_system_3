@@ -27,6 +27,7 @@
     </div>
     </form>
 
+    <div data-admin-results>
     @if ($departments->isNotEmpty())
         {{-- GRID VIEW --}}
         <div x-show="viewMode === 'grid'" x-transition:enter.duration.300ms>
@@ -155,4 +156,5 @@
             @endif
         </div>
     @endif
+    </div>
 </div>

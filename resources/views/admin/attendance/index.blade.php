@@ -64,6 +64,7 @@
                 </form>
             </div>
 
+            <div data-admin-results>
             {{-- Results Count --}}
             <div class="flex items-center justify-between mb-4">
                 <p class="text-sm text-gray-500">រកឃើញ <span class="font-bold text-gray-700">{{ $courseOfferings->total() }}</span> មុខវិជ្ជា</p>
@@ -137,6 +138,7 @@
             {{-- Pagination --}}
             <div class="mt-6">
                 {{ $courseOfferings->links() }}
+            </div>
             </div>
         </div>
     </div>

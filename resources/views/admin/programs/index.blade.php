@@ -107,6 +107,7 @@
                 </div>
             </form>
 
+            <div data-admin-results>
             @if($programs->count() > 0)
                 {{-- Card View --}}
                 <div x-show="viewMode === 'card'" x-transition>
@@ -240,6 +241,7 @@
                     </a>
                 </div>
             @endif
+            </div>
 
         </div>
     </div>

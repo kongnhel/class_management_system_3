@@ -66,6 +66,7 @@
                 </form>
             </div>
 
+            <div data-admin-results>
             @if($rooms->isEmpty())
                 {{-- Empty State --}}
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-12">
@@ -274,6 +275,7 @@
                 </div>
                 @endif
             @endif
+            </div>
 
         </div>
     </div>
