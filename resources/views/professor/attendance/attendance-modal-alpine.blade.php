@@ -21,61 +21,59 @@
             </button>
 
             {{-- === LEFT PANEL: QR + Card Scanner side by side === --}}
-            <div x-show="!isReadOnly" class="w-full lg:w-6/12 bg-slate-900 relative overflow-hidden flex flex-col items-center justify-center p-4 lg:p-6 shrink-0">
-                <div class="absolute inset-0 bg-gradient-to-br from-emerald-900 via-slate-900 to-slate-950"></div>
+            <div x-show="!isReadOnly" class="w-full lg:w-5/12 bg-slate-900 relative overflow-hidden flex flex-col items-center justify-center p-4 lg:p-5 shrink-0">
+                            <div class="absolute inset-0 bg-gradient-to-br from-emerald-900 via-slate-900 to-slate-950"></div>
 
-                <div class="relative z-10 flex flex-col items-center w-full max-w-3xl mx-auto">
-                    <div class="text-center mb-4">
-                        <div class="inline-flex items-center gap-2 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 mb-2">
-                            <span class="relative flex h-2 w-2">
-                              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                              <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                            </span>
-                            <span class="text-[10px] font-bold tracking-widest uppercase text-emerald-400">Live Attendance</span>
-                        </div>
-                        <h2 class="text-xl lg:text-3xl font-black text-white tracking-tight mb-1">ស្កែនវត្តមាន</h2>
-                        <p class="text-emerald-300 text-xs lg:text-sm font-bold uppercase truncate max-w-[250px] lg:max-w-none" x-text="courseName"></p>
-                    </div>
+                            <div class="relative z-10 flex flex-col items-center w-full max-w-lg mx-auto">
+                                <div class="text-center mb-3">
+                                    <div class="inline-flex items-center gap-2 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 mb-2">
+                                        <span class="relative flex h-2 w-2">
+                                          <span class="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                                        </span>
+                                        <span class="text-[10px] font-bold tracking-widest uppercase text-emerald-400">Live Attendance</span>
+                                    </div>
+                                    <h2 class="text-xl lg:text-3xl font-black text-white tracking-tight mb-1">ស្កែនវត្តមាន</h2>
+                                    <p class="text-emerald-300 text-xs lg:text-sm font-bold uppercase truncate max-w-[240px] lg:max-w-none" x-text="courseName"></p>
+                                </div>
 
-                    {{-- Two scan options side by side --}}
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full items-start">
+                                {{-- Two scan options side by side --}}
+                                <div class="grid grid-cols-2 gap-3 w-full items-start">
 
-                        {{-- Left: QR Code (student scans) --}}
-                        <div class="flex flex-col items-center">
-                            <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">QR · សិស្សស្កែន</p>
-                            <div class="relative group w-full">
-                                <div class="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-purple-500 rounded-2xl blur opacity-30"></div>
-                                <div class="relative bg-white p-2 rounded-xl lg:rounded-2xl shadow-2xl">
-                                    <div class="relative rounded-lg w-full aspect-square bg-white flex items-center justify-center [&_svg]:w-full [&_svg]:h-full">
-                                        <div x-html="qrSvg"></div>
-                                        <div class="scan-line"></div>
+                                    {{-- QR Code (student scans) --}}
+                                    <div class="flex flex-col items-center">
+                                        <p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">QR</p>
+                                        <div class="relative group w-full">
+                                            <div class="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-purple-500 rounded-2xl blur opacity-30"></div>
+                                            <div class="relative bg-white p-1.5 rounded-xl shadow-2xl">
+                                                <div class="relative rounded-lg aspect-square bg-white flex items-center justify-center [&_svg]:w-full [&_svg]:h-full">
+                                                    <div x-html="qrSvg"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mt-2 w-full">
+                                            <div class="flex items-center justify-between text-slate-400 text-[9px] mb-1 px-1">
+                                                <span>ប្តូរថ្មី</span>
+                                                <span class="font-mono text-white font-bold"><span x-text="qrTimeLeft">10</span>s</span>
+                                            </div>
+                                            <div class="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
+                                                <div class="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 transition-all duration-1000 ease-linear"
+                                                     :style="'width: ' + (qrTimeLeft / 10 * 100) + '%'"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {{-- Student Card scanner (professor scans) --}}
+                                    <div class="flex flex-col items-center">
+                                        <p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Student Card</p>
+                                        <div class="relative rounded-2xl overflow-hidden bg-black aspect-square shadow-inner w-full">
+                                            <div id="card-scanner-reader" class="w-full h-full absolute inset-0"></div>
+                                        </div>
+                                        <p id="card-scanner-status" class="mt-2 text-center text-xs text-slate-300">សូមបង្ហាញកាតសិស្ស</p>
                                     </div>
                                 </div>
                             </div>
-                            <div class="mt-3 w-full">
-                                <div class="flex items-center justify-between text-slate-400 text-[10px] font-medium mb-1.5 px-1">
-                                    <span>QR ប្តូរថ្មី</span>
-                                    <span class="font-mono text-white font-bold"><span x-text="qrTimeLeft">10</span>s</span>
-                                </div>
-                                <div class="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
-                                    <div class="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 transition-all duration-1000 ease-linear"
-                                         :style="'width: ' + (qrTimeLeft / 10 * 100) + '%'"></div>
-                                </div>
-                            </div>
                         </div>
-
-                        {{-- Right: Student Card scanner (professor scans) --}}
-                        <div class="flex flex-col items-center">
-                            <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">Student Card · ស្កែនកាត</p>
-                            <div class="relative rounded-2xl overflow-hidden bg-black aspect-square shadow-inner w-full">
-                                <div id="card-scanner-reader" class="w-full h-full absolute inset-0"></div>
-                            </div>
-                            <p id="card-scanner-status" class="mt-3 text-center text-xs text-slate-300">សូមបង្ហាញកាតសិស្សទៅកាមេរ៉ា</p>
-                            <p class="mt-1 text-center text-[10px] text-slate-400">បន្តស្កែនសិស្សបន្ទាប់ដោយស្វ័យប្រវត្តិ</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             {{-- === RIGHT PANEL: Student List === --}}
             <div class="flex-1 bg-slate-50 flex flex-col min-h-0 relative z-20 lg:rounded-none rounded-t-[2rem] mt-[-1.5rem] lg:mt-0 shadow-[0_-10px_30px_rgba(0,0,0,0.3)] lg:shadow-none overflow-hidden">
