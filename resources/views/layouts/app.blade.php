@@ -359,11 +359,13 @@
                     var nextMain = parsed.querySelector('main');
                     if (!nextMain) throw new Error('Admin results were not returned');
 
-                    // Capture the live-typed search value before replacing <main>,
-                    // so the input isn't torn down mid-typing and the user's characters
-                    // don't get yanked. Restore it onto the freshly-rendered input.
+                    // Capture the live-typed search value AND focus before replacing
+                    // <main>. The input is destroyed on swap, so without restoring
+                    // focus the user would have to click back into the box to keep
+                    // typing after a pause.
                     var oldInput = currentMain.querySelector('input[name="search"]');
                     var typedValue = oldInput ? oldInput.value : '';
+                    var restoreFocus = oldInput && document.activeElement === oldInput;
 
                     if (window.Alpine && Alpine.destroyTree) Alpine.destroyTree(currentMain);
                     currentMain.innerHTML = nextMain.innerHTML;
@@ -373,6 +375,10 @@
                         var newInput = document.querySelector('main input[name="search"]');
                         if (newInput && newInput.value === '') {
                             newInput.value = typedValue;
+                        }
+                        if (restoreFocus && newInput) {
+                            newInput.focus();
+                            try { newInput.setSelectionRange(typedValue.length, typedValue.length); } catch (e) {}
                         }
                     }
                     window.history.replaceState({}, '', url.toString());
