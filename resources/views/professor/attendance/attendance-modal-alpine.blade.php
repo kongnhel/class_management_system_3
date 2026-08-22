@@ -26,7 +26,7 @@
                 <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full opacity-10" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/%3E%3C/svg%3E');"></div>
 
                 <div class="relative z-10 flex flex-col items-center w-full max-w-md mx-auto">
-                    <div class="text-center mb-4 lg:mb-8">
+                    <div class="text-center mb-4 lg:mb-6">
                         <div class="inline-flex items-center gap-2 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 mb-2">
                             <span class="relative flex h-2 w-2">
                               <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -38,27 +38,52 @@
                         <p class="text-emerald-300 text-xs lg:text-sm font-bold uppercase truncate max-w-[250px] lg:max-w-none" x-text="courseName"></p>
                     </div>
 
+                    {{-- Mode Toggle --}}
+                    <div class="grid grid-cols-2 gap-2 w-full max-w-xs mb-4 p-1 rounded-xl bg-slate-800/70">
+                        <button type="button" @click="switchMode('qr')"
+                                :class="mode === 'qr' ? 'bg-emerald-600 text-white shadow' : 'text-slate-300 hover:bg-slate-700/50'"
+                                class="px-3 py-2 rounded-lg text-xs font-bold transition-all">
+                            QR (សិស្សស្កែន)
+                        </button>
+                        <button type="button" @click="switchMode('card')"
+                                :class="mode === 'card' ? 'bg-blue-600 text-white shadow' : 'text-slate-300 hover:bg-slate-700/50'"
+                                class="px-3 py-2 rounded-lg text-xs font-bold transition-all">
+                            កាតសិស្ស
+                        </button>
+                    </div>
+
                     {{-- QR Code Box --}}
-                    <div class="relative group mx-auto">
-                        <div class="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-purple-500 rounded-2xl blur opacity-30"></div>
-                        <div class="relative bg-white p-2 lg:p-4 rounded-xl lg:rounded-2xl shadow-2xl">
-                            <div class="relative rounded-lg w-[140px] h-[140px] lg:w-[240px] lg:h-[240px] bg-white flex items-center justify-center [&_svg]:w-full [&_svg]:h-full">
-                                <div x-html="qrSvg"></div>
-                                <div class="scan-line"></div>
+                    <div x-show="mode === 'qr'" class="w-full max-w-xs">
+                        <div class="relative group mx-auto">
+                            <div class="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-purple-500 rounded-2xl blur opacity-30"></div>
+                            <div class="relative bg-white p-2 lg:p-4 rounded-xl lg:rounded-2xl shadow-2xl">
+                                <div class="relative rounded-lg w-[140px] h-[140px] lg:w-[240px] lg:h-[240px] bg-white flex items-center justify-center [&_svg]:w-full [&_svg]:h-full">
+                                    <div x-html="qrSvg"></div>
+                                    <div class="scan-line"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Countdown Timer --}}
+                        <div class="mt-4 w-full">
+                            <div class="flex items-center justify-between text-slate-400 text-[10px] lg:text-sm font-medium mb-1.5 px-1">
+                                <span>QR ប្តូរថ្មី</span>
+                                <span class="font-mono text-white font-bold"><span x-text="qrTimeLeft">10</span>s</span>
+                            </div>
+                            <div class="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 transition-all duration-1000 ease-linear"
+                                     :style="'width: ' + (qrTimeLeft / 10 * 100) + '%'"></div>
                             </div>
                         </div>
                     </div>
 
-                    {{-- Countdown Timer --}}
-                    <div class="mt-4 lg:mt-8 w-48 lg:w-full">
-                        <div class="flex items-center justify-between text-slate-400 text-[10px] lg:text-sm font-medium mb-1.5 px-1">
-                            <span>QR ប្តូរថ្មី</span>
-                            <span class="font-mono text-white font-bold"><span x-text="qrTimeLeft">10</span>s</span>
+                    {{-- Student Card Scanner (inline, no popup) --}}
+                    <div x-show="mode === 'card'" class="w-full max-w-xs">
+                        <div class="relative rounded-2xl overflow-hidden bg-black aspect-square shadow-inner">
+                            <div id="card-scanner-reader" class="w-full h-full absolute inset-0"></div>
                         </div>
-                        <div class="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
-                            <div class="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 transition-all duration-1000 ease-linear"
-                                 :style="'width: ' + (qrTimeLeft / 10 * 100) + '%'"></div>
-                        </div>
+                        <p id="card-scanner-status" class="mt-3 text-center text-xs text-slate-300">សូមបង្ហាញកាតសិស្សទៅកាមេរ៉ា</p>
+                        <p class="mt-1 text-center text-[10px] text-slate-400">បើកដោយស្វ័យប្រវត្តិ ហើយបន្តស្កែនសិស្សបន្ទាប់</p>
                     </div>
                 </div>
             </div>
@@ -207,9 +232,6 @@
                     <button @click="closeModal()" class="flex-1 px-4 py-3 rounded-xl font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors text-sm">
                         បិទផ្ទាំង
                     </button>
-                    <button @click="openCardScanner()" class="flex-1 relative px-4 py-3 rounded-xl font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all active:scale-95 text-sm">
-                        ស្កែនកាតសិស្ស
-                    </button>
                     <button @click="showConfirm = true" class="flex-[2] relative px-4 py-3 rounded-xl font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-200 transition-all active:scale-95 text-sm">
                         បញ្ចប់ និងរក្សាទុក
                     </button>
@@ -276,6 +298,7 @@ function attendanceModal() {
         scheduleId: null,
         sessionId: null,
         courseName: '...',
+        mode: 'qr', // 'qr' or 'card'
         qrSvg: '',
         students: [],
         totalEnrolled: 0,
@@ -285,6 +308,7 @@ function attendanceModal() {
         qrTimeLeft: 15,
         qrDuration: 15,
         cardScanner: null,
+        inlineScannerRunning: false,
         _scanCooldown: false,
 
         async open(courseOfferingId, scheduleId, readOnly = false) {
@@ -326,30 +350,48 @@ function attendanceModal() {
             this.startPolling();
         },
 
-        async openCardScanner() {
-            if (!this.isOpen || this.isReadOnly || ! this.courseOfferingId) return;
-
-            if (! document.getElementById('attendance-card-scanner')) {
-                const scanner = document.createElement('div');
-                scanner.id = 'attendance-card-scanner';
-                scanner.className = 'fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/90 p-4';
-                scanner.innerHTML = '<div class="w-full max-w-md rounded-3xl bg-white p-4"><div class="mb-3 flex items-center justify-between"><h3 class="font-black text-slate-800">ស្កែនកាតសិស្ស</h3><button type="button" id="close-card-scanner" class="rounded-lg bg-slate-100 px-3 py-2 text-sm font-bold">បិទ</button></div><div id="card-scanner-reader" class="aspect-square overflow-hidden rounded-2xl bg-black"></div><p id="card-scanner-status" class="mt-3 text-center text-xs text-slate-500">សូមបង្ហាញកាតសិស្សទៅកាមេរ៉ា</p></div>';
-                document.body.appendChild(scanner);
-                document.getElementById('close-card-scanner').addEventListener('click', () => this.closeCardScanner());
+        async switchMode(to) {
+            if (to === this.mode) return;
+            if (to === 'card') {
+                this.mode = 'card';
+                await this.$nextTick();
+                this.startCardScanner();
+            } else {
+                await this.closeCardScanner();
+                this.mode = 'qr';
             }
+        },
+
+        async startCardScanner() {
+            if (!this.isOpen || this.isReadOnly || !this.courseOfferingId) return;
+            if (this.inlineScannerRunning) return;
 
             if (typeof Html5Qrcode === 'undefined') {
-                document.getElementById('card-scanner-status').textContent = 'QR scanner is unavailable.';
+                const status = document.getElementById('card-scanner-status');
+                if (status) status.textContent = 'QR scanner is unavailable.';
                 return;
             }
 
+            this.closeCardScanner();
+            this.inlineScannerRunning = true;
+
+            const readerEl = document.getElementById('card-scanner-reader');
+            if (!readerEl) { this.inlineScannerRunning = false; return; }
+
             this.cardScanner = new Html5Qrcode('card-scanner-reader');
-            await this.cardScanner.start(
-                { facingMode: 'environment' },
-                { fps: 10, qrbox: { width: 240, height: 240 } },
-                (decodedText) => this.submitCardScan(decodedText),
-                () => {}
-            );
+            try {
+                await this.cardScanner.start(
+                    { facingMode: 'environment' },
+                    { fps: 10, qrbox: { width: 200, height: 200 } },
+                    (decodedText) => this.submitCardScan(decodedText),
+                    () => {}
+                );
+            } catch (e) {
+                console.error('Failed to start card scanner:', e);
+                this.inlineScannerRunning = false;
+                const status = document.getElementById('card-scanner-status');
+                if (status) status.textContent = 'មិនអាចបើកកាមេរ៉ាបានទេ។';
+            }
         },
 
         async submitCardScan(decodedText) {
@@ -411,7 +453,7 @@ function attendanceModal() {
                 try { await this.cardScanner.stop(); } catch (e) {}
                 this.cardScanner = null;
             }
-            document.getElementById('attendance-card-scanner')?.remove();
+            this.inlineScannerRunning = false;
         },
 
         async refreshQr() {
@@ -525,6 +567,7 @@ function attendanceModal() {
             this.closeCardScanner();
             this.isOpen = false;
             this.stopPolling();
+            this.mode = 'qr';
             this.courseOfferingId = null;
             this.scheduleId = null;
             this.qrSvg = '';
