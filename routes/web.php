@@ -188,6 +188,7 @@ Route::middleware(['auth', 'role:admin', 'throttle:120,1'])->prefix('admin')->na
     Route::get('/course-offerings/create', [CourseOfferingController::class, 'create'])->name('create-course-offering');
     Route::post('/course-offerings', [CourseOfferingController::class, 'store'])->name('store-course-offering');
     Route::get('/course-offerings/{courseOffering}/edit', [CourseOfferingController::class, 'edit'])->name('edit-course-offering');
+    Route::get('/course-offerings/check-room', [CourseOfferingController::class, 'checkRoomAvailability'])->name('course-offerings.check-room');
     // Route::put('/course-offerings/{courseOffering}', [CourseOfferingController::class, 'update'])->name('update-course-offering');
     Route::put('/course-offerings/{courseOffering}', [CourseOfferingController::class, 'update'])->name('course-offerings.update');
     Route::delete('/course-offerings/{courseOffering}', [CourseOfferingController::class, 'destroy'])->name('course-offerings.destroy');

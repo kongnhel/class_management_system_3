@@ -392,6 +392,7 @@
                                 <input type="time" name="schedules[${index}][end_time]" value="${extractTime(schedule.end_time)}" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm">
                             </div>
                         </div>
+                        <div class="schedule-feedback mt-2"></div>
                     `;
                     schedulesContainer.appendChild(row);
                 });
@@ -434,10 +435,163 @@
                             <input type="time" name="schedules[${index}][end_time]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm">
                         </div>
                     </div>
+                    <div class="schedule-feedback mt-2"></div>
                 `;
                 schedulesContainer.appendChild(row);
                 updateSessionBadge();
             });
+
+            // ──────────────────────────────────────────────
+            // Live room-availability checker (ignores this offering's own schedules)
+            // ──────────────────────────────────────────────
+            const checkRoomUrl = '{{ route('admin.course-offerings.check-room') }}';
+            const ignoreOfferingId = {{ $courseOffering->id }};
+            const rowTimers = new WeakMap();
+
+            function getRowData(row) {
+                return {
+                    day: row.querySelector('select[name$="[day_of_week]"]') ? row.querySelector('select[name$="[day_of_week]"]').value : '',
+                    room: row.querySelector('select[name$="[room_id]"]') ? row.querySelector('select[name$="[room_id]"]').value : '',
+                    start: row.querySelector('input[name$="[start_time]"]') ? row.querySelector('input[name$="[start_time]"]').value : '',
+                    end: row.querySelector('input[name$="[end_time]"]') ? row.querySelector('input[name$="[end_time]"]').value : ''
+                };
+            }
+
+            function toMinutes(t) {
+                const p = (t || '').split(':');
+                return p.length === 2 ? (parseInt(p[0], 10) * 60) + parseInt(p[1], 10) : null;
+            }
+
+            function findInternalOverlap(row) {
+                const data = getRowData(row);
+                if (!data.day || !data.start || !data.end) return false;
+                const startM = toMinutes(data.start), endM = toMinutes(data.end);
+                let found = false;
+                document.querySelectorAll('.schedule-item').forEach(function(other) {
+                    if (other === row || found) return;
+                    const o = getRowData(other);
+                    if (!o.day || !o.start || !o.end || o.day !== data.day) return;
+                    const os = toMinutes(o.start), oe = toMinutes(o.end);
+                    if (os !== null && oe !== null && startM < oe && endM > os) found = true;
+                });
+                return found;
+            }
+
+            function warnBox(color, text) {
+                const map = {
+                    red:   'bg-red-50 border-red-200 text-red-700',
+                    amber: 'bg-amber-50 border-amber-200 text-amber-800',
+                    info:  'bg-slate-50 border-slate-200 text-slate-500'
+                };
+                return '<div class="flex items-start gap-1.5 px-3 py-1.5 rounded-lg border text-[11px] font-bold ' + (map[color] || map.info) + '"><span>' + text + '</span></div>';
+            }
+
+            function renderFeedback(row, payload) {
+                const el = row.querySelector('.schedule-feedback');
+                if (!el) return;
+                let html = '';
+                const hasError = payload.internal || payload.conflict;
+
+                if (payload.internal) {
+                    html += warnBox('red', '{{ __("⚠ ម៉ោងនេះជាន់គ្នាជាមួយ Session ផ្សេងទៀតក្នុងបញ្ជីខាងក្រោម។") }}');
+                }
+                if (payload.conflict && payload.conflicts && payload.conflicts.length > 0) {
+                    const c = payload.conflicts[0];
+                    html += warnBox('red', '{{ __("⚠") }} ' + (payload.message || '') +
+                        (c.course ? ' — <span class="font-black">' + c.course + '</span>' : '') +
+                        (c.lecturer ? ' (' + c.lecturer + ')' : '') +
+                        (c.start ? ' [' + c.start + '–' + c.end + ']' : ''));
+                }
+                if (!hasError && payload.no_time_available) {
+                    html += warnBox('amber', '{{ __("⛔ គ្មានម៉ោងទំនេរនៅសល់សម្រាប់ថ្ងៃនេះទៀតទេ — Session ទាំងអស់ពេញហើយ។") }}');
+                } else if (payload.slots && payload.slots.length > 0) {
+                    html += '<div class="flex flex-wrap gap-1.5">' + payload.slots.map(function(slot) {
+                        const free = slot.status === 'free';
+                        const title = free ? '{{ __("ទំនេរ") }}' : ((slot.course || '') + (slot.lecturer ? ' — ' + slot.lecturer : ''));
+                        return '<span class="px-2 py-0.5 rounded-lg text-[10px] font-bold border ' + (free ?
+                                'bg-emerald-50 text-emerald-700 border-emerald-100' :
+                                'bg-red-50 text-red-500 border-red-100 line-through') +
+                            '" title="' + String(title).replace(/"/g, '&quot;') + '">' + slot.start + '–' + slot.end + '</span>';
+                    }).join('') + '</div>';
+                }
+                if (!payload.conflict && payload.times_match_session === false) {
+                    html += warnBox('info', '{{ __("ℹ ចំណាំ៖ ម៉ោងដែលបានជ្រើសរើសមិនត្រូវនឹង Session ៩០ នាទីស្តង់ដារណាមួយឡើយ (អាចប្រើបាន ប៉ុណ្ណោះសិន)។") }}');
+                }
+
+                el.innerHTML = html;
+                el.classList.toggle('hidden', html === '');
+                row.classList.toggle('ring-1', !!hasError);
+                row.classList.toggle('ring-red-300', !!hasError);
+            }
+
+            function checkRowAvailability(row) {
+                const data = getRowData(row);
+                const year = academicYearSelect.value;
+                const semester = (document.getElementById('semester') || {}).value || '';
+                const hasAll = data.day && data.room && data.start && data.end;
+
+                renderFeedback(row, { internal: findInternalOverlap(row) });
+
+                if (!hasAll || !year || !semester) return;
+
+                if (row._availabilityAbort) row._availabilityAbort.abort();
+                const ctrl = new AbortController();
+                row._availabilityAbort = ctrl;
+
+                const params = new URLSearchParams({
+                    day_of_week: data.day,
+                    room_id: data.room,
+                    start_time: data.start,
+                    end_time: data.end,
+                    academic_year: year,
+                    semester: semester,
+                    ignore_offering_id: ignoreOfferingId
+                });
+
+                fetch(checkRoomUrl + '?' + params.toString(), {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                        signal: ctrl.signal
+                    })
+                    .then(function(res) { if (!res.ok) throw new Error('bad status'); return res.json(); })
+                    .then(function(payload) {
+                        payload.internal = findInternalOverlap(row);
+                        renderFeedback(row, payload);
+                    })
+                    .catch(function(err) {
+                        if (err.name !== 'AbortError') {
+                            renderFeedback(row, { internal: findInternalOverlap(row) });
+                            const el = row.querySelector('.schedule-feedback');
+                            if (el && el.innerHTML !== '') {
+                                el.insertAdjacentHTML('beforeend', warnBox('info', '{{ __("⚠ ពិនិត្យភាពរវល់របស់បន្ទប់មិនបានសម្រេច សូមព្យាយាមម្តងទៀត។") }}'));
+                            }
+                        }
+                    });
+            }
+
+            function queueRowCheck(row) {
+                clearTimeout(rowTimers.get(row));
+                rowTimers.set(row, setTimeout(function() { checkRowAvailability(row); }, 400));
+            }
+
+            schedulesContainer.addEventListener('input', function(e) {
+                const row = e.target.closest('.schedule-item');
+                if (row) queueRowCheck(row);
+            });
+            schedulesContainer.addEventListener('change', function(e) {
+                const row = e.target.closest('.schedule-item');
+                if (row) queueRowCheck(row);
+            });
+            academicYearSelect.addEventListener('change', function() {
+                document.querySelectorAll('.schedule-item').forEach(queueRowCheck);
+            });
+            document.getElementById('semester').addEventListener('change', function() {
+                document.querySelectorAll('.schedule-item').forEach(queueRowCheck);
+            });
+            new MutationObserver(function() {
+                document.querySelectorAll('.schedule-item').forEach(checkRowAvailability);
+            }).observe(schedulesContainer, { childList: true });
+
+            document.querySelectorAll('.schedule-item').forEach(checkRowAvailability);
         });
     </script>
 </x-app-layout>

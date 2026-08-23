@@ -10,10 +10,11 @@ use App\Models\CourseOffering;
 use App\Models\Generation;
 use App\Models\Program;
 use App\Models\Room;
+use App\Models\Schedule;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Maatwebsite\Excel\Facades\Excel;
@@ -108,7 +109,7 @@ class CourseOfferingController extends Controller
 
     public function create()
     {
-        $courses = Course::with('programs:id,name_km,name_en,degree_level')->get(['id','title_km','title_en','generation']);
+        $courses = Course::with('programs:id,name_km,name_en,degree_level')->get(['id', 'title_km', 'title_en', 'generation']);
         $professors = User::where('role', 'professor')->get();
         $programs = Program::all();
         $rooms = Room::all();
@@ -117,7 +118,7 @@ class CourseOfferingController extends Controller
         return view('admin.course-offerings.create', compact('courses', 'professors', 'programs', 'rooms', 'academicYears'));
     }
 
-public function store(Request $request)
+    public function store(Request $request)
     {
         // 1. Define Validation Rules
         $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
@@ -181,16 +182,8 @@ public function store(Request $request)
                     });
                 };
 
-                $roomConflict = \App\Models\Schedule::where('day_of_week', $day)
-                    ->where('room_id', $roomId)
-                    ->whereHas('courseOffering', function ($q) use ($academicYear, $semester) {
-                        $q->where('academic_year', $academicYear)
-                            ->where('semester', $semester);
-                    })
-                    ->where($overlapQuery)
-                    ->exists();
-
-                if ($roomConflict) {
+                // --- CHECK A: Room Conflict ---
+                if ($this->findRoomConflicts($day, $roomId, $start, $end, $academicYear, $semester)->isNotEmpty()) {
                     $validator->errors()->add("schedules.$index.room_id", "បន្ទប់នេះជាប់រវល់ហើយ នៅថ្ងៃ $day ចន្លោះម៉ោង $start - $end");
                 }
 
@@ -357,17 +350,7 @@ public function store(Request $request)
                 };
 
                 // --- CHECK A: Room Conflict ---
-                $roomConflict = \App\Models\Schedule::where('day_of_week', $day)
-                    ->where('room_id', $roomId)
-                    ->where('course_offering_id', '!=', $courseOffering->id)
-                    ->whereHas('courseOffering', function ($q) use ($academicYear, $semester) {
-                        $q->where('academic_year', $academicYear)
-                            ->where('semester', $semester);
-                    })
-                    ->where($overlapQuery)
-                    ->exists();
-
-                if ($roomConflict) {
+                if ($this->findRoomConflicts($day, $roomId, $start, $end, $academicYear, $semester, $courseOffering->id)->isNotEmpty()) {
                     $validator->errors()->add("schedules.$index.room_id", "បន្ទប់នេះជាប់រវល់ហើយ នៅថ្ងៃ $day ចន្លោះម៉ោង $start - $end");
                 }
 
@@ -575,6 +558,161 @@ public function store(Request $request)
         );
 
         return Excel::download(new CourseStudentsExport($offering_id), 'students_list_course_'.$offering_id.'.xlsx');
+    }
+
+    /**
+     * Find schedules that occupy the given room on the given day with an
+     * overlapping time range, scoped to one academic year + semester.
+     * Single source of truth used by store(), update() and the live checker.
+     */
+    private function findRoomConflicts(
+        string $day,
+        $roomId,
+        string $start,
+        string $end,
+        string $academicYear,
+        string $semester,
+        ?int $ignoreOfferingId = null
+    ) {
+        return Schedule::where('day_of_week', $day)
+            ->where('room_id', $roomId)
+            ->when($ignoreOfferingId, function ($q) use ($ignoreOfferingId) {
+                $q->where('course_offering_id', '!=', $ignoreOfferingId);
+            })
+            ->whereHas('courseOffering', function ($q) use ($academicYear, $semester) {
+                $q->where('academic_year', $academicYear)
+                    ->where('semester', $semester);
+            })
+            ->where(function ($query) use ($start, $end) {
+                $query->where('start_time', '<', $end)
+                    ->where('end_time', '>', $start);
+            })
+            ->with(['courseOffering.course:id,title_km,title_en', 'courseOffering.lecturer:id,name'])
+            ->get();
+    }
+
+    /**
+     * Live room-availability endpoint consumed by the course-offering
+     * create/edit forms. Returns conflicts for the selected time frame
+     * plus the full session grid (free/busy) for the selected room+day.
+     */
+    public function checkRoomAvailability(Request $request)
+    {
+        $data = $request->validate([
+            'day_of_week' => 'required|string|in:Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday',
+            'room_id' => 'required|integer|exists:rooms,id',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after:start_time',
+            'academic_year' => 'required|string',
+            'semester' => 'required|string',
+            'ignore_offering_id' => 'nullable|integer|exists:course_offerings,id',
+        ]);
+
+        $startTime = substr($data['start_time'], 0, 5);
+        $endTime = substr($data['end_time'], 0, 5);
+
+        $conflicts = $this->findRoomConflicts(
+            $data['day_of_week'],
+            $data['room_id'],
+            $data['start_time'],
+            $data['end_time'],
+            $data['academic_year'],
+            $data['semester'],
+            $data['ignore_offering_id'] ?? null
+        );
+
+        $bookings = Schedule::where('day_of_week', $data['day_of_week'])
+            ->where('room_id', $data['room_id'])
+            ->when($data['ignore_offering_id'] ?? null, function ($q) use ($data) {
+                $q->where('course_offering_id', '!=', $data['ignore_offering_id']);
+            })
+            ->whereHas('courseOffering', function ($q) use ($data) {
+                $q->where('academic_year', $data['academic_year'])
+                    ->where('semester', $data['semester']);
+            })
+            ->with(['courseOffering.course:id,title_km,title_en', 'courseOffering.lecturer:id,name'])
+            ->get();
+
+        $requestedStart = $this->timeToMinutes($startTime);
+        $requestedEnd = $this->timeToMinutes($endTime);
+
+        $slots = collect($this->sessionSlots())->map(function ($slot) use ($bookings) {
+            $slotStart = $this->timeToMinutes($slot['start']);
+            $slotEnd = $this->timeToMinutes($slot['end']);
+
+            $booking = $bookings->first(function ($b) use ($slotStart, $slotEnd) {
+                return $this->timeToMinutes(substr($b->start_time, 0, 5)) < $slotEnd
+                    && $this->timeToMinutes(substr($b->end_time, 0, 5)) > $slotStart;
+            });
+
+            return [
+                'start' => $slot['start'],
+                'end' => $slot['end'],
+                'status' => $booking ? 'busy' : 'free',
+                'course' => $booking?->courseOffering?->course?->title_km ?? $booking?->courseOffering?->course?->title_en,
+                'lecturer' => $booking?->courseOffering?->lecturer?->name,
+            ];
+        })->values();
+
+        $conflictList = $conflicts->map(function ($c) {
+            return [
+                'course' => $c->courseOffering?->course?->title_km ?? $c->courseOffering?->course?->title_en ?? '',
+                'lecturer' => $c->courseOffering?->lecturer?->name ?? '',
+                'start' => substr($c->start_time, 0, 5),
+                'end' => substr($c->end_time, 0, 5),
+            ];
+        })->values();
+
+        $matchesSessionSlot = collect($this->sessionSlots())->contains(function ($s) use ($startTime, $endTime) {
+            return $s['start'] === $startTime && $s['end'] === $endTime;
+        });
+
+        return response()->json([
+            'conflict' => $conflictList->isNotEmpty(),
+            'message' => $conflictList->isNotEmpty()
+                ? 'បន្ទប់នេះជាប់រវល់ហើយ នៅថ្ងៃ '.$data['day_of_week'].' ចន្លោះម៉ោង '.$startTime.' - '.$endTime
+                : '',
+            'conflicts' => $conflictList,
+            'slots' => $slots,
+            'no_time_available' => $slots->isNotEmpty() && $slots->every(fn ($s) => $s['status'] === 'busy'),
+            'times_match_session' => $matchesSessionSlot,
+        ]);
+    }
+
+    /**
+     * Canonical teaching sessions generated from config/school.php.
+     */
+    private function sessionSlots(): array
+    {
+        $sessionMinutes = (int) config('school.schedule.session_minutes', 90);
+        $slots = [];
+
+        foreach (config('school.schedule.windows', []) as $window) {
+            $cursor = $this->timeToMinutes($window['start']);
+            $windowEnd = $this->timeToMinutes($window['end']);
+
+            while ($cursor + $sessionMinutes <= $windowEnd) {
+                $slots[] = [
+                    'start' => $this->minutesToTime($cursor),
+                    'end' => $this->minutesToTime($cursor + $sessionMinutes),
+                ];
+                $cursor += $sessionMinutes;
+            }
+        }
+
+        return $slots;
+    }
+
+    private function timeToMinutes(string $time): int
+    {
+        [$h, $m] = array_map('intval', explode(':', substr($time, 0, 5)));
+
+        return $h * 60 + $m;
+    }
+
+    private function minutesToTime(int $minutes): string
+    {
+        return sprintf('%02d:%02d', intdiv($minutes, 60), $minutes % 60);
     }
 
     private function generateSchedulesFromPattern(CourseOffering $offering, array $data)

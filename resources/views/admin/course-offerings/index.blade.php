@@ -572,7 +572,7 @@
         }
         function printOrExport(action) {
             var progEl = document.querySelector('select[name=program_id]');
-            var genEl = document.querySelector('input[name=generation]');
+            var genEl = document.querySelector('select[name=generation]');
             var shiftEl = document.querySelector('select[name=shift]');
             var semEl = document.querySelector('select[name=semester]');
             var yearEl = document.querySelector('select[name=academic_year]');

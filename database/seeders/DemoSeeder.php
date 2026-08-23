@@ -177,11 +177,45 @@ class DemoSeeder extends Seeder
 
         // ---------- Course Offerings + Schedules + Assessments ----------
         $days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+
+        // Canonical teaching sessions generated from config/school.php
+        // so seeded demo timetables follow the school's real time grid.
+        $sessionMinutes = (int) config('school.schedule.session_minutes', 90);
+        $sessionSlots = [];
+        foreach (config('school.schedule.windows', []) as $window) {
+            [$sh, $sm] = array_map('intval', explode(':', $window['start']));
+            [$eh, $em] = array_map('intval', explode(':', $window['end']));
+            $cursor = $sh * 60 + $sm;
+            $windowEnd = $eh * 60 + $em;
+            while ($cursor + $sessionMinutes <= $windowEnd) {
+                $sessionSlots[] = [
+                    sprintf('%02d:%02d', intdiv($cursor, 60), $cursor % 60),
+                    sprintf('%02d:%02d', intdiv($cursor + $sessionMinutes, 60), ($cursor + $sessionMinutes) % 60),
+                ];
+                $cursor += $sessionMinutes;
+            }
+        }
+        if (empty($sessionSlots)) {
+            $sessionSlots = [['07:00', '08:30']];
+        }
+
+        // Deterministic rotation guarantees no two offerings of the same
+        // semester share a room/day/time slot (mirrors the app's conflict rules).
+        $semesterCounters = [];
+
         $offerings = collect();
         foreach (array_chunk($courses->all(), 4) as $chunkIdx => $chunkCourses) {
             foreach ($chunkCourses as $ci => $course) {
                 $prof = $professors[($chunkIdx + $ci) % $professors->count()];
                 $semester = ($chunkIdx % 2 === 0) ? 'ឆមាសទី១' : 'ឆមាសទី២';
+
+                $k = $semesterCounters[$semester] ?? 0;
+                $semesterCounters[$semester] = $k + 1;
+
+                $room = $rooms[$k % $rooms->count()];
+                [$startTime, $endTime] = $sessionSlots[intdiv($k, $rooms->count()) % count($sessionSlots)];
+                $day = $days[$k % count($days)];
+
                 $offering = CourseOffering::firstOrCreate(
                     [
                         'course_id' => $course->id,
@@ -193,7 +227,7 @@ class DemoSeeder extends Seeder
                         'capacity' => 8,
                         'generation' => (string) $generation,
                         'section' => 'A',
-                        'room_number' => $rooms->first()->room_number,
+                        'room_number' => $room->room_number,
                         'start_date' => now()->subMonths(2)->toDateString(),
                         'end_date' => now()->addMonths(2)->toDateString(),
                     ]
@@ -205,9 +239,14 @@ class DemoSeeder extends Seeder
                     ['generation' => (string) $generation]
                 );
 
-                Schedule::firstOrCreate(
-                    ['course_offering_id' => $offering->id, 'day_of_week' => $days[$ci % 5], 'room_id' => $rooms->first()->id],
-                    ['start_time' => '07:00:00', 'end_time' => '08:30:00']
+                Schedule::updateOrCreate(
+                    ['course_offering_id' => $offering->id],
+                    [
+                        'day_of_week' => $day,
+                        'room_id' => $room->id,
+                        'start_time' => $startTime.':00',
+                        'end_time' => $endTime.':00',
+                    ]
                 );
 
                 foreach ($students as $s) {

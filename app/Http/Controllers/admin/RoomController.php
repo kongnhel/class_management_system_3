@@ -4,6 +4,7 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Room;
+use App\Models\Schedule;
 use App\Services\ImageKitService;
 use Illuminate\Http\Request;
 
@@ -22,8 +23,8 @@ class RoomController extends Controller
 
         $rooms = Room::when($search, function ($query, $search) {
             $query->where('room_number', 'like', "%{$search}%")
-                  ->orWhere('location_of_room', 'like', "%{$search}%")
-                  ->orWhere('type_of_room', 'like', "%{$search}%");
+                ->orWhere('location_of_room', 'like', "%{$search}%")
+                ->orWhere('type_of_room', 'like', "%{$search}%");
         })->paginate(12)->withQueryString();
 
         return view('admin.rooms.index', compact('rooms', 'search'));
@@ -98,6 +99,30 @@ class RoomController extends Controller
 
     public function destroy(Room $room)
     {
+        // Hard block: refuse deletion while the room is referenced by
+        // schedules of course offerings that have not ended yet.
+        $activeSchedules = Schedule::where('room_id', $room->id)
+            ->whereHas('courseOffering', function ($q) {
+                $q->where('end_date', '>=', today());
+            })
+            ->with(['courseOffering.course:id,title_km,title_en'])
+            ->get();
+
+        if ($activeSchedules->isNotEmpty()) {
+            $courseNames = $activeSchedules
+                ->map(fn ($s) => $s->courseOffering?->course?->title_km ?? $s->courseOffering?->course?->title_en)
+                ->filter()
+                ->unique()
+                ->take(3)
+                ->implode(', ');
+
+            return redirect()->route('admin.rooms.index')
+                ->with('error', 'មិនអាចលុបបន្ទប់នេះបានទេ! ព្រោះវាកំពុងត្រូវបានប្រើក្នុងកាលវិភាគសិក្សា៖ '
+                    .$courseNames
+                    .($activeSchedules->count() > 3 ? ' ...' : '')
+                    .' (សរុប '.$activeSchedules->count().' ម៉ោងសិក្សា)');
+        }
+
         $room->delete();
 
         return redirect()->route('admin.rooms.index')->with('success', 'បន្ទប់ត្រូវបានលុបដោយជោគជ័យ!');
