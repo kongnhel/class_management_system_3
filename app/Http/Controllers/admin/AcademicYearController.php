@@ -36,7 +36,7 @@ class AcademicYearController extends Controller
         }
 
         return redirect()->route('admin.academic-years.index')
-            ->with('success', 'ឆ្នាំសិក្សាត្រូវបានបង្កើតដោយជោគជ័យ។');
+            ->with('success', __('ឆ្នាំសិក្សាត្រូវបានបង្កើតដោយជោគជ័យ។'));
     }
 
     public function edit(AcademicYear $academicYear)
@@ -60,7 +60,7 @@ class AcademicYearController extends Controller
         }
 
         return redirect()->route('admin.academic-years.index')
-            ->with('success', 'ឆ្នាំសិក្សាត្រូវបានធ្វើបច្ចុប្បន្នដោយជោគជ័យ។');
+            ->with('success', __('ឆ្នាំសិក្សាត្រូវបានកែប្រែដោយជោគជ័យ។'));
     }
 
     public function destroy(AcademicYear $academicYear)
@@ -68,7 +68,7 @@ class AcademicYearController extends Controller
         $academicYear->delete();
 
         return redirect()->route('admin.academic-years.index')
-            ->with('success', 'ឆ្នាំសិក្សាត្រូវបានលុបដោយជោគជ័យ។');
+            ->with('success', __('ឆ្នាំសិក្សាត្រូវបានលុបដោយជោគជ័យ។'));
     }
 
     public function setCurrent(AcademicYear $academicYear)
@@ -76,6 +76,6 @@ class AcademicYearController extends Controller
         $academicYear->setCurrent();
 
         return redirect()->route('admin.academic-years.index')
-            ->with('success', 'ឆ្នាំសិក្សាត្រូវបានកំណត់ជាឆ្នាំសិក្សាបច្ចុប្បន្ន។');
+            ->with('success', __('ឆ្នាំសិក្សាត្រូវបានកំណត់ជាឆ្នាំសិក្សាបច្ចុប្បន្ន។'));
     }
 }
