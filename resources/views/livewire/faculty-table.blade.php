@@ -39,7 +39,7 @@
             </div>
             @if($search)
                 <p class="text-sm font-semibold text-gray-700">{{ __('មិនរកឃើញមហាវិទ្យាល័យ') }}</p>
-                <p class="mt-1 text-sm text-gray-500">{{ __('សូមព្យាយាមស្វែងរកជាមួយពាក្យគន្លឹសខុសគ្នា') }}</p>
+                <p class="mt-1 text-sm text-gray-500">{{ __('សូមព្យាយាមស្វែងរកជាមួយពាក្យគន្លឹះខុសគ្នា') }}</p>
             @else
                 <p class="text-sm font-semibold text-gray-700">{{ __('មិនទាន់មានមហាវិទ្យាល័យទេ') }}</p>
                 <p class="mt-1 text-sm text-gray-500">{{ __('ចាប់ផ្តើមដោយបន្ថែមមហាវិទ្យាល័យដំបូងរបស់អ្នក។') }}</p>
@@ -174,7 +174,7 @@
                         </svg>
                     </div>
                     <h3 class="text-lg font-bold text-gray-900 mb-2">{{ __('បញ្ជាក់ការលុប') }}</h3>
-                    <p class="text-sm text-gray-500 leading-relaxed">{{ __('តើអ្នកពិតជាចង់លុបមហាវិទ្យាល័យ') }} <span class="font-semibold text-gray-900" id="delete-faculty-name"></span> {{ __('មែនទេ? សកម្មភាពនេះមិនអាចត្រឡប់ក្រោយបានឡើយ។') }}</p>
+                    <p class="text-sm text-gray-500 leading-relaxed">{{ __('តើអ្នកពិតជាចង់លុបមហាវិទ្យាល័យ') }} <span class="font-semibold text-gray-900" id="delete-faculty-name"></span> {{ __('នេះមែនទេ? សកម្មភាពនេះមិនអាចត្រឡប់ក្រោយបានឡើយ។') }}</p>
                 </div>
                 <div class="bg-gray-50 px-6 py-4 flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
                     <button type="button" onclick="closeDeleteModal()" class="w-full sm:w-auto px-5 py-2.5 text-sm font-semibold text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
