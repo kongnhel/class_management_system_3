@@ -141,7 +141,7 @@
                         </div>
                         <div>
                             <label for="capacity" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ចំនួននិស្សិតអតិបរមា') }} <span class="text-red-500">*</span></label>
-                            <input type="number" name="capacity" id="capacity" class="w-full min-w-0 rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm px-4 py-2.5" value="{{ old('capacity') }}" placeholder="ឧទាហរណ៍: ៣០" required>
+                            <input type="number" name="capacity" id="capacity" class="w-full min-w-0 rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm px-4 py-2.5" value="{{ old('capacity') }}" placeholder="{{ __('ឧទាហរណ៍: ៣០') }}" required>
                         </div>
                         <div class="grid grid-cols-2 gap-3">
                             <div>
@@ -222,7 +222,7 @@
                     const key = prog.id + '-' + course.generation;
                     if (!programGenGroups[key]) {
                         programGenGroups[key] = {
-                            label: (prog.name_km || prog.name_en) + ' — ជំនាន់ទី ' + course.generation,
+                            label: (prog.name_km || prog.name_en) + ' — {{ __("ជំនាន់ទី") }} ' + course.generation,
                             programId: prog.id,
                             programName: prog.name_km || prog.name_en,
                             generation: course.generation,
@@ -337,7 +337,7 @@
                             '</div>' +
                             '<div>' +
                                 '<label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __("ជំនាន់") }}</label>' +
-                                '<div class="w-full py-2 px-3 bg-emerald-50 rounded-xl text-sm font-bold text-emerald-700 border border-emerald-100">' + (courseGen ? 'ជំនាន់ទី ' + courseGen : '{{ __("មិនទាន់កំណត់") }}') + '</div>' +
+                                '<div class="w-full py-2 px-3 bg-emerald-50 rounded-xl text-sm font-bold text-emerald-700 border border-emerald-100">' + (courseGen ? '{{ __("ជំនាន់ទី") }} ' + courseGen : '{{ __("មិនទាន់កំណត់") }}') + '</div>' +
                                 '<input type="hidden" name="target_programs[' + index + '][generation]" value="' + courseGen + '">' +
                             '</div>' +
                         '</div>';

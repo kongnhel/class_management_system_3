@@ -68,7 +68,7 @@ class ProgramController extends Controller
             'pathway_program_id' => $request->pathway_program_id ?: null,
         ]);
 
-        return redirect()->route('admin.manage-programs')->with('success', 'កម្មវិធីសិក្សាបង្កើតដោយជោគជ័យ!');
+        return redirect()->route('admin.manage-programs')->with('success', __('កម្មវិធីសិក្សាត្រូវបានបង្កើតដោយជោគជ័យ។'));
     }
 
     public function show(string $id) {}
@@ -96,7 +96,7 @@ class ProgramController extends Controller
             'pathway_program_id' => $request->pathway_program_id ?: null,
         ]);
 
-        return redirect()->route('admin.manage-programs')->with('success', 'កម្មវិធីសិក្សាត្រូវបានធ្វើបច្ចុប្បន្នភាពដោយជោគជ័យ!');
+        return redirect()->route('admin.manage-programs')->with('success', __('កម្មវិធីសិក្សាត្រូវបានកែប្រែដោយជោគជ័យ។'));
     }
 
     public function destroy(Program $program)
@@ -104,16 +104,16 @@ class ProgramController extends Controller
         try {
             if ($program->users()->exists()) {
                 return redirect()->route('admin.manage-programs')
-                    ->with('error', 'មិនអាចលុបកម្មវិធីសិក្សានេះបានទេ ព្រោះមានអ្នកប្រើប្រាស់ដែលពាក់ព័ន្ធ។ សូមផ្ទេរអ្នកប្រើប្រាស់ទាំងនោះទៅកម្មវិធីផ្សេងមុន។');
+                    ->with('error', __('មិនអាចលុបកម្មវិធីសិក្សានេះបានទេ ព្រោះមានអ្នកប្រើប្រាស់ដែលពាក់ព័ន្ធ។ សូមផ្ទេរអ្នកប្រើប្រាស់ទាំងនោះទៅកម្មវិធីផ្សេងមុន។'));
             }
 
             $program->delete();
 
             return redirect()->route('admin.manage-programs')
-                ->with('success', 'កម្មវិធីសិក្សាត្រូវបានលុបដោយជោគជ័យ!');
+                ->with('success', __('កម្មវិធីសិក្សាត្រូវបានលុបដោយជោគជ័យ។'));
         } catch (\Exception $e) {
             return redirect()->route('admin.manage-programs')
-                ->with('error', 'មានកំហុសកើតឡើងក្នុងការលុបកម្មវិធីសិក្សា។ សូមព្យាយាមម្តងទៀត។');
+                ->with('error', __('មានកំហុសកើតឡើងក្នុងការលុបកម្មវិធីសិក្សា។ សូមព្យាយាមម្តងទៀត។'));
         }
     }
 }

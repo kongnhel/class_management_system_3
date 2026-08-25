@@ -12,17 +12,17 @@
                         <p class="text-gray-500 mt-0.5">
                             {{ $courseOffering->semester }} / {{ $courseOffering->academic_year }}
                             @if($courseOffering->lecturer)
-                                <span class="mx-1">·</span> គ្រូ៖ {{ $courseOffering->lecturer->name }}
+                                <span class="mx-1">·</span> {{ __('គ្រូ៖') }} {{ $courseOffering->lecturer->name }}
                             @endif
                         </p>
                     </div>
                 </div>
                 <div class="flex gap-3">
                     <a href="{{ route('admin.grades.export', $courseOffering->id) }}" class="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-5 py-2.5 rounded-xl font-bold shadow-md transition-all text-sm">
-                        <i class="fas fa-download"></i> ទាញយក Excel
+                        <i class="fas fa-download"></i> {{ __('ទាញយក Excel') }}
                     </a>
                     <a href="{{ route('admin.grades.index') }}" class="flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-700 px-5 py-2.5 rounded-xl font-bold shadow-sm border border-gray-200 transition-all text-sm">
-                        <i class="fas fa-arrow-left"></i> ត្រឡប់ក្រោយ
+                        <i class="fas fa-arrow-left"></i> {{ __('ត្រឡប់ក្រោយ') }}
                     </a>
                 </div>
             </div>
@@ -34,7 +34,7 @@
                         <div class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
                             <i class="fas fa-users text-gray-500"></i>
                         </div>
-                        <span class="text-xs font-bold text-gray-500 uppercase">សិស្សសរុប</span>
+                        <span class="text-xs font-bold text-gray-500 uppercase">{{ __('សិស្សសរុប') }}</span>
                     </div>
                     <div class="text-2xl font-bold text-gray-900">{{ $stats['total'] }}</div>
                 </div>
@@ -43,7 +43,7 @@
                         <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
                             <i class="fas fa-pen text-emerald-500"></i>
                         </div>
-                        <span class="text-xs font-bold text-gray-500 uppercase">មានពិន្ទុ</span>
+                        <span class="text-xs font-bold text-gray-500 uppercase">{{ __('មានពិន្ទុ') }}</span>
                     </div>
                     <div class="text-2xl font-bold text-emerald-600">{{ $stats['graded'] }}</div>
                 </div>
@@ -52,7 +52,7 @@
                         <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
                             <i class="fas fa-chart-bar text-emerald-500"></i>
                         </div>
-                        <span class="text-xs font-bold text-gray-500 uppercase">មធ្យមភាគ</span>
+                        <span class="text-xs font-bold text-gray-500 uppercase">{{ __('មធ្យមភាគ') }}</span>
                     </div>
                     <div class="text-2xl font-bold text-emerald-600">{{ number_format($stats['avg_grade'], 1) }}</div>
                 </div>
@@ -61,7 +61,7 @@
                         <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
                             <i class="fas fa-arrow-up text-emerald-500"></i>
                         </div>
-                        <span class="text-xs font-bold text-gray-500 uppercase">ខ្ពស់បំផុត</span>
+                        <span class="text-xs font-bold text-gray-500 uppercase">{{ __('ខ្ពស់បំផុត') }}</span>
                     </div>
                     <div class="text-2xl font-bold text-emerald-600">{{ number_format($stats['max_grade'], 1) }}</div>
                 </div>
@@ -70,7 +70,7 @@
                         <div class="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center">
                             <i class="fas fa-arrow-down text-rose-500"></i>
                         </div>
-                        <span class="text-xs font-bold text-gray-500 uppercase">ទាបបំផុត</span>
+                        <span class="text-xs font-bold text-gray-500 uppercase">{{ __('ទាបបំផុត') }}</span>
                     </div>
                     <div class="text-2xl font-bold text-rose-600">{{ number_format($stats['min_grade'], 1) }}</div>
                 </div>
@@ -79,25 +79,25 @@
             {{-- Grade Table --}}
             <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-                    <h3 class="text-lg font-bold text-gray-900">បញ្ជីពិន្ទុសិស្ស</h3>
-                    <span class="px-3 py-1 rounded-full bg-gray-100 text-xs font-bold text-gray-500">{{ $students->count() }} នាក់</span>
+                    <h3 class="text-lg font-bold text-gray-900">{{ __('បញ្ជីពិន្ទុសិស្ស') }}</h3>
+                    <span class="px-3 py-1 rounded-full bg-gray-100 text-xs font-bold text-gray-500">{{ $students->count() }} {{ __('នាក់') }}</span>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead>
                             <tr class="bg-gray-50">
                                 <th class="px-4 py-3 text-center text-[11px] font-bold text-gray-500 uppercase tracking-wider">#</th>
-                                <th class="px-4 py-3 text-left text-[11px] font-bold text-gray-500 uppercase tracking-wider">ឈ្មោះ</th>
-                                <th class="px-4 py-3 text-center text-[11px] font-bold text-emerald-600 uppercase tracking-wider">វត្តមាន</th>
+                                <th class="px-4 py-3 text-left text-[11px] font-bold text-gray-500 uppercase tracking-wider">{{ __('ឈ្មោះ') }}</th>
+                                <th class="px-4 py-3 text-center text-[11px] font-bold text-emerald-600 uppercase tracking-wider">{{ __('វត្តមាន') }}</th>
                                 @foreach($assessments as $assessment)
                                     <th class="px-3 py-3 text-center text-[11px] font-bold uppercase tracking-wider
                                         {{ $assessment instanceof \App\Models\Assignment ? 'text-emerald-600' : ($assessment instanceof \App\Models\Quiz ? 'text-amber-600' : 'text-purple-600') }}">
                                         {{ Str::limit($assessment->title_km, 15) }}
                                     </th>
                                 @endforeach
-                                <th class="px-4 py-3 text-center text-[11px] font-bold text-gray-600 uppercase tracking-wider">សរុប</th>
-                                <th class="px-4 py-3 text-center text-[11px] font-bold text-gray-600 uppercase tracking-wider">និទ្ទេស</th>
-                                <th class="px-4 py-3 text-center text-[11px] font-bold text-gray-600 uppercase tracking-wider">ស្ថានភាព</th>
+                                <th class="px-4 py-3 text-center text-[11px] font-bold text-gray-600 uppercase tracking-wider">{{ __('សរុប') }}</th>
+                                <th class="px-4 py-3 text-center text-[11px] font-bold text-gray-600 uppercase tracking-wider">{{ __('និទ្ទេស') }}</th>
+                                <th class="px-4 py-3 text-center text-[11px] font-bold text-gray-600 uppercase tracking-wider">{{ __('ស្ថានភាព') }}</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-100">
@@ -166,9 +166,9 @@
                                 </td>
                                 <td class="px-4 py-3 text-center">
                                     @if($student->isPassing)
-                                        <span class="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-emerald-100 text-emerald-700">ជាប់</span>
+                                        <span class="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-emerald-100 text-emerald-700">{{ __('ជាប់') }}</span>
                                     @else
-                                        <span class="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-rose-100 text-rose-700">មិនជាប់</span>
+                                        <span class="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-rose-100 text-rose-700">{{ __('មិនជាប់') }}</span>
                                     @endif
                                 </td>
                             </tr>
@@ -179,8 +179,8 @@
                                         <div class="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center">
                                             <i class="fas fa-inbox text-gray-300 text-2xl"></i>
                                         </div>
-                                        <p class="text-sm font-bold text-gray-400">មិនមានទិន្នន័យពិន្ទុ</p>
-                                        <p class="text-xs text-gray-300">សូមបញ្ចូលពិន្ទុសិស្សនៅក្នុងផ្នែកគ្រប់គ្រង</p>
+                                        <p class="text-sm font-bold text-gray-400">{{ __('មិនមានទិន្នន័យពិន្ទុ') }}</p>
+                                        <p class="text-xs text-gray-300">{{ __('សូមបញ្ចូលពិន្ទុសិស្សនៅក្នុងផ្នែកគ្រប់គ្រង') }}</p>
                                     </div>
                                 </td>
                             </tr>

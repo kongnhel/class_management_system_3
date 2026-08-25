@@ -252,14 +252,14 @@ class CourseOfferingController extends Controller
             \Illuminate\Support\Facades\DB::commit();
 
             return redirect()->route('admin.manage-course-offerings')
-                ->with('success', 'ការផ្តល់ជូនមុខវិជ្ជាត្រូវបានបង្កើតដោយជោគជ័យ និងបានបញ្ចូលឈ្មោះសិស្សរួចរាល់!');
+                ->with('success', __('ការផ្តល់ជូនមុខវិជ្ជាត្រូវបានបង្កើតដោយជោគជ័យ និងបានបញ្ចូលឈ្មោះសិស្សរួចរាល់។'));
 
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\DB::rollBack();
             \Illuminate\Support\Facades\Log::error('Error creating course offering: '.$e->getMessage());
 
             return redirect()->back()
-                ->with('error', 'មានបញ្ហាក្នុងការបង្កើត៖ '.$e->getMessage())
+                ->with('error', __('មានបញ្ហាក្នុងការបង្កើត៖ ').$e->getMessage())
                 ->withInput();
         }
     }
@@ -424,14 +424,14 @@ class CourseOfferingController extends Controller
             \Illuminate\Support\Facades\DB::commit();
 
             return redirect()->route('admin.manage-course-offerings')
-                ->with('success', 'ការផ្តល់ជូនមុខវិជ្ជាត្រូវបានកែប្រែដោយជោគជ័យ!');
+                ->with('success', __('ការផ្តល់ជូនមុខវិជ្ជាត្រូវបានកែប្រែដោយជោគជ័យ។'));
 
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\DB::rollBack();
             \Illuminate\Support\Facades\Log::error('Error updating course offering: '.$e->getMessage());
 
             return redirect()->back()
-                ->with('error', 'មានបញ្ហា៖ '.$e->getMessage())
+                ->with('error', __('មានបញ្ហា៖ ').$e->getMessage())
                 ->withInput();
         }
     }

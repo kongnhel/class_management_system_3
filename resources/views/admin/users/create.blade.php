@@ -37,7 +37,7 @@
                             <x-input-label for="name" class="font-semibold text-gray-700 mb-1.5">
                                 {{ __('ឈ្មោះអ្នកប្រើប្រាស់') }}
                             </x-input-label>
-                            <x-text-input id="name" class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 py-2.5 px-4 h-[50px]" type="text" name="name" :value="old('name')" placeholder="បញ្ចូលឈ្មោះអ្នកប្រើប្រាស់" required autofocus />
+                            <x-text-input id="name" class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 py-2.5 px-4 h-[50px]" type="text" name="name" :value="old('name')" placeholder="{{ __('បញ្ចូលឈ្មោះអ្នកប្រើប្រាស់') }}" required autofocus />
                             <x-input-error :messages="$errors->get('name')" class="mt-2" />
                         </div>
 
@@ -87,7 +87,7 @@
                                         type="password"
                                         name="password"
                                         autocomplete="new-password"
-                                        placeholder="បញ្ចូលពាក្យសម្ងាត់"
+                                        placeholder="{{ __('បញ្ចូលពាក្យសម្ងាត់') }}"
                                         class="block w-full h-full rounded-xl border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 py-2.5 px-4 pr-12 shadow-sm text-gray-900 bg-white transition"
                                         required
                                     />
@@ -115,7 +115,7 @@
                                         type="password"
                                         name="password_confirmation"
                                         autocomplete="new-password"
-                                        placeholder="វាយពាក្យសម្ងាត់ម្តងទៀត"
+                                        placeholder="{{ __('វាយពាក្យសម្ងាត់ម្តងទៀត') }}"
                                         class="block w-full h-full rounded-xl border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 py-2.5 px-4 pr-12 shadow-sm text-gray-900 bg-white transition"
                                         required
                                     />
@@ -167,12 +167,12 @@
                             </x-input-label>
                             <select id="degree_level" name="degree_level" class="block w-full border-gray-200 bg-white text-gray-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 rounded-xl shadow-sm transition py-2.5 px-4 h-[50px]" required>
                                 <option value="">{{ __('ជ្រើសរើសកម្រិតសញ្ញាបត្រ') }}</option>
-                                <option value="បរិញ្ញាបត្រ">បរិញ្ញាបត្រ</option>
-                                <option value="បរិញ្ញាបត្ររង">បរិញ្ញាបត្ររង</option>
-                                <option value="អនុបណ្ឌិត">អនុបណ្ឌិត</option>
-                                <option value="បណ្ឌិត">បណ្ឌិត</option>
-                                <option value="វិញ្ញាបនបត្រ">វិញ្ញាបនបត្រ</option>
-                                <option value="ផ្សេងៗ">ផ្សេងៗ</option>
+                                <option value="បរិញ្ញាបត្រ">{{ __('បរិញ្ញាបត្រ') }}</option>
+                                <option value="បរិញ្ញាបត្ររង">{{ __('បរិញ្ញាបត្ររង') }}</option>
+                                <option value="អនុបណ្ឌិត">{{ __('អនុបណ្ឌិត') }}</option>
+                                <option value="បណ្ឌិត">{{ __('បណ្ឌិត') }}</option>
+                                <option value="វិញ្ញាបនបត្រ">{{ __('វិញ្ញាបនបត្រ') }}</option>
+                                <option value="ផ្សេងៗ">{{ __('ផ្សេងៗ') }}</option>
                             </select>
                         </div>
                         <div>
@@ -182,7 +182,7 @@
                             <select id="generation" name="generation" class="block w-full border-gray-200 bg-white text-gray-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 rounded-xl shadow-sm transition py-2.5 px-4 h-[50px]" required>
                                 <option value="">{{ __('ជ្រើសរើសជំនាន់') }}</option>
                                 @foreach(\App\Models\Generation::orderByDesc('name')->get() as $gen)
-                                    <option value="{{ $gen->name }}">{{ $gen->name }} (ចូលរៀនឆ្នាំ {{ $gen->join_year }})</option>
+                                    <option value="{{ $gen->name }}">{{ $gen->name }} ({{ __('ចូលរៀនឆ្នាំ') }} {{ $gen->join_year }})</option>
                                 @endforeach
                             </select>
                         </div>
@@ -249,7 +249,7 @@
                                             const file = $event.target.files[0];
                                             if (file) {
                                                 if (file.size > 2 * 1024 * 1024) {
-                                                    showToast('រូបភាពធំពេក! សូមជ្រើសរើសរូបភាពដែលមានទំហំតូចជាង ២MB', 'error');
+                                                    showToast('{{ __("រូបភាពធំពេក! សូមជ្រើសរើសរូបភាពដែលមានទំហំតូចជាង ២MB") }}', 'error');
                                                     $event.target.value = '';
                                                     profilePicturePreview = '';
                                                 } else {
@@ -267,7 +267,7 @@
                                 <x-input-label for="full_name_km" class="font-semibold text-gray-700 mb-1.5">
                                     <i class="fas fa-file-alt mr-1.5 text-orange-500"></i> {{ __('ឈ្មោះពេញ (ខ្មែរ)') }}
                                 </x-input-label>
-                                <x-text-input id="full_name_km" class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 py-2.5 px-4 h-[50px]" type="text" name="full_name_km" :value="old('full_name_km')" placeholder="បញ្ចូលឈ្មោះពេញជាភាសាខ្មែរ" />
+                                <x-text-input id="full_name_km" class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 py-2.5 px-4 h-[50px]" type="text" name="full_name_km" :value="old('full_name_km')" placeholder="{{ __('បញ្ចូលឈ្មោះពេញជាភាសាខ្មែរ') }}" />
                             </div>
                             <div>
                                 <x-input-label for="full_name_en" class="font-semibold text-gray-700 mb-1.5">
@@ -296,7 +296,7 @@
                                 <x-input-label for="address" class="font-semibold text-gray-700 mb-1.5">
                                     <i class="fas fa-map-marker-alt mr-1.5 text-orange-500"></i> {{ __('អាសយដ្ឋាន') }}
                                 </x-input-label>
-                                <x-text-input id="address" class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 py-2.5 px-4 h-[50px]" type="text" name="address" :value="old('address')" placeholder="បញ្ចូលអាសយដ្ឋាន" />
+                                <x-text-input id="address" class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 py-2.5 px-4 h-[50px]" type="text" name="address" :value="old('address')" placeholder="{{ __('បញ្ចូលអាសយដ្ឋាន') }}" />
                             </div>
                         </div>
                     </div>
@@ -392,14 +392,14 @@
                     if (/[@$!%*?&]/.test(value)) strength++;
                     if (value.length >= 8) strength++;
 
-                    const levels = ['ខ្សោយ', 'មធ្យម', 'ល្អ', 'ខ្លាំង', 'ខ្លាំងណាស់'];
+                    const levels = ['{{ __("ខ្សោយ") }}', '{{ __("មធ្យម") }}', '{{ __("ល្អ") }}', '{{ __("ខ្លាំង") }}', '{{ __("ខ្លាំងណាស់") }}'];
                     const colors = ['text-red-400', 'text-yellow-400', 'text-green-400', 'text-green-500', 'text-green-600'];
                     
                     strengthText.className = 'text-sm mt-2'; 
                     
                     if (value) {
                         const levelIndex = strength > 0 ? strength - 1 : 0;
-                        strengthText.textContent = 'កម្លាំងពាក្យសម្ងាត់៖ ' + levels[levelIndex];
+                        strengthText.textContent = '{{ __("កម្លាំងពាក្យសម្ងាត់៖") }} ' + levels[levelIndex];
                         strengthText.classList.add(colors[levelIndex]);
                     } else {
                         strengthText.textContent = '';

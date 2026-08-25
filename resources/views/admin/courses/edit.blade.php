@@ -206,7 +206,7 @@
                         </a>
                         <button type="submit"
                                 class="px-8 py-3 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-xl transition-all shadow-md shadow-emerald-200 active:scale-95">
-                            {{ __('រក្សារាងការផ្លាស់ប្តូរ') }}
+                            {{ __('រក្សាទុកការផ្លាស់ប្តូរ') }}
                         </button>
                     </div>
                 </form>

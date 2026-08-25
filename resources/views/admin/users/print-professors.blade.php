@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>បញ្ជីឈ្មោះសាស្ត្រាចារ្យ</title>
+    <title>{{ __('បញ្ជីឈ្មោះសាស្ត្រាចារ្យ') }}</title>
     <link rel="icon" type="image/png" href="{{ asset('assets/image/nmu_Logo.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Moul:wght@400&display=swap" rel="stylesheet">
@@ -70,9 +70,9 @@
 
 <div class="container">
     <div class="toolbar">
-        <h2>បញ្ជីឈ្មោះសាស្ត្រាចារ្យ</h2>
+        <h2>{{ __('បញ្ជីឈ្មោះសាស្ត្រាចារ្យ') }}</h2>
         <div>
-            <a href="{{ url()->previous() }}" class="btn btn-back">ត្រឡប់ក្រោយ</a>
+            <a href="{{ url()->previous() }}" class="btn btn-back">{{ __('ត្រឡប់ក្រោយ') }}</a>
             <button onclick="window.print()" class="btn btn-print">🖨️ Print</button>
         </div>
     </div>
@@ -81,8 +81,8 @@
         $totalProfessors = $professors->count();
         $maleCount = $professors->filter(fn($p) => ($p->profile?->gender) === 'male')->count();
         $femaleCount = $totalProfessors - $maleCount;
-        $facultyName = $faculty?->name_km ?? 'មិនកំណត់';
-        $departmentName = $department?->name_km ?? 'មិនកំណត់';
+        $facultyName = $faculty?->name_km ?? __('មិនកំណត់');
+        $departmentName = $department?->name_km ?? __('មិនកំណត់');
         $currentAcademicYear = \App\Models\AcademicYear::getCurrent();
         $academicYearName = $currentAcademicYear?->name ?? '';
         $currentYear = \Carbon\Carbon::now()->year + 543;
@@ -93,44 +93,44 @@
             <img src="{{ asset('assets/image/nmu_Logo.png') }}" alt="NMU Logo">
         </div>
         <div class="text header-kh">
-            <p class="line1">ព្រះរាជាណាចក្រកម្ពុជា</p>
-            <p class="line2">ជាតិ សាសនា ព្រះមហាក្សត្រ</p>
+            <p class="line1">{{ __('ព្រះរាជាណាចក្រកម្ពុជា') }}</p>
+            <p class="line2">{{ __('ជាតិ សាសនា ព្រះមហាក្សត្រ') }}</p>
             <p class="line-motto"><img src="{{ asset('assets/image/2.png') }}" alt="motto" style="height:18px;"></p>
             @if($academicYearName)
-                <p class="line3">ឆ្នាំសិក្សា {{ $academicYearName }}</p>
+                <p class="line3">{{ __('ឆ្នាំសិក្សា') }} {{ $academicYearName }}</p>
             @endif
-            <p class="line4">សាកលវិទ្យាល័យជាតិមានជ័យ</p>
+            <p class="line4">{{ __('សាកលវិទ្យាល័យជាតិមានជ័យ') }}</p>
             <p class="line5">{{ $facultyName }}</p>
-            <p class="line6">បញ្ជីឈ្មោះសាស្ត្រាចារ្យ</p>
-            <p class="line7">ចំនួន {{ $totalProfessors }} នាក់</p>
+            <p class="line6">{{ __('បញ្ជីឈ្មោះសាស្ត្រាចារ្យ') }}</p>
+            <p class="line7">{{ __('ចំនួន') }} {{ $totalProfessors }} {{ __('នាក់') }}</p>
         </div>
     </div>
 
     <div class="info-row">
-        <span>មហវិទ្យាល័យ៖ <strong>{{ $facultyName }}</strong></span>
-        <span>ដេប៉ាតឺម៉ង់៖ <strong>{{ $departmentName }}</strong></span>
-        <span>សរុប៖ <strong>{{ $totalProfessors }}</strong> នាក់ (ប្រុស <strong>{{ $maleCount }}</strong> នាក់, ស្រី <strong>{{ $femaleCount }}</strong> នាក់)</span>
+        <span>{{ __('មហាវិទ្យាល័យ៖') }} <strong>{{ $facultyName }}</strong></span>
+        <span>{{ __('ដេប៉ាតឺម៉ង់៖') }} <strong>{{ $departmentName }}</strong></span>
+        <span>{{ __('សរុប៖') }} <strong>{{ $totalProfessors }}</strong> {{ __('នាក់') }} ({{ __('ប្រុស') }} <strong>{{ $maleCount }}</strong> {{ __('នាក់') }}, {{ __('ស្រី') }} <strong>{{ $femaleCount }}</strong> {{ __('នាក់') }})</span>
     </div>
 
     <table>
         <thead>
             <tr>
-                <th class="col-stt">ល.រ</th>
-                <th class="col-id">អត្តសញ្ញាណ</th>
-                <th class="col-name-kh">គោត្តនាម និងនាម</th>
-                <th class="col-name-en">ឈ្មោះអង់គ្លេស</th>
-                <th class="col-gender">ភេទ</th>
-                <th class="col-dob">ថ្ងៃខែឆ្នាំកំណើត</th>
-                <th class="col-dept text-left">ដេប៉ាតឺម៉ង់</th>
-                <th class="col-phone">ទូរស័ព្ទ</th>
-                <th class="col-pos text-left">តួនាទី</th>
+                <th class="col-stt">{{ __('ល.រ') }}</th>
+                <th class="col-id">{{ __('អត្តសញ្ញាណ') }}</th>
+                <th class="col-name-kh">{{ __('គោត្តនាម និងនាម') }}</th>
+                <th class="col-name-en">{{ __('ឈ្មោះអង់គ្លេស') }}</th>
+                <th class="col-gender">{{ __('ភេទ') }}</th>
+                <th class="col-dob">{{ __('ថ្ងៃខែឆ្នាំកំណើត') }}</th>
+                <th class="col-dept text-left">{{ __('ដេប៉ាតឺម៉ង់') }}</th>
+                <th class="col-phone">{{ __('ទូរស័ព្ទ') }}</th>
+                <th class="col-pos text-left">{{ __('តួនាទី') }}</th>
             </tr>
         </thead>
         <tbody>
             @foreach($professors as $index => $professor)
                 @php
                     $gender = $professor->professorProfile?->gender ?? $professor->profile?->gender ?? '';
-                    $genderText = $gender === 'male' ? 'ប' : ($gender === 'female' ? 'ស' : '');
+                    $genderText = $gender === 'male' ? __('ប') : ($gender === 'female' ? __('ស') : '');
                 @endphp
                 <tr>
                     <td class="col-stt">{{ $index + 1 }}</td>
@@ -149,13 +149,13 @@
 
     <div class="signature-section">
         <div class="signature-block">
-            <div class="date-line">ថ្ងៃទី ..... ខែ ..... ឆ្នាំ {{ $currentYear }}</div>
-            <div class="title">ហត្ថលេខារបស់អ្នករៀបចំ</div>
+            <div class="date-line">{{ __('ថ្ងៃទី') }} ..... {{ __('ខែ') }} ..... {{ __('ឆ្នាំ') }} {{ $currentYear }}</div>
+            <div class="title">{{ __('ហត្ថលេខារបស់អ្នករៀបចំ') }}</div>
             <div class="sign-line"></div>
         </div>
         <div class="signature-block">
-            <div class="date-line">ថ្ងៃទី ..... ខែ ..... ឆ្នាំ {{ $currentYear }}</div>
-            <div class="title">ហត្ថលេខារបស់នាយកសាលា</div>
+            <div class="date-line">{{ __('ថ្ងៃទី') }} ..... {{ __('ខែ') }} ..... {{ __('ឆ្នាំ') }} {{ $currentYear }}</div>
+            <div class="title">{{ __('ហត្ថលេខារបស់នាយកសាលា') }}</div>
             <div class="sign-line"></div>
         </div>
     </div>

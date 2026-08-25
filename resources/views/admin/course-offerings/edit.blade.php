@@ -346,7 +346,7 @@
             // ──────────────────────────────────────────────
             const addScheduleBtn = document.getElementById('add-schedule-btn');
             const schedulesContainer = document.getElementById('schedules-container');
-            const khmerDays = {'Monday': 'ច័ន្ទ', 'Tuesday': 'អង្គារ', 'Wednesday': 'ពុធ', 'Thursday': 'ព្រហស្បតិ៍', 'Friday': 'សុក្រ', 'Saturday': 'សៅរ៍', 'Sunday': 'អាទិត្យ'};
+            const khmerDays = {'Monday': '{{ __("ច័ន្ទ") }}', 'Tuesday': '{{ __("អង្គារ") }}', 'Wednesday': '{{ __("ពុធ") }}', 'Thursday': '{{ __("ព្រហស្បតិ៍") }}', 'Friday': '{{ __("សុក្រ") }}', 'Saturday': '{{ __("សៅរ៍") }}', 'Sunday': '{{ __("អាទិត្យ") }}'};
 
             // Load existing custom schedules
             const existingSchedules = {!! json_encode($courseOffering->schedules) !!};

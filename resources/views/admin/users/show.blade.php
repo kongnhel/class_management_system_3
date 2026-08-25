@@ -189,7 +189,7 @@
                                     </div>
                                     <div class="text-right">
                                         <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold {{ $enrollment->status === 'active' ? 'bg-green-100 text-green-700' : ($enrollment->status === 'graduated' ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-700') }}">
-                                            {{ $enrollment->status === 'active' ? 'កំពុងសិក្សា' : ($enrollment->status === 'graduated' ? 'បានបញ្ចប់' : 'បានផ្អាក') }}
+                                            {{ $enrollment->status === 'active' ? __('កំពុងសិក្សា') : ($enrollment->status === 'graduated' ? __('បានបញ្ចប់') : __('បានផ្អាក')) }}
                                         </span>
                                         @if($enrollment->graduation_date)
                                             <p class="text-xs text-gray-400 mt-1">{{ $enrollment->graduation_date->format('d M Y') }}</p>

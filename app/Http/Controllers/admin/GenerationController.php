@@ -26,7 +26,7 @@ class GenerationController extends Controller
         ]);
 
         return redirect()->route('admin.generations.index')
-            ->with('success', 'ជំនាន់ថ្មីបានបង្កើតដោយជោគជ័យ!');
+            ->with('success', __('ជំនាន់ថ្មីត្រូវបានបង្កើតដោយជោគជ័យ។'));
     }
 
     public function update(Request $request, Generation $generation)
@@ -34,7 +34,7 @@ class GenerationController extends Controller
         $studentCount = $generation->students()->count();
 
         if ($studentCount > 0) {
-            return back()->with('error', "មិនអាចកែប្រែបានទេ ព្រោះជំនាន់នេះមានសិស្សចំនួន {$studentCount} នាក់។");
+            return back()->with('error', __('មិនអាចកែប្រែបានទេ ព្រោះជំនាន់នេះមានសិស្សចំនួន :count នាក់។', ['count' => $studentCount]));
         }
 
         $request->validate([
@@ -46,7 +46,7 @@ class GenerationController extends Controller
         ]);
 
         return redirect()->route('admin.generations.index')
-            ->with('success', 'ជំនាន់បានកែប្រែដោយជោគជ័យ!');
+            ->with('success', __('ជំនាន់ត្រូវបានកែប្រែដោយជោគជ័យ។'));
     }
 
     public function destroy(Generation $generation)
@@ -54,12 +54,12 @@ class GenerationController extends Controller
         $studentCount = $generation->students()->count();
 
         if ($studentCount > 0) {
-            return back()->with('error', "មិនអាចលុបបានទេ ព្រោះជំនាន់នេះមានសិស្សចំនួន {$studentCount} នាក់។");
+            return back()->with('error', __('មិនអាចលុបបានទេ ព្រោះជំនាន់នេះមានសិស្សចំនួន :count នាក់។', ['count' => $studentCount]));
         }
 
         $generation->delete();
 
         return redirect()->route('admin.generations.index')
-            ->with('success', 'ជំនាន់បានលុបដោយជោគជ័យ!');
+            ->with('success', __('ជំនាន់ត្រូវបានលុបដោយជោគជ័យ។'));
     }
 }

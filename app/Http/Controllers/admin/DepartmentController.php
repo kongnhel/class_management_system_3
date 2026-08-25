@@ -46,7 +46,7 @@ class DepartmentController extends Controller
             $this->logCreated($department);
         } catch (\Exception $e) {}
 
-        return redirect()->route('admin.manage-departments')->with('success', 'ដេប៉ាតឺម៉ង់ត្រូវបានបង្កើតដោយជោគជ័យ!');
+        return redirect()->route('admin.manage-departments')->with('success', __('ដេប៉ាតឺម៉ង់ត្រូវបានបង្កើតដោយជោគជ័យ។'));
     }
 
     public function edit(Department $department)
@@ -74,7 +74,7 @@ class DepartmentController extends Controller
             $this->logUpdated($department, $oldAttributes);
         } catch (\Exception $e) {}
 
-        return redirect()->route('admin.manage-departments')->with('success', 'ដេប៉ាតឺម៉ង់ត្រូវបានធ្វើបច្ចុបន្បភាពដោយជោគជ័យ');
+        return redirect()->route('admin.manage-departments')->with('success', __('ដេប៉ាតឺម៉ង់ត្រូវបានកែប្រែដោយជោគជ័យ។'));
     }
 
     public function destroy(Department $department)
@@ -83,15 +83,15 @@ class DepartmentController extends Controller
         $deptName = $department->name_km;
 
         if (User::where('department_id', $department->id)->exists()) {
-            return redirect()->route('admin.manage-departments')->with('error', 'មិនអាចលុបដេប៉ាតឺម៉ង់នេះបានទេ ព្រោះមានអ្នកប្រើប្រាស់ភ្ជាប់នឹងដេប៉ាតឺម៉ង់នេះ។');
+            return redirect()->route('admin.manage-departments')->with('error', __('មិនអាចលុបដេប៉ាតឺម៉ង់នេះបានទេ ព្រោះមានអ្នកប្រើប្រាស់ភ្ជាប់នឹងដេប៉ាតឺម៉ង់នេះ។'));
         }
 
         if ($department->courses()->withTrashed()->exists()) {
-            return redirect()->route('admin.manage-departments')->with('error', 'មិនអាចលុបដេប៉ាតឺម៉ង់នេះបានទេ ព្រោះមានមុខវិជ្ជាភ្ជាប់នឹងដេប៉ាតឺម៉ង់នេះ។');
+            return redirect()->route('admin.manage-departments')->with('error', __('មិនអាចលុបដេប៉ាតឺម៉ង់នេះបានទេ ព្រោះមានមុខវិជ្ជាភ្ជាប់នឹងដេប៉ាតឺម៉ង់នេះ។'));
         }
 
         if ($department->programs()->exists()) {
-            return redirect()->route('admin.manage-departments')->with('error', 'មិនអាចលុបដេប៉ាតឺម៉ង់នេះបានទេ ព្រោះមានកម្មវិធីសិក្សាភ្ជាប់នឹងដេប៉ាតឺម៉ង់នេះ។');
+            return redirect()->route('admin.manage-departments')->with('error', __('មិនអាចលុបដេប៉ាតឺម៉ង់នេះបានទេ ព្រោះមានកម្មវិធីសិក្សាភ្ជាប់នឹងដេប៉ាតឺម៉ង់នេះ។'));
         }
 
         try {
@@ -114,13 +114,13 @@ class DepartmentController extends Controller
                 $this->logAction('delete', null, $oldAttributes, null, "Deleted department: {$deptName}");
             } catch (\Exception $e) {}
 
-            return redirect()->route('admin.manage-departments')->with('success', 'ដេប៉ាតឺម៉ង់ត្រូវបានលុបដោយជោគជ័យ។');
+            return redirect()->route('admin.manage-departments')->with('success', __('ដេប៉ាតឺម៉ង់ត្រូវបានលុបដោយជោគជ័យ។'));
 
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error deleting department: '.$e->getMessage());
 
-            return redirect()->route('admin.manage-departments')->with('error', 'មិនអាចលុបដេប៉ាតឺម៉ង់បានទេ');
+            return redirect()->route('admin.manage-departments')->with('error', __('មិនអាចលុបដេប៉ាតឺម៉ង់បានទេ'));
         }
     }
 

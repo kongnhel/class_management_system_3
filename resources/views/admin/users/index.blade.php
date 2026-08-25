@@ -448,7 +448,7 @@
                                                                 <h4 class="text-sm font-extrabold text-gray-700 uppercase tracking-wider">{{ $programName }}</h4>
                                                             </div>
                                                             <span class="bg-green-50 text-green-700 text-[10px] font-bold px-2 py-0.5 rounded-md border border-green-100">
-                                                                {{ $studentList->count() }} នាក់
+                                                                {{ $studentList->count() }} {{ __('នាក់') }}
                                                             </span>
                                                         </div>
 
@@ -486,7 +486,7 @@
                                                                                 <div class="text-sm font-bold text-gray-900 uppercase tracking-tighter edit-user-name">{{ $student->name }}</div>
                                                                                 <div class="text-[11px] text-gray-500 font-medium edit-user-fullname">{{ $student->studentProfile->full_name_km ?? 'N/A' }}</div>
                                                                             </td>
-                                                                            <td class="px-6 py-3 text-sm text-gray-600 font-medium edit-user-email">{{ $student->email ?? 'មិនទាន់បង្កើតគណនី' }}</td>
+                                                                            <td class="px-6 py-3 text-sm text-gray-600 font-medium edit-user-email">{{ $student->email ?? __('មិនទាន់បង្កើតគណនី') }}</td>
                                                                             <td class="px-6 py-3 text-center">
                                                                                 @if($student->computed_year_level)
                                                                                     <span class="inline-flex items-center justify-center min-w-[2.5rem] px-2.5 py-1 rounded-lg text-xs font-bold
@@ -590,7 +590,7 @@
                                         <button type="button" @click="showDeleteModal = false" class="px-5 py-2 text-sm font-bold text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition-all">{{ __('បោះបង់') }}</button>
                                         <button type="button" @click="executeDeleteUser()" :disabled="isDeleting" class="px-5 py-2 text-sm font-bold text-white bg-red-600 rounded-xl hover:bg-red-700 shadow-lg shadow-red-200 transition-all disabled:opacity-50">
                                             <span x-show="!isDeleting">{{ __('លុបចេញ') }}</span>
-                                            <span x-show="isDeleting"><i class="fas fa-spinner fa-spin mr-1"></i> កំពុងលុប...</span>
+                                            <span x-show="isDeleting"><i class="fas fa-spinner fa-spin mr-1"></i> {{ __('កំពុងលុប...') }}</span>
                                         </button>
                                     </div>
                                 </div>
@@ -610,7 +610,7 @@
                                     <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center">
                                         <i class="fas fa-user-edit"></i>
                                     </div>
-                                    <h3 class="text-lg font-bold text-gray-900">កែប្រែអ្នកប្រើប្រាស់</h3>
+                                    <h3 class="text-lg font-bold text-gray-900">{{ __('កែប្រែអ្នកប្រើប្រាស់') }}</h3>
                                 </div>
                                 <button @click="showEditModal = false" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
                                     <i class="fas fa-times text-gray-400"></i>
@@ -620,7 +620,7 @@
                             {{-- Loading --}}
                             <div x-show="editLoading" class="p-12 text-center">
                                 <i class="fas fa-spinner fa-spin text-2xl text-emerald-500"></i>
-                                <p class="text-gray-400 mt-2 text-sm">កំពុងទាញយកទិន្នន័យ...</p>
+                                <p class="text-gray-400 mt-2 text-sm">{{ __('កំពុងទាញយកទិន្នន័យ...') }}</p>
                             </div>
 
                             {{-- Form --}}
@@ -628,11 +628,11 @@
                                 {{-- Name + Role --}}
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
-                                        <label class="block text-xs font-bold text-gray-500 mb-1.5">ឈ្មោះអ្នកប្រើប្រាស់ <span class="text-red-500">*</span></label>
-                                        <input type="text" x-model="editForm.name" required placeholder="បញ្ចូលឈ្មោះអ្នកប្រើប្រាស់" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
+                                        <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('ឈ្មោះអ្នកប្រើប្រាស់') }} <span class="text-red-500">*</span></label>
+                                        <input type="text" x-model="editForm.name" required placeholder="{{ __('បញ្ចូលឈ្មោះអ្នកប្រើប្រាស់') }}" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-bold text-gray-500 mb-1.5">តួនាទី <span class="text-red-500">*</span></label>
+                                        <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('តួនាទី') }} <span class="text-red-500">*</span></label>
                                         <select x-model="editForm.role" required class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
                                             <option value="admin">Admin</option>
                                             <option value="professor">Professor</option>
@@ -643,39 +643,39 @@
 
                                 {{-- Email (non-student) --}}
                                 <div x-show="editForm.role !== 'student'">
-                                    <label class="block text-xs font-bold text-gray-500 mb-1.5">អ៊ីម៉ែល</label>
+                                    <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('អ៊ីម៉ែល') }}</label>
                                     <input type="email" x-model="editForm.email" placeholder="name@example.com" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
                                 </div>
 
                                 {{-- Password --}}
                                 <div x-show="editForm.role !== 'student'" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
-                                        <label class="block text-xs font-bold text-gray-500 mb-1.5">ពាក្យសម្ងាត់ថ្មី</label>
-                                        <input type="password" x-model="editForm.password" placeholder="ទុកឱ្យនៅទទេប្រសិនបើមិនប្តូរ" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
+                                        <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('ពាក្យសម្ងាត់ថ្មី') }}</label>
+                                        <input type="password" x-model="editForm.password" placeholder="{{ __('ទុកឱ្យនៅទទេប្រសិនបើមិនប្តូរ') }}" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-bold text-gray-500 mb-1.5">បញ្ជាក់ពាក្យសម្ងាត់</label>
-                                        <input type="password" x-model="editForm.password_confirmation" placeholder="បញ្ជាក់ពាក្យសម្ងាត់ម្ដងទៀត" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
+                                        <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('បញ្ជាក់ពាក្យសម្ងាត់') }}</label>
+                                        <input type="password" x-model="editForm.password_confirmation" placeholder="{{ __('បញ្ជាក់ពាក្យសម្ងាត់ម្ដងទៀត') }}" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
                                     </div>
                                 </div>
 
                                 {{-- Student fields --}}
                                 <div x-show="editForm.role === 'student'" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
-                                        <label class="block text-xs font-bold text-gray-500 mb-1.5">កម្មវិធីសិក្សា</label>
+                                        <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('កម្មវិធីសិក្សា') }}</label>
                                         <select x-model="editForm.program_id" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
-                                            <option value="">ជ្រើសរើស</option>
+                                            <option value="">{{ __('ជ្រើសរើស') }}</option>
                                             <template x-for="p in (editForm.programs || [])" :key="p.id">
                                                 <option :value="p.id" x-text="p.name"></option>
                                             </template>
                                         </select>
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-bold text-gray-500 mb-1.5">ជំនាន់</label>
+                                        <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('ជំនាន់') }}</label>
                                         <select x-model="editForm.generation" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
-                                            <option value="">ជ្រើសរើស</option>
+                                            <option value="">{{ __('ជ្រើសរើស') }}</option>
                                             <template x-for="g in (editForm.generations || [])" :key="g.name">
-                                                <option :value="g.name" x-text="'ជំនាន់ទី' + g.name"></option>
+                                                <option :value="g.name" x-text="'{{ __("ជំនាន់ទី") }}' + g.name"></option>
                                             </template>
                                         </select>
                                     </div>
@@ -684,18 +684,18 @@
                                 {{-- Professor fields --}}
                                 <div x-show="editForm.role === 'professor'" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
-                                        <label class="block text-xs font-bold text-gray-500 mb-1.5">មហាវិទ្យាល័យ</label>
+                                        <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('មហាវិទ្យាល័យ') }}</label>
                                         <select x-model="editForm.faculty_id" @change="filterEditDepartments($event.target.value)" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
-                                            <option value="">ជ្រើសរើស</option>
+                                            <option value="">{{ __('ជ្រើសរើស') }}</option>
                                             <template x-for="f in (editForm.faculties || [])" :key="f.id">
                                                 <option :value="f.id" x-text="f.name"></option>
                                             </template>
                                         </select>
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-bold text-gray-500 mb-1.5">ដេប៉ាតឺម៉ង់</label>
+                                        <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('ដេប៉ាតឺម៉ង់') }}</label>
                                         <select x-model="editForm.department_id" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
-                                            <option value="">ជ្រើសរើស</option>
+                                            <option value="">{{ __('ជ្រើសរើស') }}</option>
                                             <template x-for="d in editDepartments" :key="d.id">
                                                 <option :value="d.id" x-text="d.name"></option>
                                             </template>
@@ -705,41 +705,41 @@
 
                                 {{-- Profile Info --}}
                                 <div class="border-t border-gray-100 pt-5">
-                                    <h4 class="text-sm font-bold text-gray-700 mb-3"><i class="fas fa-id-card mr-1.5 text-orange-500"></i> ព័ត៌មានផ្ទាល់ខ្លួន</h4>
+                                    <h4 class="text-sm font-bold text-gray-700 mb-3"><i class="fas fa-id-card mr-1.5 text-orange-500"></i> {{ __('ព័ត៌មានផ្ទាល់ខ្លួន') }}</h4>
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div>
                                             <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('ឈ្មោះពេញ (ខ្មែរ)') }}</label>
-                                            <input type="text" x-model="editForm.full_name_km" placeholder="បញ្ចូលឈ្មោះពេញជាភាសាខ្មែរ" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
+                                            <input type="text" x-model="editForm.full_name_km" placeholder="{{ __('បញ្ចូលឈ្មោះពេញជាភាសាខ្មែរ') }}" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
                                         </div>
                                         <div>
-                                            <label class="block text-xs font-bold text-gray-500 mb-1.5">ឈ្មោះពេញ (អង់គ្លេស)</label>
+                                            <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('ឈ្មោះពេញ (អង់គ្លេស)') }}</label>
                                             <input type="text" x-model="editForm.full_name_en" placeholder="Enter full name in English" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
                                         </div>
                                         <div>
-                                            <label class="block text-xs font-bold text-gray-500 mb-1.5">ភេទ</label>
+                                            <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('ភេទ') }}</label>
                                             <select x-model="editForm.gender" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
-                                                <option value="">ជ្រើសរើស</option>
-                                                <option value="male">ប្រុស</option>
-                                                <option value="female">ស្រី</option>
-                                                <option value="other">ផ្សេងទៀត</option>
+                                                <option value="">{{ __('ជ្រើសរើស') }}</option>
+                                                <option value="male">{{ __('ប្រុស') }}</option>
+                                                <option value="female">{{ __('ស្រី') }}</option>
+                                                <option value="other">{{ __('ផ្សេងទៀត') }}</option>
                                             </select>
                                         </div>
                                         <div>
-                                            <label class="block text-xs font-bold text-gray-500 mb-1.5">លេខទូរស័ព្ទ</label>
+                                            <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('លេខទូរស័ព្ទ') }}</label>
                                             <input type="text" x-model="editForm.phone_number" placeholder="012 345 678" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
                                         </div>
                                         <div>
-                                            <label class="block text-xs font-bold text-gray-500 mb-1.5">អាសយដ្ឋាន</label>
-                                            <input type="text" x-model="editForm.address" placeholder="បញ្ចូលអាសយដ្ឋាន" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
+                                            <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('អាសយដ្ឋាន') }}</label>
+                                            <input type="text" x-model="editForm.address" placeholder="{{ __('បញ្ចូលអាសយដ្ឋាន') }}" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
                                         </div>
                                         <div>
-                                            <label class="block text-xs font-bold text-gray-500 mb-1.5">ថ្ងៃខែឆ្នាំកំណើត</label>
+                                            <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('ថ្ងៃខែឆ្នាំកំណើត') }}</label>
                                             <input type="date" x-model="editForm.date_of_birth" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
                                         </div>
                                     </div>
 
                                     <div class="mt-4">
-                                        <label class="block text-xs font-bold text-gray-500 mb-2">រូបភាពប្រវត្តិរូប</label>
+                                        <label class="block text-xs font-bold text-gray-500 mb-2">{{ __('រូបភាពប្រវត្តិរូប') }}</label>
                                         <div class="flex items-center gap-5">
                                             <div class="relative group">
                                                 <div id="editAvatarPreview" class="w-20 h-20 rounded-2xl bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden">
@@ -752,11 +752,11 @@
                                             <div class="flex-1">
                                                 <input type="file" id="editProfilePicture" accept="image/jpeg,image/png,image/jpg" class="hidden" onchange="previewEditAvatar(this)">
                                                 <button type="button" onclick="document.getElementById('editProfilePicture').click()" class="px-4 py-2 text-xs font-bold text-emerald-700 bg-emerald-50 rounded-xl hover:bg-emerald-100 transition-all">
-                                                    <i class="fas fa-upload mr-1.5"></i>ជ្រើសរើសរូបភាព
+                                                    <i class="fas fa-upload mr-1.5"></i>{{ __('ជ្រើសរើសរូបភាព') }}
                                                 </button>
-                                                <p class="text-[11px] text-gray-400 mt-1.5">JPEG, PNG ទំហំអតិបរមា 2MB</p>
+                                                <p class="text-[11px] text-gray-400 mt-1.5">{{ __('JPEG, PNG ទំហំអតិបរមា 2MB') }}</p>
                                                 <button type="button" id="editRemovePicBtn" onclick="removeEditAvatar()" class="hidden mt-1.5 px-3 py-1 text-[11px] font-bold text-red-500 hover:text-red-700 transition-colors">
-                                                    <i class="fas fa-times mr-1"></i>លុបរូបភាព
+                                                    <i class="fas fa-times mr-1"></i>{{ __('លុបរូបភាព') }}
                                                 </button>
                                             </div>
                                         </div>
@@ -765,10 +765,10 @@
 
                                 {{-- Actions --}}
                                 <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
-                                    <button type="button" @click="showEditModal = false" class="px-5 py-2.5 text-sm font-bold text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition-all">បោះបង់</button>
+                                    <button type="button" @click="showEditModal = false" class="px-5 py-2.5 text-sm font-bold text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition-all">{{ __('បោះបង់') }}</button>
                                     <button type="submit" :disabled="editSaving" class="px-6 py-2.5 text-sm font-bold text-white bg-emerald-600 rounded-xl hover:bg-emerald-700 shadow-lg shadow-emerald-200 transition-all disabled:opacity-50">
-                                        <span x-show="!editSaving"><i class="fas fa-save mr-1.5"></i> រក្សាទុក</span>
-                                        <span x-show="editSaving"><i class="fas fa-spinner fa-spin mr-1.5"></i> កំពុងរក្សាទុក...</span>
+                                        <span x-show="!editSaving"><i class="fas fa-save mr-1.5"></i> {{ __('រក្សាទុក') }}</span>
+                                        <span x-show="editSaving"><i class="fas fa-spinner fa-spin mr-1.5"></i> {{ __('កំពុងរក្សាទុក...') }}</span>
                                     </button>
                                 </div>
                             </form>
@@ -881,7 +881,7 @@
         .catch(function() {
             c.editLoading = false;
             c.showEditModal = false;
-            window.showToast && window.showToast('មានបញ្ហាក្នុងការទាញយកទិន្នន័យ។', 'error');
+            window.showToast && window.showToast('{{ __("មានបញ្ហាក្នុងការទាញយកទិន្នន័យ។") }}', 'error');
         });
     }
 
@@ -968,22 +968,22 @@
                     var emailEl = row.querySelector('.edit-user-email');
                     var fullnameEl = row.querySelector('.edit-user-fullname');
                     if (nameEl) nameEl.textContent = data.user.name;
-                    if (emailEl) emailEl.textContent = data.user.email || 'មិនទាន់បង្កើតគណនី';
+                    if (emailEl) emailEl.textContent = data.user.email || '{{ __("មិនទាន់បង្កើតគណនី") }}';
                     if (fullnameEl) fullnameEl.textContent = data.user.full_name_km || data.user.full_name_en || 'N/A';
                     row.style.transition = 'all 0.3s ease';
                     row.style.backgroundColor = '#d1fae5';
                     setTimeout(function() { row.style.backgroundColor = ''; }, 1500);
                 }
-                window.showToast && window.showToast(data.message || 'បានធ្វើបច្ចុប្បន្នភាព។', 'success');
+                window.showToast && window.showToast(data.message || '{{ __("បានកែប្រែដោយជោគជ័យ។") }}', 'success');
             } else {
-                var msg = data.message || 'មានបញ្ហា។';
+                var msg = data.message || '{{ __("មានបញ្ហា។") }}';
                 if (data.errors) { msg += '\n' + Object.values(data.errors).flat().join('\n'); }
                 window.showToast && window.showToast(msg, 'error');
             }
         })
         .catch(function() {
             c.editSaving = false;
-            window.showToast && window.showToast('មានបញ្ហាក្នុងការរក្សាទុក។', 'error');
+            window.showToast && window.showToast('{{ __("មានបញ្ហាក្នុងការរក្សាទុក។") }}', 'error');
         });
     }
     </script>
@@ -1021,9 +1021,9 @@
                     el.style.transform = 'translateX(40px)';
                     setTimeout(function() { el.remove(); }, 400);
                 });
-                window.showToast && window.showToast(data.message || 'អ្នកប្រើប្រាស់ត្រូវបានលុបដោយជោគជ័យ។', 'success');
+                window.showToast && window.showToast(data.message || '{{ __("អ្នកប្រើប្រាស់ត្រូវបានលុបដោយជោគជ័យ។") }}', 'success');
             } else {
-                window.showToast && window.showToast(data.message || 'មានបញ្ហា។', 'error');
+                window.showToast && window.showToast(data.message || '{{ __("មានបញ្ហា។") }}', 'error');
             }
         })
         .catch(function() {
@@ -1240,7 +1240,7 @@
             var gen = genEl ? genEl.value : '';
             var prog = progEl ? progEl.value : '';
             if (!gen || !prog) {
-                window.showToast && window.showToast('សូមជ្រើសរើសជំនាន់ និងកម្មវិធីសិក្សាមុនពេលបោះពុម្ព។', 'warning');
+                window.showToast && window.showToast('{{ __("សូមជ្រើសរើសជំនាន់ និងកម្មវិធីសិក្សាមុនពេលបោះពុម្ព។") }}', 'warning');
                 return;
             }
             window.open('{{ route('admin.users.print-students') }}?generation=' + gen + '&program_id=' + prog, '_blank');
@@ -1250,12 +1250,12 @@
             var fac = facEl ? facEl.value : '';
             var dept = deptEl ? deptEl.value : '';
             if (!fac && !dept) {
-                window.showToast && window.showToast('សូមជ្រើសរើសមហវិទ្យាល័យ ឬដេប៉ាតឺម៉ង់មុនពេលបោះពុម្ព។', 'warning');
+                window.showToast && window.showToast('{{ __("សូមជ្រើសរើសមហាវិទ្យាល័យ ឬដេប៉ាតឺម៉ង់មុនពេលបោះពុម្ព។") }}', 'warning');
                 return;
             }
             window.open('{{ route('admin.users.print-professors') }}?faculty_id=' + fac + '&department_id=' + dept, '_blank');
         } else {
-            window.showToast && window.showToast('មុខងារនេះគាំទ្រតែសម្រាប់និស្សិត និងសាស្ត្រាចារ្យប៉ុណ្ណោះ។', 'warning');
+            window.showToast && window.showToast('{{ __("មុខងារនេះគាំទ្រតែសម្រាប់និស្សិត និងសាស្ត្រាចារ្យប៉ុណ្ណោះ។") }}', 'warning');
         }
     }
     </script>

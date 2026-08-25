@@ -57,13 +57,13 @@ class RoomController extends Controller
             if ($url) {
                 $data['wifi_qr_code'] = $url;
             } else {
-                return back()->withErrors(['wifi_qr_code' => 'ការ Upload ទៅ ImageKit បរាជ័យ។']);
+                return back()->withErrors(['wifi_qr_code' => __('ការ Upload ទៅ ImageKit បរាជ័យ។')]);
             }
         }
 
         Room::create($data);
 
-        return redirect()->route('admin.rooms.index')->with('success', 'បន្ទប់ត្រូវបានបង្កើតដោយជោគជ័យ!');
+        return redirect()->route('admin.rooms.index')->with('success', __('បន្ទប់ត្រូវបានបង្កើតដោយជោគជ័យ។'));
     }
 
     public function edit(Room $room)
@@ -88,13 +88,13 @@ class RoomController extends Controller
             if ($url) {
                 $data['wifi_qr_code'] = $url;
             } else {
-                return back()->withErrors(['wifi_qr_code' => 'ការ Upload ទៅ ImageKit បរាជ័យ។']);
+                return back()->withErrors(['wifi_qr_code' => __('ការ Upload ទៅ ImageKit បរាជ័យ។')]);
             }
         }
 
         $room->update($data);
 
-        return redirect()->route('admin.rooms.index')->with('success', 'បន្ទប់ត្រូវបានកែប្រែដោយជោគជ័យ!');
+        return redirect()->route('admin.rooms.index')->with('success', __('បន្ទប់ត្រូវបានកែប្រែដោយជោគជ័យ។'));
     }
 
     public function destroy(Room $room)
@@ -117,14 +117,14 @@ class RoomController extends Controller
                 ->implode(', ');
 
             return redirect()->route('admin.rooms.index')
-                ->with('error', 'មិនអាចលុបបន្ទប់នេះបានទេ! ព្រោះវាកំពុងត្រូវបានប្រើក្នុងកាលវិភាគសិក្សា៖ '
+                ->with('error', __('មិនអាចលុបបន្ទប់នេះបានទេ។ ព្រោះវាកំពុងត្រូវបានប្រើក្នុងកាលវិភាគសិក្សា៖ ')
                     .$courseNames
                     .($activeSchedules->count() > 3 ? ' ...' : '')
-                    .' (សរុប '.$activeSchedules->count().' ម៉ោងសិក្សា)');
+                    .' ('.__('សរុប').' '.$activeSchedules->count().' '.__('ម៉ោងសិក្សា').')');
         }
 
         $room->delete();
 
-        return redirect()->route('admin.rooms.index')->with('success', 'បន្ទប់ត្រូវបានលុបដោយជោគជ័យ!');
+        return redirect()->route('admin.rooms.index')->with('success', __('បន្ទប់ត្រូវបានលុបដោយជោគជ័យ។'));
     }
 }

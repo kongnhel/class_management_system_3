@@ -15,8 +15,8 @@
                         </svg>
                     </div>
                     <div>
-                        <h1 class="text-3xl font-bold text-gray-900">កែប្រែបន្ទប់</h1>
-                        <p class="text-gray-500 text-sm mt-0.5">បំពេញព័ត៌មានខាងក្រោមដើម្បីធ្វើបច្ចុប្បន្នភាពបន្ទប់</p>
+                        <h1 class="text-3xl font-bold text-gray-900">{{ __('កែប្រែបន្ទប់') }}</h1>
+                        <p class="text-gray-500 text-sm mt-0.5">{{ __('បំពេញព័ត៌មានខាងក្រោមដើម្បីកែប្រែបន្ទប់') }}</p>
                     </div>
                 </div>
             </div>
@@ -31,7 +31,7 @@
                             </svg>
                         </div>
                         <div>
-                            <p class="font-bold text-red-800 text-sm">មានបញ្ហា!</p>
+                            <p class="font-bold text-red-800 text-sm">{{ __('មានបញ្ហា!') }}</p>
                             <ul class="mt-1 text-sm text-red-600 list-disc list-inside space-y-0.5">
                                 @foreach ($errors->all() as $error)
                                     <li>{{ $error }}</li>
@@ -52,7 +52,7 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                             {{-- លេខបន្ទប់ --}}
                             <div>
-                                <label for="room_number" class="block text-sm font-bold text-gray-700 mb-1.5">លេខបន្ទប់ <span class="text-red-500">*</span></label>
+                                <label for="room_number" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('លេខបន្ទប់') }} <span class="text-red-500">*</span></label>
                                 <input type="text" name="room_number" id="room_number" value="{{ old('room_number', $room->room_number) }}" required
                                        class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm transition">
                                 @error('room_number')
@@ -62,17 +62,17 @@
 
                             {{-- សមត្ថភាពផ្ទុក --}}
                             <div>
-                                <label for="capacity" class="block text-sm font-bold text-gray-700 mb-1.5">សមត្ថភាពផ្ទុក <span class="text-red-500">*</span></label>
+                                <label for="capacity" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('សមត្ថភាពផ្ទុក') }} <span class="text-red-500">*</span></label>
                                 <input type="number" name="capacity" id="capacity" value="{{ old('capacity', $room->capacity) }}" required min="1"
                                        class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm transition">
                                 @error('capacity')
-                                    <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
+                                <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
                                 @enderror
                             </div>
 
                             {{-- ទីតាំងបន្ទប់ --}}
                             <div class="sm:col-span-2">
-                                <label for="location_of_room" class="block text-sm font-bold text-gray-700 mb-1.5">ទីតាំងបន្ទប់</label>
+                                <label for="location_of_room" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ទីតាំងបន្ទប់') }}</label>
                                 <input type="text" name="location_of_room" id="location_of_room" value="{{ old('location_of_room', $room->location_of_room) }}"
                                        class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm transition">
                                 @error('location_of_room')
@@ -82,13 +82,13 @@
 
                             {{-- ប្រភេទបន្ទប់ --}}
                             <div class="sm:col-span-2">
-                                <label for="type_of_room" class="block text-sm font-bold text-gray-700 mb-1.5">ប្រភេទបន្ទប់</label>
+                                <label for="type_of_room" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ប្រភេទបន្ទប់') }}</label>
                                 <select name="type_of_room" id="type_of_room"
                                         class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm transition bg-white">
-                                    <option value="">ជ្រើសរើសប្រភេទបន្ទប់</option>
+                                    <option value="">{{ __('ជ្រើសរើសប្រភេទបន្ទប់') }}</option>
                                     @php $types = ['បន្ទប់រៀនធម្មតា', 'បន្ទប់ពិសោធន៍', 'បន្ទប់កុំព្យូទ័រ', 'បន្ទប់សម្ភាសន៍', 'សាលប្រជុំ', 'ផ្សេងទៀត']; @endphp
                                     @foreach($types as $type)
-                                        <option value="{{ $type }}" {{ old('type_of_room', $room->type_of_room) == $type ? 'selected' : '' }}>{{ $type }}</option>
+                                        <option value="{{ $type }}" {{ old('type_of_room', $room->type_of_room) == $type ? 'selected' : '' }}>{{ __($type) }}</option>
                                     @endforeach
                                 </select>
                                 @error('type_of_room')
@@ -99,7 +99,7 @@
 
                         {{-- WiFi QR Code --}}
                         <div x-data="{ imagePreview: null }">
-                            <label class="block text-sm font-bold text-gray-700 mb-1.5">រូបភាព WiFi QR Code</label>
+                            <label class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('រូបភាព WiFi QR Code') }}</label>
                             <div class="flex flex-col sm:flex-row items-start gap-4 p-4 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50">
                                 <div class="relative w-36 h-36 flex-shrink-0">
                                     <template x-if="imagePreview">
@@ -113,18 +113,18 @@
                                                 <svg class="w-10 h-10 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                                 </svg>
-                                                <span class="text-xs">មិនមានរូបភាព</span>
+                                                <span class="text-xs">{{ __('មិនមានរូបភាព') }}</span>
                                             </div>
                                         @endif
                                     </template>
                                 </div>
                                 <div class="flex-1">
-                                    <p class="text-sm text-gray-600 mb-3">ជ្រើសរើសរូបភាពថ្មីដើម្បីជំនួសរូបភាពចាស់</p>
+                                    <p class="text-sm text-gray-600 mb-3">{{ __('ជ្រើសរើសរូបភាពថ្មីដើម្បីជំនួសរូបភាពចាស់') }}</p>
                                     <label for="wifi_qr_code" class="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl font-bold text-sm text-gray-700 hover:bg-gray-50 transition shadow-sm">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
                                         </svg>
-                                        ប្តូររូបភាព
+                                        {{ __('ប្តូររូបភាព') }}
                                         <input id="wifi_qr_code" name="wifi_qr_code" type="file" class="sr-only" accept="image/*"
                                                @change="const file = $event.target.files[0]; if (file) { const reader = new FileReader(); reader.onload = (e) => { imagePreview = e.target.result; }; reader.readAsDataURL(file); }">
                                     </label>
@@ -139,11 +139,11 @@
                         <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
                             <a href="{{ route('admin.rooms.index') }}"
                                class="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl transition text-sm">
-                                បោះបង់
+                                {{ __('បោះបង់') }}
                             </a>
                             <button type="submit"
                                     class="px-6 py-2.5 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl transition shadow-lg shadow-green-200 hover:shadow-xl hover:-translate-y-0.5 text-sm">
-                                រក្សាទុកការផ្លាស់ប្តូរ
+                                {{ __('រក្សាទុកការផ្លាស់ប្តូរ') }}
                             </button>
                         </div>
                     </form>

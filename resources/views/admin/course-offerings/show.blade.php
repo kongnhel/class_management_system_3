@@ -22,7 +22,7 @@
                                     <h2 class="text-3xl font-bold tracking-tight">{{ $courseOffering->course->title_km ?? $courseOffering->course->title_en }}</h2>
                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold {{ $isActive ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-red-500/20 text-red-300 border border-red-500/30' }}">
                                         <span class="w-1.5 h-1.5 rounded-full {{ $isActive ? 'bg-emerald-400' : 'bg-red-400' }}"></span>
-                                        {{ $isActive ? 'សកម្ម' : 'ផុតកំណត់' }}
+                                        {{ $isActive ? __('សកម្ម') : __('ផុតកំណត់') }}
                                     </span>
                                 </div>
                                 <p class="text-slate-400 text-sm">{{ $courseOffering->semester }} / {{ $courseOffering->academic_year }}</p>
@@ -61,7 +61,7 @@
                             <i class="fas fa-user-tie text-emerald-500"></i>
                         </div>
                         <div>
-                            <p class="text-sm font-bold text-gray-900 truncate max-w-[120px]">{{ $courseOffering->lecturer->name ?? 'មិនទាន់កំណត់' }}</p>
+                            <p class="text-sm font-bold text-gray-900 truncate max-w-[120px]">{{ $courseOffering->lecturer->name ?? __('មិនទាន់កំណត់') }}</p>
                             <p class="text-xs text-gray-500">{{ __('សាស្ត្រាចារ្យ') }}</p>
                         </div>
                     </div>
@@ -117,7 +117,7 @@
                             </div>
                             <div class="bg-gray-50 rounded-xl p-4">
                                 <label class="text-xs font-bold text-gray-500 uppercase tracking-wide">{{ __('សមត្ថភាព') }}</label>
-                                <p class="text-gray-900 font-semibold mt-1">{{ $courseOffering->capacity }} សិស្ស</p>
+                                <p class="text-gray-900 font-semibold mt-1">{{ $courseOffering->capacity }} {{ __('សិស្ស') }}</p>
                             </div>
                             <div class="bg-gray-50 rounded-xl p-4">
                                 <label class="text-xs font-bold text-gray-500 uppercase tracking-wide">{{ __('កាលបរិច្ឆេទចាប់ផ្តើម') }}</label>
@@ -139,7 +139,7 @@
                                 </div>
                                 {{ __('បញ្ជីសិស្ស') }}
                             </h3>
-                            <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-emerald-50 text-emerald-700">{{ $enrollmentCount }} នាក់</span>
+                            <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-emerald-50 text-emerald-700">{{ $enrollmentCount }} {{ __('នាក់') }}</span>
                         </div>
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200">
@@ -166,7 +166,7 @@
                                         <td class="px-4 py-3 text-sm text-gray-500">{{ \Carbon\Carbon::parse($enrollment->enrollment_date)->format('d/m/Y') }}</td>
                                         <td class="px-4 py-3">
                                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs font-bold {{ $enrollment->status === 'enrolled' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-gray-100 text-gray-600 border border-gray-200' }}">
-                                                {{ $enrollment->status === 'enrolled' ? 'ចុះឈ្មោះ' : $enrollment->status }}
+                                                {{ $enrollment->status === 'enrolled' ? __('ចុះឈ្មោះ') : $enrollment->status }}
                                             </span>
                                         </td>
                                     </tr>
@@ -198,7 +198,7 @@
                                 $totalRecords = $attendanceRecords->flatten()->count();
                                 $totalDates = $attendanceRecords->count();
                             @endphp
-                            <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-blue-50 text-blue-700">{{ $totalDates }} ថ្ងៃ | {{ $totalRecords }} កំណត់ត្រា</span>
+                            <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-blue-50 text-blue-700">{{ $totalDates }} {{ __('ថ្ងៃ') }} | {{ $totalRecords }} {{ __('កំណត់ត្រា') }}</span>
                         </div>
 
                         @if($attendanceRecords->isEmpty())
@@ -272,9 +272,9 @@
                                                                         'absent' => 'bg-rose-50 text-rose-700 border-rose-200',
                                                                     ];
                                                                     $statusLabels = [
-                                                                        'present' => 'វត្តមាន',
-                                                                        'permission' => 'ច្បាប់',
-                                                                        'absent' => 'អវត្តមាន',
+                                                                        'present' => __('វត្តមាន'),
+                                                                        'permission' => __('ច្បាប់'),
+                                                                        'absent' => __('អវត្តមាន'),
                                                                     ];
                                                                 @endphp
                                                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs font-bold border {{ $statusColors[$record->status] ?? 'bg-gray-100 text-gray-600 border-gray-200' }}">
@@ -306,7 +306,7 @@
                         <div class="space-y-3">
                             <div class="bg-gray-50 rounded-xl p-4">
                                 <label class="text-xs font-bold text-gray-500 uppercase tracking-wide">{{ __('ឈ្មោះ') }}</label>
-                                <p class="text-gray-900 font-semibold mt-1">{{ $courseOffering->lecturer->name ?? 'មិនទាន់កំណត់' }}</p>
+                                <p class="text-gray-900 font-semibold mt-1">{{ $courseOffering->lecturer->name ?? __('មិនទាន់កំណត់') }}</p>
                             </div>
                             @if($courseOffering->lecturer->profile)
                             <div class="bg-gray-50 rounded-xl p-4">

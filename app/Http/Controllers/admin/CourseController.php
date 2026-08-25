@@ -47,10 +47,10 @@ class CourseController extends Controller
 
         $coursesGrouped = $flattenedCourses->groupBy([
             function ($item) {
-                return $item->assigned_program_name ?? 'មិនទាន់មានកម្មវិធីសិក្សា';
+                return $item->assigned_program_name ?? __('មិនទាន់មានកម្មវិធីសិក្សា');
             },
             function ($item) {
-                return $item->generation ? 'ជំនាន់ទី '.$item->generation : 'មិនទាន់កំណត់ជំនាន់';
+                return $item->generation ? __('ជំនាន់ទី').' '.$item->generation : __('មិនទាន់កំណត់ជំនាន់');
             },
         ]);
 
@@ -89,7 +89,7 @@ class CourseController extends Controller
         $course->programs()->sync($request->program_id);
 
         return redirect()->route('admin.manage-courses')
-            ->with('success', 'មុខវិជ្ជាត្រូវបានបង្កើតដោយជោគជ័យ!');
+            ->with('success', __('មុខវិជ្ជាត្រូវបានបង្កើតដោយជោគជ័យ។'));
     }
 
     public function show(Course $course)
@@ -136,13 +136,13 @@ class CourseController extends Controller
         $course->programs()->sync($request->program_ids);
 
         return redirect()->route('admin.manage-courses')
-            ->with('success', 'មុខវិជ្ជាត្រូវបានធ្វើបច្ចុប្បន្នភាពដោយជោគជ័យ');
+            ->with('success', __('មុខវិជ្ជាត្រូវបានកែប្រែដោយជោគជ័យ។'));
     }
 
     public function destroy(Course $course)
     {
         $course->delete();
 
-        return redirect()->route('admin.manage-courses')->with('success', 'មុខវិជ្ជាត្រូវបានលុបដោយជោគជ័យ');
+        return redirect()->route('admin.manage-courses')->with('success', __('មុខវិជ្ជាត្រូវបានលុបដោយជោគជ័យ។'));
     }
 }

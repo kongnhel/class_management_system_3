@@ -15,8 +15,8 @@
                         </svg>
                     </div>
                     <div>
-                        <h1 class="text-3xl font-bold text-gray-900">បង្កើតបន្ទប់ថ្មី</h1>
-                        <p class="text-gray-500 text-sm mt-0.5">បំពេញព័ត៌មានខាងក្រោមដើម្បីបង្កើតបន្ទប់</p>
+                        <h1 class="text-3xl font-bold text-gray-900">{{ __('បង្កើតបន្ទប់ថ្មី') }}</h1>
+                        <p class="text-gray-500 text-sm mt-0.5">{{ __('បំពេញព័ត៌មានខាងក្រោមដើម្បីបង្កើតបន្ទប់') }}</p>
                     </div>
                 </div>
             </div>
@@ -31,7 +31,7 @@
                             </svg>
                         </div>
                         <div>
-                            <p class="font-bold text-red-800 text-sm">មានបញ្ហា!</p>
+                            <p class="font-bold text-red-800 text-sm">{{ __('មានបញ្ហា!') }}</p>
                             <ul class="mt-1 text-sm text-red-600 list-disc list-inside space-y-0.5">
                                 @foreach ($errors->all() as $error)
                                     <li>{{ $error }}</li>
@@ -51,47 +51,47 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                             {{-- លេខបន្ទប់ --}}
                             <div>
-                                <label for="room_number" class="block text-sm font-bold text-gray-700 mb-1.5">លេខបន្ទប់ <span class="text-red-500">*</span></label>
+                                <label for="room_number" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('លេខបន្ទប់') }} <span class="text-red-500">*</span></label>
                                 <input type="text" name="room_number" id="room_number" value="{{ old('room_number') }}" required
                                        class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm transition"
-                                       placeholder="ឧទាហរណ៍: B-101">
+                                       placeholder="{{ __('ឧទាហរណ៍: B-101') }}">
                             </div>
 
                             {{-- សមត្ថភាពផ្ទុក --}}
                             <div>
-                                <label for="capacity" class="block text-sm font-bold text-gray-700 mb-1.5">សមត្ថភាពផ្ទុក <span class="text-red-500">*</span></label>
+                                <label for="capacity" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('សមត្ថភាពផ្ទុក') }} <span class="text-red-500">*</span></label>
                                 <input type="number" name="capacity" id="capacity" value="{{ old('capacity') }}" required min="1"
                                        class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm transition"
-                                       placeholder="ឧទាហរណ៍: 50">
+                                       placeholder="{{ __('ឧទាហរណ៍: 50') }}">
                             </div>
 
                             {{-- ទីតាំងបន្ទប់ --}}
                             <div class="sm:col-span-2">
-                                <label for="location_of_room" class="block text-sm font-bold text-gray-700 mb-1.5">ទីតាំងបន្ទប់</label>
+                                <label for="location_of_room" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ទីតាំងបន្ទប់') }}</label>
                                 <input type="text" name="location_of_room" id="location_of_room" value="{{ old('location_of_room') }}"
                                        class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm transition"
-                                       placeholder="ឧទាហរណ៍: អគារ B ជាន់ទី១">
+                                       placeholder="{{ __('ឧទាហរណ៍: អគារ B ជាន់ទី១') }}">
                             </div>
 
                             {{-- ប្រភេទបន្ទប់ --}}
                             <div class="sm:col-span-2">
-                                <label for="type_of_room" class="block text-sm font-bold text-gray-700 mb-1.5">ប្រភេទបន្ទប់</label>
+                                <label for="type_of_room" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ប្រភេទបន្ទប់') }}</label>
                                 <select name="type_of_room" id="type_of_room"
                                         class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm transition bg-white">
-                                    <option value="">ជ្រើសរើសប្រភេទបន្ទប់</option>
-                                    <option value="បន្ទប់រៀនធម្មតា" {{ old('type_of_room') == 'បន្ទប់រៀនធម្មតា' ? 'selected' : '' }}>បន្ទប់រៀនធម្មតា</option>
-                                    <option value="បន្ទប់ពិសោធន៍" {{ old('type_of_room') == 'បន្ទប់ពិសោធន៍' ? 'selected' : '' }}>បន្ទប់ពិសោធន៍</option>
-                                    <option value="បន្ទប់កុំព្យូទ័រ" {{ old('type_of_room') == 'បន្ទប់កុំព្យូទ័រ' ? 'selected' : '' }}>បន្ទប់កុំព្យូទ័រ</option>
-                                    <option value="បន្ទប់សម្ភាសន៍" {{ old('type_of_room') == 'បន្ទប់សម្ភាសន៍' ? 'selected' : '' }}>បន្ទប់សម្ភាសន៍</option>
-                                    <option value="សាលប្រជុំ" {{ old('type_of_room') == 'សាលប្រជុំ' ? 'selected' : '' }}>សាលប្រជុំ</option>
-                                    <option value="ផ្សេងទៀត" {{ old('type_of_room') == 'ផ្សេងទៀត' ? 'selected' : '' }}>ផ្សេងទៀត</option>
+                                    <option value="">{{ __('ជ្រើសរើសប្រភេទបន្ទប់') }}</option>
+                                    <option value="បន្ទប់រៀនធម្មតា" {{ old('type_of_room') == 'បន្ទប់រៀនធម្មតា' ? 'selected' : '' }}>{{ __('បន្ទប់រៀនធម្មតា') }}</option>
+                                    <option value="បន្ទប់ពិសោធន៍" {{ old('type_of_room') == 'បន្ទប់ពិសោធន៍' ? 'selected' : '' }}>{{ __('បន្ទប់ពិសោធន៍') }}</option>
+                                    <option value="បន្ទប់កុំព្យូទ័រ" {{ old('type_of_room') == 'បន្ទប់កុំព្យូទ័រ' ? 'selected' : '' }}>{{ __('បន្ទប់កុំព្យូទ័រ') }}</option>
+                                    <option value="បន្ទប់សម្ភាសន៍" {{ old('type_of_room') == 'បន្ទប់សម្ភាសន៍' ? 'selected' : '' }}>{{ __('បន្ទប់សម្ភាសន៍') }}</option>
+                                    <option value="សាលប្រជុំ" {{ old('type_of_room') == 'សាលប្រជុំ' ? 'selected' : '' }}>{{ __('សាលប្រជុំ') }}</option>
+                                    <option value="ផ្សេងទៀត" {{ old('type_of_room') == 'ផ្សេងទៀត' ? 'selected' : '' }}>{{ __('ផ្សេងទៀត') }}</option>
                                 </select>
                             </div>
                         </div>
 
                         {{-- WiFi QR Code Upload --}}
                         <div x-data="{ imagePreview: null }">
-                            <label class="block text-sm font-bold text-gray-700 mb-1.5">រូបភាព WiFi QR Code</label>
+                            <label class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('រូបភាព WiFi QR Code') }}</label>
                             <div class="relative flex justify-center px-6 pt-5 pb-6 border-2 border-dashed border-gray-200 rounded-xl hover:border-emerald-400 transition-colors bg-gray-50 cursor-pointer"
                                  @click="$refs.fileInput.click()">
                                 <div class="space-y-2 text-center">
@@ -108,10 +108,10 @@
                                                 </svg>
                                             </div>
                                             <p class="text-sm text-gray-600">
-                                                <span class="font-medium text-emerald-600 hover:text-emerald-500">បញ្ចូលរូបភាព</span>
-                                                ឬអូសទម្លាក់ទីនេះ
+                                                <span class="font-medium text-emerald-600 hover:text-emerald-500">{{ __('បញ្ចូលរូបភាព') }}</span>
+                                                {{ __('ឬអូសទម្លាក់ទីនេះ') }}
                                             </p>
-                                            <p class="text-xs text-gray-400 mt-1">PNG, JPG រហូតដល់ 2MB</p>
+                                            <p class="text-xs text-gray-400 mt-1">{{ __('PNG, JPG រហូតដល់ 2MB') }}</p>
                                         </div>
                                     </template>
                                 </div>
@@ -124,11 +124,11 @@
                         <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
                             <a href="{{ route('admin.rooms.index') }}"
                                class="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl transition text-sm">
-                                បោះបង់
+                                {{ __('បោះបង់') }}
                             </a>
                             <button type="submit"
                                     class="px-6 py-2.5 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl transition shadow-lg shadow-green-200 hover:shadow-xl hover:-translate-y-0.5 text-sm">
-                                បង្កើតបន្ទប់
+                                {{ __('បង្កើតបន្ទប់') }}
                             </button>
                         </div>
                     </form>
