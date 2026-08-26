@@ -445,10 +445,17 @@
                 if (!link || link.hasAttribute('wire:navigate') || link.hasAttribute('wire:click') || link.closest('[wire\\:id]')) return;
 
                 var url = new URL(link.href, window.location.href);
-                if (url.pathname !== window.location.pathname || !url.searchParams.has('page')) return;
+                var pageKey = null;
+                url.searchParams.forEach(function (value, key) {
+                    if (/^[a-zA-Z]*page$/i.test(key)) pageKey = key;
+                });
+                if (url.pathname !== window.location.pathname || pageKey === null) return;
+                if (!document.querySelector('[data-admin-results]')) return;
 
                 event.preventDefault();
-                fetchAdminResults(mergeUrlParams(url), null);
+                var merged = mergeUrlParams(url);
+                merged.searchParams.set(pageKey, url.searchParams.get(pageKey));
+                fetchAdminResults(merged, null);
             });
         })();
     </script>
