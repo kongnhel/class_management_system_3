@@ -25,16 +25,16 @@
                                 </div>
                                 <div>
                                     <h3 class="font-bold text-gray-800">{{ $courseData['course_name'] }}</h3>
-                                    <p class="text-xs text-gray-400">{{ $courseData['offering']->academic_year }} • ឆមាស {{ $courseData['offering']->semester }}</p>
+                                    <p class="text-xs text-gray-400">{{ $courseData['offering']->academic_year }} • {{ __('ឆមាស') }} {{ $courseData['offering']->semester }}</p>
                                 </div>
                             </div>
                             <div class="flex items-center gap-4">
                                 <div class="text-right">
                                     <p class="text-2xl font-black text-emerald-600">{{ number_format($courseData['total_score'], 1) }}</p>
-                                    <p class="text-[10px] font-bold text-gray-400 uppercase">សរុប</p>
+                                    <p class="text-[10px] font-bold text-gray-400 uppercase">{{ __('សរុប') }}</p>
                                 </div>
                                 <div class="w-12 h-12 rounded-xl flex flex-col items-center justify-center text-sm font-black {{ !$courseData['is_failed'] ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-rose-50 text-rose-600 border border-rose-100' }}">
-                                    <span class="text-[8px] uppercase opacity-60 leading-none mb-0.5">និទ្ទេស</span>
+                                    <span class="text-[8px] uppercase opacity-60 leading-none mb-0.5">{{ __('និទ្ទេស') }}</span>
                                     {{ $courseData['letter_grade'] }}
                                 </div>
                             </div>
@@ -42,7 +42,7 @@
                         {{-- Summary chips --}}
                         <div class="flex flex-wrap gap-2 mt-3">
                             <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 text-[10px] font-bold">
-                                <i class="fas fa-user-check"></i> វត្តមាន: {{ number_format($courseData['attendance_score'], 1) }}/15
+                                <i class="fas fa-user-check"></i> {{ __('វត្តមាន') }}: {{ number_format($courseData['attendance_score'], 1) }}/15
                             </span>
                             @if($courseData['quiz_bonus'] > 0)
                                 <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-50 text-amber-700 text-[10px] font-bold">
@@ -57,20 +57,20 @@
                         <table class="w-full text-sm">
                             <thead>
                                 <tr class="border-b border-slate-100">
-                                    <th class="text-left px-6 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider">ប្រភេទ</th>
-                                    <th class="text-left px-6 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider">ឈ្មោះ</th>
-                                    <th class="text-center px-6 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider">ពិន្ទុ</th>
-                                    <th class="text-center px-6 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider">អតិបរមា</th>
-                                    <th class="text-left px-6 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider">កំណត់ចំណាំ</th>
+                                    <th class="text-left px-6 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider">{{ __('ប្រភេទ') }}</th>
+                                    <th class="text-left px-6 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider">{{ __('ឈ្មោះ') }}</th>
+                                    <th class="text-center px-6 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider">{{ __('ពិន្ទុ') }}</th>
+                                    <th class="text-center px-6 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider">{{ __('អតិបរមា') }}</th>
+                                    <th class="text-left px-6 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider">{{ __('កំណត់ចំណាំ') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-50">
                                 {{-- Attendance row --}}
                                 <tr class="hover:bg-blue-50/30">
                                     <td class="px-6 py-3">
-                                        <span class="inline-flex px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 text-blue-700">វត្តមាន</span>
+                                        <span class="inline-flex px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 text-blue-700">{{ __('វត្តមាន') }}</span>
                                     </td>
-                                    <td class="px-6 py-3 font-semibold text-gray-700">ពិន្ទុវត្តមាន (15%)</td>
+                                    <td class="px-6 py-3 font-semibold text-gray-700">{{ __('ពិន្ទុវត្តមាន (15%)') }}</td>
                                     <td class="px-6 py-3 text-center">
                                         <span class="font-black text-blue-600">{{ number_format($courseData['attendance_score'], 1) }}</span>
                                     </td>
@@ -108,7 +108,7 @@
 
                                 {{-- Total row --}}
                                 <tr class="bg-emerald-50/30 border-t-2 border-emerald-100">
-                                    <td colspan="2" class="px-6 py-3 font-black text-gray-700 text-right">សរុបរួម</td>
+                                    <td colspan="2" class="px-6 py-3 font-black text-gray-700 text-right">{{ __('សរុបរួម') }}</td>
                                     <td class="px-6 py-3 text-center">
                                         <span class="font-black text-emerald-600 text-base">{{ number_format($courseData['total_score'], 1) }}</span>
                                     </td>

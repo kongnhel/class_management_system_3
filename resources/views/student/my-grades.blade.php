@@ -85,7 +85,7 @@
                     <div class="relative z-10">
                         <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('stu_gpa') }}</p>
                         <h3 class="text-3xl font-black text-slate-800">{{ number_format($gpa, 2) }}</h3>
-                        <p class="text-[10px] text-slate-400 mt-0.5">{{ $overallGrade }} · {{ $totalCredits }} {{ __(' Credits') }}</p>
+                        <p class="text-[10px] text-slate-400 mt-0.5">{{ $overallGrade }} · {{ $totalCredits }} {{ __('ក្រេឌីត') }}</p>
                     </div>
                     <div class="w-12 h-12 bg-rose-50 text-rose-500 rounded-full flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
                         <i class="fas fa-star"></i>
@@ -243,7 +243,7 @@
                                 <div class="min-w-0 flex-1">
                                     <h4 class="text-sm font-bold text-slate-900 truncate">{{ $grade->course_name_en }}</h4>
                                     <p class="text-xs text-slate-500 mt-0.5 truncate">{{ $grade->course_name_km }}</p>
-                                    <span class="text-[10px] text-slate-400 font-bold">{{ $grade->credits }} Credits</span>
+                                    <span class="text-[10px] text-slate-400 font-bold">{{ $grade->credits }} {{ __('ក្រេឌីត') }}</span>
                                 </div>
                                 <div class="flex flex-col items-end shrink-0 ml-3">
                                     <span class="text-lg font-black {{ $grade->is_failed ? 'text-rose-600' : 'text-emerald-600' }}">

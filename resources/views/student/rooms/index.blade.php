@@ -48,7 +48,7 @@
                                     <div>
                                         <div class="flex items-center gap-2 mb-1">
                                             <span class="px-3 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-black uppercase tracking-widest rounded-lg">
-                                                {{ $room->type_of_room ?? 'Lecture' }}
+                                                {{ $room->type_of_room ?? __('Lecture') }}
                                             </span>
                                         </div>
                                         <h4 class="text-4xl font-black text-slate-800 room-number-text">
@@ -68,12 +68,12 @@
                                         </div>
                                         <div class="mt-4 flex items-center gap-2 px-4 py-1.5 bg-white text-emerald-600 border border-emerald-100 rounded-full shadow-sm">
                                             <i class="fas fa-wifi text-xs"></i>
-                                            <span class="text-[10px] font-black uppercase tracking-tighter">Scan WiFi</span>
+                                            <span class="text-[10px] font-black uppercase tracking-tighter">{{ __('Scan WiFi') }}</span>
                                         </div>
                                     @else
                                         <div class="w-32 h-32 md:w-40 md:h-40 flex flex-col items-center justify-center text-slate-200 border-2 border-dashed border-slate-200 rounded-2xl">
                                             <i class="fas fa-qrcode text-3xl mb-2"></i>
-                                            <span class="text-[9px] font-bold">No QR</span>
+                                            <span class="text-[9px] font-bold">{{ __('No QR') }}</span>
                                         </div>
                                     @endif
                                 </div>

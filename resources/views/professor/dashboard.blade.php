@@ -388,10 +388,10 @@
             <form action="{{ route('professor.update_telegram') }}" method="POST">
                 @csrf
                 <div class="mb-5 text-xs text-slate-500 leading-relaxed bg-slate-50 p-4 rounded-2xl space-y-2">
-                    <p class="flex gap-2"><span class="font-black text-slate-400">១.</span> ផ្ញើសារទៅ <a href="https://t.me/userinfobot" target="_blank" class="text-emerald-600 font-bold">@userinfobot</a> រួចចម្លងលេខ ID។</p>
-                    <p class="flex gap-2"><span class="font-black text-slate-400">២.</span> ចុច <a href="https://t.me/Nmu1_schedule_bot" target="_blank" class="text-amber-600 font-bold">@Nmu1_schedule_bot</a> រួចចុច <span class="text-amber-600 italic font-bold">START</span>។</p>
+                    <p class="flex gap-2"><span class="font-black text-slate-400">១.</span> {{ __('ផ្ញើសារទៅ') }} <a href="https://t.me/userinfobot" target="_blank" class="text-emerald-600 font-bold">@userinfobot</a> {{ __('រួចចម្លងលេខ ID។') }}</p>
+                    <p class="flex gap-2"><span class="font-black text-slate-400">២.</span> {{ __('ចុច') }} <a href="https://t.me/Nmu1_schedule_bot" target="_blank" class="text-amber-600 font-bold">@Nmu1_schedule_bot</a> {{ __('រួចចុច') }} <span class="text-amber-600 italic font-bold">START</span>។</p>
                 </div>
-                <input type="number" name="telegram_chat_id" required placeholder="ឧ. 584930211"
+                <input type="number" name="telegram_chat_id" required placeholder="{{ __('ឧ. 584930211') }}"
                     class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl mb-4 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none text-center text-lg font-mono tracking-widest">
                 <div class="flex gap-3">
                     <button type="button" onclick="document.getElementById('telegramEntryModal').classList.add('hidden')" class="flex-1 py-4 bg-slate-100 rounded-2xl font-bold text-slate-500 text-sm">{{ __('បោះបង់') }}</button>
@@ -428,7 +428,7 @@
         window.linkWithGoogle = () => {
             const btn = document.getElementById('btn-link-google');
             const originalHtml = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> កំពុងដំណើរការ...';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> {{ __("កំពុងដំណើរការ...") }}';
             btn.disabled = true;
 
             signInWithPopup(auth, provider)
@@ -447,31 +447,31 @@
                     });
                 })
                 .then(async (res) => {
-                    const data = await res.json().catch(() => ({ status: 'error', message: 'មានបញ្ហាក្នុងការទាក់ទងនឹង server។' }));
+                    const data = await res.json().catch(() => ({ status: 'error', message: '{{ __("មានបញ្ហាក្នុងការទាក់ទងនឹង server។") }}' }));
                     if (data.status === 'linked') {
                         Swal.fire({
                             icon: 'success',
-                            title: 'ជោគជ័យ',
-                            text: 'គណនី Google ត្រូវបានភ្ជាប់!',
+                            title: '{{ __("ជោគជ័យ") }}',
+                            text: '{{ __("គណនី Google ត្រូវបានភ្ជាប់!") }}',
                             timer: 2000,
                             showConfirmButton: false
                         }).then(() => window.location.reload());
                     } else {
                         btn.innerHTML = originalHtml;
                         btn.disabled = false;
-                        Swal.fire('បរាជ័យ', data.message || 'មិនអាចភ្ជាប់ Google បានទេ', 'error');
+                        Swal.fire('{{ __("បរាជ័យ") }}', data.message || '{{ __("មិនអាចភ្ជាប់ Google បានទេ") }}', 'error');
                     }
                 })
                 .catch((error) => {
                     console.error("Firebase Error:", error.code);
                     btn.innerHTML = originalHtml;
                     btn.disabled = false;
-                    let msg = 'មិនអាចភ្ជាប់ Google បានទេ';
-                    if (error.code === 'auth/popup-closed-by-user') msg = 'បង្អួចបានបិទមុនពេលភ្ជាប់បានសម្រេច។';
-                    else if (error.code === 'auth/popup-blocked') msg = 'Popup ត្រូវបានបិទ។ សូមអនុញ្ញាត popup សម្រាប់ទំព័រនេះ។';
-                    else if (error.code === 'auth/unauthorized-domain') msg = 'Domain នេះមិនទាន់បានអនុញ្ញាតនៅក្នុង Firebase Console ទេ។';
+                    let msg = '{{ __("មិនអាចភ្ជាប់ Google បានទេ") }}';
+                    if (error.code === 'auth/popup-closed-by-user') msg = '{{ __("បង្អួចបានបិទមុនពេលភ្ជាប់បានសម្រេច។") }}';
+                    else if (error.code === 'auth/popup-blocked') msg = '{{ __("Popup ត្រូវបានបិទ។ សូមអនុញ្ញាត popup សម្រាប់ទំព័រនេះ។") }}';
+                    else if (error.code === 'auth/unauthorized-domain') msg = '{{ __("Domain នេះមិនទាន់បានអនុញ្ញាតនៅក្នុង Firebase Console ទេ។") }}';
                     else if (error.message) msg = error.message;
-                    Swal.fire('បរាជ័យ', msg, 'error');
+                    Swal.fire('{{ __("បរាជ័យ") }}', msg, 'error');
                 });
         };
     </script>
@@ -541,7 +541,7 @@
       function getBestLocation(attempts = 3, waitMs = 1500) {
         return new Promise((resolve, reject) => {
           if (!navigator.geolocation) {
-            reject(new Error('ឧបករណ៍លោកគ្រូមិនគាំទ្រ GPS ទេ!'));
+            reject(new Error('{{ __("ឧបករណ៍លោកគ្រូមិនគាំទ្រ GPS ទេ!") }}'));
             return;
           }
           let best = null;
@@ -555,7 +555,7 @@
                 if (count >= attempts) resolve(best);
                 else setTimeout(tryOnce, waitMs);
               },
-              () => reject(new Error('សូមបើក GPS និងអនុញ្ញាត (Allow Location)!')),
+              () => reject(new Error('{{ __("សូមបើក GPS និងអនុញ្ញាត (Allow Location)!") }}')),
               { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
             );
           };
@@ -568,8 +568,8 @@
         if (scanBtn) scanBtn.disabled = true;
 
         Swal.fire({
-            title: 'កំពុងពិនិត្យ...',
-            text: 'សូមរង់ចាំបន្តិច...',
+            title: '{{ __("កំពុងពិនិត្យ...") }}',
+            text: '{{ __("សូមរង់ចាំបន្តិច...") }}',
             allowOutsideClick: false,
             showConfirmButton: false,
             didOpen: () => Swal.showLoading()
@@ -598,17 +598,17 @@
             if (data?.success) {
                 await Swal.fire({
                     icon: 'success',
-                    title: 'ជោគជ័យ',
-                    text: data.message || 'ចុះវត្តមានបានសម្រេច!',
+                    title: '{{ __("ជោគជ័យ") }}',
+                    text: data.message || '{{ __("ចុះវត្តមានបានសម្រេច!") }}',
                     confirmButtonColor: '#4f46e5'
                 });
                 await openAttendanceList(courseOfferingId, sessionId);
             } else {
-                Swal.fire({ icon: 'error', title: 'បរាជ័យ', text: data?.message || 'ទីតាំងមិនត្រឹមត្រូវ' });
+                Swal.fire({ icon: 'error', title: '{{ __("បរាជ័យ") }}', text: data?.message || '{{ __("ទីតាំងមិនត្រឹមត្រូវ") }}' });
             }
         } catch (err) {
             Swal.close();
-            Swal.fire('កំហុស', err.message || 'មានបញ្ហា!', 'error');
+            Swal.fire('{{ __("កំហុស") }}', err.message || '{{ __("មានបញ្ហា!") }}', 'error');
         } finally {
             if (scanBtn) scanBtn.disabled = false;
         }

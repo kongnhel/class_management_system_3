@@ -26,7 +26,7 @@
                         <div class="hidden md:flex items-center gap-3 bg-slate-50 px-4 py-2 rounded-xl border border-slate-100 mr-2">
                             <span class="text-xs font-bold text-slate-400 uppercase">{{ $semester }}</span>
                             <div class="h-4 w-px bg-slate-300"></div>
-                            <span class="text-sm font-bold text-emerald-600">ឆ្នាំសិក្សា {{ $academicYear }}</span>
+                            <span class="text-sm font-bold text-emerald-600">{{ __('ឆ្នាំសិក្សា') }} {{ $academicYear }}</span>
                         </div>
                         <button onclick="window.print()" class="group flex items-center justify-center gap-2 bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-700 px-4 py-2.5 rounded-xl font-bold shadow-sm transition-all text-sm">
                             <svg class="w-4 h-4 text-slate-400 group-hover:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2z"></path></svg>
@@ -48,12 +48,12 @@
                             <svg class="w-10 h-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
                         </div>
                         <h3 class="text-xl font-bold text-slate-800">{{ __('មិនទាន់មានកាលវិភាគបង្រៀន') }}</h3>
-                        <p class="text-slate-500 mt-2">{{ __('សូមទាក់ទងការិយាល័យសិក្សាសម្រាប់ព័ត៌មានបន្ថែម។') }}</p>
+                        <p class="text-slate-500 mt-2">{{ __('សូមទាក់ទង{{ __('ការិយាល័យសិក្សា') }}សម្រាប់ព័ត៌មានបន្ថែម។') }}</p>
                     </div>
                 @else
                     @php
-                        $weekdayMap = ['Monday' => 'ចន្ទ/Mon', 'Tuesday' => 'អង្គារ/Tue', 'Wednesday' => 'ពុធ/Wed', 'Thursday' => 'ព្រហស្បតិ៍/Thu', 'Friday' => 'សុក្រ/Fri'];
-                        $weekendMap = ['Saturday' => 'សៅរ៍/Sat', 'Sunday' => 'អាទិត្យ/Sun'];
+                        $weekdayMap = ['Monday' => __('ចន្ទ/Mon'), 'Tuesday' => __('អង្គារ/Tue'), 'Wednesday' => __('ពុធ/Wed'), 'Thursday' => __('ព្រហស្បតិ៍/Thu'), 'Friday' => __('សុក្រ/Fri')];
+                        $weekendMap = ['Saturday' => __('សៅរ៍/Sat'), 'Sunday' => __('អាទិត្យ/Sun')];
 
                         $allSchedules = collect();
                         foreach ($courseOfferings as $offering) {
@@ -82,31 +82,31 @@
                             <div class="grid grid-cols-3 items-start gap-4 border-b-2 border-black pb-4 mb-4 text-center">
                                 <div class="flex flex-col items-center">
                                     <img src="{{ asset('assets/image/nmu_Logo.png') }}" alt="Logo" class="w-20 h-20 object-contain">
-                                    <h3 class="text-sm font-bold text-blue-700 mt-1" style="font-family: 'Moul', serif;">សាកលវិទ្យាល័យជាតិមានជ័យ</h3>
-                                    <h3 class="text-sm font-bold text-blue-700" style="font-family: 'Moul', serif;">ការិយាល័យសិក្សា</h3>
+                                    <h3 class="text-sm font-bold text-blue-700 mt-1" style="font-family: 'Moul', serif;">{{ __('សាកលវិទ្យាល័យជាតិមានជ័យ') }}</h3>
+                                    <h3 class="text-sm font-bold text-blue-700" style="font-family: 'Moul', serif;">{{ __('ការិយាល័យសិក្សា') }}</h3>
                                 </div>
                                 <div class="flex flex-col items-center">
-                                    <h2 class="text-base font-bold" style="font-family: 'Moul', serif;">ព្រះរាជាណាចក្រកម្ពុជា</h2>
-                                    <h2 class="text-base font-bold" style="font-family: 'Moul', serif;">ជាតិ សាសនា ព្រះមហាក្សត្រ</h2>
+                                    <h2 class="text-base font-bold" style="font-family: 'Moul', serif;">{{ __('ព្រះរាជាណាចក្រកម្ពុជា') }}</h2>
+                                    <h2 class="text-base font-bold" style="font-family: 'Moul', serif;">{{ __('ជាតិ សាសនា ព្រះមហាក្សត្រ') }}</h2>
                                     <img src="{{ asset('assets/image/2.png') }}" alt="motto" class="h-7 mx-auto mt-1">
                                 </div>
                                 <div></div>
                             </div>
 
                             <div class="text-center mb-4">
-                                <h1 class="text-lg font-bold" style="font-family: 'Moul', serif;">តារាងវិភាគប្រចាំ{{ $semester }}</h1>
-                                <p class="text-sm font-bold mt-1">ឆ្នាំសិក្សា {{ $academicYear }}</p>
+                                <h1 class="text-lg font-bold" style="font-family: 'Moul', serif;">{{ __('តារាងវិភាគប្រចាំ') }}{{ $semester }}</h1>
+                                <p class="text-sm font-bold mt-1">{{ __('ឆ្នាំសិក្សា') }} {{ $academicYear }}</p>
                             </div>
 
                             {{-- Weekday Table --}}
                             @if($weekdayRows->isNotEmpty())
                                 <div class="mb-5">
-                                    <div class="text-left font-bold underline text-sm mb-1">វេនសិក្សា៖ ចន្ទ-សុក្រ (Mon-Fri)</div>
+                                    <div class="text-left font-bold underline text-sm mb-1">{{ __('វេនសិក្សា៖ ចន្ទ-សុក្រ') }} (Mon-Fri)</div>
                                     <div class="overflow-x-auto">
                                         <table class="w-full border-collapse border border-black text-sm">
                                             <thead>
                                                 <tr>
-                                                    <th class="border border-black px-2 py-1 bg-slate-100" style="font-family: 'Moul', serif; width: 12%;">ម៉ោងសិក្សា</th>
+                                                    <th class="border border-black px-2 py-1 bg-slate-100" style="font-family: 'Moul', serif; width: 12%;">{{ __('ម៉ោងសិក្សា') }}</th>
                                                     @foreach($weekdayMap as $label)
                                                         <th class="border border-black px-2 py-1 bg-slate-100" style="font-family: 'Moul', serif;">{{ $label }}</th>
                                                     @endforeach
@@ -122,7 +122,7 @@
                                                             @if($class)
                                                                 <div class="flex flex-col gap-0.5">
                                                                     <span class="font-bold">{{ $class->course_title_km }}</span>
-                                                                    <span class="text-xs">បន្ទប់ {{ $class->room_number }}</span>
+                                                                    <span class="text-xs">{{ __('បន្ទប់') }} {{ $class->room_number }}</span>
                                                                 </div>
                                                             @endif
                                                         </td>
@@ -138,12 +138,12 @@
                             {{-- Weekend Table --}}
                             @if($weekendSchedules->isNotEmpty())
                                 <div class="mb-5">
-                                    <div class="text-left font-bold underline text-sm mb-1">វេនសិក្សា៖ សៅរ៍-អាទិត្យ (Sat-Sun)</div>
+                                    <div class="text-left font-bold underline text-sm mb-1">{{ __('វេនសិក្សា៖ សៅរ៍-អាទិត្យ') }} (Sat-Sun)</div>
                                     <div class="overflow-x-auto">
                                         <table class="w-full border-collapse border border-black text-sm">
                                             <thead>
                                                 <tr>
-                                                    <th class="border border-black px-2 py-1 bg-slate-100" style="font-family: 'Moul', serif; width: 12%;">ថ្ងៃសិក្សា</th>
+                                                    <th class="border border-black px-2 py-1 bg-slate-100" style="font-family: 'Moul', serif; width: 12%;">{{ __('ថ្ងៃសិក្សា') }}</th>
                                                     @foreach($weekendTimeSlots as $time)
                                                         <th class="border border-black px-2 py-1 bg-slate-100" style="font-family: 'Moul', serif;">{{ $time }}</th>
                                                     @endforeach
@@ -164,7 +164,7 @@
                                                             @if($class)
                                                                 <div class="flex flex-col gap-0.5">
                                                                     <span class="font-bold">{{ $class->course_title_km }}</span>
-                                                                    <span class="text-xs">បន្ទប់ {{ $class->room_number }}</span>
+                                                                    <span class="text-xs">{{ __('បន្ទប់') }} {{ $class->room_number }}</span>
                                                                 </div>
                                                             @endif
                                                         </td>
@@ -180,19 +180,19 @@
                             {{-- Footer Signature --}}
                             <div class="flex justify-between mt-6">
                                 <div class="text-left w-1/2 pl-2">
-                                    <div class="text-sm font-bold">បានឃើញ និងឯកភាព</div>
-                                    <div class="text-sm" style="font-family: 'Moul', serif;">ជ. សាកលវិទ្យាធិការ</div>
-                                    <div class="text-sm" style="font-family: 'Moul', serif;">សាកលវិទ្យាធិការរង</div>
+                                    <div class="text-sm font-bold">{{ __('បានឃើញ និងឯកភាព') }}</div>
+                                    <div class="text-sm" style="font-family: 'Moul', serif;">{{ __('ជ. សាកលវិទ្យាធិការ') }}</div>
+                                    <div class="text-sm" style="font-family: 'Moul', serif;">{{ __('សាកលវិទ្យាធិការរង') }}</div>
                                     <div class="h-16"></div>
                                 </div>
                                 @php
                                     $now = now();
-                                    $khmerMonths = [1=>'មករា',2=>'កុម្ភៈ',3=>'មីនា',4=>'មេសា',5=>'ឧសភា',6=>'មិថុនា',7=>'កក្កដា',8=>'សីហា',9=>'កញ្ញា',10=>'តុលា',11=>'វិច្ឆិកា',12=>'ធ្នូ'];
+                                    $khmerMonths = [1=>__('មករា'),2=>__('កុម្ភៈ'),3=>__('មីនា'),4=>__('មេសា'),5=>__('ឧសភា'),6=>__('មិថុនា'),7=>__('កក្កដា'),8=>__('សីហា'),9=>__('កញ្ញា'),10=>__('តុលា'),11=>__('វិច្ឆិកា'),12=>__('ធ្នូ')];
                                     function toKhmerNumsScr($n) { return str_replace(range(0,9), ['០','១','២','៣','៤','៥','៦','៧','៨','៩'], $n); }
                                 @endphp
                                 <div class="text-right w-1/2 pr-2">
-                                    <div class="text-xs">ថ្ងៃទី{{ toKhmerNumsScr($now->format('d')) }} ខែ{{ $khmerMonths[$now->month] }} ឆ្នាំ{{ toKhmerNumsScr((string)$now->year) }}</div>
-                                    <div class="text-sm mt-1" style="font-family: 'Moul', serif;">ប្រធានការិយាល័យសិក្សា</div>
+                                    <div class="text-xs">{{ __('ថ្ងៃទី') }}{{ toKhmerNumsScr($now->format('d')) }} {{ __('ខែ') }}{{ $khmerMonths[$now->month] }} {{ __('ឆ្នាំ') }}{{ toKhmerNumsScr((string)$now->year) }}</div>
+                                    <div class="text-sm mt-1" style="font-family: 'Moul', serif;">ប្រធាន{{ __('ការិយាល័យសិក្សា') }}</div>
                                     <div class="h-16"></div>
                                 </div>
                             </div>
@@ -212,8 +212,8 @@
             {{-- PRINT VIEW (Matching Student Schedule Print Layout) --}}
             <div class="hidden print:block font-['Battambang']">
                 @php
-                    $weekdayMap = ['Monday' => 'ចន្ទ/Mon', 'Tuesday' => 'អង្គារ/Tue', 'Wednesday' => 'ពុធ/Wed', 'Thursday' => 'ព្រហស្បតិ៍/Thu', 'Friday' => 'សុក្រ/Fri'];
-                    $weekendMap = ['Saturday' => 'សៅរ៍/Sat', 'Sunday' => 'អាទិត្យ/Sun'];
+                    $weekdayMap = ['Monday' => __('ចន្ទ/Mon'), 'Tuesday' => __('អង្គារ/Tue'), 'Wednesday' => __('ពុធ/Wed'), 'Thursday' => __('ព្រហស្បតិ៍/Thu'), 'Friday' => __('សុក្រ/Fri')];
+                    $weekendMap = ['Saturday' => __('សៅរ៍/Sat'), 'Sunday' => __('អាទិត្យ/Sun')];
 
                     $allSchedules = collect();
                     foreach ($courseOfferings as $offering) {
@@ -243,7 +243,7 @@
                         return str_replace(range(0,9), $khmer, $n);
                     }
                     $now = now();
-                    $khmerMonths = [1=>'មករា',2=>'កុម្ភៈ',3=>'មីនា',4=>'មេសា',5=>'ឧសភា',6=>'មិថុនា',7=>'កក្កដា',8=>'សីហា',9=>'កញ្ញា',10=>'តុលា',11=>'វិច្ឆិកា',12=>'ធ្នូ'];
+                    $khmerMonths = [1=>__('មករា'),2=>__('កុម្ភៈ'),3=>__('មីនា'),4=>__('មេសា'),5=>__('ឧសភា'),6=>__('មិថុនា'),7=>__('កក្កដា'),8=>__('សីហា'),9=>__('កញ្ញា'),10=>__('តុលា'),11=>__('វិច្ឆិកា'),12=>__('ធ្នូ')];
                     $dayKh = toKhmerNumsPrint($now->format('d'));
                     $monthKh = $khmerMonths[$now->month];
                     $yearKh = toKhmerNumsPrint((string)$now->year);
@@ -253,32 +253,32 @@
                 <div style="display: grid; grid-template-columns: 30% 40% 30%; text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px;">
                     <div style="display: flex; flex-direction: column; align-items: center;">
                         <img src="{{ asset('assets/image/nmu_Logo.png') }}" alt="Logo" style="width: 70px; height: auto; margin-bottom: 5px;">
-                        <h3 style="font-family: 'Moul', serif; font-size: 10pt; color: #2a58ad; line-height: 1.4; margin: 0;">សាកលវិទ្យាល័យជាតិមានជ័យ</h3>
-                        <h3 style="font-family: 'Moul', serif; font-size: 10pt; color: #2a58ad; line-height: 1.4; margin: 0;">ការិយាល័យសិក្សា</h3>
+                        <h3 style="font-family: 'Moul', serif; font-size: 10pt; color: #2a58ad; line-height: 1.4; margin: 0;">{{ __('សាកលវិទ្យាល័យជាតិមានជ័យ') }}</h3>
+                        <h3 style="font-family: 'Moul', serif; font-size: 10pt; color: #2a58ad; line-height: 1.4; margin: 0;">{{ __('ការិយាល័យសិក្សា') }}</h3>
                     </div>
                     <div style="display: flex; flex-direction: column; align-items: center;">
-                        <h2 style="font-family: 'Moul', serif; font-size: 11pt; margin: 0;">ព្រះរាជាណាចក្រកម្ពុជា</h2>
-                        <h2 style="font-family: 'Moul', serif; font-size: 11pt; margin: 0;">ជាតិ សាសនា ព្រះមហាក្សត្រ</h2>
+                        <h2 style="font-family: 'Moul', serif; font-size: 11pt; margin: 0;">{{ __('ព្រះរាជាណាចក្រកម្ពុជា') }}</h2>
+                        <h2 style="font-family: 'Moul', serif; font-size: 11pt; margin: 0;">{{ __('ជាតិ សាសនា ព្រះមហាក្សត្រ') }}</h2>
                         <img src="{{ asset('assets/image/2.png') }}" alt="motto" style="height: 30px; margin-top: 5px;">
                     </div>
                     <div></div>
                 </div>
 
                 <div style="text-align: center; margin-bottom: 15px;">
-                    <h1 style="font-family: 'Moul', serif; font-size: 13pt; margin: 5px 0;">តារាងវិភាគប្រចាំ{{ $semester }}</h1>
+                    <h1 style="font-family: 'Moul', serif; font-size: 13pt; margin: 5px 0;">{{ __('តារាងវិភាគប្រចាំ') }}{{ $semester }}</h1>
                     <p style="font-size: 9pt; font-weight: bold; margin: 2px 0;">
-                        ឆ្នាំសិក្សា {{ $academicYear }}
+                        {{ __('ឆ្នាំសិក្សា') }} {{ $academicYear }}
                     </p>
                 </div>
 
                 {{-- WEEKDAY TABLE --}}
                 @if($weekdayRows->isNotEmpty())
                     <div style="margin-bottom: 15px;">
-                        <div style="text-align: left; font-weight: bold; text-decoration: underline; font-size: 10pt; margin-bottom: 5px;">វេនសិក្សា៖ ចន្ទ-សុក្រ (Mon-Fri)</div>
+                        <div style="text-align: left; font-weight: bold; text-decoration: underline; font-size: 10pt; margin-bottom: 5px;">{{ __('វេនសិក្សា៖ ចន្ទ-សុក្រ') }} (Mon-Fri)</div>
                         <table style="width: 100%; border-collapse: collapse; border: 1.5pt solid black;">
                             <thead>
                                 <tr>
-                                    <th style="border: 1pt solid black; padding: 4px; background-color: #f1f5f9; font-family: 'Moul', serif; width: 12%;">ម៉ោងសិក្សា</th>
+                                    <th style="border: 1pt solid black; padding: 4px; background-color: #f1f5f9; font-family: 'Moul', serif; width: 12%;">{{ __('ម៉ោងសិក្សា') }}</th>
                                     @foreach($weekdayMap as $label)
                                         <th style="border: 1pt solid black; padding: 4px; background-color: #f1f5f9; font-family: 'Moul', serif; font-size: 8.5pt;">{{ $label }}</th>
                                     @endforeach
@@ -294,7 +294,7 @@
                                             @if($class)
                                                 <div style="display: flex; flex-direction: column; gap: 2px;">
                                                     <span style="font-weight: bold; color: #1e293b;">{{ $class->course_title_km }}</span>
-                                                    <span style="color: #334155;">បន្ទប់ {{ $class->room_number }}</span>
+                                                    <span style="color: #334155;">{{ __('បន្ទប់') }} {{ $class->room_number }}</span>
                                                 </div>
                                             @endif
                                         </td>
@@ -309,11 +309,11 @@
                 {{-- WEEKEND TABLE --}}
                 @if($weekendSchedules->isNotEmpty())
                     <div style="margin-bottom: 15px;">
-                        <div style="text-align: left; font-weight: bold; text-decoration: underline; font-size: 10pt; margin-bottom: 5px;">វេនសិក្សា៖ សៅរ៍-អាទិត្យ (Sat-Sun)</div>
+                        <div style="text-align: left; font-weight: bold; text-decoration: underline; font-size: 10pt; margin-bottom: 5px;">{{ __('វេនសិក្សា៖ សៅរ៍-អាទិត្យ') }} (Sat-Sun)</div>
                         <table style="width: 100%; border-collapse: collapse; border: 1.5pt solid black;">
                             <thead>
                                 <tr>
-                                    <th style="border: 1pt solid black; padding: 4px; background-color: #f1f5f9; font-family: 'Moul', serif; width: 12%;">ថ្ងៃសិក្សា</th>
+                                    <th style="border: 1pt solid black; padding: 4px; background-color: #f1f5f9; font-family: 'Moul', serif; width: 12%;">{{ __('ថ្ងៃសិក្សា') }}</th>
                                     @foreach($weekendTimeSlots as $time)
                                         <th style="border: 1pt solid black; padding: 4px; background-color: #f1f5f9; font-family: 'Moul', serif; font-size: 8.5pt;">{{ $time }}</th>
                                     @endforeach
@@ -334,7 +334,7 @@
                                             @if($class)
                                                 <div style="display: flex; flex-direction: column; gap: 2px;">
                                                     <span style="font-weight: bold; color: #1e293b;">{{ $class->course_title_km }}</span>
-                                                    <span style="color: #334155;">បន្ទប់ {{ $class->room_number }}</span>
+                                                    <span style="color: #334155;">{{ __('បន្ទប់') }} {{ $class->room_number }}</span>
                                                 </div>
                                             @endif
                                         </td>
@@ -349,14 +349,14 @@
                 {{-- FOOTER SIGNATURE --}}
                 <div style="display: flex; justify-content: space-between; margin-top: 20px; gap: 10px;">
                     <div style="text-align: left; padding-left: 10px; width: 48%;">
-                        <div style="font-size: 9pt; font-weight: bold;">បានឃើញ និងឯកភាព</div>
-                        <div style="font-size: 9pt; font-family: 'Moul', serif;">ជ. សាកលវិទ្យាធិការ</div>
-                        <div style="font-size: 9pt; font-family: 'Moul', serif;">សាកលវិទ្យាធិការរង</div>
+                        <div style="font-size: 9pt; font-weight: bold;">{{ __('បានឃើញ និងឯកភាព') }}</div>
+                        <div style="font-size: 9pt; font-family: 'Moul', serif;">{{ __('ជ. សាកលវិទ្យាធិការ') }}</div>
+                        <div style="font-size: 9pt; font-family: 'Moul', serif;">{{ __('សាកលវិទ្យាធិការរង') }}</div>
                         <div style="height: 70px;"></div>
                     </div>
                     <div style="text-align: right; padding-right: 10px; width: 48%;">
-                        <div style="font-size: 8.5pt;">ថ្ងៃទី{{ $dayKh }} ខែ{{ $monthKh }} ឆ្នាំ{{ $yearKh }}</div>
-                        <div style="font-size: 9pt; font-family: 'Moul', serif; margin-top: 5px;">ប្រធានការិយាល័យសិក្សា</div>
+                        <div style="font-size: 8.5pt;">{{ __('ថ្ងៃទី') }}{{ $dayKh }} {{ __('ខែ') }}{{ $monthKh }} {{ __('ឆ្នាំ') }}{{ $yearKh }}</div>
+                        <div style="font-size: 9pt; font-family: 'Moul', serif; margin-top: 5px;">ប្រធាន{{ __('ការិយាល័យសិក្សា') }}</div>
                         <div style="height: 70px;"></div>
                     </div>
                 </div>

@@ -173,7 +173,7 @@
                                     <span>{{ $offering->academic_year }}</span>
                                 </span>
                                 <span class="badge khmer">
-                                    ឆមាស {{ $offering->semester }}
+                                    {{ __('ឆមាស') }} {{ $offering->semester }}
                                 </span>
                             </div>
                         </div>

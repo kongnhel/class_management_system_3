@@ -101,7 +101,7 @@ class StudentAttendanceController extends Controller
             }
         });
 
-        return redirect()->back()->with('success', 'រក្សាទុកវត្តមានបានជោគជ័យ!');
+        return redirect()->back()->with('success', __('រក្សាទុកវត្តមានបានជោគជ័យ។'));
     }
 
     public function leaderAttendanceReport($courseOfferingId)

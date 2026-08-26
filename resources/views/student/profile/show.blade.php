@@ -64,7 +64,7 @@
                                     </span>
                                     <input type="text" name="full_name_km" id="full_name_km" value="{{ old('full_name_km', $studentProfile->full_name_km ?? '') }}" required 
                                            class="block w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 focus:bg-white outline-none transition-all font-bold text-slate-700" 
-                                           placeholder="បញ្ជាក់ឈ្មោះជាភាសាខ្មែរ">
+                                           placeholder="{{ __('បញ្ជាក់ឈ្មោះជាភាសាខ្មែរ') }}">
                                 </div>
                                 <x-input-error :messages="$errors->get('full_name_km')" class="mt-2" />
                             </div>

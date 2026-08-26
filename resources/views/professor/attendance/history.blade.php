@@ -11,7 +11,7 @@
             </div>
             <a wire:navigate href="{{ route('professor.dashboard') }}"
                class="px-5 py-3 bg-white border border-slate-200 rounded-2xl font-bold text-slate-700 hover:bg-slate-50 transition-all flex items-center gap-2">
-                <i class="fas fa-arrow-left"></i> ត្រឡប់ក្រោយ
+                <i class="fas fa-arrow-left"></i> {{ __('ត្រឡប់ក្រោយ') }}
             </a>
         </div>
     </x-slot>

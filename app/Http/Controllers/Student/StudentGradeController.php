@@ -339,11 +339,11 @@ class StudentGradeController extends Controller
 
         $exists = StudentCourseEnrollment::where('student_user_id', $user->id)->where('course_offering_id', $request->course_offering_id)->exists();
         if ($exists) {
-            return back()->with('error', 'អ្នកបានចុះឈ្មោះរួចហើយ។');
+            return back()->with('error', __('អ្នកបានចុះឈ្មោះរួចហើយ។'));
         }
         StudentCourseEnrollment::create(['student_user_id' => $user->id, 'course_offering_id' => $request->course_offering_id, 'enrollment_date' => now(), 'status' => 'enrolled']);
 
-        return back()->with('success', 'ចុះឈ្មោះជោគជ័យ!');
+        return back()->with('success', __('ចុះឈ្មោះជោគជ័យ។'));
     }
 
     public function enrollProgram(Request $request)
@@ -366,7 +366,7 @@ class StudentGradeController extends Controller
             }
         }
 
-        return back()->with('success', "ចុះឈ្មោះបាន {$enrolled} មុខវិជ្ជា!");
+        return back()->with('success', __('ចុះឈ្មោះបាន :count មុខវិជ្ជា។', ['count' => $enrolled]));
     }
 
     public function myEnrolledCourses()

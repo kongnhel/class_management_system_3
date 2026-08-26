@@ -44,7 +44,7 @@ class ProfessorAttendanceController extends Controller
         }
 
         if (empty($studentIds)) {
-            return redirect()->back()->with('error', 'សូមជ្រើសរើសនិស្សិតយ៉ាងហោចណាស់មួយ។');
+            return redirect()->back()->with('error', __('សូមជ្រើសរើសនិស្សិតយ៉ាងហោចណាស់មួយ។'));
         }
 
         foreach ($studentIds as $studentId) {

@@ -45,7 +45,7 @@ class AttendanceCardController extends Controller
             ]);
         }
 
-        return redirect()->route('student.attendance-card')->with('success', 'Attendance card created successfully.');
+        return redirect()->route('student.attendance-card')->with('success', __('Attendance card created successfully.'));
     }
 
     public function revoke()
@@ -56,7 +56,7 @@ class AttendanceCardController extends Controller
             $card->update(['revoked_at' => now()]);
         }
 
-        return redirect()->route('student.attendance-card')->with('success', 'Attendance card revoked.');
+        return redirect()->route('student.attendance-card')->with('success', __('Attendance card revoked.'));
     }
 
     public function qr()

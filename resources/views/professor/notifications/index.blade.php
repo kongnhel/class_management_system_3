@@ -307,7 +307,7 @@
                         if (button) {
                             const readStatus = document.createElement('span');
                             readStatus.className = 'text-xs text-green-600 font-semibold flex items-center gap-1';
-                            readStatus.innerHTML = '<i class="fas fa-check-circle"></i> បានអាន';
+                            readStatus.innerHTML = '<i class="fas fa-check-circle"></i> {{ __("បានអាន") }}';
                             button.parentNode.replaceChild(readStatus, button);
                         }
                     }
@@ -339,7 +339,7 @@
                         if (button) {
                             const readStatus = document.createElement('span');
                             readStatus.className = 'text-xs text-green-600 font-semibold flex items-center gap-1';
-                            readStatus.innerHTML = '<i class="fas fa-check-circle"></i> បានអាន';
+                            readStatus.innerHTML = '<i class="fas fa-check-circle"></i> {{ __("បានអាន") }}';
                             button.parentNode.replaceChild(readStatus, button);
                         }
                     });

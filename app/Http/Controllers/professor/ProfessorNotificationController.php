@@ -75,7 +75,7 @@ class ProfessorNotificationController extends Controller
         $recipients = User::whereIn('id', $recipientIds)->get();
 
         if ($recipients->isEmpty()) {
-            return back()->with('error', 'No valid recipients found.');
+            return back()->with('error', __('No valid recipients found.'));
         }
 
         $batchUuid = Str::uuid()->toString();

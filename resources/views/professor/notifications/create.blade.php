@@ -104,11 +104,11 @@ document.getElementById('course_offering_id').addEventListener('change', functio
     toggleBtn.classList.add('hidden');
 
     if (!courseId) {
-        container.innerHTML = '<p class="text-gray-500 text-sm">សូមជ្រើសរើសមុខវិជ្ជា</p>';
+        container.innerHTML = '<p class="text-gray-500 text-sm">{{ __("សូមជ្រើសរើសមុខវិជ្ជា") }}</p>';
         return;
     }
 
-    container.innerHTML = '<p class="text-gray-500 text-sm">កំពុងផ្ទុក...</p>';
+    container.innerHTML = '<p class="text-gray-500 text-sm">{{ __("កំពុងផ្ទុក...") }}</p>';
 
     fetch(`/professor/course-offerings/${courseId}/students`)
         .then(response => response.json())
@@ -117,12 +117,12 @@ document.getElementById('course_offering_id').addEventListener('change', functio
 
             // ✅ ប្រាកដថា response ជា array
             if (!Array.isArray(data)) {
-                container.innerHTML = `<p class="text-red-500 text-sm">${data.error || 'មានបញ្ហាក្នុងការទាញយកទិន្នន័យ'}</p>`;
+                container.innerHTML = `<p class="text-red-500 text-sm">${data.error || '{{ __("មានបញ្ហាក្នុងការទាញយកទិន្នន័យ") }}'}</p>`;
                 return;
             }
 
             if (data.length === 0) {
-                container.innerHTML = '<p class="text-gray-500 text-sm">មិនមាននិស្សិតទេ</p>';
+                container.innerHTML = '<p class="text-gray-500 text-sm">{{ __("មិនមាននិស្សិតទេ") }}</p>';
                 return;
             }
 
@@ -140,7 +140,7 @@ document.getElementById('course_offering_id').addEventListener('change', functio
         })
         .catch(err => {
             console.error(err);
-            container.innerHTML = '<p class="text-red-500 text-sm">មានបញ្ហាក្នុងការទាញយកទិន្នន័យ</p>';
+            container.innerHTML = '<p class="text-red-500 text-sm">{{ __("មានបញ្ហាក្នុងការទាញយកទិន្នន័យ") }}</p>';
         });
 });
 
