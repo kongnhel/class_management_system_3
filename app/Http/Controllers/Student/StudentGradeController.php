@@ -194,7 +194,7 @@ class StudentGradeController extends Controller
             return true;
         })->values();
 
-        $page = request()->input('page', 1);
+        $page = max(1, (int) request()->input('page', 1));
         $perPage = 10;
         $grades = new \Illuminate\Pagination\LengthAwarePaginator(
             $grades->forPage($page, $perPage),
