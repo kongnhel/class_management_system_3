@@ -46,6 +46,7 @@
                             </div>
                         @endif
 
+                        {{-- Google Connect (disabled)
                         @if(!auth()->user()->google_id)
                             <button onclick="linkWithGoogle()" id="btn-link-google" class="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white px-4 py-2.5 rounded-xl font-bold text-xs transition-all">
                                 <i class="fa-brands fa-google text-sm"></i>
@@ -57,6 +58,7 @@
                                 <span>{{ auth()->user()->email }}</span>
                             </div>
                         @endif
+                        --}}
                     </div>
                 </div>
             </div>
@@ -407,7 +409,7 @@
     {{-- Scripts --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    {{-- Firebase Integration --}}
+    {{-- Firebase Integration (disabled)
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -475,6 +477,7 @@
                 });
         };
     </script>
+    --}}
 
     <script>
       // ========= Helpers =========
