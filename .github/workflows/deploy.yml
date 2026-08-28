@@ -1,12 +1,45 @@
-name: Manual Deploy to Windows IIS
+# name: Manual Deploy to Windows IIS
 
-on: 
-  workflow_dispatch: # This creates the manual button!
+# on: 
+#   workflow_dispatch: # This creates the manual button!
+
+# jobs:
+#   deploy:
+#     runs-on: self-hosted
+
+#     steps:
+#       - name: Run Deployment Script
+#         run: C:\deploy.bat
+
+
+name: Manual Deploy to Windows IIS
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to deploy'
+        required: true
+        default: 'main'
 
 jobs:
   deploy:
     runs-on: self-hosted
-
+    defaults:
+      run:
+        working-directory: C:\Apps\class_management_system_3
     steps:
+      - name: Switch to selected branch
+        run: |
+          git fetch origin
+          git checkout ${{ github.event.inputs.branch }}
+          git pull origin ${{ github.event.inputs.branch }}
+
+      - name: Clear Laravel cache
+        run: |
+          php artisan view:clear
+          php artisan cache:clear
+          php artisan config:clear
+
       - name: Run Deployment Script
         run: C:\deploy.bat
+        working-directory: C:\
