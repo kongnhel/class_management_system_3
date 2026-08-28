@@ -13,6 +13,7 @@
 
 
 name: Manual Deploy to Windows IIS
+
 on:
   workflow_dispatch:
     inputs:
@@ -26,11 +27,13 @@ jobs:
     runs-on: self-hosted
     defaults:
       run:
-        working-directory: C:\Apps\class_management_system_3
+        working-directory: 'C:/Apps/class_management_system_3'
+
     steps:
       - name: Switch to selected branch
         run: |
           git fetch origin
+          git reset --hard
           git checkout ${{ github.event.inputs.branch }}
           git pull origin ${{ github.event.inputs.branch }}
 
@@ -42,4 +45,4 @@ jobs:
 
       - name: Run Deployment Script
         run: C:\deploy.bat
-        working-directory: C:\
+        working-directory: 'C:\'
