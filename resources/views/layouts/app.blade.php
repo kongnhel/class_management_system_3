@@ -453,8 +453,9 @@
                 if (!document.querySelector('[data-admin-results]')) return;
 
                 event.preventDefault();
+                var pageValue = url.searchParams.get(pageKey);
                 var merged = mergeUrlParams(url);
-                merged.searchParams.set(pageKey, url.searchParams.get(pageKey));
+                merged.searchParams.set(pageKey, pageValue);
                 fetchAdminResults(merged, null);
             });
         })();
