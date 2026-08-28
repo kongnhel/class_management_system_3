@@ -13,7 +13,6 @@
 
 
 name: Manual Deploy to Windows IIS
-
 on:
   workflow_dispatch:
     inputs:
@@ -25,19 +24,22 @@ on:
 jobs:
   deploy:
     runs-on: self-hosted
+    defaults:
+      run:
+        working-directory: C:\Apps\class_management_system_3
     steps:
       - name: Switch to selected branch
         run: |
-          cd C:\Apps\class_management_system_3
           git fetch origin
           git checkout ${{ github.event.inputs.branch }}
           git pull origin ${{ github.event.inputs.branch }}
 
       - name: Clear Laravel cache
         run: |
-          cd C:\Apps\class_management_system_3
           php artisan view:clear
           php artisan cache:clear
+          php artisan config:clear
 
       - name: Run Deployment Script
         run: C:\deploy.bat
+        working-directory: C:\
