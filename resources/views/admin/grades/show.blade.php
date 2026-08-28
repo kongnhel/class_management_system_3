@@ -21,6 +21,9 @@
                     <a href="{{ route('admin.grades.export', $courseOffering->id) }}" class="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-5 py-2.5 rounded-xl font-bold shadow-md transition-all text-sm">
                         <i class="fas fa-download"></i> {{ __('ទាញយក Excel') }}
                     </a>
+                    <a href="{{ route('professor.re-exam-form', $courseOffering->id) }}" class="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white px-5 py-2.5 rounded-xl font-bold shadow-md transition-all text-sm">
+                        <i class="fas fa-redo"></i> {{ __('ប្រឡងសង') }}
+                    </a>
                     <a href="{{ route('admin.grades.index') }}" class="flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-700 px-5 py-2.5 rounded-xl font-bold shadow-sm border border-gray-200 transition-all text-sm">
                         <i class="fas fa-arrow-left"></i> {{ __('ត្រឡប់ក្រោយ') }}
                     </a>
@@ -123,8 +126,12 @@
                                     </div>
                                 </td>
                                 <td class="px-4 py-3 text-center">
-                                    <span class="inline-flex items-center justify-center min-w-[28px] h-7 px-2 rounded-lg bg-emerald-50 text-emerald-600 font-bold text-xs">
-                                        {{ $student->getAttendanceScoreByCourse($courseOffering->id) ?? 0 }}
+                                    @php
+                                        $attScore = $student->getAttendanceScoreByCourse($courseOffering->id) ?? 0;
+                                        $attPass = $attScore >= 10;
+                                    @endphp
+                                    <span class="inline-flex items-center justify-center min-w-[28px] h-7 px-2 rounded-lg {{ $attPass ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600' }} font-bold text-xs">
+                                        {{ $attScore }}
                                     </span>
                                 </td>
                                 @foreach($assessments as $assessment)
@@ -134,11 +141,17 @@
                                         $key = $type . '_' . $assessment->id;
                                         $score = $gradebook[$student->id][$key] ?? 0;
                                         $maxScore = $assessment->max_score ?? 100;
-                                        $percent = $maxScore > 0 ? ($score / $maxScore) * 100 : 0;
-                                        $scoreClass = $score == 0 ? 'text-gray-300' : ($percent < 50 ? 'text-rose-600' : 'text-gray-700');
+                                        $assessmentType = match(true) {
+                                            $assessment instanceof \App\Models\Assignment => 'assignment',
+                                            $assessment instanceof \App\Models\Exam => \App\Services\GradingService::classifyExamType($assessment),
+                                            default => 'quiz',
+                                        };
+                                        $isCritical = in_array($assessmentType, ['assignment', 'midterm', 'final']);
+                                        $threshold = $isCritical ? \App\Services\GradingService::getPassThreshold($assessmentType) : 0;
+                                        $isFailing = $isCritical && $score < $threshold;
                                     @endphp
                                     <td class="px-3 py-3 text-center">
-                                        <span class="text-xs font-bold {{ $scoreClass }}">
+                                        <span class="text-xs font-bold {{ $isFailing ? 'text-rose-600' : 'text-gray-700' }}">
                                             {{ $score > 0 ? number_format($score, 1) : '-' }}
                                         </span>
                                     </td>
@@ -167,6 +180,14 @@
                                 <td class="px-4 py-3 text-center">
                                     @if($student->isPassing)
                                         <span class="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-emerald-100 text-emerald-700">{{ __('ជាប់') }}</span>
+                                    @elseif($student->needs_retake_semester ?? false)
+                                        <span class="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-rose-100 text-rose-700">
+                                            <i class="fas fa-exclamation-circle mr-0.5"></i> {{ __('ត្រូវសិក្សាឡើងវិញ') }}
+                                        </span>
+                                    @elseif(!empty($student->needs_re_exam))
+                                        <span class="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-amber-100 text-amber-700">
+                                            <i class="fas fa-redo mr-0.5"></i> {{ __('ត្រូវប្រឡងសង') }}
+                                        </span>
                                     @else
                                         <span class="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-rose-100 text-rose-700">{{ __('មិនជាប់') }}</span>
                                     @endif

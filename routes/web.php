@@ -270,6 +270,8 @@ Route::middleware(['auth', 'role:professor', 'throttle:120,1'])->prefix('profess
     Route::get('/course-offering/{offering_id}/grades/print', [ProfessorGradeController::class, 'printGrades'])->name('grades.print');
     Route::get('/course-offering/{offering_id}/grades/export-excel', [ProfessorGradeController::class, 'exportExcel'])->name('grades.export-excel');
     Route::post('/course-offering/{offering_id}/grades/import-excel', [ProfessorGradeController::class, 'importGradesExcel'])->name('grades.import-excel');
+    Route::get('/course-offering/{offering_id}/re-exam', [App\Http\Controllers\professor\ProfessorReExamController::class, 'showForm'])->name('re-exam-form');
+    Route::post('/course-offering/{offering_id}/re-exam', [App\Http\Controllers\professor\ProfessorReExamController::class, 'store'])->name('re-exam-store');
     Route::get('/course-offering/{offering_id}/attendance', [ProfessorController::class, 'manageAttendance'])->name('manage-attendance');
     Route::get('/course-offering/{offering_id}/assignments', [ProfessorController::class, 'manageAssignments'])->name('manage-assignments');
     Route::get('/course-offering/{offering_id}/exams', [ProfessorController::class, 'manageExams'])->name('manage-exams');

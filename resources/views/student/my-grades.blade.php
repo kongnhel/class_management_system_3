@@ -157,13 +157,23 @@
                                             <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 font-bold text-sm border border-slate-200 shrink-0">
                                                 {{ strtoupper(substr($grade->course_name_en, 0, 2)) }}
                                             </div>
-                                            <div class="min-w-0">
+                                                <div class="min-w-0">
                                                 <div class="text-sm font-bold text-slate-800 group-hover:text-emerald-600 transition-colors truncate">{{ $grade->course_name_en }}</div>
                                                 <div class="text-[11px] text-slate-400 mt-0.5 truncate">{{ $grade->course_name_km }}</div>
                                                 @if($grade->is_failed)
-                                                    <span class="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded text-[10px] font-bold bg-rose-50 text-rose-600 border border-rose-100">
-                                                        <i class="fas fa-exclamation-circle"></i> {{ __('ប្រឡងសង') }}
-                                                    </span>
+                                                    @if($grade->needs_retake_semester ?? false)
+                                                        <span class="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded text-[10px] font-bold bg-rose-50 text-rose-600 border border-rose-100">
+                                                            <i class="fas fa-exclamation-circle"></i> {{ __('ត្រូវសិក្សាឡើងវិញ') }}
+                                                        </span>
+                                                    @elseif(!empty($grade->needs_re_exam))
+                                                        <span class="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-600 border border-amber-100">
+                                                            <i class="fas fa-redo"></i> {{ __('ត្រូវប្រឡងសង') }}
+                                                        </span>
+                                                    @else
+                                                        <span class="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded text-[10px] font-bold bg-rose-50 text-rose-600 border border-rose-100">
+                                                            <i class="fas fa-exclamation-circle"></i> {{ __('ប្រឡងសង') }}
+                                                        </span>
+                                                    @endif
                                                 @endif
                                             </div>
                                         </div>
@@ -179,14 +189,20 @@
                                         <div class="flex justify-center gap-1.5 flex-wrap">
                                             @foreach($grade->assessments as $asmt)
                                                 @php
-                                                    $isLow = ($asmt->display_type == 'Final' && $asmt->score_obtained < 24) || ($asmt->display_type != 'Final' && $asmt->score_obtained < ($asmt->max_score/2));
+                                                    $type = $asmt->getDisplayTypeAttribute();
+                                                    $threshold = \App\Services\GradingService::getPassThreshold(strtolower($type));
+                                                    $isCritical = in_array(strtolower($type), ['assignment', 'midterm', 'final']);
+                                                    $isFailing = $isCritical && $asmt->score_obtained < $threshold;
                                                 @endphp
-                                                <div class="flex flex-col items-center p-1.5 rounded-lg border {{ $isLow ? 'bg-rose-50 border-rose-100' : 'bg-white border-slate-100' }} shadow-sm w-[4.5rem]">
-                                                    <span class="text-[9px] text-slate-400 font-bold uppercase truncate max-w-full">{{ $asmt->display_type }}</span>
-                                                    <span class="text-xs font-bold {{ $isLow ? 'text-rose-600' : 'text-slate-700' }}">
+                                                <div class="flex flex-col items-center p-1.5 rounded-lg border {{ $isFailing ? 'bg-rose-50 border-rose-200' : 'bg-white border-slate-100' }} shadow-sm w-[4.5rem]">
+                                                    <span class="text-[9px] {{ $isFailing ? 'text-rose-400' : 'text-slate-400' }} font-bold uppercase truncate max-w-full">{{ $type }}</span>
+                                                    <span class="text-xs font-bold {{ $isFailing ? 'text-rose-600' : 'text-slate-700' }}">
                                                         {{ number_format($asmt->score_obtained, 1) }}
                                                     </span>
-                                                    <span class="text-[8px] text-slate-300">/ {{ number_format($asmt->max_score, 0) }}</span>
+                                                    <span class="text-[8px] {{ $isFailing ? 'text-rose-300' : 'text-slate-300' }}">/ {{ number_format($asmt->max_score, 0) }}</span>
+                                                    @if($isFailing)
+                                                        <span class="text-[7px] font-bold text-rose-400 mt-0.5">≥{{ $threshold }}</span>
+                                                    @endif
                                                 </div>
                                             @endforeach
                                         </div>
@@ -194,10 +210,10 @@
 
                                     {{-- Attendance --}}
                                     <td class="px-4 py-5 text-center">
-                                        <span class="inline-flex flex-col items-center justify-center w-14 py-1 rounded-lg border border-slate-100 bg-slate-50">
-                                            <span class="text-xs font-bold text-slate-700">{{ number_format($grade->attendance_score, 1) }}</span>
-                                            <span class="text-[9px] font-bold {{ $grade->attendance_score >= 9 ? 'text-emerald-500' : 'text-rose-500' }}">
-                                                {{ $grade->attendance_score >= 9 ? 'P' : 'F' }}
+                                        <span class="inline-flex flex-col items-center justify-center w-14 py-1 rounded-lg border {{ $grade->attendance_score >= 10 ? 'border-slate-100 bg-slate-50' : 'border-rose-200 bg-rose-50' }}">
+                                            <span class="text-xs font-bold {{ $grade->attendance_score >= 10 ? 'text-slate-700' : 'text-rose-600' }}">{{ number_format($grade->attendance_score, 1) }}</span>
+                                            <span class="text-[9px] font-bold {{ $grade->attendance_score >= 10 ? 'text-emerald-500' : 'text-rose-500' }}">
+                                                {{ $grade->attendance_score >= 10 ? 'P' : 'F' }}
                                             </span>
                                         </span>
                                     </td>
@@ -243,7 +259,20 @@
                                 <div class="min-w-0 flex-1">
                                     <h4 class="text-sm font-bold text-slate-900 truncate">{{ $grade->course_name_en }}</h4>
                                     <p class="text-xs text-slate-500 mt-0.5 truncate">{{ $grade->course_name_km }}</p>
-                                    <span class="text-[10px] text-slate-400 font-bold">{{ $grade->credits }} {{ __('ក្រេឌីត') }}</span>
+                                    <div class="flex items-center gap-2 mt-1">
+                                        <span class="text-[10px] text-slate-400 font-bold">{{ $grade->credits }} {{ __('ក្រេឌីត') }}</span>
+                                        @if($grade->is_failed)
+                                            @if($grade->needs_retake_semester ?? false)
+                                                <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-rose-50 text-rose-600 border border-rose-100">
+                                                    <i class="fas fa-exclamation-circle"></i> {{ __('ត្រូវសិក្សាឡើងវិញ') }}
+                                                </span>
+                                            @elseif(!empty($grade->needs_re_exam))
+                                                <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-50 text-amber-600 border border-amber-100">
+                                                    <i class="fas fa-redo"></i> {{ __('ត្រូវប្រឡងសង') }}
+                                                </span>
+                                            @endif
+                                        @endif
+                                    </div>
                                 </div>
                                 <div class="flex flex-col items-end shrink-0 ml-3">
                                     <span class="text-lg font-black {{ $grade->is_failed ? 'text-rose-600' : 'text-emerald-600' }}">
@@ -257,11 +286,14 @@
                             <div class="grid grid-cols-3 gap-1.5 mb-3">
                                 @foreach($grade->assessments as $asmt)
                                     @php
-                                        $isLow = ($asmt->display_type == 'Final' && $asmt->score_obtained < 24) || ($asmt->display_type != 'Final' && $asmt->score_obtained < ($asmt->max_score/2));
+                                        $type = $asmt->getDisplayTypeAttribute();
+                                        $threshold = \App\Services\GradingService::getPassThreshold(strtolower($type));
+                                        $isCritical = in_array(strtolower($type), ['assignment', 'midterm', 'final']);
+                                        $isFailing = $isCritical && $asmt->score_obtained < $threshold;
                                     @endphp
-                                    <div class="bg-slate-50 p-1.5 rounded-lg text-center border border-slate-100">
-                                        <p class="text-[9px] text-slate-400 uppercase font-bold truncate">{{ $asmt->display_type }}</p>
-                                        <p class="text-xs font-bold {{ $isLow ? 'text-rose-600' : 'text-slate-700' }}">{{ number_format($asmt->score_obtained, 1) }}</p>
+                                    <div class="p-1.5 rounded-lg text-center border {{ $isFailing ? 'bg-rose-50 border-rose-200' : 'bg-slate-50 border-slate-100' }}">
+                                        <p class="text-[9px] {{ $isFailing ? 'text-rose-400' : 'text-slate-400' }} uppercase font-bold truncate">{{ $type }}</p>
+                                        <p class="text-xs font-bold {{ $isFailing ? 'text-rose-600' : 'text-slate-700' }}">{{ number_format($asmt->score_obtained, 1) }}</p>
                                     </div>
                                 @endforeach
                             </div>

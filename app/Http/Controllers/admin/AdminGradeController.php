@@ -87,67 +87,45 @@ class AdminGradeController extends Controller
 
         $assessments = collect($assignments)->concat($exams)->concat($quizzes)->sortBy('created_at');
 
-        // Load all exam results for enrolled students
+        // Load all exam results for enrolled students with relationships
         $allResults = ExamResult::whereIn('student_user_id', $enrollments->pluck('student_user_id'))
+            ->with(['exam', 'assignment', 'quiz'])
             ->get();
 
-        // Build gradebook and compute totals (matching student flow)
+        // Build gradebook and compute totals using critical component logic
         $gradebook = [];
-        $students = $enrollments->map(function ($enrollment) use ($assessments, $allResults, &$gradebook, $courseOffering, $exams, $assignments) {
+        $students = $enrollments->map(function ($enrollment) use ($assessments, $allResults, &$gradebook, $courseOffering) {
             $student = $enrollment->student;
-
-            // Attendance score (15% weight)
             $attendanceScore = (float) ($student->getAttendanceScoreByCourse($courseOffering->id) ?? 0);
 
-            $nonQuizScore = 0;
-            $quizBonus = 0;
+            // Get student's exam results for this offering
+            $studentResults = $allResults->where('student_user_id', $student->id);
 
             foreach ($assessments as $assessment) {
                 $type = ($assessment instanceof Assignment) ? 'assignment' :
                        (($assessment instanceof Quiz) ? 'quiz' : 'exam');
-
-                $scoreRecord = $allResults->where('assessment_id', $assessment->id)
-                    ->where('student_user_id', $student->id)
+                $scoreRecord = $studentResults->where('assessment_id', $assessment->id)
                     ->where('assessment_type', $type)
                     ->first();
-
                 $score = $scoreRecord ? (float) $scoreRecord->score_obtained : 0;
                 $gradebook[$student->id][$type.'_'.$assessment->id] = $score;
-
-                if ($type === 'quiz') {
-                    $quizBonus += $score;
-                } else {
-                    $nonQuizScore += $score;
-                }
             }
 
-            // Cap total at 100 (matching student flow)
-            $totalScore = min($attendanceScore + $nonQuizScore + $quizBonus, 100);
+            // Use new grading service with critical component + re-exam logic
+            $gradeResult = GradingService::calculateFinalGrade(
+                $attendanceScore,
+                $studentResults,
+                $student,
+                $courseOffering->id
+            );
 
-            // Failing logic (matching student flow)
-            $finalExamScore = $exams->sum(function ($e) use ($allResults, $student) {
-                $r = $allResults->where('assessment_id', $e->id)->where('student_user_id', $student->id)->where('assessment_type', 'exam')->first();
-
-                return $r ? (float) $r->score_obtained : 0;
-            });
-            $midtermScore = $exams->sum(function ($e) use ($allResults, $student) {
-                $r = $allResults->where('assessment_id', $e->id)->where('student_user_id', $student->id)->where('assessment_type', 'exam')->first();
-                $titleEn = strtolower($e->title_en ?? '');
-                $titleKm = strtolower($e->title_km ?? '');
-                $isMidterm = str_contains($titleEn, 'midterm') || str_contains($titleEn, 'ពាក់កណ្ដាល់') || str_contains($titleKm, 'ពាក់កណ្ដាល់');
-
-                return $isMidterm ? ($r ? (float) $r->score_obtained : 0) : 0;
-            });
-            $assignmentScore = $assignments->sum(function ($a) use ($allResults, $student) {
-                $r = $allResults->where('assessment_id', $a->id)->where('student_user_id', $student->id)->where('assessment_type', 'assignment')->first();
-
-                return $r ? (float) $r->score_obtained : 0;
-            });
-
-            $letterGrade = GradingService::getLetterGrade($totalScore);
-            $student->temp_total = (float) $totalScore;
-            $student->letterGrade = $letterGrade;
-            $student->isPassing = GradingService::isPassing($letterGrade);
+            $student->temp_total = (float) $gradeResult['total_score'];
+            $student->letterGrade = $gradeResult['letter_grade'];
+            $student->isPassing = $gradeResult['is_passing'];
+            $student->component_status = $gradeResult['component_status'];
+            $student->failed_components = $gradeResult['failed_components'];
+            $student->needs_re_exam = $gradeResult['needs_re_exam'];
+            $student->needs_retake_semester = $gradeResult['needs_retake_semester'];
 
             return $student;
         });
@@ -199,55 +177,36 @@ class AdminGradeController extends Controller
         $assessments = collect($assignments)->concat($exams)->concat($quizzes)->sortBy('created_at');
 
         $allResults = ExamResult::whereIn('student_user_id', $enrollments->pluck('student_user_id'))
+            ->with(['exam', 'assignment', 'quiz'])
             ->get();
 
         $gradebook = [];
-        $students = $enrollments->map(function ($enrollment) use ($assessments, $allResults, &$gradebook, $courseOffering, $exams, $assignments) {
+        $students = $enrollments->map(function ($enrollment) use ($assessments, $allResults, &$gradebook, $courseOffering) {
             $student = $enrollment->student;
             $attendanceScore = (float) ($student->getAttendanceScoreByCourse($courseOffering->id) ?? 0);
-            $nonQuizScore = 0;
-            $quizBonus = 0;
+
+            $studentResults = $allResults->where('student_user_id', $student->id);
 
             foreach ($assessments as $assessment) {
                 $type = ($assessment instanceof Assignment) ? 'assignment' :
                        (($assessment instanceof Quiz) ? 'quiz' : 'exam');
-                $scoreRecord = $allResults->where('assessment_id', $assessment->id)
-                    ->where('student_user_id', $student->id)
+                $scoreRecord = $studentResults->where('assessment_id', $assessment->id)
                     ->where('assessment_type', $type)
                     ->first();
                 $score = $scoreRecord ? (float) $scoreRecord->score_obtained : 0;
                 $gradebook[$student->id][$type.'_'.$assessment->id] = $score;
-                if ($type === 'quiz') {
-                    $quizBonus += $score;
-                } else {
-                    $nonQuizScore += $score;
-                }
             }
-            $totalScore = min($attendanceScore + $nonQuizScore + $quizBonus, 100);
 
-            $finalExamScore = $exams->sum(function ($e) use ($allResults, $student) {
-                $r = $allResults->where('assessment_id', $e->id)->where('student_user_id', $student->id)->where('assessment_type', 'exam')->first();
+            $gradeResult = GradingService::calculateFinalGrade(
+                $attendanceScore,
+                $studentResults,
+                $student,
+                $courseOffering->id
+            );
 
-                return $r ? (float) $r->score_obtained : 0;
-            });
-            $midtermScore = $exams->sum(function ($e) use ($allResults, $student) {
-                $r = $allResults->where('assessment_id', $e->id)->where('student_user_id', $student->id)->where('assessment_type', 'exam')->first();
-                $titleEn = strtolower($e->title_en ?? '');
-                $titleKm = strtolower($e->title_km ?? '');
-                $isMidterm = str_contains($titleEn, 'midterm') || str_contains($titleEn, 'ពាក់កណ្ដាល់') || str_contains($titleKm, 'ពាក់កណ្ដាល់');
-
-                return $isMidterm ? ($r ? (float) $r->score_obtained : 0) : 0;
-            });
-            $assignmentScore = $assignments->sum(function ($a) use ($allResults, $student) {
-                $r = $allResults->where('assessment_id', $a->id)->where('student_user_id', $student->id)->where('assessment_type', 'assignment')->first();
-
-                return $r ? (float) $r->score_obtained : 0;
-            });
-
-            $letterGrade = GradingService::getLetterGrade($totalScore);
-            $student->temp_total = (float) $totalScore;
-            $student->letterGrade = $letterGrade;
-            $student->isPassing = GradingService::isPassing($letterGrade);
+            $student->temp_total = (float) $gradeResult['total_score'];
+            $student->letterGrade = $gradeResult['letter_grade'];
+            $student->isPassing = $gradeResult['is_passing'];
 
             return $student;
         });

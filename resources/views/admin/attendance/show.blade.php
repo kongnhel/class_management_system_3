@@ -81,6 +81,7 @@
                             <tr class="bg-gray-50">
                                 <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">#</th>
                                 <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('ឈ្មោះ') }}</th>
+                                <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('ពិន្ទុវត្តមាន') }}</th>
                                 <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('សរុប') }}</th>
                                 <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('មានវត្តមាន') }}</th>
                                 <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('អវត្តមាន') }}</th>
@@ -111,6 +112,15 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 text-center text-sm font-bold text-gray-700">{{ $data['total_days'] }}</td>
+                                <td class="px-6 py-4 text-center">
+                                    @php
+                                        $attScore = $data['attendance_score'] ?? 0;
+                                        $attPass = $attScore >= 10;
+                                    @endphp
+                                    <span class="inline-flex items-center justify-center min-w-[36px] h-7 px-2 rounded-lg {{ $attPass ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600' }} font-bold text-xs">
+                                        {{ number_format($attScore, 1) }} / 15
+                                    </span>
+                                </td>
                                 <td class="px-6 py-4 text-center">
                                     <span class="inline-flex items-center justify-center min-w-[28px] h-7 px-2 rounded-lg bg-emerald-50 text-emerald-600 font-bold text-xs">
                                         {{ $data['present_days'] }}
@@ -152,7 +162,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="7" class="px-6 py-16">
+                                <td colspan="8" class="px-6 py-16">
                                     <div class="flex flex-col items-center gap-3">
                                         <div class="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center">
                                             <i class="fas fa-inbox text-gray-300 text-2xl"></i>

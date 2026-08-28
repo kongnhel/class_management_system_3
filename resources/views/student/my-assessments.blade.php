@@ -41,12 +41,30 @@
                         </div>
                         {{-- Summary chips --}}
                         <div class="flex flex-wrap gap-2 mt-3">
-                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 text-[10px] font-bold">
+                            @php
+                                $attPassing = \App\Services\GradingService::isComponentPassing('attendance', $courseData['attendance_score']);
+                            @endphp
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg {{ $attPassing ? 'bg-blue-50 text-blue-700' : 'bg-rose-50 text-rose-700' }} text-[10px] font-bold">
                                 <i class="fas fa-user-check"></i> {{ __('វត្តមាន') }}: {{ number_format($courseData['attendance_score'], 1) }}/15
+                                @if(!$attPassing)
+                                    <span class="ml-1 text-rose-500">✗</span>
+                                @else
+                                    <span class="ml-1 text-emerald-500">✓</span>
+                                @endif
                             </span>
                             @if($courseData['quiz_bonus'] > 0)
                                 <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-50 text-amber-700 text-[10px] font-bold">
                                     <i class="fas fa-star"></i> Quiz Bonus: +{{ number_format($courseData['quiz_bonus'], 1) }}
+                                </span>
+                            @endif
+                            @if(!empty($courseData['needs_re_exam']))
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-50 text-amber-700 text-[10px] font-bold">
+                                    <i class="fas fa-redo"></i> {{ __('ត្រូវប្រឡងសង') }}: {{ implode(', ', array_map(fn($t) => match($t) { 'assignment' => __('កិច្ចការ'), 'midterm' => __('ប្រឡងពាក់កណ្ដាល់'), 'final' => __('ប្រឡងប្រចាំឆមាស'), default => $t }, $courseData['needs_re_exam'])) }}
+                                </span>
+                            @endif
+                            @if($courseData['needs_retake_semester'] ?? false)
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-rose-50 text-rose-700 text-[10px] font-bold">
+                                    <i class="fas fa-exclamation-circle"></i> {{ __('ត្រូវសិក្សាឡើងវិញ') }}
                                 </span>
                             @endif
                         </div>
@@ -66,16 +84,22 @@
                             </thead>
                             <tbody class="divide-y divide-slate-50">
                                 {{-- Attendance row --}}
-                                <tr class="hover:bg-blue-50/30">
+                                @php
+                                    $attPass = \App\Services\GradingService::isComponentPassing('attendance', $courseData['attendance_score']);
+                                @endphp
+                                <tr class="{{ $attPass ? 'hover:bg-blue-50/30' : 'hover:bg-rose-50/30' }}">
                                     <td class="px-6 py-3">
-                                        <span class="inline-flex px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 text-blue-700">{{ __('វត្តមាន') }}</span>
+                                        <span class="inline-flex px-2 py-0.5 rounded-md text-[10px] font-bold {{ $attPass ? 'bg-blue-50 text-blue-700' : 'bg-rose-50 text-rose-700' }}">{{ __('វត្តមាន') }}</span>
                                     </td>
                                     <td class="px-6 py-3 font-semibold text-gray-700">{{ __('ពិន្ទុវត្តមាន (15%)') }}</td>
                                     <td class="px-6 py-3 text-center">
-                                        <span class="font-black text-blue-600">{{ number_format($courseData['attendance_score'], 1) }}</span>
+                                        <span class="font-black {{ $attPass ? 'text-blue-600' : 'text-rose-600' }}">{{ number_format($courseData['attendance_score'], 1) }}</span>
+                                        <span class="text-[10px] font-bold {{ $attPass ? 'text-emerald-500' : 'text-rose-500' }}">{{ $attPass ? '✓' : '✗' }}</span>
                                     </td>
                                     <td class="px-6 py-3 text-center text-gray-400 font-bold">15</td>
-                                    <td class="px-6 py-3 text-xs text-gray-400">—</td>
+                                    <td class="px-6 py-3 text-xs {{ $attPass ? 'text-gray-400' : 'text-rose-500 font-bold' }}">
+                                        {{ $attPass ? '—' : __('ត្រូវសិក្សាឡើងវិញ') }}
+                                    </td>
                                 </tr>
 
                                 @foreach($courseData['assessments'] as $assessment)
@@ -87,22 +111,37 @@
                                             'quiz' => 'bg-amber-50 text-amber-700',
                                         ];
                                         $typeClass = $typeColors[$assessment['type']] ?? 'bg-gray-50 text-gray-700';
-                                        $hasScore = $assessment['score'] !== null;
-                                        $scoreVal = $hasScore ? (float) $assessment['score'] : 0;
-                                        $scoreClass = !$hasScore ? 'text-gray-300' : ($scoreVal >= ($assessment['max_score'] * 0.5) ? 'text-emerald-600' : 'text-rose-500');
+                                        $scoreVal = (float) ($assessment['score'] ?? 0);
+                                        $isCritical = in_array($assessment['type'], ['assignment', 'midterm', 'final']);
+                                        $threshold = $isCritical ? \App\Services\GradingService::getPassThreshold($assessment['type']) : 0;
+                                        $isPassing = !$isCritical || $scoreVal >= $threshold;
+                                        $hasReExam = $assessment['has_re_exam'] ?? false;
                                     @endphp
-                                    <tr class="hover:bg-slate-50/50">
+                                    <tr class="{{ $isPassing ? 'hover:bg-slate-50/50' : 'hover:bg-rose-50/30' }}">
                                         <td class="px-6 py-3">
                                             <span class="inline-flex px-2 py-0.5 rounded-md text-[10px] font-bold {{ $typeClass }}">{{ $assessment['type_label'] }}</span>
                                         </td>
-                                        <td class="px-6 py-3 font-semibold text-gray-700">{{ $assessment['title'] }}</td>
+                                        <td class="px-6 py-3">
+                                            <span class="font-semibold text-gray-700">{{ $assessment['title'] }}</span>
+                                            @if($hasReExam)
+                                                <span class="ml-1.5 inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-blue-100 text-blue-600">
+                                                    <i class="fas fa-redo mr-0.5"></i> {{ __('ប្រឡងសង') }}
+                                                </span>
+                                            @endif
+                                        </td>
                                         <td class="px-6 py-3 text-center">
-                                            <span class="font-black {{ $scoreClass }}">
-                                                {{ $hasScore ? number_format($scoreVal, 1) : '—' }}
+                                            @if($hasReExam && ($assessment['original_score'] ?? 0) != $scoreVal)
+                                                <span class="text-gray-300 line-through text-xs mr-1">{{ number_format($assessment['original_score'] ?? 0, 1) }}</span>
+                                            @endif
+                                            <span class="font-black {{ $isPassing ? 'text-emerald-600' : 'text-rose-600' }}">
+                                                {{ number_format($scoreVal, 1) }}
                                             </span>
+                                            <span class="text-[10px] font-bold {{ $isPassing ? 'text-emerald-500' : 'text-rose-500' }}">{{ $isPassing ? '✓' : '✗' }}</span>
                                         </td>
                                         <td class="px-6 py-3 text-center text-gray-400 font-bold">{{ $assessment['max_score'] }}</td>
-                                        <td class="px-6 py-3 text-xs text-gray-400">{{ $assessment['notes'] ?? '—' }}</td>
+                                        <td class="px-6 py-3 text-xs {{ $isPassing ? 'text-gray-400' : 'text-rose-500 font-bold' }}">
+                                            {{ $isPassing ? ($assessment['notes'] ?? '—') : __('ត្រូវការ') . ' ≥ ' . $threshold }}
+                                        </td>
                                     </tr>
                                 @endforeach
 

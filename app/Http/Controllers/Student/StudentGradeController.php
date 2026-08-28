@@ -47,9 +47,6 @@ class StudentGradeController extends Controller
         $courseGrades = $courseOfferings->map(function ($offering) use ($filteredResults, $user) {
             $courseId = $offering->course_id;
             $items = $filteredResults->where('course_offering_id', $offering->id)->values();
-            // Build the breakdown from every assessment in the offering, not only
-            // assessments that already have an ExamResult. This keeps score boxes
-            // visible when a professor has not entered a result yet.
             $resultFor = function (string $type, int $assessmentId) use ($items) {
                 return $items->first(fn ($result) =>
                     $result->assessment_type === $type && (int) $result->assessment_id === $assessmentId
@@ -91,15 +88,17 @@ class StudentGradeController extends Controller
             $absCount = $offeringId ? \App\Models\AttendanceRecord::where('student_user_id', $user->id)->where('course_offering_id', $offeringId)->where('status', 'absent')->count() : 0;
             $perCount = $offeringId ? \App\Models\AttendanceRecord::where('student_user_id', $user->id)->where('course_offering_id', $offeringId)->where('status', 'permission')->count() : 0;
 
-            $nonQuiz = $items->where('assessment_type', '!=', 'quiz')->sum('score_obtained');
-            $quizBonus = $items->where('assessment_type', 'quiz')->sum('score_obtained');
-            $totalObtained = min($attendanceScore + $nonQuiz + $quizBonus, 100);
-            $letterGrade = GradingService::getLetterGrade($totalObtained);
-            $isFailed = ! GradingService::isPassing($letterGrade);
+            // Use new grading service with critical component + re-exam logic
+            $gradeResult = GradingService::calculateFinalGrade(
+                $attendanceScore,
+                $items,
+                $user,
+                $offeringId
+            );
+
             $course = $offering->course;
 
-            // Get course_offering_id for this course for ranking
-            $offeringId = $offering->id;
+            // Ranking
             $enrollments = $offeringId
                 ? StudentCourseEnrollment::where('course_offering_id', $offeringId)->get()
                 : collect();
@@ -134,11 +133,15 @@ class StudentGradeController extends Controller
                 'attendance_score' => $attendanceScore,
                 'absent_count' => $absCount,
                 'permission_count' => $perCount,
-                'total_score' => $totalObtained,
-                'grade' => $letterGrade,
-                'grade_points' => GradingService::getGradePoints($letterGrade),
-                'is_failed' => $isFailed,
+                'total_score' => $gradeResult['total_score'],
+                'grade' => $gradeResult['letter_grade'],
+                'grade_points' => GradingService::getGradePoints($gradeResult['letter_grade']),
+                'is_failed' => ! $gradeResult['is_passing'],
                 'assessments' => $items,
+                'component_status' => $gradeResult['component_status'],
+                'failed_components' => $gradeResult['failed_components'],
+                'needs_re_exam' => $gradeResult['needs_re_exam'],
+                'needs_retake_semester' => $gradeResult['needs_retake_semester'],
             ];
         })->values();
 
@@ -251,41 +254,94 @@ class StudentGradeController extends Controller
 
         $allResultIds = ExamResult::where('student_user_id', $user->id)->get()->keyBy(fn ($r) => $r->assessment_type.'_'.$r->assessment_id);
 
-        $assessmentsByCourse = $courseOfferings->map(function ($offering) use ($user, $allResultIds) {
+        // Load all re-exam results for this student
+        $reExamResults = \App\Models\ReExamResult::where('student_user_id', $user->id)->get();
+        $reExamMap = $reExamResults->groupBy('course_offering_id');
+
+        $assessmentsByCourse = $courseOfferings->map(function ($offering) use ($user, $allResultIds, $reExamMap) {
             $items = collect();
+            $offeringReExams = $reExamMap->get($offering->id, collect())->keyBy('assessment_type');
 
             foreach ($offering->assignments as $a) {
                 $key = 'assignment_'.$a->id;
                 $result = $allResultIds->get($key);
-                $items->push(['title' => $a->title_km ?? $a->title_en, 'type' => 'assignment', 'type_label' => 'កិច្ចការ', 'max_score' => $a->max_score, 'score' => $result?->score_obtained, 'date' => $a->due_date, 'notes' => $result?->notes]);
+                $reExam = $offeringReExams->get('assignment');
+                $score = $reExam ? (float) $reExam->new_score : ($result?->score_obtained ?? 0);
+                $originalScore = $result?->score_obtained ?? 0;
+                $items->push([
+                    'title' => $a->title_km ?? $a->title_en,
+                    'type' => 'assignment',
+                    'type_label' => __('កិច្ចការ'),
+                    'max_score' => $a->max_score,
+                    'score' => $score,
+                    'original_score' => $originalScore,
+                    'has_re_exam' => (bool) $reExam,
+                    'date' => $a->due_date,
+                    'notes' => $result?->notes,
+                ]);
             }
 
             foreach ($offering->exams as $e) {
                 $key = 'exam_'.$e->id;
                 $result = $allResultIds->get($key);
-                $titleEn = strtolower($e->title_en ?? '');
-                $isMidterm = str_contains($titleEn, 'midterm') || str_contains($titleEn, 'ពាក់កណ្ដាល់') || str_contains(strtolower($e->title_km ?? ''), 'ពាក់កណ្ដាល់');
-                $typeLabel = $isMidterm ? 'ប្រឡងពាក់កណ្ដាល់' : 'ប្រឡងប្រចាំឆមាស';
-                $type = $isMidterm ? 'midterm' : 'final';
-                $items->push(['title' => $e->title_km ?? $e->title_en, 'type' => $type, 'type_label' => $typeLabel, 'max_score' => $e->max_score, 'score' => $result?->score_obtained, 'date' => $e->exam_date, 'notes' => $result?->notes]);
+                $type = GradingService::classifyExamType($e);
+                $typeLabel = match ($type) {
+                    'midterm' => __('ប្រឡងពាក់កណ្ដាល់'),
+                    'final' => __('ប្រឡងប្រចាំឆមាស'),
+                    default => __('ប្រឡង'),
+                };
+                $reExam = $offeringReExams->get($type);
+                $score = $reExam ? (float) $reExam->new_score : ($result?->score_obtained ?? 0);
+                $originalScore = $result?->score_obtained ?? 0;
+                $items->push([
+                    'title' => $e->title_km ?? $e->title_en,
+                    'type' => $type,
+                    'type_label' => $typeLabel,
+                    'max_score' => $e->max_score,
+                    'score' => $score,
+                    'original_score' => $originalScore,
+                    'has_re_exam' => (bool) $reExam,
+                    'date' => $e->exam_date,
+                    'notes' => $result?->notes,
+                ]);
             }
 
             foreach ($offering->quizzes as $q) {
                 $key = 'quiz_'.$q->id;
                 $result = $allResultIds->get($key);
-                $items->push(['title' => $q->title_km ?? $q->title_en, 'type' => 'quiz', 'type_label' => 'Quiz (Bonus)', 'max_score' => $q->max_score, 'score' => $result?->score_obtained, 'date' => $q->quiz_date, 'notes' => $result?->notes]);
+                $items->push([
+                    'title' => $q->title_km ?? $q->title_en,
+                    'type' => 'quiz',
+                    'type_label' => 'Quiz (Bonus)',
+                    'max_score' => $q->max_score,
+                    'score' => $result?->score_obtained ?? 0,
+                    'original_score' => $result?->score_obtained ?? 0,
+                    'has_re_exam' => false,
+                    'date' => $q->quiz_date,
+                    'notes' => $result?->notes,
+                ]);
             }
 
             $att = (float) ($user->getAttendanceScoreByCourse($offering->id) ?? 0);
 
-            $scored = $items->filter(fn ($a) => $a['score'] !== null);
-            $nonQuiz = $scored->where('type', '!=', 'quiz')->sum('score');
-            $quizBonus = $scored->where('type', 'quiz')->sum('score');
-            $totalScore = min($att + $nonQuiz + $quizBonus, 100);
-            $letterGrade = GradingService::getLetterGrade($totalScore);
+            // Build ExamResult-like objects for the grading service
+            $examResultsForGrading = collect();
+            foreach ($items as $item) {
+                $examResultsForGrading->push((object) [
+                    'assessment_type' => $item['type'],
+                    'assessment_id' => 0,
+                    'score_obtained' => $item['score'],
+                ]);
+            }
 
-            $isFailed = ! GradingService::isPassing($letterGrade);
+            $gradeResult = GradingService::calculateFinalGrade(
+                $att,
+                $examResultsForGrading,
+                $user,
+                $offering->id
+            );
 
+            $quizBonus = $items->where('type', 'quiz')->sum('score');
 
             return [
                 'offering' => $offering,
@@ -293,9 +349,13 @@ class StudentGradeController extends Controller
                 'assessments' => $items->values(),
                 'attendance_score' => $att,
                 'quiz_bonus' => $quizBonus,
-                'total_score' => $totalScore,
-                'letter_grade' => $letterGrade,
-                'is_failed' => $isFailed,
+                'total_score' => $gradeResult['total_score'],
+                'letter_grade' => $gradeResult['letter_grade'],
+                'is_failed' => ! $gradeResult['is_passing'],
+                'component_status' => $gradeResult['component_status'],
+                'failed_components' => $gradeResult['failed_components'],
+                'needs_re_exam' => $gradeResult['needs_re_exam'],
+                'needs_retake_semester' => $gradeResult['needs_retake_semester'],
             ];
         })->values();
 

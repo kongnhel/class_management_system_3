@@ -91,6 +91,8 @@ class StudentProgressionService
 
     /**
      * Check if a student has any F grade in the current year's courses.
+     * Uses critical component logic: fail ANY critical component = F.
+     * Failed attendance = needs retake semester (cannot advance).
      */
     public function hasFailedCourses(User $student, Program $program): bool
     {
@@ -98,12 +100,8 @@ class StudentProgressionService
         $courseOfferingIds = $this->getYearCourseOfferingIds($student, $program, $yearLevel);
 
         if ($courseOfferingIds->isEmpty()) {
-            // No courses assigned for this year = cannot advance (treat as F)
             return true;
         }
-
-        // Check exam results for F grades
-        $hasF = false;
 
         foreach ($courseOfferingIds as $offeringId) {
             $attendanceScore = $student->getAttendanceScoreByCourse($offeringId);
@@ -120,59 +118,26 @@ class StudentProgressionService
                         $q2->where('assessment_type', 'assignment')
                             ->whereIn('assessment_id', fn ($q3) => $q3->select('id')->from('assignments')->where('course_offering_id', $offeringId));
                     });
-                })->get();
+                })->with(['exam', 'assignment', 'quiz'])
+                ->get();
 
             if ($examResults->isEmpty()) {
-                // No scores at all = F grade
-                $hasF = true;
-                break;
+                return true;
             }
 
-            $finalExamScore = 0;
-            $midtermScore = 0;
-            $assignmentScore = 0;
-            $totalScore = 0;
+            $gradeResult = GradingService::calculateFinalGrade(
+                $attendanceScore,
+                $examResults,
+                $student,
+                $offeringId
+            );
 
-            foreach ($examResults as $result) {
-                $assessment = match ($result->assessment_type) {
-                    'assignment' => \App\Models\Assignment::find($result->assessment_id),
-                    'quiz' => \App\Models\Quiz::find($result->assessment_id),
-                    default => \App\Models\Exam::find($result->assessment_id),
-                };
-
-                if (! $assessment) {
-                    continue;
-                }
-
-                $maxScore = (float) $assessment->max_score;
-                $displayType = match (true) {
-                    $result->assessment_type === 'exam' && $maxScore == 15 => 'midterm',
-                    $result->assessment_type === 'exam' => 'final',
-                    default => $result->assessment_type,
-                };
-
-                $totalScore += $result->score_obtained;
-
-                if ($displayType === 'final') {
-                    $finalExamScore += $result->score_obtained;
-                } elseif ($displayType === 'midterm') {
-                    $midtermScore += $result->score_obtained;
-                } elseif ($displayType === 'assignment') {
-                    $assignmentScore += $result->score_obtained;
-                }
-            }
-
-            $courseTotal = min($totalScore + $attendanceScore, 100);
-            $letterGrade = GradingService::getLetterGrade($courseTotal);
-            $isFailed = ! GradingService::isPassing($letterGrade);
-
-            if ($isFailed) {
-                $hasF = true;
-                break;
+            if (! $gradeResult['is_passing']) {
+                return true;
             }
         }
 
-        return $hasF;
+        return false;
     }
 
     /**

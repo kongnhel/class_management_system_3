@@ -82,7 +82,7 @@ class AdminAttendanceController extends Controller
             ->values();
 
         // Group by student
-        $studentAttendance = $enrollments->map(function ($enrollment) use ($attendanceRecords) {
+        $studentAttendance = $enrollments->map(function ($enrollment) use ($attendanceRecords, $courseOffering) {
             $studentRecords = $attendanceRecords->where('student_user_id', $enrollment->student_user_id);
             $totalDays = $studentRecords->count();
             $presentDays = $studentRecords->where('status', 'present')->count();
@@ -91,6 +91,9 @@ class AdminAttendanceController extends Controller
 
             $attendanceRate = $totalDays > 0 ? round(($presentDays / $totalDays) * 100, 1) : 0;
 
+            // Compute attendance score out of 15 (same as student view)
+            $attendanceScore = (float) ($enrollment->student->getAttendanceScoreByCourse($courseOffering->id) ?? 0);
+
             return [
                 'student' => $enrollment->student,
                 'total_days' => $totalDays,
@@ -98,6 +101,7 @@ class AdminAttendanceController extends Controller
                 'absent_days' => $absentDays,
                 'permission_days' => $permissionDays,
                 'attendance_rate' => $attendanceRate,
+                'attendance_score' => $attendanceScore,
             ];
         });
 
@@ -132,7 +136,7 @@ class AdminAttendanceController extends Controller
             ->unique('student_user_id')
             ->values();
 
-        $studentAttendance = $enrollments->map(function ($enrollment) use ($attendanceRecords) {
+        $studentAttendance = $enrollments->map(function ($enrollment) use ($attendanceRecords, $courseOffering) {
             $studentRecords = $attendanceRecords->where('student_user_id', $enrollment->student_user_id);
             $totalDays = $studentRecords->count();
             $presentDays = $studentRecords->where('status', 'present')->count();
@@ -140,6 +144,7 @@ class AdminAttendanceController extends Controller
             $permissionDays = $studentRecords->where('status', 'permission')->count();
 
             $attendanceRate = $totalDays > 0 ? round(($presentDays / $totalDays) * 100, 1) : 0;
+            $attendanceScore = (float) ($enrollment->student->getAttendanceScoreByCourse($courseOffering->id) ?? 0);
 
             return [
                 'student' => $enrollment->student,
@@ -148,6 +153,7 @@ class AdminAttendanceController extends Controller
                 'absent_days' => $absentDays,
                 'permission_days' => $permissionDays,
                 'attendance_rate' => $attendanceRate,
+                'attendance_score' => $attendanceScore,
             ];
         });
 
