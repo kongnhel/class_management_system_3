@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Program;
 use App\Models\StudentProfile;
+use App\Services\ImageKitService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\ImageKit;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 
@@ -74,26 +74,16 @@ class StudentProfileController extends Controller
 
         if ($request->hasFile('profile_picture')) {
             try {
-                $image = $request->file('profile_picture');
+                $imageKitService = app(ImageKitService::class);
+                $imageUrl = $imageKitService->uploadProfilePicture(
+                    $request->file('profile_picture')
+                );
 
-                $response = \Illuminate\Support\Facades\Http::withBasicAuth(env('IMAGEKIT_PRIVATE_KEY'), '')
-                    ->attach(
-                        'file',
-                        file_get_contents($image->getRealPath()),
-                        $image->getClientOriginalName()
-                    )
-                    ->post('https://upload.imagekit.io/api/v1/files/upload', [
-                        'fileName' => 'student_'.time(),
-                        'useUniqueFileName' => 'true',
-                        'folder' => '/student_profiles',
-                    ]);
-
-                if ($response->successful()) {
-                    $studentProfile->profile_picture_url = $response->json()['url'];
+                if ($imageUrl) {
+                    $studentProfile->profile_picture_url = $imageUrl;
                 } else {
-                    Log::error('ImageKit Upload Error: '.$response->body());
+                    Log::error('ImageKit Upload returned null for student '.$user->id);
                 }
-
             } catch (\Exception $e) {
                 Log::error('Upload Error: '.$e->getMessage());
             }
