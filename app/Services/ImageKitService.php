@@ -28,11 +28,21 @@ class ImageKitService
             return null;
         }
 
+        Log::info('ImageKit upload starting', [
+            'folder' => $folder,
+            'size' => $file->getSize(),
+            'mime' => $file->getMimeType(),
+            'name' => $file->getClientOriginalName(),
+        ]);
+
         try {
+            $contents = file_get_contents($file->getRealPath());
+            Log::info('ImageKit file_read contents length: '.strlen($contents));
+
             $response = Http::withBasicAuth($this->privateKey, '')
                 ->attach(
                     'file',
-                    file_get_contents($file->getRealPath()),
+                    $contents,
                     $file->getClientOriginalName()
                 )
                 ->post('https://upload.imagekit.io/api/v1/files/upload', [
@@ -40,6 +50,8 @@ class ImageKitService
                     'useUniqueFileName' => 'true',
                     'folder' => $folder,
                 ]);
+
+            Log::info('ImageKit response status: '.$response->status());
 
             if ($response->successful()) {
                 return $response->json()['url'];
