@@ -157,28 +157,77 @@
 </x-app-layout>
 
 <script>
-    // JavaScript សម្រាប់បង្ហាញរូបភាពបណ្តោះអាសន្ន (Preview)
-    document.getElementById('profile_picture').addEventListener('change', function(event) {
-        const [file] = event.target.files;
-        const previewElement = document.getElementById('profile-picture-preview');
-        const placeholderElement = document.getElementById('profile-picture-placeholder');
-        const parentContainer = document.querySelector('.relative.group');
-
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                if (previewElement) {
-                    previewElement.src = e.target.result;
-                } else if (placeholderElement) {
-                    const img = document.createElement('img');
-                    img.id = 'profile-picture-preview';
-                    img.src = e.target.result;
-                    img.alt = 'Profile Picture';
-                    img.className = 'w-32 h-32 rounded-full object-cover border-4 border-emerald-400 shadow-xl transition-transform duration-300 transform group-hover:scale-105';
-                    placeholderElement.replaceWith(img);
-                }
+    function compressImage(file) {
+        return new Promise(function(resolve, reject) {
+            var reader = new FileReader();
+            reader.onload = function(ev) {
+                var img = new Image();
+                img.onload = function() {
+                    var canvas = document.createElement('canvas');
+                    var ctx = canvas.getContext('2d');
+                    var w = img.width, h = img.height;
+                    if (w > 1920 || h > 1920) {
+                        var r = Math.min(1920 / w, 1920 / h);
+                        w = Math.round(w * r);
+                        h = Math.round(h * r);
+                    }
+                    canvas.width = w;
+                    canvas.height = h;
+                    ctx.drawImage(img, 0, 0, w, h);
+                    var quality = 0.8;
+                    function tryCompress() {
+                        canvas.toBlob(function(blob) {
+                            if (!blob) return reject('Canvas failed');
+                            if (blob.size <= 1024 * 1024 || quality <= 0.3) {
+                                resolve(new File([blob], file.name, { type: 'image/jpeg', lastModified: Date.now() }));
+                                return;
+                            }
+                            quality -= 0.05;
+                            tryCompress();
+                        }, 'image/jpeg', quality);
+                    }
+                    tryCompress();
+                };
+                img.onerror = reject;
+                img.src = ev.target.result;
             };
+            reader.onerror = reject;
             reader.readAsDataURL(file);
+        });
+    }
+
+    document.getElementById('profile_picture').addEventListener('change', async function(event) {
+        var file = event.target.files[0];
+        var previewElement = document.getElementById('profile-picture-preview');
+        var placeholderElement = document.getElementById('profile-picture-placeholder');
+
+        if (!file) return;
+
+        if (file.size > 1024 * 1024) {
+            try {
+                var compressed = await compressImage(file);
+                var dt = new DataTransfer();
+                dt.items.add(compressed);
+                event.target.files = dt.files;
+                file = compressed;
+            } catch (err) {
+                console.error('Compression failed:', err);
+            }
         }
+
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            if (previewElement) {
+                previewElement.src = e.target.result;
+            } else if (placeholderElement) {
+                var img = document.createElement('img');
+                img.id = 'profile-picture-preview';
+                img.src = e.target.result;
+                img.alt = 'Profile Picture';
+                img.className = 'w-32 h-32 rounded-full object-cover border-4 border-emerald-400 shadow-xl transition-transform duration-300 transform group-hover:scale-105';
+                placeholderElement.replaceWith(img);
+            }
+        };
+        reader.readAsDataURL(file);
     });
 </script>

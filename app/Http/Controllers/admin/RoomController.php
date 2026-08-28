@@ -45,7 +45,7 @@ class RoomController extends Controller
         $request->validate([
             'room_number' => 'required|string|unique:rooms,room_number|max:255',
             'capacity' => 'required|integer|min:1',
-            'wifi_qr_code' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'wifi_qr_code' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
             'location_of_room' => 'nullable|string|max:255',
             'type_of_room' => 'nullable|string|max:255',
         ]);
@@ -76,7 +76,7 @@ class RoomController extends Controller
         $request->validate([
             'room_number' => 'required|string|max:255|unique:rooms,room_number,'.$room->id,
             'capacity' => 'required|integer|min:1',
-            'wifi_qr_code' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'wifi_qr_code' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
             'location_of_room' => 'nullable|string|max:255',
             'type_of_room' => 'nullable|string|max:255',
         ]);

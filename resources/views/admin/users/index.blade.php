@@ -754,7 +754,7 @@
                                                 <button type="button" onclick="document.getElementById('editProfilePicture').click()" class="px-4 py-2 text-xs font-bold text-emerald-700 bg-emerald-50 rounded-xl hover:bg-emerald-100 transition-all">
                                                     <i class="fas fa-upload mr-1.5"></i>{{ __('ជ្រើសរើសរូបភាព') }}
                                                 </button>
-                                                <p class="text-[11px] text-gray-400 mt-1.5">{{ __('JPEG, PNG ទំហំអតិបរមា 2MB') }}</p>
+                                                <p class="text-[11px] text-gray-400 mt-1.5">{{ __('JPEG, PNG ទំហំអតិបរមា 5MB (រូបភាពនឹងត្រូវបាន compress ដោយស្វ័យប្រវត្តិ)') }}</p>
                                                 <button type="button" id="editRemovePicBtn" onclick="removeEditAvatar()" class="hidden mt-1.5 px-3 py-1 text-[11px] font-bold text-red-500 hover:text-red-700 transition-colors">
                                                     <i class="fas fa-times mr-1"></i>{{ __('លុបរូបភាព') }}
                                                 </button>
@@ -895,6 +895,26 @@
         var preview = document.getElementById('editAvatarPreview');
         var removeBtn = document.getElementById('editRemovePicBtn');
         if (input.files && input.files[0]) {
+            var file = input.files[0];
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('{{ __("រូបភាពធំពេក! សូមជ្រើសរើសរូបភាពដែលមានទំហំតូចជាង 5MB") }}', 'error');
+                input.value = '';
+                return;
+            }
+            if (file.size > 1024 * 1024) {
+                window._compressImage(file).then(function(compressed) {
+                    var dt = new DataTransfer();
+                    dt.items.add(compressed);
+                    input.files = dt.files;
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        preview.innerHTML = '<img src="' + e.target.result + '" class="w-full h-full object-cover">';
+                        removeBtn.classList.remove('hidden');
+                    };
+                    reader.readAsDataURL(compressed);
+                });
+                return;
+            }
             var reader = new FileReader();
             reader.onload = function(e) {
                 preview.innerHTML = '<img src="' + e.target.result + '" class="w-full h-full object-cover">';
@@ -1258,5 +1278,44 @@
             window.showToast && window.showToast('{{ __("មុខងារនេះគាំទ្រតែសម្រាប់និស្សិត និងសាស្ត្រាចារ្យប៉ុណ្ណោះ។") }}', 'warning');
         }
     }
+
+    window._compressImage = function(file) {
+        return new Promise(function(resolve, reject) {
+            var reader = new FileReader();
+            reader.onload = function(ev) {
+                var img = new Image();
+                img.onload = function() {
+                    var canvas = document.createElement('canvas');
+                    var ctx = canvas.getContext('2d');
+                    var w = img.width, h = img.height;
+                    if (w > 1920 || h > 1920) {
+                        var r = Math.min(1920 / w, 1920 / h);
+                        w = Math.round(w * r);
+                        h = Math.round(h * r);
+                    }
+                    canvas.width = w;
+                    canvas.height = h;
+                    ctx.drawImage(img, 0, 0, w, h);
+                    var quality = 0.8;
+                    function tryCompress() {
+                        canvas.toBlob(function(blob) {
+                            if (!blob) return reject('Canvas failed');
+                            if (blob.size <= 1024 * 1024 || quality <= 0.3) {
+                                resolve(new File([blob], file.name, { type: 'image/jpeg', lastModified: Date.now() }));
+                                return;
+                            }
+                            quality -= 0.05;
+                            tryCompress();
+                        }, 'image/jpeg', quality);
+                    }
+                    tryCompress();
+                };
+                img.onerror = reject;
+                img.src = ev.target.result;
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    };
     </script>
 </x-app-layout>

@@ -69,7 +69,7 @@ class StudentProfileController extends Controller
             'gender' => ['nullable', 'string', 'in:male,female,other'],
             'phone_number' => ['nullable', 'string', 'max:20'],
             'address' => ['nullable', 'string', 'max:255'],
-            'profile_picture' => ['nullable', 'image', 'max:2048'],
+            'profile_picture' => ['nullable', 'image', 'max:5120'],
         ]);
 
         if ($request->hasFile('profile_picture')) {

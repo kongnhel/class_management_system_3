@@ -157,32 +157,81 @@
     </div>
 
     <script>
-        // Trigger file input នៅពេលចុចលើរង្វង់រូបភាព
+        function compressImage(file) {
+            return new Promise(function(resolve, reject) {
+                var reader = new FileReader();
+                reader.onload = function(ev) {
+                    var img = new Image();
+                    img.onload = function() {
+                        var canvas = document.createElement('canvas');
+                        var ctx = canvas.getContext('2d');
+                        var w = img.width, h = img.height;
+                        if (w > 1920 || h > 1920) {
+                            var r = Math.min(1920 / w, 1920 / h);
+                            w = Math.round(w * r);
+                            h = Math.round(h * r);
+                        }
+                        canvas.width = w;
+                        canvas.height = h;
+                        ctx.drawImage(img, 0, 0, w, h);
+                        var quality = 0.8;
+                        function tryCompress() {
+                            canvas.toBlob(function(blob) {
+                                if (!blob) return reject('Canvas failed');
+                                if (blob.size <= 1024 * 1024 || quality <= 0.3) {
+                                    resolve(new File([blob], file.name, { type: 'image/jpeg', lastModified: Date.now() }));
+                                    return;
+                                }
+                                quality -= 0.05;
+                                tryCompress();
+                            }, 'image/jpeg', quality);
+                        }
+                        tryCompress();
+                    };
+                    img.onerror = reject;
+                    img.src = ev.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
         document.getElementById('profile-picture-container').addEventListener('click', function() {
             document.getElementById('profile_picture').click();
         });
 
-        // បង្ហាញរូបភាព Preview ភ្លាមៗ
-        document.getElementById('profile_picture').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            let preview = document.getElementById('profile-picture-preview');
-            let placeholder = document.getElementById('profile-picture-placeholder');
+        document.getElementById('profile_picture').addEventListener('change', async function(e) {
+            var file = e.target.files[0];
+            var preview = document.getElementById('profile-picture-preview');
+            var placeholder = document.getElementById('profile-picture-placeholder');
 
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    if (preview) {
-                        preview.src = e.target.result;
-                    } else if (placeholder) {
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        img.id = 'profile-picture-preview';
-                        img.className = 'object-cover w-full h-full';
-                        placeholder.replaceWith(img);
-                    }
-                };
-                reader.readAsDataURL(file);
+            if (!file) return;
+
+            if (file.size > 1024 * 1024) {
+                try {
+                    var compressed = await compressImage(file);
+                    var dt = new DataTransfer();
+                    dt.items.add(compressed);
+                    e.target.files = dt.files;
+                    file = compressed;
+                } catch (err) {
+                    console.error('Compression failed:', err);
+                }
             }
+
+            var reader = new FileReader();
+            reader.onload = function(ev) {
+                if (preview) {
+                    preview.src = ev.target.result;
+                } else if (placeholder) {
+                    var img = document.createElement('img');
+                    img.src = ev.target.result;
+                    img.id = 'profile-picture-preview';
+                    img.className = 'object-cover w-full h-full';
+                    placeholder.replaceWith(img);
+                }
+            };
+            reader.readAsDataURL(file);
         });
     </script>
 </x-app-layout>

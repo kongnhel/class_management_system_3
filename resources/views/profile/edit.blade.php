@@ -168,8 +168,66 @@
         </div>
     </div>
 
-    {{-- File Preview Script --}}
+    {{-- File Preview & Compress Script --}}
     <script>
         document.getElementById('profile-picture-container').onclick = () => document.getElementById('profile_picture').click();
+
+        document.getElementById('profile_picture').addEventListener('change', async function(e) {
+            var file = e.target.files[0];
+            if (!file) return;
+
+            if (file.size > 1024 * 1024) {
+                e.target.disabled = true;
+                try {
+                    var compressed = await compressImage(file);
+                    var dt = new DataTransfer();
+                    dt.items.add(compressed);
+                    e.target.files = dt.files;
+                } catch (err) {
+                    console.error('Compression failed:', err);
+                }
+                e.target.disabled = false;
+            }
+            e.target.form.submit();
+        });
+
+        function compressImage(file) {
+            return new Promise(function(resolve, reject) {
+                var reader = new FileReader();
+                reader.onload = function(ev) {
+                    var img = new Image();
+                    img.onload = function() {
+                        var canvas = document.createElement('canvas');
+                        var ctx = canvas.getContext('2d');
+                        var w = img.width, h = img.height;
+                        if (w > 1920 || h > 1920) {
+                            var r = Math.min(1920 / w, 1920 / h);
+                            w = Math.round(w * r);
+                            h = Math.round(h * r);
+                        }
+                        canvas.width = w;
+                        canvas.height = h;
+                        ctx.drawImage(img, 0, 0, w, h);
+                        var quality = 0.8;
+                        function tryCompress() {
+                            canvas.toBlob(function(blob) {
+                                if (!blob) return reject('Canvas failed');
+                                if (blob.size <= 1024 * 1024 || quality <= 0.3) {
+                                    resolve(new File([blob], file.name, { type: 'image/jpeg', lastModified: Date.now() }));
+                                    return;
+                                }
+                                quality -= 0.05;
+                                tryCompress();
+                            }, 'image/jpeg', quality);
+                        }
+                        tryCompress();
+                    };
+                    img.onerror = reject;
+                    img.src = ev.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
     </script>
 </x-app-layout>
