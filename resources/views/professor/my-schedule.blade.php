@@ -48,7 +48,7 @@
                             <svg class="w-10 h-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
                         </div>
                         <h3 class="text-xl font-bold text-slate-800">{{ __('មិនទាន់មានកាលវិភាគបង្រៀន') }}</h3>
-                        <p class="text-slate-500 mt-2">{{ __('សូមទាក់ទង{{ __('ការិយាល័យសិក្សា') }}សម្រាប់ព័ត៌មានបន្ថែម។') }}</p>
+                        <p class="text-slate-500 mt-2">{{ __('សូមទាក់ទងការិយាល័យសិក្សាសម្រាប់ព័ត៌មានបន្ថែម។') }}</p>
                     </div>
                 @else
                     @php
