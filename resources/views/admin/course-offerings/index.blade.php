@@ -354,6 +354,12 @@
             $weekendMap = ['Saturday' => __('សៅរ៍/Sat'), 'Sunday' => __('អាទិត្យ/Sun')];
             $weekdaySchedules = $allSchedules->filter(fn($s) => array_key_exists($s->day_of_week, $weekdayMap));
             $weekendSchedules = $allSchedules->filter(fn($s) => array_key_exists($s->day_of_week, $weekendMap));
+            $shiftFilter = request('shift');
+            if ($shiftFilter === 'weekday') {
+                $weekendSchedules = collect();
+            } elseif ($shiftFilter === 'weekend') {
+                $weekdaySchedules = collect();
+            }
             $weekdayRows = $weekdaySchedules->groupBy(fn($s) => \Carbon\Carbon::parse($s->start_time)->format('H:i') . '-' . \Carbon\Carbon::parse($s->end_time)->format('H:i'))->sortKeys();
             $weekendTimeSlots = $weekendSchedules->map(fn($s) => \Carbon\Carbon::parse($s->start_time)->format('H:i') . '-' . \Carbon\Carbon::parse($s->end_time)->format('H:i'))->unique()->sort();
 

@@ -129,13 +129,13 @@ class ImageKitService
             $ext = 'webp';
         }
 
-        Log::info('ImageKit base64 upload starting', [
-            'folder' => $folder,
-            'size' => strlen($contents),
-            'mime' => $mime,
-        ]);
-
         try {
+            Log::info('ImageKit base64 upload starting', [
+                'folder' => $folder,
+                'size' => strlen($contents),
+                'mime' => $mime,
+            ]);
+
             $response = Http::withBasicAuth($this->privateKey, '')
                 ->attach(
                     'file',
