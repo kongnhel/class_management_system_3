@@ -73,24 +73,18 @@ class StudentProfileController extends Controller
         ]);
 
         if ($request->hasFile('profile_picture')) {
-            try {
-                $imageKitService = app(ImageKitService::class);
-                $imageUrl = $imageKitService->uploadProfilePicture(
-                    $request->file('profile_picture')
-                );
-
-                if ($imageUrl) {
-                    $studentProfile->profile_picture_url = $imageUrl;
-                } else {
-                    Session::flash('error', 'ImageKit upload failed. Check logs.');
-                }
-            } catch (\Exception $e) {
-                Session::flash('error', 'Upload error: '.$e->getMessage());
-            }
+            $file = $request->file('profile_picture');
+            \Log::info('STUDENT UPLOAD DEBUG', [
+                'has_file' => true,
+                'size' => $file->getSize(),
+                'mime' => $file->getMimeType(),
+                'name' => $file->getClientOriginalName(),
+                'real_path' => $file->getRealPath(),
+                'valid' => $file->isValid(),
+            ]);
+            dd('File received: '.$file->getClientOriginalName().' size='.$file->getSize().' mime='.$file->getMimeType());
         } else {
-            if ($request->has('remove_profile_picture') && $request->input('remove_profile_picture') === '1') {
-                $studentProfile->profile_picture_url = null;
-            }
+            dd('No file received. hasFile=false. Keys: '.implode(', ', array_keys($request->all())));
         }
 
         $studentProfile->fill($validatedData);

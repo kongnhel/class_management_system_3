@@ -52,6 +52,16 @@
                             <i class="fas fa-check-circle mr-2"></i>{{ session('success') }}
                         </div>
                     @endif
+                    @if ($errors->any())
+                        <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl text-sm font-bold">
+                            <i class="fas fa-exclamation-triangle mr-2 text-red-500"></i>
+                            <ul class="list-disc list-inside text-red-700 mt-1">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
                     <div class="text-center mb-10">
                         <h2 class="text-2xl font-black text-slate-800">{{ __('កែប្រែប្រវត្តិរូប') }}</h2>
                         <p class="text-sm text-slate-400 font-medium mt-1">{{ __('រក្សាទុកព័ត៌មានផ្ទាល់ខ្លួនរបស់អ្នកឱ្យទាន់សម័យ') }}</p>
