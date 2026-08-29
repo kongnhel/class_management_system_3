@@ -115,13 +115,11 @@ class ImageKitService
             return null;
         }
 
-        $ext = 'jpg';
-        // Detect MIME from decoded bytes
+        // Detect MIME from decoded bytes (in-memory, no temp file)
         $finfo = new \finfo(FILEINFO_MIME_TYPE);
-        $tmpFile = tempnam(sys_get_temp_dir(), 'imgkit_');
-        file_put_contents($tmpFile, $contents);
-        $mime = $finfo->file($tmpFile);
-        unlink($tmpFile);
+        $mime = $finfo->buffer($contents);
+
+        $ext = 'jpg';
 
         if ($mime === 'image/png') {
             $ext = 'png';
