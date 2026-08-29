@@ -69,10 +69,30 @@ class StudentProfileController extends Controller
             'gender' => ['nullable', 'string', 'in:male,female,other'],
             'phone_number' => ['nullable', 'string', 'max:20'],
             'address' => ['nullable', 'string', 'max:255'],
-            'profile_picture' => ['nullable', 'mimetypes:image/jpeg,image/png,image/gif,image/svg+xml,image/webp', 'max:5120'],
+            'profile_picture_base64' => ['nullable', 'string', 'max:5242880'],
         ]);
 
-        if ($request->hasFile('profile_picture')) {
+        $uploaded = false;
+
+        // Prefer base64 upload (bypasses PHP upload_max_filesize)
+        if ($request->filled('profile_picture_base64')) {
+            try {
+                $imageKitService = app(ImageKitService::class);
+                $imageUrl = $imageKitService->uploadProfilePictureBase64(
+                    $request->input('profile_picture_base64')
+                );
+
+                if ($imageUrl) {
+                    $studentProfile->profile_picture_url = $imageUrl;
+                    $uploaded = true;
+                } else {
+                    Session::flash('error', 'ImageKit upload failed. Check logs.');
+                }
+            } catch (\Exception $e) {
+                Session::flash('error', 'Upload error: '.$e->getMessage());
+            }
+        } elseif ($request->hasFile('profile_picture')) {
+            // Fallback: direct file upload
             try {
                 $imageKitService = app(ImageKitService::class);
                 $imageUrl = $imageKitService->uploadProfilePicture(
@@ -81,6 +101,7 @@ class StudentProfileController extends Controller
 
                 if ($imageUrl) {
                     $studentProfile->profile_picture_url = $imageUrl;
+                    $uploaded = true;
                 } else {
                     Session::flash('error', 'ImageKit upload failed. Check logs.');
                 }

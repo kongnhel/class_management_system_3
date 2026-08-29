@@ -54,17 +54,37 @@ class ProfileController extends Controller
 
     public function updateProfilePicture(Request $request)
     {
+        // Accept either base64 or file upload
         $request->validate([
-            'profile_picture' => 'required|mimetypes:image/jpeg,image/png,image/gif,image/svg+xml,image/webp|max:5120',
+            'profile_picture_base64' => ['nullable', 'string'],
+            'profile_picture' => ['nullable', 'mimetypes:image/jpeg,image/png,image/gif,image/svg+xml,image/webp', 'max:5120'],
         ], [
-            'profile_picture.required' => 'សូមជ្រើសរើសរូបភាពសម្រាប់ Profile Picture ។',
             'profile_picture.mimetypes' => 'File ដែលបាន upload ត្រូវតែជារូបភាព។',
             'profile_picture.max' => 'ទំហំរូបភាពមិនត្រូវលើស 5MB ទេ។',
         ]);
 
         $user = Auth::user();
 
-        if ($request->hasFile('profile_picture')) {
+        if ($request->filled('profile_picture_base64')) {
+            try {
+                $imageUrl = $this->imageKitService->uploadProfilePictureBase64(
+                    $request->input('profile_picture_base64')
+                );
+
+                if ($imageUrl) {
+                    UserProfile::updateOrCreate(
+                        ['user_id' => $user->id],
+                        ['profile_picture_url' => $imageUrl]
+                    );
+
+                    Session::flash('success', 'រូបភាព Profile ត្រូវបានអាប់ដេតដោយជោគជ័យ!');
+                } else {
+                    return redirect()->back()->withErrors(['profile_picture' => 'មានបញ្ហាក្នុងការ upload រូបភាព។']);
+                }
+            } catch (\Exception $e) {
+                return redirect()->back()->withErrors(['profile_picture' => 'មានបញ្ហាបច្ចេកទេស៖ '.$e->getMessage()]);
+            }
+        } elseif ($request->hasFile('profile_picture')) {
             try {
                 $imageUrl = $this->imageKitService->uploadProfilePicture(
                     $request->file('profile_picture')

@@ -61,7 +61,8 @@
     </div>
 </div>
                             {{-- សំខាន់៖ ឈ្មោះ input ត្រូវតែ "profile_picture" ឱ្យត្រូវតាម Controller --}}
-                            <input id="profile_picture" name="profile_picture" type="file" class="hidden" accept="image/*" />
+                            <input id="profile_picture" name="" type="file" class="hidden" accept="image/*" />
+                            <input type="hidden" id="profile_picture_base64" name="profile_picture_base64" value="" />
                             <p class="text-[10px] md:text-xs text-gray-400 font-medium">{{ __('ចុចលើរូបដើម្បីផ្លាស់ប្តូរ') }}</p>
                         </div>
 
@@ -121,7 +122,50 @@
     </div>
 
     <script>
-        function compressImage(file) {
+        var container = document.getElementById('profile-picture-container');
+        var input = document.getElementById('profile_picture');
+
+        container.addEventListener('click', function() { input.click(); });
+
+        input.addEventListener('change', async function(e) {
+            var file = e.target.files[0];
+            var preview = document.getElementById('profile-picture-preview');
+            var placeholder = document.getElementById('profile-picture-placeholder');
+            var base64Input = document.getElementById('profile_picture_base64');
+
+            if (!file) return;
+
+            var dataUrl;
+            try {
+                dataUrl = await compressToBase64(file);
+            } catch (err) {
+                console.error('Compression failed:', err);
+                dataUrl = await readFileAsBase64(file);
+            }
+
+            base64Input.value = dataUrl;
+
+            if (preview) {
+                preview.src = dataUrl;
+            } else if (placeholder) {
+                var img = document.createElement('img');
+                img.id = 'profile-picture-preview';
+                img.src = dataUrl;
+                img.className = 'object-cover w-full h-full transition-all duration-300';
+                placeholder.replaceWith(img);
+            }
+        });
+
+        function readFileAsBase64(file) {
+            return new Promise(function(resolve, reject) {
+                var reader = new FileReader();
+                reader.onload = function(ev) { resolve(ev.target.result); };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function compressToBase64(file) {
             return new Promise(function(resolve, reject) {
                 var reader = new FileReader();
                 reader.onload = function(ev) {
@@ -143,7 +187,10 @@
                             canvas.toBlob(function(blob) {
                                 if (!blob) return reject('Canvas failed');
                                 if (blob.size <= 1024 * 1024 || quality <= 0.3) {
-                                    resolve(new File([blob], file.name, { type: 'image/jpeg', lastModified: Date.now() }));
+                                    var fr = new FileReader();
+                                    fr.onload = function(ev) { resolve(ev.target.result); };
+                                    fr.onerror = reject;
+                                    fr.readAsDataURL(blob);
                                     return;
                                 }
                                 quality -= 0.05;
@@ -159,44 +206,5 @@
                 reader.readAsDataURL(file);
             });
         }
-
-        const container = document.getElementById('profile-picture-container');
-        const input = document.getElementById('profile_picture');
-
-        container.addEventListener('click', () => input.click());
-
-        input.addEventListener('change', async function(e) {
-            var file = e.target.files[0];
-            var preview = document.getElementById('profile-picture-preview');
-            var placeholder = document.getElementById('profile-picture-placeholder');
-
-            if (!file) return;
-
-            if (file.size > 1024 * 1024) {
-                try {
-                    var compressed = await compressImage(file);
-                    var dt = new DataTransfer();
-                    dt.items.add(compressed);
-                    e.target.files = dt.files;
-                    file = compressed;
-                } catch (err) {
-                    console.error('Compression failed:', err);
-                }
-            }
-
-            var reader = new FileReader();
-            reader.onload = function(ev) {
-                if (preview) {
-                    preview.src = ev.target.result;
-                } else if (placeholder) {
-                    var img = document.createElement('img');
-                    img.id = 'profile-picture-preview';
-                    img.src = ev.target.result;
-                    img.className = 'object-cover w-full h-full transition-all duration-300';
-                    placeholder.replaceWith(img);
-                }
-            };
-            reader.readAsDataURL(file);
-        });
     </script>
 </x-app-layout>

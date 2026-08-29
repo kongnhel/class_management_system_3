@@ -751,6 +751,7 @@
                                             </div>
                                             <div class="flex-1">
                                                 <input type="file" id="editProfilePicture" accept="image/jpeg,image/png,image/jpg" class="hidden" onchange="previewEditAvatar(this)">
+                                                <input type="hidden" id="editProfilePictureBase64" value="">
                                                 <button type="button" onclick="document.getElementById('editProfilePicture').click()" class="px-4 py-2 text-xs font-bold text-emerald-700 bg-emerald-50 rounded-xl hover:bg-emerald-100 transition-all">
                                                     <i class="fas fa-upload mr-1.5"></i>{{ __('ជ្រើសរើសរូបភាព') }}
                                                 </button>
@@ -859,7 +860,9 @@
                     removeBtn.classList.remove('hidden');
                 } else {
                     preview.innerHTML = '<i class="fas fa-camera text-gray-400 text-xl"></i>';
-                    removeBtn.classList.add('hidden');
+        var base64Input = document.getElementById('editProfilePictureBase64');
+        if (base64Input) base64Input.value = '';
+        removeBtn.classList.add('hidden');
                 }
             }
             // Re-set select values after x-for options render
@@ -894,6 +897,7 @@
     function previewEditAvatar(input) {
         var preview = document.getElementById('editAvatarPreview');
         var removeBtn = document.getElementById('editRemovePicBtn');
+        var base64Input = document.getElementById('editProfilePictureBase64');
         if (input.files && input.files[0]) {
             var file = input.files[0];
             if (file.size > 5 * 1024 * 1024) {
@@ -901,26 +905,15 @@
                 input.value = '';
                 return;
             }
-            if (file.size > 1024 * 1024) {
-                window._compressImage(file).then(function(compressed) {
-                    var dt = new DataTransfer();
-                    dt.items.add(compressed);
-                    input.files = dt.files;
-                    var reader = new FileReader();
-                    reader.onload = function(e) {
-                        preview.innerHTML = '<img src="' + e.target.result + '" class="w-full h-full object-cover">';
-                        removeBtn.classList.remove('hidden');
-                    };
-                    reader.readAsDataURL(compressed);
-                });
-                return;
-            }
-            var reader = new FileReader();
-            reader.onload = function(e) {
-                preview.innerHTML = '<img src="' + e.target.result + '" class="w-full h-full object-cover">';
-                removeBtn.classList.remove('hidden');
-            };
-            reader.readAsDataURL(input.files[0]);
+            window._compressToBase64(file).then(function(dataUrl) {
+                base64Input.value = dataUrl;
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.innerHTML = '<img src="' + e.target.result + '" class="w-full h-full object-cover">';
+                    removeBtn.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            });
         }
     }
 
@@ -960,7 +953,10 @@
         fd.append('address', f.address);
         fd.append('date_of_birth', f.date_of_birth);
         var fileInput = document.getElementById('editProfilePicture');
-        if (fileInput && fileInput.files.length > 0) {
+        var base64Input = document.getElementById('editProfilePictureBase64');
+        if (base64Input && base64Input.value) {
+            fd.append('profile_picture_base64', base64Input.value);
+        } else if (fileInput && fileInput.files.length > 0) {
             fd.append('profile_picture', fileInput.files[0]);
         }
         if (c._removePicture) {
@@ -1279,7 +1275,7 @@
         }
     }
 
-    window._compressImage = function(file) {
+    window._compressToBase64 = function(file) {
         return new Promise(function(resolve, reject) {
             var reader = new FileReader();
             reader.onload = function(ev) {
@@ -1301,7 +1297,10 @@
                         canvas.toBlob(function(blob) {
                             if (!blob) return reject('Canvas failed');
                             if (blob.size <= 1024 * 1024 || quality <= 0.3) {
-                                resolve(new File([blob], file.name, { type: 'image/jpeg', lastModified: Date.now() }));
+                                var fr = new FileReader();
+                                fr.onload = function(e) { resolve(e.target.result); };
+                                fr.onerror = reject;
+                                fr.readAsDataURL(blob);
                                 return;
                             }
                             quality -= 0.05;

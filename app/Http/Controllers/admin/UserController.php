@@ -341,7 +341,12 @@ class UserController extends Controller
 
             $profile->user_id = $user->id;
 
-            if ($request->hasFile('profile_picture')) {
+        if ($request->filled('profile_picture_base64')) {
+            $url = $this->imageKitService->uploadProfilePictureBase64($request->input('profile_picture_base64'));
+            if ($url) {
+                $profile->profile_picture_url = $url;
+            }
+        } elseif ($request->hasFile('profile_picture')) {
                 $url = $this->imageKitService->uploadProfilePicture($request->file('profile_picture'));
                 if ($url) {
                     $profile->profile_picture_url = $url;

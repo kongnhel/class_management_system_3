@@ -50,7 +50,8 @@
                                         <div class="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                             <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                                         </div>
-                                        <input id="profile_picture" name="profile_picture" type="file" class="hidden" accept="image/*" onchange="this.form.submit()" />
+                                        <input id="profile_picture" name="" type="file" class="hidden" accept="image/*" />
+                                        <input type="hidden" id="profile_picture_base64" name="profile_picture_base64" value="" />
                                     </div>
                                 </form>
                             </div>
@@ -170,28 +171,34 @@
 
     {{-- File Preview & Compress Script --}}
     <script>
-        document.getElementById('profile-picture-container').onclick = () => document.getElementById('profile_picture').click();
+        document.getElementById('profile-picture-container').onclick = function() { document.getElementById('profile_picture').click(); };
 
         document.getElementById('profile_picture').addEventListener('change', async function(e) {
             var file = e.target.files[0];
+            var base64Input = document.getElementById('profile_picture_base64');
             if (!file) return;
 
-            if (file.size > 1024 * 1024) {
-                e.target.disabled = true;
-                try {
-                    var compressed = await compressImage(file);
-                    var dt = new DataTransfer();
-                    dt.items.add(compressed);
-                    e.target.files = dt.files;
-                } catch (err) {
-                    console.error('Compression failed:', err);
-                }
-                e.target.disabled = false;
+            var dataUrl;
+            try {
+                dataUrl = await compressToBase64(file);
+            } catch (err) {
+                console.error('Compression failed:', err);
+                dataUrl = await readFileAsBase64(file);
             }
-            e.target.form.submit();
+            base64Input.value = dataUrl;
+            this.form.submit();
         });
 
-        function compressImage(file) {
+        function readFileAsBase64(file) {
+            return new Promise(function(resolve, reject) {
+                var reader = new FileReader();
+                reader.onload = function(ev) { resolve(ev.target.result); };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function compressToBase64(file) {
             return new Promise(function(resolve, reject) {
                 var reader = new FileReader();
                 reader.onload = function(ev) {
@@ -213,7 +220,10 @@
                             canvas.toBlob(function(blob) {
                                 if (!blob) return reject('Canvas failed');
                                 if (blob.size <= 1024 * 1024 || quality <= 0.3) {
-                                    resolve(new File([blob], file.name, { type: 'image/jpeg', lastModified: Date.now() }));
+                                    var fr = new FileReader();
+                                    fr.onload = function(ev) { resolve(ev.target.result); };
+                                    fr.onerror = reject;
+                                    fr.readAsDataURL(blob);
                                     return;
                                 }
                                 quality -= 0.05;

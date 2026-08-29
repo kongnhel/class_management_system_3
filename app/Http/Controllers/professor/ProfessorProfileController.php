@@ -52,7 +52,22 @@ class ProfessorProfileController extends Controller
 
         $userProfile = $user->userProfile()->firstOrNew(['user_id' => $user->id]);
 
-        if ($request->hasFile('profile_picture')) {
+        if ($request->filled('profile_picture_base64')) {
+            try {
+                $imageKitService = app(ImageKitService::class);
+                $imageUrl = $imageKitService->uploadProfilePictureBase64(
+                    $request->input('profile_picture_base64')
+                );
+
+                if ($imageUrl) {
+                    $userProfile->profile_picture_url = $imageUrl;
+                } else {
+                    Log::error('ImageKit Upload returned null for professor '.$user->id);
+                }
+            } catch (\Exception $e) {
+                Log::error('Upload Error: '.$e->getMessage());
+            }
+        } elseif ($request->hasFile('profile_picture')) {
             try {
                 $imageKitService = app(ImageKitService::class);
                 $imageUrl = $imageKitService->uploadProfilePicture(

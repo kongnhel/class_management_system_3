@@ -50,9 +50,16 @@ class RoomController extends Controller
             'type_of_room' => 'nullable|string|max:255',
         ]);
 
-        $data = $request->except('wifi_qr_code');
+        $data = $request->except(['wifi_qr_code', 'wifi_qr_code_base64']);
 
-        if ($request->hasFile('wifi_qr_code')) {
+        if ($request->filled('wifi_qr_code_base64')) {
+            $url = $this->imageKitService->uploadWifiQrCodeBase64($request->input('wifi_qr_code_base64'));
+            if ($url) {
+                $data['wifi_qr_code'] = $url;
+            } else {
+                return back()->withErrors(['wifi_qr_code' => __('ការ Upload ទៅ ImageKit បរាជ័យ។')]);
+            }
+        } elseif ($request->hasFile('wifi_qr_code')) {
             $url = $this->imageKitService->uploadWifiQrCode($request->file('wifi_qr_code'));
             if ($url) {
                 $data['wifi_qr_code'] = $url;
@@ -81,9 +88,16 @@ class RoomController extends Controller
             'type_of_room' => 'nullable|string|max:255',
         ]);
 
-        $data = $request->except('wifi_qr_code');
+        $data = $request->except(['wifi_qr_code', 'wifi_qr_code_base64']);
 
-        if ($request->hasFile('wifi_qr_code')) {
+        if ($request->filled('wifi_qr_code_base64')) {
+            $url = $this->imageKitService->uploadWifiQrCodeBase64($request->input('wifi_qr_code_base64'));
+            if ($url) {
+                $data['wifi_qr_code'] = $url;
+            } else {
+                return back()->withErrors(['wifi_qr_code' => __('ការ Upload ទៅ ImageKit បរាជ័យ។')]);
+            }
+        } elseif ($request->hasFile('wifi_qr_code')) {
             $url = $this->imageKitService->uploadWifiQrCode($request->file('wifi_qr_code'));
             if ($url) {
                 $data['wifi_qr_code'] = $url;

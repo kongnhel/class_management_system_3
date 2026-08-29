@@ -25,6 +25,7 @@
                 class="space-y-6">
                 @csrf
                 @method('PUT')
+                <input type="hidden" id="profile_picture_base64" name="profile_picture_base64" value="" />
 
                 {{-- Section 1: Basic Info --}}
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
@@ -261,7 +262,7 @@
                                 </div>
                                 <label class="absolute -bottom-2 -right-2 bg-emerald-600 text-white p-2 rounded-xl cursor-pointer hover:bg-emerald-700 shadow-lg transition-all hover:scale-110 active:scale-95">
                                     <i class="fas fa-pen text-xs"></i>
-                                    <input type="file" name="profile_picture" class="hidden" 
+                                    <input type="file" name="" class="hidden" 
                                         @change="
                                             const file = $event.target.files[0];
                                             if (file) {
@@ -269,16 +270,12 @@
                                                     showToast('{{ __("រូបភាពធំពេក! សូមជ្រើសរើសរូបភាពដែលមានទំហំតូចជាង 5MB") }}', 'error');
                                                     $event.target.value = '';
                                                     profilePicturePreview = '{{ $userProfile->profile_picture_url ?? '' }}';
-                                                } else if (file.size > 1024 * 1024) {
-                                                    profilePicturePreview = URL.createObjectURL(file);
-                                                    (async function() {
-                                                        var compressed = await window._compressImage(file);
-                                                        var dt = new DataTransfer();
-                                                        dt.items.add(compressed);
-                                                        $event.target.files = dt.files;
-                                                    })();
                                                 } else {
                                                     profilePicturePreview = URL.createObjectURL(file);
+                                                    (async function() {
+                                                        var dataUrl = await window._compressToBase64(file);
+                                                        document.getElementById('profile_picture_base64').value = dataUrl;
+                                                    })();
                                                 }
                                             }
                                         ">
@@ -453,7 +450,7 @@
             }
         });
 
-        window._compressImage = function(file) {
+        window._compressToBase64 = function(file) {
             return new Promise(function(resolve, reject) {
                 var reader = new FileReader();
                 reader.onload = function(ev) {
@@ -475,7 +472,10 @@
                             canvas.toBlob(function(blob) {
                                 if (!blob) return reject('Canvas failed');
                                 if (blob.size <= 1024 * 1024 || quality <= 0.3) {
-                                    resolve(new File([blob], file.name, { type: 'image/jpeg', lastModified: Date.now() }));
+                                    var fr = new FileReader();
+                                    fr.onload = function(e) { resolve(e.target.result); };
+                                    fr.onerror = reject;
+                                    fr.readAsDataURL(blob);
                                     return;
                                 }
                                 quality -= 0.05;

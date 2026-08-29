@@ -42,12 +42,13 @@
                                             <polyline points="21 15 16 10 5 21"></polyline>
                                         </svg> {{ __('រូបភាព Profile') }}
                                     </x-input-label>
-                                    <input type="file" id="profile_picture" name="profile_picture" class="block w-full text-sm text-gray-500
+                                    <input type="file" id="profile_picture" name="" class="block w-full text-sm text-gray-500
                                         file:mr-4 file:py-3 file:px-6
                                         file:rounded-full file:border-0
                                         file:text-sm file:font-semibold
                                         file:bg-emerald-100 file:text-emerald-700
                                         hover:file:bg-emerald-200 transition-colors duration-200"/>
+                                    <input type="hidden" id="profile_picture_base64" name="profile_picture_base64" value="" />
                                     <x-input-error :messages="$errors->get('profile_picture')" class="mt-2" />
                                     
                                     @if($profileUrl)
@@ -157,7 +158,46 @@
 </x-app-layout>
 
 <script>
-    function compressImage(file) {
+    document.getElementById('profile_picture').addEventListener('change', async function(event) {
+        var file = event.target.files[0];
+        var previewElement = document.getElementById('profile-picture-preview');
+        var placeholderElement = document.getElementById('profile-picture-placeholder');
+        var base64Input = document.getElementById('profile_picture_base64');
+
+        if (!file) return;
+
+        var dataUrl;
+        try {
+            dataUrl = await compressToBase64(file);
+        } catch (err) {
+            console.error('Compression failed:', err);
+            dataUrl = await readFileAsBase64(file);
+        }
+
+        base64Input.value = dataUrl;
+
+        if (previewElement) {
+            previewElement.src = dataUrl;
+        } else if (placeholderElement) {
+            var img = document.createElement('img');
+            img.id = 'profile-picture-preview';
+            img.src = dataUrl;
+            img.alt = 'Profile Picture';
+            img.className = 'w-32 h-32 rounded-full object-cover border-4 border-emerald-400 shadow-xl transition-transform duration-300 transform group-hover:scale-105';
+            placeholderElement.replaceWith(img);
+        }
+    });
+
+    function readFileAsBase64(file) {
+        return new Promise(function(resolve, reject) {
+            var reader = new FileReader();
+            reader.onload = function(ev) { resolve(ev.target.result); };
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    }
+
+    function compressToBase64(file) {
         return new Promise(function(resolve, reject) {
             var reader = new FileReader();
             reader.onload = function(ev) {
@@ -179,7 +219,10 @@
                         canvas.toBlob(function(blob) {
                             if (!blob) return reject('Canvas failed');
                             if (blob.size <= 1024 * 1024 || quality <= 0.3) {
-                                resolve(new File([blob], file.name, { type: 'image/jpeg', lastModified: Date.now() }));
+                                var fr = new FileReader();
+                                fr.onload = function(ev) { resolve(ev.target.result); };
+                                fr.onerror = reject;
+                                fr.readAsDataURL(blob);
                                 return;
                             }
                             quality -= 0.05;
@@ -195,39 +238,4 @@
             reader.readAsDataURL(file);
         });
     }
-
-    document.getElementById('profile_picture').addEventListener('change', async function(event) {
-        var file = event.target.files[0];
-        var previewElement = document.getElementById('profile-picture-preview');
-        var placeholderElement = document.getElementById('profile-picture-placeholder');
-
-        if (!file) return;
-
-        if (file.size > 1024 * 1024) {
-            try {
-                var compressed = await compressImage(file);
-                var dt = new DataTransfer();
-                dt.items.add(compressed);
-                event.target.files = dt.files;
-                file = compressed;
-            } catch (err) {
-                console.error('Compression failed:', err);
-            }
-        }
-
-        var reader = new FileReader();
-        reader.onload = function(e) {
-            if (previewElement) {
-                previewElement.src = e.target.result;
-            } else if (placeholderElement) {
-                var img = document.createElement('img');
-                img.id = 'profile-picture-preview';
-                img.src = e.target.result;
-                img.alt = 'Profile Picture';
-                img.className = 'w-32 h-32 rounded-full object-cover border-4 border-emerald-400 shadow-xl transition-transform duration-300 transform group-hover:scale-105';
-                placeholderElement.replaceWith(img);
-            }
-        };
-        reader.readAsDataURL(file);
-    });
 </script>
