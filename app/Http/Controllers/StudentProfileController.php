@@ -69,22 +69,28 @@ class StudentProfileController extends Controller
             'gender' => ['nullable', 'string', 'in:male,female,other'],
             'phone_number' => ['nullable', 'string', 'max:20'],
             'address' => ['nullable', 'string', 'max:255'],
-            'profile_picture' => ['nullable', 'image', 'max:5120'],
+            'profile_picture' => ['nullable', 'mimetypes:image/jpeg,image/png,image/gif,image/svg+xml,image/webp', 'max:5120'],
         ]);
 
         if ($request->hasFile('profile_picture')) {
-            $file = $request->file('profile_picture');
-            \Log::info('STUDENT UPLOAD DEBUG', [
-                'has_file' => true,
-                'size' => $file->getSize(),
-                'mime' => $file->getMimeType(),
-                'name' => $file->getClientOriginalName(),
-                'real_path' => $file->getRealPath(),
-                'valid' => $file->isValid(),
-            ]);
-            dd('File received: '.$file->getClientOriginalName().' size='.$file->getSize().' mime='.$file->getMimeType());
+            try {
+                $imageKitService = app(ImageKitService::class);
+                $imageUrl = $imageKitService->uploadProfilePicture(
+                    $request->file('profile_picture')
+                );
+
+                if ($imageUrl) {
+                    $studentProfile->profile_picture_url = $imageUrl;
+                } else {
+                    Session::flash('error', 'ImageKit upload failed. Check logs.');
+                }
+            } catch (\Exception $e) {
+                Session::flash('error', 'Upload error: '.$e->getMessage());
+            }
         } else {
-            dd('No file received. hasFile=false. Keys: '.implode(', ', array_keys($request->all())));
+            if ($request->has('remove_profile_picture') && $request->input('remove_profile_picture') === '1') {
+                $studentProfile->profile_picture_url = null;
+            }
         }
 
         $studentProfile->fill($validatedData);

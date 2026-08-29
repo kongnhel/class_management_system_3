@@ -415,13 +415,12 @@ class UserController extends Controller
             'date_of_birth' => 'nullable|date',
             'phone_number' => 'nullable|string|max:20',
             'address' => 'nullable|string|max:255',
-            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
+            'profile_picture' => 'nullable|mimetypes:image/jpeg,image/png,image/gif,image/webp|max:5120',
             'generation' => 'nullable|string|max:255',
         ];
         $messages = [
             'profile_picture.max' => 'រូបភាពមិនអាចធំជាង 5MB ឡើយ!',
-            'profile_picture.image' => 'ឯកសារត្រូវតែជាប្រភេទរូបភាព!',
-            'profile_picture.mimes' => 'រូបភាពត្រូវតែជាប្រភេទ: jpeg, png, jpg!',
+            'profile_picture.mimetypes' => 'ឯកសារត្រូវតែជាប្រភេទរូបភាព!',
         ];
 
         if ($request->role === 'student') {

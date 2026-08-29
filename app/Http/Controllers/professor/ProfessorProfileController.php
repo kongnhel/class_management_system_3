@@ -47,7 +47,7 @@ class ProfessorProfileController extends Controller
             'phone_number' => 'nullable|string|max:20',
             'telegram_user' => 'nullable|string|max:255',
             'address' => 'nullable|string|max:255',
-            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
+            'profile_picture' => 'nullable|mimetypes:image/jpeg,image/png,image/gif,image/svg+xml,image/webp|max:5120',
         ]);
 
         $userProfile = $user->userProfile()->firstOrNew(['user_id' => $user->id]);

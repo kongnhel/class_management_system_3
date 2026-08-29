@@ -55,10 +55,10 @@ class ProfileController extends Controller
     public function updateProfilePicture(Request $request)
     {
         $request->validate([
-            'profile_picture' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:5120',
+            'profile_picture' => 'required|mimetypes:image/jpeg,image/png,image/gif,image/svg+xml,image/webp|max:5120',
         ], [
             'profile_picture.required' => 'សូមជ្រើសរើសរូបភាពសម្រាប់ Profile Picture ។',
-            'profile_picture.image' => 'File ដែលបាន upload ត្រូវតែជារូបភាព។',
+            'profile_picture.mimetypes' => 'File ដែលបាន upload ត្រូវតែជារូបភាព។',
             'profile_picture.max' => 'ទំហំរូបភាពមិនត្រូវលើស 5MB ទេ។',
         ]);
 
