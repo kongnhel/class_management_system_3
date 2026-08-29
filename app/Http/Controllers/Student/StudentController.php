@@ -53,6 +53,13 @@ class StudentController extends Controller
             ->where('status', 'active')->with('program')->first();
         $studentProgram = $studentProgramEnrollment?->program;
 
+        // Computed year level
+        $computedYearLevel = null;
+        if ($studentProgram) {
+            $progressionService = app(\App\Services\StudentProgressionService::class);
+            $computedYearLevel = $progressionService->getYearLevel($user, $studentProgram);
+        }
+
         // Available courses for self-enrollment
         $availableCoursesInProgram = collect([]);
         if ($studentProgram) {
@@ -178,7 +185,8 @@ class StudentController extends Controller
             'user', 'totalPresent', 'totalAbsent', 'totalPermission',
             'enrolledCourses', 'upcomingSchedules', 'studentProgram', 'availableCoursesInProgram',
             'completedCoursesCount', 'totalCoursesInProgram', 'combinedFeed', 'todayName',
-            'attendanceScore', 'gpa', 'averageScore', 'overallRank', 'totalClassmates', 'overallGrade'
+            'attendanceScore', 'gpa', 'averageScore', 'overallRank', 'totalClassmates', 'overallGrade',
+            'computedYearLevel'
         ));
     }
 

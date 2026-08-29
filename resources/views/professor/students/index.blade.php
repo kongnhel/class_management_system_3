@@ -321,11 +321,17 @@
                                             <div class="kh" style="font-size:0.92rem; font-weight:700; color:#111827; line-height:1.3;">
                                                 {{ $student->studentProfile->full_name_km ?? $student->name }}
                                             </div>
-                                            <div style="margin-top:4px;">
+                                            <div style="margin-top:4px; display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
                                                 @if($isLeader)
                                                     <span class="pill-leader kh">{{ __('prof_stu_class_leader') }}</span>
                                                 @else
                                                     <span class="pill-student kh">{{ __('prof_stu_student_label') }}</span>
+                                                @endif
+                                                @if($student->generation)
+                                                    <span style="font-size:0.68rem; font-weight:600; color:#6366f1; background:#eef2ff; padding:2px 6px; border-radius:9999px;">G{{ $student->generation }}</span>
+                                                @endif
+                                                @if($student->computed_year_level)
+                                                    <span style="font-size:0.68rem; font-weight:600; color:#0d9488; background:#f0fdfa; padding:2px 6px; border-radius:9999px;">{{ __('ឆ្នាំទី') }}{{ $student->computed_year_level }}</span>
                                                 @endif
                                             </div>
                                         </div>

@@ -1597,5 +1597,13 @@
     "⚠": "⚠",
     "⚠ ពិនិត្យភាពរវល់របស់បន្ទប់មិនបានសម្រេច សូមព្យាយាមម្តងទៀត។": "⚠ Room availability check failed. Please try again.",
     "⚠ ម៉ោងនេះជាន់គ្នាជាមួយ Session ផ្សេងទៀតក្នុងបញ្ជីខាងក្រោម។": "⚠ This time conflicts with another session listed below.",
-    "⛔ គ្មានម៉ោងទំនេរនៅសល់សម្រាប់ថ្ងៃនេះទៀតទេ — Session ទាំងអស់ពេញហើយ។": "⛔ No free slots left for today — all sessions are full."
+    "⛔ គ្មានម៉ោងទំនេរនៅសល់សម្រាប់ថ្ងៃនេះទៀតទេ — Session ទាំងអស់ពេញហើយ។": "⛔ No free slots left for today — all sessions are full.",
+    "ឆ្នាំទី": "Year",
+    "ឆ្នាំសិក្សា": "Academic Year",
+    "ព័ត៌មានសិក្សា": "Academic Info",
+    "កម្មវិធីសិក្សា": "Study Program",
+    "មហាវិទ្យាល័យ": "Faculty",
+    "ជំនាញ": "Department",
+    "កម្រិតសិក្សា": "Degree Level",
+    "ជំនាន់": "Generation"
 }

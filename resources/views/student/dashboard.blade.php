@@ -41,6 +41,9 @@
                                 <i class="fas fa-graduation-cap text-emerald-200"></i>
                                 <span class="max-w-[140px] truncate">{{ $studentProgram->name_km }}</span>
                                 <span class="bg-white/15 px-2 py-0.5 rounded-md text-[10px]">G{{ $user->generation }}</span>
+                                @if($computedYearLevel)
+                                    <span class="bg-white/15 px-2 py-0.5 rounded-md text-[10px]">{{ __('ឆ្នាំទី') }}{{ $computedYearLevel }}</span>
+                                @endif
                             </div>
                         @endif
 

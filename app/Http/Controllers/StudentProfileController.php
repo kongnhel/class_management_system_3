@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Program;
-use App\Models\StudentProfile;
+use App\Models\StudentProgramEnrollment;
 use App\Services\ImageKitService;
+use App\Services\StudentProgressionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 
 class StudentProfileController extends Controller
@@ -26,7 +26,18 @@ class StudentProfileController extends Controller
             'user_id' => $user->id,
         ]);
 
-        return view('student.profile.show', compact('user', 'studentProfile'));
+        // Academic info
+        $studentProgramEnrollment = StudentProgramEnrollment::where('student_user_id', $user->id)
+            ->where('status', 'active')
+            ->with('program.department.faculty')
+            ->first();
+        $computedYearLevel = null;
+        if ($studentProgramEnrollment?->program) {
+            $computedYearLevel = app(StudentProgressionService::class)
+                ->getYearLevel($user, $studentProgramEnrollment->program);
+        }
+
+        return view('student.profile.show', compact('user', 'studentProfile', 'studentProgramEnrollment', 'computedYearLevel'));
     }
 
     public function edit()

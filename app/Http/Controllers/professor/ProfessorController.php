@@ -191,6 +191,7 @@ class ProfessorController extends Controller
             ->firstOrFail();
 
         // ២. រៀបចំបញ្ជីឈ្មោះនិស្សិត និងគណនាស្ថិតិ
+        $progressionService = app(\App\Services\StudentProgressionService::class);
         $stats = [
             'total' => $courseOffering->studentCourseEnrollments->count(),
             'male' => 0,
@@ -198,8 +199,15 @@ class ProfessorController extends Controller
             'leaders' => 0,
         ];
 
-        $students = $courseOffering->studentCourseEnrollments->map(function ($enrollment) use (&$stats) {
+        $students = $courseOffering->studentCourseEnrollments->map(function ($enrollment) use (&$stats, $progressionService) {
             $student = $enrollment->student;
+
+            // Compute year level
+            if ($student->program) {
+                $student->computed_year_level = $progressionService->getYearLevel($student, $student->program);
+            } else {
+                $student->computed_year_level = null;
+            }
 
             // ឆែកភេទ (Gender) ពី Profile
             $gender = strtoupper($student->studentProfile->gender ?? '');
@@ -308,9 +316,16 @@ class ProfessorController extends Controller
             abort(404);
         }
 
-        $student->loadMissing('studentProfile', 'program');
+        $student->loadMissing('studentProfile', 'studentProgramEnrollments.program.department.faculty');
 
-        return view('professor.students.show_profile', compact('courseOffering', 'student'));
+        // Compute year level
+        $computedYearLevel = null;
+        if ($student->program) {
+            $computedYearLevel = app(\App\Services\StudentProgressionService::class)
+                ->getYearLevel($student, $student->program);
+        }
+
+        return view('professor.students.show_profile', compact('courseOffering', 'student', 'computedYearLevel'));
     }
 
     public function showStudentsInCourse(CourseOffering $courseOffering)
@@ -326,6 +341,18 @@ class ProfessorController extends Controller
             ->with(['studentProfile', 'studentProgramEnrollments.program'])
             ->orderBy('name', 'asc')
             ->paginate(10);
+
+        // Compute year levels
+        $progressionService = app(\App\Services\StudentProgressionService::class);
+        $students->getCollection()->transform(function ($student) use ($progressionService) {
+            if ($student->program) {
+                $student->computed_year_level = $progressionService->getYearLevel($student, $student->program);
+            } else {
+                $student->computed_year_level = null;
+            }
+
+            return $student;
+        });
 
         return view('professor.students.index', compact('courseOffering', 'students'));
     }
@@ -347,6 +374,16 @@ class ProfessorController extends Controller
         $students = $courseOffering->studentCourseEnrollments->map(function ($enrollment) {
             return $enrollment->student;
         })->sortBy('name')->values();
+
+        // Compute year levels
+        $progressionService = app(\App\Services\StudentProgressionService::class);
+        $students->each(function ($student) use ($progressionService) {
+            if ($student->program) {
+                $student->computed_year_level = $progressionService->getYearLevel($student, $student->program);
+            } else {
+                $student->computed_year_level = null;
+            }
+        });
 
         return view('professor.students.print', compact('courseOffering', 'students'));
     }
