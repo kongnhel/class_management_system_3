@@ -20,7 +20,7 @@
         <link rel="icon" type="image/png" href="{{ asset('assets/image/nmu_Logo.png') }}">
         <title>{{ config('', 'Class Management System') }}</title>
         @livewireStyles
-        <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/dist/html5-qrcode.min.js" type="text/javascript"></script>
+        <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js" type="text/javascript"></script>
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
         <link rel="preconnect" href="https://fonts.bunny.net">
