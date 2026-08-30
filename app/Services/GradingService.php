@@ -210,7 +210,7 @@ class GradingService
             }
 
             if ($type === 'exam') {
-                $exam = $result->exam ?? $result->getRelation('exam') ?? null;
+                $exam = $result->exam ?? (method_exists($result, 'getRelation') ? $result->getRelation('exam') : null);
                 if ($exam) {
                     $classified = self::classifyExamType($exam);
                     $totals[$classified] += $result->score_obtained;
