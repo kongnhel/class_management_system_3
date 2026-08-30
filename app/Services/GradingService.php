@@ -213,7 +213,11 @@ class GradingService
                 $exam = $result->exam ?? (method_exists($result, 'getRelation') ? $result->getRelation('exam') : null);
                 if ($exam) {
                     $classified = self::classifyExamType($exam);
-                    $totals[$classified] += $result->score_obtained;
+                    if (isset($totals[$classified])) {
+                        $totals[$classified] += $result->score_obtained;
+                    } else {
+                        $totals['final'] += $result->score_obtained;
+                    }
                 }
             } elseif (in_array($type, ['midterm', 'final'])) {
                 $totals[$type] += $result->score_obtained;
