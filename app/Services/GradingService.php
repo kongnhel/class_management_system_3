@@ -215,6 +215,8 @@ class GradingService
                     $classified = self::classifyExamType($exam);
                     $totals[$classified] += $result->score_obtained;
                 }
+            } elseif (in_array($type, ['midterm', 'final'])) {
+                $totals[$type] += $result->score_obtained;
             } elseif ($type === 'assignment') {
                 $totals['assignment'] += $result->score_obtained;
             }
