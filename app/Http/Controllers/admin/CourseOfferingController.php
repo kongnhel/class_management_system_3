@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AcademicYear;
 use App\Models\Course;
 use App\Models\CourseOffering;
+use App\Models\Faculty;
 use App\Models\Generation;
 use App\Models\Program;
 use App\Models\Room;
@@ -53,6 +54,12 @@ class CourseOfferingController extends Controller
             });
         }
 
+        if ($request->filled('faculty_id')) {
+            $query->whereHas('targetPrograms.program.department', function ($q) use ($request) {
+                $q->where('faculty_id', $request->input('faculty_id'));
+            });
+        }
+
         if ($request->filled('generation')) {
             $query->whereHas('targetPrograms', function ($q) use ($request) {
                 $q->where('course_offering_program.generation', '=', $request->input('generation'));
@@ -88,6 +95,8 @@ class CourseOfferingController extends Controller
 
         $programs = Program::orderBy('name_km')->get();
 
+        $faculties = Faculty::with('departments')->orderBy('name_km')->get();
+
         $academicYears = AcademicYear::orderBy('name', 'desc')->get();
 
         $assignedLecturerIds = CourseOffering::distinct()->pluck('lecturer_user_id')->filter()->unique();
@@ -101,6 +110,7 @@ class CourseOfferingController extends Controller
         return view('admin.course-offerings.index', compact(
             'courseOfferings',
             'programs',
+            'faculties',
             'academicYears',
             'lecturers',
             'generations'

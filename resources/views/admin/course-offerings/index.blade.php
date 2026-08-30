@@ -84,13 +84,22 @@
                     </div>
 
                     {{-- Row 2: Filters --}}
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-4">
+                        <div>
+                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('មហាវិទ្យាល័យ') }}</label>
+                            <select name="faculty_id" id="faculty-filter" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm">
+                                <option value="">{{ __('ទាំងអស់') }}</option>
+                                @foreach($faculties as $faculty)
+                                    <option value="{{ $faculty->id }}" {{ request('faculty_id') == $faculty->id ? 'selected' : '' }}>{{ $faculty->name_km }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                         <div>
                             <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('កម្មវិធីសិក្សា') }}</label>
-                            <select name="program_id" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm">
+                            <select name="program_id" id="program-filter" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm">
                                 <option value="">{{ __('ទាំងអស់') }}</option>
                                 @foreach($programs as $program)
-                                    <option value="{{ $program->id }}" {{ request('program_id') == $program->id ? 'selected' : '' }}>{{ $program->name_km }}</option>
+                                    <option value="{{ $program->id }}" data-department-id="{{ $program->department_id }}" {{ request('program_id') == $program->id ? 'selected' : '' }}>{{ $program->name_km }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -523,6 +532,48 @@
     </div>
 
     <script>
+        // Faculty → Department mapping for cascading filter
+        const facultyDepartments = {
+            @foreach($faculties as $faculty)
+                {{ $faculty->id }}: [@foreach($faculty->departments as $dept) {{ $dept->id }}, @endforeach],
+            @endforeach
+        };
+
+        document.getElementById('faculty-filter').addEventListener('change', function() {
+            const facultyId = this.value;
+            const programSelect = document.getElementById('program-filter');
+            const currentProgram = programSelect.value;
+
+            if (!facultyId) {
+                // Show all programs
+                Array.from(programSelect.options).forEach(opt => {
+                    if (opt.value) opt.style.display = '';
+                });
+            } else {
+                const departmentIds = facultyDepartments[facultyId] || [];
+                Array.from(programSelect.options).forEach(opt => {
+                    if (!opt.value) return; // skip "All" option
+                    const deptId = parseInt(opt.dataset.departmentId);
+                    opt.style.display = departmentIds.includes(deptId) ? '' : 'none';
+                });
+                // Reset if selected program is not in this faculty
+                if (currentProgram) {
+                    const selectedOpt = programSelect.querySelector(`option[value="${currentProgram}"]`);
+                    if (selectedOpt && selectedOpt.style.display === 'none') {
+                        programSelect.value = '';
+                    }
+                }
+            }
+        });
+
+        // Trigger on page load if faculty is pre-selected
+        document.addEventListener('DOMContentLoaded', function() {
+            const facultyFilter = document.getElementById('faculty-filter');
+            if (facultyFilter.value) {
+                facultyFilter.dispatchEvent(new Event('change'));
+            }
+        });
+
         function openDeleteModal(id) {
             const form = document.getElementById('delete-form');
             form.action = '{{ route("admin.course-offerings.destroy", ":id") }}'.replace(':id', id);
