@@ -77,14 +77,6 @@
                     </button>
                 </div>
 
-                {{-- Manual Token Input Fallback --}}
-                <div class="mt-3 pt-3 border-t border-gray-100">
-                    <p class="text-xs text-gray-400 mb-2 text-center">ឬ បញ្ចូលកូដដោយដៃ：</p>
-                    <div class="flex gap-2">
-                        <input type="text" id="manual-token" placeholder="បញ្ចូល token..." class="flex-1 px-3 py-2 text-xs border border-gray-200 rounded-lg focus:outline-none focus:border-emerald-400">
-                        <button onclick="submitManualToken()" class="px-4 py-2 bg-emerald-600 text-white text-xs font-bold rounded-lg hover:bg-emerald-700">ផ្ញើ</button>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -203,18 +195,6 @@
                 console.error('[QR] Fetch error:', error);
                 showModal('error', error.message || 'មានបញ្ហាក្នុងការទាក់ទង server');
             });
-        }
-
-        function submitManualToken() {
-            const token = document.getElementById('manual-token').value.trim();
-            if (!token) {
-                showOnScreenError('សូមបញ្ចូល token!');
-                return;
-            }
-            if (isProcessing) return;
-            isProcessing = true;
-            showModal('processing');
-            sendTokenToServer(token);
         }
 
         let failureCount = 0;
