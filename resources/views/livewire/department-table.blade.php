@@ -1,8 +1,8 @@
 ﻿<div>
-    {{-- Search Bar --}}
+    {{-- Search & Faculty Filter --}}
     <form method="GET" action="{{ route('admin.manage-departments') }}" data-admin-realtime-filter class="mb-6">
-    <div>
-        <div class="relative max-w-md">
+    <div class="flex flex-col sm:flex-row gap-3">
+        <div class="relative flex-1 max-w-md">
             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -14,15 +14,23 @@
                 value="{{ $search }}"
                 placeholder="{{ __('ស្វែងរកដេប៉ាតឺម៉ង់...') }}"
                 autocomplete="off"
-                class="block w-full pl-11 pr-20 py-3 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-gray-50 transition"
+                class="block w-full pl-11 pr-10 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-gray-50 transition"
             />
             @if($search)
-                <button type="button" data-admin-clear-search aria-label="{{ __('សម្អាតការស្វែងរក') }}" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600">
+                <button type="button" data-admin-clear-search aria-label="{{ __('សម្អាតការស្វែងរក') }}" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600">
                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
             @endif
+        </div>
+        <div>
+            <select wire:model.live="facultyId" class="w-full sm:w-56 px-3 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-gray-50 transition">
+                <option value="">{{ __('ទាំងអស់') }} {{ __('មហាវិទ្យាល័យ') }}</option>
+                @foreach($faculties as $faculty)
+                    <option value="{{ $faculty->id }}">{{ $faculty->name_km }}</option>
+                @endforeach
+            </select>
         </div>
     </div>
     </form>
