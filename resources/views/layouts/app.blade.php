@@ -337,6 +337,7 @@
             function fetchAdminResults(url, form) {
                 var container = document.querySelector('[data-admin-results]');
                 if (!container) return;
+                if (container.closest('[wire\\:id]')) return;
 
                 if (activeRequest) activeRequest.abort();
                 var requestController = new AbortController();

@@ -23,6 +23,9 @@ class DepartmentTable extends Component
     public function mount()
     {
         $this->facultyId = (string) request()->query('faculty_id', '');
+        if (request()->has('search')) {
+            $this->js("window.history.replaceState({}, '', window.location.pathname)");
+        }
     }
 
     public function updatedSearch()
