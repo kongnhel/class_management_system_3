@@ -390,7 +390,7 @@
 <script>
     if (typeof firebaseConfig === 'undefined') {
         var firebaseConfig = {
-            apiKey: "{{ config('services.firebase.api_key') }}"
+            apiKey: "{{ config('services.firebase.api_key') }}",
             authDomain: "classmanagementsystem-cd57f.firebaseapp.com",
             databaseURL: "https://classmanagementsystem-cd57f-default-rtdb.firebaseio.com/",
             projectId: "classmanagementsystem-cd57f",
