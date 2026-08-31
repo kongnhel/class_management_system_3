@@ -32,7 +32,7 @@
                             </div>
 
                             {{-- Faculty Filter --}}
-                            <select name="faculty_id" onchange="this.form.submit()"
+                            <select name="faculty_id"
                                 class="py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full md:w-52 transition-all">
                                 <option value="">{{ __('សាលាទាំងអស់') }}</option>
                                 @foreach($faculties as $f)
