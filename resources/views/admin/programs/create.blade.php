@@ -110,7 +110,6 @@
                             <label for="pathway_program_id" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('កម្មវិធីសិក្សាផ្លូវបន្ត') }}</label>
                             <select id="pathway_program_id" name="pathway_program_id"
                                 class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
-                                <option value="">{{ __('មិនមានផ្លូវបន្ត') }}</option>
                                 @foreach ($programs as $program)
                                     <option value="{{ $program->id }}" {{ old('pathway_program_id') == $program->id ? 'selected' : '' }}>
                                         {{ $program->name_km }} - {{ $program->duration_years }} ឆ្នាំ
