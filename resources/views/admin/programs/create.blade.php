@@ -104,21 +104,6 @@
                             <p class="mt-1.5 text-xs text-gray-500">{{ __('ជម្រើស។ កម្រិតសញ្ញាបត្រពិតប្រាកដត្រូវបានកំណត់នៅពេលបង្កើតនិស្សិត។') }}</p>
                             @error('degree_level') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                         </div>
-
-                        {{-- Pathway Program --}}
-                        <div>
-                            <label for="pathway_program_id" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('កម្មវិធីសិក្សាផ្លូវបន្ត') }}</label>
-                            <select id="pathway_program_id" name="pathway_program_id"
-                                class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
-                                @foreach ($programs as $program)
-                                    <option value="{{ $program->id }}" {{ old('pathway_program_id') == $program->id ? 'selected' : '' }}>
-                                        {{ $program->name_km }} - {{ $program->duration_years }} ឆ្នាំ
-                                    </option>
-                                @endforeach
-                            </select>
-                            <p class="mt-1.5 text-xs text-gray-500">{{ __('ជ្រើសរើសកម្មវិធីសិក្សាបរិញ្ញាបត្ររងដែលសិស្សអាចផ្ទេរពី។ សិស្សនឹងចាប់ផ្តើមពីឆ្នាំទី ៣។') }}</p>
-                            @error('pathway_program_id') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
-                        </div>
                     </div>
 
                     {{-- Actions --}}
