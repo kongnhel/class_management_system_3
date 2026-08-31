@@ -382,6 +382,17 @@
                     $currentProgramName = $first->targetPrograms->first()->name_km;
                 }
             }
+            $currentFacultyName = "";
+            if(request('faculty_id')){
+                $fac = $faculties->firstWhere('id', request('faculty_id'));
+                if($fac) $currentFacultyName = $fac->name_km;
+            } elseif($courseOfferings->isNotEmpty()) {
+                $first = $courseOfferings->first();
+                if($first->targetPrograms->isNotEmpty()){
+                    $prog = $first->targetPrograms->first();
+                    if($prog->department ?? null) $currentFacultyName = $prog->department->faculty->name_km ?? "";
+                }
+            }
             $generation = request('generation');
             $genText = $generation ? "(G$generation)" : "";
         @endphp
@@ -403,7 +414,7 @@
 
             <div class="schedule-title-block">
                 <h1 class="font-moul">{{ __('តារាងវិភាគកម្មធ៌មឆមាសទី') }}{{ request('semester') == 'ឆមាសទី២' ? '២' : '១' }} / Timetable Semester {{ request('semester') == 'ឆមាសទី២' ? '2' : '1' }}</h1>
-                <p>{{ __('ជំនាន់ទី') }}{{ request('generation', '...') }} {{ $currentProgramName }} {{ __('ឆ្នាំសិក្សា') }} {{ request('academic_year', date('Y').'-'.date('Y')+1) }}</p>
+                <p>{{ __('ជំនាន់ទី') }}{{ request('generation', '...') }} {{ $currentFacultyName }} {{ __('ឆ្នាំសិក្សា') }} {{ request('academic_year', date('Y').'-'.date('Y')+1) }}</p>
             </div>
         </div>
 
