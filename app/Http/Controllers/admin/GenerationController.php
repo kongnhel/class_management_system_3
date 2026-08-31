@@ -62,4 +62,14 @@ class GenerationController extends Controller
         return redirect()->route('admin.generations.index')
             ->with('success', __('ជំនាន់ត្រូវបានលុបដោយជោគជ័យ។'));
     }
+
+    public function toggle(Generation $generation)
+    {
+        $generation->update(['is_active' => ! $generation->is_active]);
+
+        $status = $generation->is_active ? 'សកម្ម' : 'មិនសកម្ម';
+
+        return redirect()->route('admin.generations.index')
+            ->with('success', __('ជំនាន់នេះត្រូវបានកំណត់ជា :status។', ['status' => $status]));
+    }
 }

@@ -174,6 +174,7 @@ Route::middleware(['auth', 'role:admin', 'throttle:120,1'])->prefix('admin')->na
     Route::get('/generations', [GenerationController::class, 'index'])->name('generations.index');
     Route::post('/generations', [GenerationController::class, 'store'])->name('generations.store');
     Route::put('/generations/{generation}', [GenerationController::class, 'update'])->name('generations.update');
+    Route::patch('/generations/{generation}/toggle', [GenerationController::class, 'toggle'])->name('generations.toggle');
     Route::delete('/generations/{generation}', [GenerationController::class, 'destroy'])->name('generations.destroy');
 
     Route::get('/courses', [CourseController::class, 'index'])->name('manage-courses');

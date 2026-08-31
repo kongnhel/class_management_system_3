@@ -12,10 +12,12 @@ class Generation extends Model
     protected $fillable = [
         'name',
         'join_year',
+        'is_active',
     ];
 
     protected $casts = [
         'join_year' => 'integer',
+        'is_active' => 'boolean',
     ];
 
     private const BASE_YEAR = 2006;

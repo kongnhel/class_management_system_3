@@ -133,11 +133,10 @@ class UserController extends Controller
             },
         ]);
 
-        $generations = User::where('role', 'student')
-            ->whereNotNull('generation')
-            ->distinct()
-            ->pluck('generation')
-            ->sortDesc();
+        $generations = \App\Models\Generation::where('is_active', true)
+            ->orderByDesc('name')
+            ->pluck('name')
+            ->toArray();
 
         $programs = \App\Models\Program::all();
         $faculties = \App\Models\Faculty::all();
@@ -209,7 +208,7 @@ class UserController extends Controller
         $faculties = Faculty::all();
         $departments = Department::all();
         $programs = Program::all();
-        $generations = \App\Models\Generation::orderByDesc('name')->pluck('name')->toArray();
+        $generations = \App\Models\Generation::where('is_active', true)->orderByDesc('name')->pluck('name')->toArray();
 
         return view('admin.users.create', compact('departments', 'programs', 'faculties', 'generations'));
     }
@@ -374,7 +373,7 @@ class UserController extends Controller
         $faculties = Faculty::all();
         $departments = Department::all();
         $programs = Program::all();
-        $generations = \App\Models\Generation::orderByDesc('name')->pluck('name')->toArray();
+        $generations = \App\Models\Generation::where('is_active', true)->orderByDesc('name')->pluck('name')->toArray();
 
         return view('admin.users.edit', compact('user', 'departments', 'programs', 'faculties', 'generations'));
     }
@@ -405,7 +404,7 @@ class UserController extends Controller
             'programs' => Program::all()->map(fn($p) => ['id' => $p->id, 'name' => $p->name_km ?? $p->name_en]),
             'departments' => Department::all()->map(fn($d) => ['id' => $d->id, 'name' => $d->name_km ?? $d->name_en, 'faculty_id' => $d->faculty_id]),
             'faculties' => \App\Models\Faculty::all()->map(fn($f) => ['id' => $f->id, 'name' => $f->name_km ?? $f->name_en]),
-            'generations' => \App\Models\Generation::orderByDesc('name')->get()->map(fn($g) => ['name' => $g->name, 'join_year' => $g->join_year ?? '']),
+            'generations' => \App\Models\Generation::where('is_active', true)->orderByDesc('name')->get()->map(fn($g) => ['name' => $g->name, 'join_year' => $g->join_year ?? '']),
         ]);
     }
 

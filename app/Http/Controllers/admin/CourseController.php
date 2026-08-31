@@ -64,7 +64,7 @@ class CourseController extends Controller
     {
         $departments = Department::all();
         $programs = Program::all();
-        $generations = \App\Models\Generation::orderByDesc('name')->pluck('name')->toArray();
+        $generations = \App\Models\Generation::where('is_active', true)->orderByDesc('name')->pluck('name')->toArray();
 
         return view('admin.courses.create', compact('departments', 'programs', 'generations'));
     }
@@ -102,7 +102,7 @@ class CourseController extends Controller
         $departments = Department::all();
         $programs = Program::all();
 
-        $generations = \App\Models\Generation::orderByDesc('name')->pluck('name')->toArray();
+        $generations = \App\Models\Generation::where('is_active', true)->orderByDesc('name')->pluck('name')->toArray();
 
         $selectedPrograms = $course->programs->pluck('id')->toArray();
 

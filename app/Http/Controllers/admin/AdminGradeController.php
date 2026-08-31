@@ -61,7 +61,7 @@ class AdminGradeController extends Controller
             ->appends($request->query());
 
         $programs = Program::orderBy('name_km')->get();
-        $generations = Generation::orderByDesc('name')->get();
+        $generations = Generation::where('is_active', true)->orderByDesc('name')->get();
 
         return view('admin.grades.index', compact('courseOfferings', 'programs', 'generations'));
     }

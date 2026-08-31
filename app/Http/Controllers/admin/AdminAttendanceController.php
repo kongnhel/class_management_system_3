@@ -57,7 +57,7 @@ class AdminAttendanceController extends Controller
             ->appends($request->query());
 
         $programs = Program::orderBy('name_km')->get();
-        $generations = Generation::orderByDesc('name')->get();
+        $generations = Generation::where('is_active', true)->orderByDesc('name')->get();
 
         return view('admin.attendance.index', compact('courseOfferings', 'programs', 'generations'));
     }

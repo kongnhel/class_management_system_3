@@ -105,7 +105,7 @@ class CourseOfferingController extends Controller
             ->orderBy('name')
             ->get(['id', 'name']);
 
-        $generations = Generation::orderBy('name', 'desc')->pluck('name')->filter()->values();
+        $generations = Generation::where('is_active', true)->orderBy('name', 'desc')->pluck('name')->filter()->values();
 
         return view('admin.course-offerings.index', compact(
             'courseOfferings',

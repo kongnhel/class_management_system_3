@@ -28,7 +28,7 @@ class BulkImportController extends Controller
         $faculties = Faculty::all();
         $departments = Department::all();
         $programs = Program::all();
-        $generations = \App\Models\Generation::orderByDesc('name')->get();
+        $generations = \App\Models\Generation::where('is_active', true)->orderByDesc('name')->get();
 
         return view('admin.import.index', compact('faculties', 'departments', 'programs', 'generations'));
     }

@@ -21,7 +21,10 @@ class StudentRegistrationController extends Controller
     public function create()
     {
         $programs = Program::all();
-        $generations = User::select('generation')->distinct()->pluck('generation')->filter()->all();
+        $generations = \App\Models\Generation::where('is_active', true)
+            ->orderByDesc('name')
+            ->pluck('name')
+            ->toArray();
 
         return view('auth.register', compact('programs', 'generations'));
     }

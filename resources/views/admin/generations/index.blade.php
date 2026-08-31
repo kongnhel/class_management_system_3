@@ -65,7 +65,7 @@
             {{-- Generations List --}}
             <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100">
-                    <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">{{ __('ជំនាន់ទាំងអស់') }} <span class="text-gray-300">· {{ $generations->count() }}</span></h3>
+                    <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">{{ __('ជំនាន់ទាំងអស់') }} <span class="text-gray-300">· {{ $generations->count() }}</span> <span class="text-emerald-500">({{ $generations->where('is_active', true)->count() }} {{ __('សកម្ម') }})</span></h3>
                 </div>
 
                 @if($generations->isEmpty())
@@ -75,26 +75,37 @@
                 @else
                     <div class="divide-y divide-gray-50">
                         @foreach($generations as $gen)
-                            <div class="px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition">
+                            <div class="px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition {{ !$gen->is_active ? 'opacity-60' : '' }}">
                                 <div class="flex items-center gap-4">
-                                    <div class="h-10 w-10 bg-emerald-50 rounded-lg flex items-center justify-center">
-                                        <span class="text-sm font-bold text-emerald-600">G{{ $gen->name }}</span>
+                                    <div class="h-10 w-10 {{ $gen->is_active ? 'bg-emerald-50' : 'bg-gray-100' }} rounded-lg flex items-center justify-center">
+                                        <span class="text-sm font-bold {{ $gen->is_active ? 'text-emerald-600' : 'text-gray-400' }}">G{{ $gen->name }}</span>
                                     </div>
                                     <div>
-                                        <p class="text-sm font-medium text-gray-900">{{ __('ជំនាន់ទី') }}{{ $gen->name }}</p>
+                                        <div class="flex items-center gap-2">
+                                            <p class="text-sm font-medium text-gray-900">{{ __('ជំនាន់ទី') }}{{ $gen->name }}</p>
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold {{ $gen->is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500' }}">
+                                                {{ $gen->is_active ? __('សកម្ម') : __('មិនសកម្ម') }}
+                                            </span>
+                                        </div>
                                         <p class="text-xs text-gray-400">{{ __('ចូលរៀនឆ្នាំ') }} {{ $gen->join_year }} · {{ $gen->students_count }} {{ __('និស្សិត') }}</p>
                                     </div>
                                 </div>
-                                @if($gen->students_count === 0)
-                                    <div class="flex items-center gap-2">
+                                <div class="flex items-center gap-2">
+                                    <form action="{{ route('admin.generations.toggle', $gen) }}" method="POST" class="inline-flex">
+                                        @csrf @method('PATCH')
+                                        <button type="submit" class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors {{ $gen->is_active ? 'bg-emerald-500' : 'bg-gray-300' }}" title="{{ $gen->is_active ? 'បិទសកម្មភាព' : 'បើកសកម្មភាព' }}">
+                                            <span class="inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform {{ $gen->is_active ? 'translate-x-6' : 'translate-x-1' }}"></span>
+                                        </button>
+                                    </form>
+                                    @if($gen->students_count === 0)
                                         <button type="button" onclick="openEditModal({{ $gen->id }}, {{ $gen->name }})" class="text-emerald-500 hover:text-emerald-700 transition" title="{{ __('កែប្រែ') }}">
                                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                                         </button>
                                         <button type="button" onclick="openDeleteModal({{ $gen->id }}, '{{ $gen->name }}')" class="text-red-400 hover:text-red-600 transition" title="{{ __('លុប') }}">
                                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                         </button>
-                                    </div>
-                                @endif
+                                    @endif
+                                </div>
                             </div>
                         @endforeach
                     </div>

@@ -196,7 +196,7 @@
                             </x-input-label>
                             <select id="generation" name="generation" class="block w-full rounded-xl border-gray-200 bg-white text-gray-900 focus:ring-2 focus:ring-emerald-500 shadow-sm transition px-4 py-2.5 h-[50px]">
                                 <option value="">{{ __('ជ្រើសរើសជំនាន់') }}</option>
-                                @foreach(\App\Models\Generation::orderByDesc('name')->get() as $gen)
+                                @foreach(\App\Models\Generation::where('is_active', true)->orderByDesc('name')->get() as $gen)
                                     <option value="{{ $gen->name }}" {{ old('generation', $user->generation) == $gen->name ? 'selected' : '' }}>{{ $gen->name }} ({{ __('ចូលរៀនឆ្នាំ') }} {{ $gen->join_year }})</option>
                                 @endforeach
                             </select>
