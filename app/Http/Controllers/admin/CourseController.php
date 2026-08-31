@@ -33,7 +33,7 @@ class CourseController extends Controller
 
         if ($programId) {
             $query->whereHas('programs', function ($pq) use ($programId) {
-                $pq->where('program_id', $programId);
+                $pq->where('id', $programId);
             });
         }
 
