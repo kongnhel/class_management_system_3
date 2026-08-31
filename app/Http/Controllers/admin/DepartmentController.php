@@ -16,11 +16,29 @@ class DepartmentController extends Controller
 {
     use AuditableTrait;
 
-    public function index()
+    public function index(Request $request)
     {
-        $departments = Department::with('faculty', 'head')->paginate(10);
+        $query = Department::with('faculty', 'head');
 
-        return view('admin.departments.index', compact('departments'));
+        if ($search = $request->input('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name_km', 'like', "%{$search}%")
+                  ->orWhere('name_en', 'like', "%{$search}%")
+                  ->orWhereHas('faculty', function ($fq) use ($search) {
+                      $fq->where('name_km', 'like', "%{$search}%")
+                        ->orWhere('name_en', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        if ($facultyId = $request->input('faculty_id')) {
+            $query->where('faculty_id', $facultyId);
+        }
+
+        $departments = $query->orderBy('name_km')->paginate(10)->withQueryString();
+        $faculties = Faculty::all();
+
+        return view('admin.departments.index', compact('departments', 'faculties'));
     }
 
     public function create()
