@@ -5,6 +5,7 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\Models\Department;
+use App\Models\Faculty;
 use App\Models\Program;
 use App\Models\Room;
 use App\Models\StudentProfile;
@@ -16,9 +17,17 @@ class CourseController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search', '');
+        $facultyId = $request->input('faculty_id', '');
         $room = Room::all();
+        $faculties = Faculty::all();
 
         $query = Course::with(['department', 'programs']);
+
+        if ($facultyId) {
+            $query->whereHas('department', function ($dq) use ($facultyId) {
+                $dq->where('faculty_id', $facultyId);
+            });
+        }
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -54,7 +63,7 @@ class CourseController extends Controller
             },
         ]);
 
-        return view('admin.courses.index', compact('coursesGrouped', 'room', 'search'));
+        return view('admin.courses.index', compact('coursesGrouped', 'room', 'search', 'faculties', 'facultyId'));
     }
 
     /**
