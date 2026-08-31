@@ -94,10 +94,10 @@
                             <select id="degree_level" name="degree_level"
                                 class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
                                 <option value="">{{ __('ជ្រើសរើសកម្រិតសញ្ញាបត្រ') }}</option>
-                                <option value="បរិញ្ញាបត្រ" {{ old('degree_level') == 'បរិញ្ញាបត្រ' ? 'selected' : '' }}>{{ __('បរិញ្ញាបត្រ') }}</option>
                                 <option value="បរិញ្ញាបត្ររង" {{ old('degree_level') == 'បរិញ្ញាបត្ររង' ? 'selected' : '' }}>{{ __('បរិញ្ញាបត្ររង') }}</option>
-                                <option value="អនុបណ្ឌិត" {{ old('degree_level') == 'អនុបណ្ឌិត' ? 'selected' : '' }}>{{ __('អនុបណ្ឌិត') }}</option>
-                                <option value="បណ្ឌិត" {{ old('degree_level') == 'បណ្ឌិត' ? 'selected' : '' }}>{{ __('បណ្ឌិត') }}</option>
+                                <option value="បរិញ្ញាបត្រ" {{ old('degree_level') == 'បរិញ្ញាបត្រ' ? 'selected' : '' }}>{{ __('បរិញ្ញាបត្រ') }}</option>
+                                <!-- <option value="អនុបណ្ឌិត" {{ old('degree_level') == 'អនុបណ្ឌិត' ? 'selected' : '' }}>{{ __('អនុបណ្ឌិត') }}</option>
+                                <option value="បណ្ឌិត" {{ old('degree_level') == 'បណ្ឌិត' ? 'selected' : '' }}>{{ __('បណ្ឌិត') }}</option> -->
                                 <option value="វិញ្ញាបនបត្រ" {{ old('degree_level') == 'វិញ្ញាបនបត្រ' ? 'selected' : '' }}>{{ __('វិញ្ញាបនបត្រ') }}</option>
                                 <option value="ផ្សេងៗ" {{ old('degree_level') == 'ផ្សេងៗ' ? 'selected' : '' }}>{{ __('ផ្សេងៗ') }}</option>
                             </select>
