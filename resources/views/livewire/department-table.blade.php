@@ -1,6 +1,6 @@
 ﻿<div>
     {{-- Search & Faculty Filter --}}
-    <form method="GET" action="{{ route('admin.manage-departments') }}" data-admin-realtime-filter class="mb-6">
+    <div class="mb-6">
     <div class="flex flex-col sm:flex-row gap-3">
         <div class="relative flex-1 max-w-md">
             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -33,7 +33,7 @@
             </select>
         </div>
     </div>
-    </form>
+    </div>
 
     <div data-admin-results>
     @if ($departments->isNotEmpty())
