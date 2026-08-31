@@ -21,7 +21,7 @@ class CourseController extends Controller
         $programId = $request->input('program_id', '');
         $room = Room::all();
         $faculties = Faculty::all();
-        $programs = Program::orderByDesc('name_km')->get();
+        $programs = Program::with('department')->orderByDesc('name_km')->get();
 
         $query = Course::with(['department', 'programs']);
 

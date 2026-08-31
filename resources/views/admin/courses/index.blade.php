@@ -64,11 +64,11 @@
                                 </option>
                             @endforeach
                         </select>
-                        <select name="program_id"
+                        <select name="program_id" id="courseProgramFilter"
                             class="py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full sm:w-56 transition-all">
                             <option value="">{{ __('កម្មវិធីសិក្សាទាំងអស់') }}</option>
                             @foreach($programs as $p)
-                                <option value="{{ $p->id }}" {{ $programId == $p->id ? 'selected' : '' }}>
+                                <option value="{{ $p->id }}" data-faculty-id="{{ $p->department->faculty_id ?? '' }}" {{ $programId == $p->id ? 'selected' : '' }}>
                                     {{ $p->name_km }}
                                 </option>
                             @endforeach
@@ -283,5 +283,30 @@
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') closeDeleteModal();
         });
+
+        (function () {
+            var facultySelect = document.querySelector('select[name="faculty_id"]');
+            var programSelect = document.getElementById('courseProgramFilter');
+            if (!facultySelect || !programSelect) return;
+
+            function filterPrograms() {
+                var facultyId = facultySelect.value;
+                var options = programSelect.querySelectorAll('option[value]');
+                var selectedStillVisible = false;
+
+                options.forEach(function (opt) {
+                    if (opt.value === '') return;
+                    var match = !facultyId || opt.dataset.facultyId === facultyId;
+                    opt.hidden = !match;
+                    opt.disabled = !match;
+                    if (match && opt.value === programSelect.value) selectedStillVisible = true;
+                });
+
+                if (!selectedStillVisible) programSelect.value = '';
+            }
+
+            facultySelect.addEventListener('change', filterPrograms);
+            filterPrograms();
+        })();
     </script>
 </x-app-layout>
