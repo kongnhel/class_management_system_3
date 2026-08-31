@@ -4,6 +4,7 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Department;
+use App\Models\Faculty;
 use App\Models\Program;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -30,6 +31,12 @@ class ProgramController extends Controller
             $query->where('degree_level', $degreeLevel);
         }
 
+        if ($facultyId = $request->input('faculty_id')) {
+            $query->whereHas('department', function ($q) use ($facultyId) {
+                $q->where('faculty_id', $facultyId);
+            });
+        }
+
         $sort = $request->input('sort', 'name_km');
         $direction = $request->input('direction', 'asc');
         $allowedSorts = ['name_km', 'name_en', 'duration_years', 'degree_level', 'created_at'];
@@ -41,8 +48,9 @@ class ProgramController extends Controller
         $programs = $query->paginate(12)->withQueryString();
         $departments = Department::all();
         $degreeLevels = Program::distinct()->pluck('degree_level')->filter()->values();
+        $faculties = Faculty::all();
 
-        return view('admin.programs.index', compact('programs', 'departments', 'degreeLevels'));
+        return view('admin.programs.index', compact('programs', 'departments', 'degreeLevels', 'faculties'));
     }
 
     public function create()

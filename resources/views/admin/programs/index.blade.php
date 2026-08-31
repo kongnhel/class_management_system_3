@@ -40,7 +40,7 @@
 
             {{-- Search & Filters --}}
             <form method="GET" action="{{ route('admin.manage-programs') }}" id="filterForm" data-admin-realtime-filter class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 mb-6">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
                     {{-- Search --}}
                     <div class="md:col-span-2">
                         <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('ស្វែងរក') }}</label>
@@ -50,13 +50,24 @@
                         </div>
                     </div>
 
+                    {{-- Faculty Filter --}}
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('មហាវិទ្យាល័យ') }}</label>
+                        <select name="faculty_id" id="faculty-filter" class="w-full px-3 py-2.5 rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 bg-gray-50 focus:bg-white transition">
+                            <option value="">{{ __('ទាំងអស់') }}</option>
+                            @foreach($faculties as $faculty)
+                                <option value="{{ $faculty->id }}" {{ request('faculty_id') == $faculty->id ? 'selected' : '' }}>{{ $faculty->name_km }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
                     {{-- Department Filter --}}
                     <div>
                         <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('ដេប៉ាតឺម៉ង់') }}</label>
-                        <select name="department_id" class="w-full px-3 py-2.5 rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 bg-gray-50 focus:bg-white transition">
+                        <select name="department_id" id="department-filter" class="w-full px-3 py-2.5 rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 bg-gray-50 focus:bg-white transition">
                             <option value="">{{ __('ទាំងអស់') }}</option>
                             @foreach($departments as $dept)
-                                <option value="{{ $dept->id }}" {{ request('department_id') == $dept->id ? 'selected' : '' }}>{{ $dept->name_km }}</option>
+                                <option value="{{ $dept->id }}" data-faculty-id="{{ $dept->faculty_id }}" {{ request('department_id') == $dept->id ? 'selected' : '' }}>{{ $dept->name_km }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -78,7 +89,7 @@
                         <button type="submit" class="inline-flex items-center gap-2 bg-emerald-600 text-white px-5 py-2 rounded-xl text-sm font-bold hover:bg-emerald-700 transition">
                             <i class="fas fa-filter"></i> {{ __('ច្រោះ') }}
                         </button>
-                        @if(request()->hasAny(['search', 'department_id', 'degree_level']))
+                        @if(request()->hasAny(['search', 'faculty_id', 'department_id', 'degree_level']))
                             <a href="{{ route('admin.manage-programs') }}" class="inline-flex items-center gap-2 bg-gray-100 text-gray-600 px-4 py-2 rounded-xl text-sm font-bold hover:bg-gray-200 transition">
                                 <i class="fas fa-times"></i> {{ __('សម្អាត') }}
                             </a>
@@ -290,6 +301,38 @@
 
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') closeDeleteModal();
+        });
+
+        // Faculty → Department cascading filter
+        document.getElementById('faculty-filter').addEventListener('change', function() {
+            const facultyId = this.value;
+            const deptSelect = document.getElementById('department-filter');
+            const currentDept = deptSelect.value;
+
+            if (!facultyId) {
+                Array.from(deptSelect.options).forEach(opt => {
+                    if (opt.value) opt.style.display = '';
+                });
+            } else {
+                Array.from(deptSelect.options).forEach(opt => {
+                    if (!opt.value) return;
+                    const deptFacultyId = parseInt(opt.dataset.facultyId);
+                    opt.style.display = deptFacultyId == facultyId ? '' : 'none';
+                });
+                if (currentDept) {
+                    const selectedOpt = deptSelect.querySelector(`option[value="${currentDept}"]`);
+                    if (selectedOpt && selectedOpt.style.display === 'none') {
+                        deptSelect.value = '';
+                    }
+                }
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const facultyFilter = document.getElementById('faculty-filter');
+            if (facultyFilter.value) {
+                facultyFilter.dispatchEvent(new Event('change'));
+            }
         });
     </script>
 </x-app-layout>
