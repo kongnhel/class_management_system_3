@@ -18,9 +18,13 @@
     <div class="py-8 bg-gray-50 min-h-screen">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <form method="POST" action="{{ route('admin.store-user') }}" enctype="multipart/form-data" novalidate
-                x-data="{ 
+                x-data="{
                     userRole: '{{ old('role', 'professor') }}',
-                    profilePicturePreview: null
+                    profilePicturePreview: null,
+                    passwordVisible: false,
+                    passwordConfirmVisible: false,
+                    passwordStrength: '',
+                    passwordStrengthColor: ''
                 }" class="space-y-6">
                 @csrf
                 <input type="hidden" id="profile_picture_base64" name="profile_picture_base64" value="" />
@@ -85,22 +89,35 @@
                                 <div class="relative w-full h-[50px]">
                                     <input
                                         id="password"
-                                        type="password"
+                                        :type="passwordVisible ? 'text' : 'password'"
                                         name="password"
                                         autocomplete="new-password"
                                         placeholder="{{ __('បញ្ចូលពាក្យសម្ងាត់') }}"
                                         class="block w-full h-full rounded-xl border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 py-2.5 px-4 pr-12 shadow-sm text-gray-900 bg-white transition"
                                         required
+                                        @input="
+                                            let v = $event.target.value;
+                                            let s = 0;
+                                            if (/[A-Z]/.test(v)) s++;
+                                            if (/[a-z]/.test(v)) s++;
+                                            if (/[0-9]/.test(v)) s++;
+                                            if (/[@$!%*?&]/.test(v)) s++;
+                                            if (v.length >= 8) s++;
+                                            let levels = ['{{ __('ខ្សោយ') }}','{{ __('មធ្យម') }}','{{ __('ល្អ') }}','{{ __('ខ្លាំង') }}','{{ __('ខ្លាំងណាស់') }}'];
+                                            let colors = ['text-red-400','text-yellow-400','text-green-400','text-green-500','text-green-600'];
+                                            passwordStrength = v ? levels[s > 0 ? s - 1 : 0] : '';
+                                            passwordStrengthColor = v ? colors[s > 0 ? s - 1 : 0] : '';
+                                        "
                                     />
                                     <button
                                         type="button"
-                                        id="togglePassword"
+                                        @click="passwordVisible = !passwordVisible"
                                         class="absolute inset-y-0 right-0 px-4 flex items-center text-gray-400 hover:text-gray-600 transition h-full"
                                     >
-                                        <i class="fas fa-eye"></i>
+                                        <i class="fas" :class="passwordVisible ? 'fa-eye-slash' : 'fa-eye'"></i>
                                     </button>
                                 </div>
-                                <p id="password-strength" class="text-sm mt-2"></p>
+                                <p x-show="passwordStrength" x-text="'{{ __('កម្លាំងពាក្យសម្ងាត់៖') }} ' + passwordStrength" :class="passwordStrengthColor" class="text-sm mt-2"></p>
                                 <x-input-error :messages="$errors->get('password')" class="mt-2" />
                             </div>
 
@@ -113,7 +130,7 @@
                                 <div class="relative w-full h-[50px]">
                                     <input
                                         id="password_confirmation"
-                                        type="password"
+                                        :type="passwordConfirmVisible ? 'text' : 'password'"
                                         name="password_confirmation"
                                         autocomplete="new-password"
                                         placeholder="{{ __('វាយពាក្យសម្ងាត់ម្តងទៀត') }}"
@@ -122,10 +139,10 @@
                                     />
                                     <button
                                         type="button"
-                                        id="togglePasswordConfirm"
+                                        @click="passwordConfirmVisible = !passwordConfirmVisible"
                                         class="absolute inset-y-0 right-0 px-4 flex items-center text-gray-400 hover:text-gray-600 transition h-full"
                                     >
-                                        <i class="fas fa-eye"></i>
+                                        <i class="fas" :class="passwordConfirmVisible ? 'fa-eye-slash' : 'fa-eye'"></i>
                                     </button>
                                 </div>
                                 <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
@@ -355,63 +372,15 @@
                     .catch(error => console.error('Error fetching departments:', error));
             }
 
-            if (facultySelect) {
-                facultySelect.addEventListener('change', function() {
-                    updateDepartments(this.value);
-                });
-                if (oldFacultyId) {
-                    updateDepartments(oldFacultyId, oldDepartmentId);
-                }
-            }
-
-            // Toggle Password Visibility
-            function togglePassword(inputId, buttonId) {
-                const input = document.getElementById(inputId);
-                const button = document.getElementById(buttonId);
-                
-                if (input && button) {
-                    button.addEventListener('click', function() {
-                        const type = input.type === 'password' ? 'text' : 'password';
-                        input.type = type;
-                        const icon = this.querySelector('i');
-                        icon.classList.toggle('fa-eye');
-                        icon.classList.toggle('fa-eye-slash');
+                if (facultySelect) {
+                    facultySelect.addEventListener('change', function() {
+                        updateDepartments(this.value);
                     });
-                }
-            }
-
-            togglePassword('password', 'togglePassword');
-            togglePassword('password_confirmation', 'togglePasswordConfirm');
-
-            // Password Strength Checker
-            const passwordInput = document.getElementById('password');
-            const strengthText = document.getElementById('password-strength');
-
-            if (passwordInput && strengthText) {
-                passwordInput.addEventListener('input', () => {
-                    const value = passwordInput.value;
-                    let strength = 0;
-                    if (/[A-Z]/.test(value)) strength++;
-                    if (/[a-z]/.test(value)) strength++;
-                    if (/[0-9]/.test(value)) strength++;
-                    if (/[@$!%*?&]/.test(value)) strength++;
-                    if (value.length >= 8) strength++;
-
-                    const levels = ['{{ __("ខ្សោយ") }}', '{{ __("មធ្យម") }}', '{{ __("ល្អ") }}', '{{ __("ខ្លាំង") }}', '{{ __("ខ្លាំងណាស់") }}'];
-                    const colors = ['text-red-400', 'text-yellow-400', 'text-green-400', 'text-green-500', 'text-green-600'];
-                    
-                    strengthText.className = 'text-sm mt-2'; 
-                    
-                    if (value) {
-                        const levelIndex = strength > 0 ? strength - 1 : 0;
-                        strengthText.textContent = '{{ __("កម្លាំងពាក្យសម្ងាត់៖") }} ' + levels[levelIndex];
-                        strengthText.classList.add(colors[levelIndex]);
-                    } else {
-                        strengthText.textContent = '';
+                    if (oldFacultyId) {
+                        updateDepartments(oldFacultyId, oldDepartmentId);
                     }
-                });
-            }
-        });
+                }
+            });
 
         // Student ID Preview
         const programSelect = document.getElementById('program_id');
