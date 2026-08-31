@@ -18,14 +18,22 @@ class CourseController extends Controller
     {
         $search = $request->input('search', '');
         $facultyId = $request->input('faculty_id', '');
+        $programId = $request->input('program_id', '');
         $room = Room::all();
         $faculties = Faculty::all();
+        $programs = Program::orderByDesc('name_km')->get();
 
         $query = Course::with(['department', 'programs']);
 
         if ($facultyId) {
             $query->whereHas('department', function ($dq) use ($facultyId) {
                 $dq->where('faculty_id', $facultyId);
+            });
+        }
+
+        if ($programId) {
+            $query->whereHas('programs', function ($pq) use ($programId) {
+                $pq->where('program_id', $programId);
             });
         }
 
@@ -63,7 +71,7 @@ class CourseController extends Controller
             },
         ]);
 
-        return view('admin.courses.index', compact('coursesGrouped', 'room', 'search', 'faculties', 'facultyId'));
+        return view('admin.courses.index', compact('coursesGrouped', 'room', 'search', 'faculties', 'facultyId', 'programs', 'programId'));
     }
 
     /**

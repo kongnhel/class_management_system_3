@@ -7,66 +7,73 @@
                  class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
 
                 {{-- Header Section --}}
-                <div class="p-6 lg:p-8 border-b border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div class="flex items-center gap-4">
-                        <div class="h-12 w-12 bg-emerald-600 rounded-2xl flex items-center justify-center text-white shadow-md shadow-emerald-200">
-                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.462 9.492 5 8 5c-5.072 0-8 3.844-8 7s2.928 7 8 7c1.492 0 2.832-.462 4-1.253m0-13C13.168 5.462 14.508 5 16 5c5.072 0 8 3.844 8 7s-2.928 7-8 7c-1.492 0-2.832-.462-4-1.253"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <h2 class="text-3xl font-bold text-gray-900">{{ __('គ្រប់គ្រងមុខវិជ្ជា') }}</h2>
-                            <p class="mt-1 text-sm text-gray-500">{{ __('គ្រប់គ្រង និងពិនិត្យមើលបញ្ជីឈ្មោះមុខវិជ្ជាទាំងអស់') }}</p>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-wrap items-center gap-3">
-                        {{-- Search Input --}}
-                        <form method="GET" action="{{ route('admin.manage-courses') }}" id="courseSearchForm" data-admin-realtime-filter class="relative group flex items-center gap-3">
-                            <div class="relative">
-                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 group-focus-within:text-emerald-500 transition-colors">
-                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                                </span>
-                                <input type="text" name="search" value="{{ $search }}" placeholder="{{ __('ស្វែងរកមុខវិជ្ជា...') }}" autocomplete="off"
-                                       class="pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full md:w-56 transition-all">
+                <div class="p-6 lg:p-8 border-b border-gray-100">
+                    {{-- Row 1: Title + Actions --}}
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5">
+                        <div class="flex items-center gap-4">
+                            <div class="h-12 w-12 bg-emerald-600 rounded-2xl flex items-center justify-center text-white shadow-md shadow-emerald-200">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.462 9.492 5 8 5c-5.072 0-8 3.844-8 7s2.928 7 8 7c1.492 0 2.832-.462 4-1.253m0-13C13.168 5.462 14.508 5 16 5c5.072 0 8 3.844 8 7s-2.928 7-8 7c-1.492 0-2.832-.462-4-1.253"/>
+                                </svg>
                             </div>
-
-                            {{-- Faculty Filter --}}
-                            <select name="faculty_id"
-                                class="py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full md:w-52 transition-all">
-                                <option value="">{{ __('សាលាទាំងអស់') }}</option>
-                                @foreach($faculties as $f)
-                                    <option value="{{ $f->id }}" {{ $facultyId == $f->id ? 'selected' : '' }}>
-                                        {{ $f->name_km }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </form>
-
-                        {{-- VIEW TOGGLE --}}
-                        <div class="inline-flex bg-gray-100 p-1 rounded-xl">
-                            <button @click="viewMode = 'table'"
-                                    :class="viewMode === 'table' ? 'bg-white shadow-sm text-emerald-600' : 'text-gray-500 hover:text-gray-700'"
-                                    class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 flex items-center gap-2">
-                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>
-                                {{ __('បញ្ជី') }}
-                            </button>
-                            <button @click="viewMode = 'grid'"
-                                    :class="viewMode === 'grid' ? 'bg-white shadow-sm text-emerald-600' : 'text-gray-500 hover:text-gray-700'"
-                                    class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 flex items-center gap-2">
-                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
-                                {{ __('ប័ណ្ណ') }}
-                            </button>
+                            <div>
+                                <h2 class="text-3xl font-bold text-gray-900">{{ __('គ្រប់គ្រងមុខវិជ្ជា') }}</h2>
+                                <p class="mt-1 text-sm text-gray-500">{{ __('គ្រប់គ្រង និងពិនិត្យមើលបញ្ជីឈ្មោះមុខវិជ្ជាទាំងអស់') }}</p>
+                            </div>
                         </div>
-
-                        <a href="{{ route('admin.create-course') }}"
-                           class="inline-flex items-center justify-center px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-xl transition-all shadow-md shadow-emerald-200 gap-2 active:scale-95">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
-                            </svg>
-                            {{ __('បន្ថែមមុខវិជ្ជា') }}
-                        </a>
+                        <div class="flex items-center gap-3">
+                            <div class="inline-flex bg-gray-100 p-1 rounded-xl">
+                                <button @click="viewMode = 'table'"
+                                        :class="viewMode === 'table' ? 'bg-white shadow-sm text-emerald-600' : 'text-gray-500 hover:text-gray-700'"
+                                        class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 flex items-center gap-2">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>
+                                    {{ __('បញ្ជី') }}
+                                </button>
+                                <button @click="viewMode = 'grid'"
+                                        :class="viewMode === 'grid' ? 'bg-white shadow-sm text-emerald-600' : 'text-gray-500 hover:text-gray-700'"
+                                        class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 flex items-center gap-2">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
+                                    {{ __('ប័ណ្ណ') }}
+                                </button>
+                            </div>
+                            <a href="{{ route('admin.create-course') }}"
+                               class="inline-flex items-center justify-center px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-xl transition-all shadow-md shadow-emerald-200 gap-2 active:scale-95">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                                </svg>
+                                {{ __('បន្ថែមមុខវិជ្ជា') }}
+                            </a>
+                        </div>
                     </div>
+
+                    {{-- Row 2: Filters --}}
+                    <form method="GET" action="{{ route('admin.manage-courses') }}" data-admin-realtime-filter class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                        <div class="relative flex-1 max-w-sm">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                            </span>
+                            <input type="text" name="search" value="{{ $search }}" placeholder="{{ __('ស្វែងរកមុខវិជ្ជា...') }}" autocomplete="off"
+                                   class="pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full transition-all">
+                        </div>
+                        <select name="faculty_id"
+                            class="py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full sm:w-52 transition-all">
+                            <option value="">{{ __('សាលាទាំងអស់') }}</option>
+                            @foreach($faculties as $f)
+                                <option value="{{ $f->id }}" {{ $facultyId == $f->id ? 'selected' : '' }}>
+                                    {{ $f->name_km }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <select name="program_id"
+                            class="py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full sm:w-56 transition-all">
+                            <option value="">{{ __('កម្មវិធីសិក្សាទាំងអស់') }}</option>
+                            @foreach($programs as $p)
+                                <option value="{{ $p->id }}" {{ $programId == $p->id ? 'selected' : '' }}>
+                                    {{ $p->name_km }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </form>
                 </div>
 
                 {{-- Content --}}
