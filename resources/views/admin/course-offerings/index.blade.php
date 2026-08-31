@@ -403,8 +403,7 @@
 
             <div class="schedule-title-block">
                 <h1 class="font-moul">{{ __('តារាងវិភាគកម្មធ៌មឆមាសទី') }}{{ request('semester') == 'ឆមាសទី២' ? '២' : '១' }} / Timetable Semester {{ request('semester') == 'ឆមាសទី២' ? '2' : '1' }}</h1>
-                <p>{{ __('ជំនាន់ទី') }}{{ request('generation', '...') }} {{ __('ថ្នាក់បរិញ្ញាបត្រវិទ្យាសាស្ត្រ និងបច្ចេកវិទ្យា') }} {{ __('ឆ្នាំសិក្សា') }} {{ date('Y') }}-{{ date('Y')+1 }}</p>
-                <p style="font-weight: normal; font-size: 10pt;">{{ __('ចាប់ផ្តើមពីថ្ងៃចន្ទ ១២ កើត ខែអស្សុជ ឆ្នាំរោង ឆស័ក ព.ស ២៥៦៨ ត្រូវនឹងថ្ងៃទី១៤ ខែតុលា ឆ្នាំ២០២៤ ដល់សប្តាហ៍') }}</p>
+                <p>{{ __('ជំនាន់ទី') }}{{ request('generation', '...') }} {{ $currentProgramName }} {{ __('ឆ្នាំសិក្សា') }} {{ request('academic_year', date('Y').'-'.date('Y')+1) }}</p>
             </div>
         </div>
 
