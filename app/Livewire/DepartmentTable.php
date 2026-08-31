@@ -17,19 +17,16 @@ class DepartmentTable extends Component
     protected $listeners = ['refreshComponent' => '$refresh'];
 
     protected $queryString = [
-        'search' => ['except' => ''],
         'facultyId' => ['except' => '', 'as' => 'faculty_id'],
     ];
 
     public function mount()
     {
-        $this->search = trim((string) request()->query('search', ''));
         $this->facultyId = (string) request()->query('faculty_id', '');
     }
 
     public function updatedSearch()
     {
-        $this->search = trim($this->search);
         $this->resetPage();
     }
 
