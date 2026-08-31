@@ -55,10 +55,11 @@ class ProgramController extends Controller
 
     public function create()
     {
+        $faculties = Faculty::all();
         $departments = Department::all();
         $programs = Program::where('duration_years', '<=', 2)->get();
 
-        return view('admin.programs.create', compact('departments', 'programs'));
+        return view('admin.programs.create', compact('faculties', 'departments', 'programs'));
     }
 
     public function store(Request $request)
@@ -83,10 +84,11 @@ class ProgramController extends Controller
 
     public function edit(Program $program)
     {
+        $faculties = Faculty::all();
         $departments = Department::all();
         $programs = Program::where('id', '!=', $program->id)->where('duration_years', '<=', 2)->get();
 
-        return view('admin.programs.edit', compact('program', 'departments', 'programs'));
+        return view('admin.programs.edit', compact('program', 'faculties', 'departments', 'programs'));
     }
 
     public function update(Request $request, Program $program)

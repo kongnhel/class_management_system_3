@@ -65,17 +65,26 @@
                             @error('name_en') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                         </div>
 
+                        {{-- Faculty --}}
+                        <div>
+                            <label for="faculty_id" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('សាលា') }} <span class="text-red-500">*</span></label>
+                            <select id="faculty_id" required
+                                class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
+                                <option value="">{{ __('ជ្រើសរើសសាលា') }}</option>
+                                @foreach ($faculties as $faculty)
+                                    <option value="{{ $faculty->id }}" {{ old('faculty_id', $program->department->faculty_id) == $faculty->id ? 'selected' : '' }}>
+                                        {{ $faculty->name_km }} ({{ $faculty->name_en }})
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
                         {{-- Department --}}
                         <div>
                             <label for="department_id" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ដេប៉ាតឺម៉ង់') }} <span class="text-red-500">*</span></label>
                             <select id="department_id" name="department_id" required
                                 class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
-                                <option value="">{{ __('ជ្រើសរើសដេប៉ាតឺម៉ង់') }}</option>
-                                @foreach ($departments as $department)
-                                    <option value="{{ $department->id }}" {{ old('department_id', $program->department_id) == $department->id ? 'selected' : '' }}>
-                                        {{ $department->name_km }} ({{ $department->name_en }})
-                                    </option>
-                                @endforeach
+                                <option value="">{{ __('សូមជ្រើសរើសសាលាមុន') }}</option>
                             </select>
                             @error('department_id') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                         </div>
@@ -125,4 +134,30 @@
 
         </div>
     </div>
+
+    <script>
+        var departments = @json($departments);
+        var facultySelect = document.getElementById('faculty_id');
+        var departmentSelect = document.getElementById('department_id');
+
+        function filterDepartments(facultyId, selectedDeptId) {
+            departmentSelect.innerHTML = '<option value="">{{ __("ជ្រើសរើសសាលាមុន") }}</option>';
+            var filtered = departments.filter(function(d) { return d.faculty_id == facultyId; });
+            filtered.forEach(function(d) {
+                var opt = document.createElement('option');
+                opt.value = d.id;
+                opt.textContent = d.name_km + ' (' + d.name_en + ')';
+                if (selectedDeptId && d.id == selectedDeptId) opt.selected = true;
+                departmentSelect.appendChild(opt);
+            });
+        }
+
+        facultySelect.addEventListener('change', function() {
+            filterDepartments(this.value, '');
+        });
+
+        if (facultySelect.value) {
+            filterDepartments(facultySelect.value, '{{ old("department_id", $program->department_id) }}');
+        }
+    </script>
 </x-app-layout>
