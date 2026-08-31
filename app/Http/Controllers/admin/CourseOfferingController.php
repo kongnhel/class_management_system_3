@@ -55,7 +55,7 @@ class CourseOfferingController extends Controller
         }
 
         if ($request->filled('faculty_id')) {
-            $query->whereHas('targetPrograms.program.department', function ($q) use ($request) {
+            $query->whereHas('targetPrograms.department', function ($q) use ($request) {
                 $q->where('faculty_id', $request->input('faculty_id'));
             });
         }
