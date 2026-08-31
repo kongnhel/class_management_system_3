@@ -646,11 +646,34 @@
                 showFilterAlert();
                 return;
             }
-            if (action === 'print') {
-                window.print();
-            } else if (action === 'word') {
-                exportToWord();
-            }
+
+            var printableContainer = document.getElementById('printable-schedule-container');
+            var printBtn = document.querySelector('button[onclick*="printOrExport"]');
+
+            fetch(window.location.href, {
+                headers: { 'Accept': 'text/html', 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(function(response) { return response.text(); })
+            .then(function(html) {
+                var parsed = new DOMParser().parseFromString(html, 'text/html');
+                var freshPrintable = parsed.querySelector('#printable-schedule-container');
+                if (freshPrintable && printableContainer) {
+                    printableContainer.innerHTML = freshPrintable.innerHTML;
+                }
+
+                if (action === 'print') {
+                    window.print();
+                } else if (action === 'word') {
+                    exportToWord();
+                }
+            })
+            .catch(function() {
+                if (action === 'print') {
+                    window.print();
+                } else if (action === 'word') {
+                    exportToWord();
+                }
+            });
         }
     </script>
 
