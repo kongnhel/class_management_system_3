@@ -388,30 +388,35 @@
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 <script>
-    if (typeof firebaseConfig === 'undefined') {
-        var firebaseConfig = {
-            apiKey: "{{ config('services.firebase.api_key') }}",
-            authDomain: "classmanagementsystem-cd57f.firebaseapp.com",
-            databaseURL: "https://classmanagementsystem-cd57f-default-rtdb.firebaseio.com/",
-            projectId: "classmanagementsystem-cd57f",
-        };
-        firebase.initializeApp(firebaseConfig);
-    }
-    var database = firebase.database();
-    if (!window.sharedPageLoadTime) {
-        window.sharedPageLoadTime = Math.floor(Date.now() / 1000);
-    }
-
-    ['faculties_sync', 'rooms_sync', 'departments_sync'].forEach(function(ref) {
-        database.ref(ref).on('value', function(snapshot) {
-            var data = snapshot.val();
-            if (data && data.updated_at > window.sharedPageLoadTime) {
-                window.dispatchEvent(new CustomEvent('firebase-message', {
-                    detail: { message: data.message || '{{ __('realtime_data_updated') }}' }
-                }));
+    (function() {
+        try {
+            if (!firebase.apps.length) {
+                firebase.initializeApp({
+                    apiKey: "{{ config('services.firebase.api_key') }}",
+                    authDomain: "classmanagementsystem-cd57f.firebaseapp.com",
+                    databaseURL: "https://classmanagementsystem-cd57f-default-rtdb.firebaseio.com/",
+                    projectId: "classmanagementsystem-cd57f",
+                });
             }
-        });
-    });
+            var database = firebase.database();
+            if (!window.sharedPageLoadTime) {
+                window.sharedPageLoadTime = Math.floor(Date.now() / 1000);
+            }
+
+            ['faculties_sync', 'rooms_sync', 'departments_sync'].forEach(function(ref) {
+                database.ref(ref).on('value', function(snapshot) {
+                    var data = snapshot.val();
+                    if (data && data.updated_at > window.sharedPageLoadTime) {
+                        window.dispatchEvent(new CustomEvent('firebase-message', {
+                            detail: { message: data.message || '{{ __('realtime_data_updated') }}' }
+                        }));
+                    }
+                });
+            });
+        } catch (e) {
+            console.warn('Firebase Realtime Database not available:', e.message);
+        }
+    })();
 </script>
 
 <div
