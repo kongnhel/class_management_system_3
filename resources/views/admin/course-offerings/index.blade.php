@@ -409,7 +409,7 @@
 
         <div class="table-wrapper">
             @if($weekdayRows->isNotEmpty())
-                <div style="text-align: left; font-weight: bold; font-family: 'Battambang'; text-decoration: underline; font-size: 10pt; margin-bottom: 5px;">{{ __('ជំនាញ') }} {{ $currentProgramName }} {{ $genText }} (Mon-Fri)</div>
+                <div style="text-align: left; font-weight: bold; font-family: 'Battambang'; text-decoration: underline; font-size: 10pt; margin-bottom: 5px;">{{ __('ជំនាញ') }} {{ $currentProgramName }} (ចន្ទ-សុក្រ)</div>
                 <table class="matrix-table">
                     <thead>
                         <tr>
@@ -438,7 +438,7 @@
             @endif
 
             @if($weekendSchedules->isNotEmpty())
-                <div style="text-align: left; font-weight: bold; font-family: 'Battambang'; text-decoration: underline; font-size: 10pt; margin-bottom: 5px;">{{ __('ជំនាញ') }} {{ $currentProgramName }} {{ $genText }} (Sat-Sun)</div>
+                <div style="text-align: left; font-weight: bold; font-family: 'Battambang'; text-decoration: underline; font-size: 10pt; margin-bottom: 5px;">{{ __('ជំនាញ') }} {{ $currentProgramName }} (សៅរ៍-អាទិត្យ)</div>
                 <table class="matrix-table">
                     <thead>
                         <tr>
