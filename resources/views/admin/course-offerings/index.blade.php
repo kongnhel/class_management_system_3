@@ -628,19 +628,21 @@
             document.getElementById('filter-alert-modal').classList.add('hidden');
         }
         function printOrExport(action) {
+            var facEl = document.querySelector('select[name=faculty_id]');
             var progEl = document.querySelector('select[name=program_id]');
             var genEl = document.querySelector('select[name=generation]');
             var shiftEl = document.querySelector('select[name=shift]');
             var semEl = document.querySelector('select[name=semester]');
             var yearEl = document.querySelector('select[name=academic_year]');
             var lectEl = document.querySelector('select[name=lecturer_id]');
+            var fac = facEl ? facEl.value : '';
             var prog = progEl ? progEl.value : '';
             var gen = genEl ? genEl.value : '';
             var shift = shiftEl ? shiftEl.value : '';
             var sem = semEl ? semEl.value : '';
             var year = yearEl ? yearEl.value : '';
             var lect = lectEl ? lectEl.value : '';
-            if (!prog && !gen && !shift && !sem && !year && !lect) {
+            if (!fac && !prog && !gen && !shift && !sem && !year && !lect) {
                 showFilterAlert();
                 return;
             }
