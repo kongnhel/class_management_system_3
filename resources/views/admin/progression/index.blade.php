@@ -478,8 +478,8 @@
             }
          "
          x-show="selectedCount > 0" x-transition
-         class="fixed bottom-0 left-0 right-0 lg:left-72 z-[60] bg-white border-t border-gray-200 shadow-lg shadow-gray-200/50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+         class="fixed bottom-0 right-0 lg:left-72 z-[60] flex justify-center lg:justify-end">
+        <div class="w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between bg-white border-t border-gray-200 shadow-lg shadow-gray-200/50">
             <div class="flex items-center gap-3">
                 <div class="h-9 w-9 bg-emerald-50 rounded-lg flex items-center justify-center">
                     <svg class="h-4 w-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
