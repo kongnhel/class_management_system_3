@@ -364,12 +364,9 @@
         let startX, startY, initialX, initialY;
         const DRAG_THRESHOLD = 5;
 
-        window.__aiDragMoved = false;
-
         const startDrag = (e) => {
             isDragging = true;
             hasMoved = false;
-            window.__aiDragMoved = false;
             const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
             const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
             const rect = container.getBoundingClientRect();
@@ -386,7 +383,6 @@
             const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
             if (Math.abs(clientX - startX) > DRAG_THRESHOLD || Math.abs(clientY - startY) > DRAG_THRESHOLD) {
                 hasMoved = true;
-                window.__aiDragMoved = true;
             }
             if (!hasMoved) return;
             let x = Math.max(10, Math.min(initialX + clientX - startX, window.innerWidth - container.offsetWidth - 10));
@@ -400,8 +396,21 @@
         const stopDrag = () => {
             isDragging = false;
             container.style.transition = 'all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28)';
-            setTimeout(() => { window.__aiDragMoved = false; }, 50);
         };
+
+        // Intercept click after drag — capture phase fires before onclick attribute
+        const btn = document.getElementById('chatBtn');
+        if (btn) {
+            btn.addEventListener('click', (e) => {
+                if (hasMoved) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    hasMoved = false;
+                    return false;
+                }
+                hasMoved = false;
+            }, true);
+        }
 
         container.addEventListener('mousedown', startDrag);
         document.addEventListener('mousemove', onDrag);

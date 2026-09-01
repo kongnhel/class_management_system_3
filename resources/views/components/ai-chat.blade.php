@@ -13,7 +13,7 @@
         <div class="absolute -bottom-1 right-4 w-2 h-2 bg-gray-900 rotate-45"></div>
     </div>
 
-    <button onclick="if(!window.__aiDragMoved) toggleAIChat()" id="chatBtn"
+    <button onclick="toggleAIChat()" id="chatBtn"
             class="relative w-14 h-14 bg-gradient-to-br from-emerald-500 to-green-600 text-white rounded-full shadow-[0_8px_30px_-4px_rgba(16,185,129,0.5)] hover:shadow-[0_8px_40px_-4px_rgba(16,185,129,0.6)] hover:scale-110 active:scale-95 transition-all duration-300 flex items-center justify-center cursor-move">
         <div id="unread-badge" class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 border-2 border-white rounded-full items-center justify-center text-[9px] font-bold text-white hidden flex items-center justify-center">0</div>
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
