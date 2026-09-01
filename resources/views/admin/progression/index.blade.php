@@ -174,6 +174,9 @@
                 </div>
             </div>
 
+            {{-- Results container for realtime filtering --}}
+            <div data-admin-results>
+
             @php
                 $genBase = 2006;
                 $currentYearStart = \App\Models\AcademicYear::getCurrent()
@@ -462,6 +465,8 @@
                     </form>
                 </div>
             </div>
+
+            </div>{{-- /data-admin-results --}}
 
         </div>
     </div>

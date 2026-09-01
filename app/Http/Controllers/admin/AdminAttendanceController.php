@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\AttendanceProfessor;
 use App\Models\AttendanceRecord;
 use App\Models\CourseOffering;
 use App\Models\Generation;
@@ -173,5 +174,64 @@ class AdminAttendanceController extends Controller
             new \App\Exports\AdminAttendanceExcelExport($courseOffering, $studentAttendance, $stats),
             $fileName
         );
+    }
+
+    public function professorCheckins(Request $request)
+    {
+        $query = AttendanceProfessor::with(['professor', 'courseOffering.course', 'courseOffering.targetPrograms']);
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->whereHas('professor', function ($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                    ->orWhere('email', 'LIKE', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('professor_id')) {
+            $query->where('professor_id', $request->input('professor_id'));
+        }
+
+        if ($request->filled('semester')) {
+            $query->whereHas('courseOffering', function ($q) use ($request) {
+                $q->where('semester', $request->input('semester'));
+            });
+        }
+
+        if ($request->filled('academic_year')) {
+            $query->whereHas('courseOffering', function ($q) use ($request) {
+                $q->where('academic_year', $request->input('academic_year'));
+            });
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('verified_at', '>=', $request->input('date_from'));
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('verified_at', '<=', $request->input('date_to'));
+        }
+
+        $checkins = $query->orderBy('verified_at', 'desc')
+            ->paginate(20)
+            ->appends($request->query());
+
+        // Summary stats
+        $now = \Carbon\Carbon::now('Asia/Phnom_Penh');
+        $monthStart = $now->copy()->startOfMonth();
+        $weekStart = $now->copy()->startOfWeek();
+
+        $stats = [
+            'total' => AttendanceProfessor::count(),
+            'this_month' => AttendanceProfessor::where('verified_at', '>=', $monthStart)->count(),
+            'this_week' => AttendanceProfessor::where('verified_at', '>=', $weekStart)->count(),
+            'unique_professors' => AttendanceProfessor::where('verified_at', '>=', $monthStart)->distinct('professor_id')->count('professor_id'),
+        ];
+
+        $professors = \App\Models\User::where('role', 'professor')
+            ->orderBy('name')
+            ->get();
+
+        return view('admin.attendance.professor-checkins', compact('checkins', 'stats', 'professors'));
     }
 }
