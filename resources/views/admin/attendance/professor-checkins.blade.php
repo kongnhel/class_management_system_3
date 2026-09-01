@@ -25,79 +25,11 @@
     <div class="py-8 bg-gray-50 min-h-screen">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
 
-            {{-- Section 1: Summary Stats --}}
+            {{-- Section 1: Filters --}}
             <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
                     <div class="h-8 w-8 bg-slate-900 rounded-lg flex items-center justify-center">
                         <span class="text-white text-xs font-bold">①</span>
-                    </div>
-                    <div>
-                        <h3 class="text-sm font-semibold text-gray-900">សង្ខេប</h3>
-                        <p class="text-xs text-gray-400">ទិន្នន័យវត្តមានគ្រូបង្រៀន</p>
-                    </div>
-                </div>
-                <div class="p-6">
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="bg-white border border-gray-200 rounded-xl p-5">
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="h-9 w-9 bg-blue-50 rounded-lg flex items-center justify-center">
-                                    <svg class="h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                                    </svg>
-                                </div>
-                                <span class="text-2xl font-bold text-gray-900">{{ $stats['total'] }}</span>
-                            </div>
-                            <p class="text-sm font-medium text-gray-900">សរុប</p>
-                            <p class="text-xs text-gray-400 mt-0.5">កំណត់ត្រាទាំងអស់</p>
-                        </div>
-
-                        <div class="bg-white border border-gray-200 rounded-xl p-5">
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="h-9 w-9 bg-emerald-50 rounded-lg flex items-center justify-center">
-                                    <svg class="h-4 w-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                    </svg>
-                                </div>
-                                <span class="text-2xl font-bold text-gray-900">{{ $stats['this_month'] }}</span>
-                            </div>
-                            <p class="text-sm font-medium text-gray-900">ខែនេះ</p>
-                            <p class="text-xs text-gray-400 mt-0.5">កំណត់ត្រាខែបច្ចុប្បន្ន</p>
-                        </div>
-
-                        <div class="bg-white border border-gray-200 rounded-xl p-5">
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="h-9 w-9 bg-amber-50 rounded-lg flex items-center justify-center">
-                                    <svg class="h-4 w-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                    </svg>
-                                </div>
-                                <span class="text-2xl font-bold text-gray-900">{{ $stats['this_week'] }}</span>
-                            </div>
-                            <p class="text-sm font-medium text-gray-900">សប្តាហ៍នេះ</p>
-                            <p class="text-xs text-gray-400 mt-0.5">កំណត់ត្រាសប្តាហ៍បច្ចុប្បន្ន</p>
-                        </div>
-
-                        <div class="bg-white border border-gray-200 rounded-xl p-5">
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="h-9 w-9 bg-violet-50 rounded-lg flex items-center justify-center">
-                                    <svg class="h-4 w-4 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                    </svg>
-                                </div>
-                                <span class="text-2xl font-bold text-gray-900">{{ $stats['unique_professors'] }}</span>
-                            </div>
-                            <p class="text-sm font-medium text-gray-900">គ្រូបង្រៀន</p>
-                            <p class="text-xs text-gray-400 mt-0.5">គ្រូដែលមានវត្តមានខែនេះ</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Section 2: Filters --}}
-            <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-                <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
-                    <div class="h-8 w-8 bg-slate-900 rounded-lg flex items-center justify-center">
-                        <span class="text-white text-xs font-bold">②</span>
                     </div>
                     <div>
                         <h3 class="text-sm font-semibold text-gray-900">តម្រង់ទិស</h3>
@@ -156,6 +88,77 @@
                             </div>
                         </div>
                     </form>
+                </div>
+            </div>
+
+            {{-- Results container for realtime filtering --}}
+            <div data-admin-results>
+
+            {{-- Section 2: Summary Stats --}}
+            <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
+                    <div class="h-8 w-8 bg-slate-900 rounded-lg flex items-center justify-center">
+                        <span class="text-white text-xs font-bold">②</span>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-semibold text-gray-900">សង្ខេប</h3>
+                        <p class="text-xs text-gray-400">ទិន្នន័យវត្តមានគ្រូបង្រៀន</p>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="bg-white border border-gray-200 rounded-xl p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="h-9 w-9 bg-blue-50 rounded-lg flex items-center justify-center">
+                                    <svg class="h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                                    </svg>
+                                </div>
+                                <span class="text-2xl font-bold text-gray-900">{{ $stats['total'] }}</span>
+                            </div>
+                            <p class="text-sm font-medium text-gray-900">សរុប</p>
+                            <p class="text-xs text-gray-400 mt-0.5">កំណត់ត្រាទាំងអស់</p>
+                        </div>
+
+                        <div class="bg-white border border-gray-200 rounded-xl p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="h-9 w-9 bg-emerald-50 rounded-lg flex items-center justify-center">
+                                    <svg class="h-4 w-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                </div>
+                                <span class="text-2xl font-bold text-gray-900">{{ $stats['this_month'] }}</span>
+                            </div>
+                            <p class="text-sm font-medium text-gray-900">ខែនេះ</p>
+                            <p class="text-xs text-gray-400 mt-0.5">កំណត់ត្រាខែបច្ចុប្បន្ន</p>
+                        </div>
+
+                        <div class="bg-white border border-gray-200 rounded-xl p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="h-9 w-9 bg-amber-50 rounded-lg flex items-center justify-center">
+                                    <svg class="h-4 w-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                </div>
+                                <span class="text-2xl font-bold text-gray-900">{{ $stats['this_week'] }}</span>
+                            </div>
+                            <p class="text-sm font-medium text-gray-900">សប្តាហ៍នេះ</p>
+                            <p class="text-xs text-gray-400 mt-0.5">កំណត់ត្រាសប្តាហ៍បច្ចុប្បន្ន</p>
+                        </div>
+
+                        <div class="bg-white border border-gray-200 rounded-xl p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="h-9 w-9 bg-violet-50 rounded-lg flex items-center justify-center">
+                                    <svg class="h-4 w-4 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    </svg>
+                                </div>
+                                <span class="text-2xl font-bold text-gray-900">{{ $stats['unique_professors'] }}</span>
+                            </div>
+                            <p class="text-sm font-medium text-gray-900">គ្រូបង្រៀន</p>
+                            <p class="text-xs text-gray-400 mt-0.5">គ្រូដែលមានវត្តមានខែនេះ</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -275,6 +278,8 @@
                     </div>
                 @endif
             </div>
+
+            </div><!-- /data-admin-results -->
 
         </div>
     </div>
