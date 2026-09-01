@@ -15,14 +15,14 @@
         <!-- Icons -->
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
-        <link rel="preload" href="{{ asset('fonts/KhmerOSbattambang.ttf') }}" as="font" type="font/ttf" crossorigin>
+        <link rel="preload" href="{{ asset('fonts/Battambang-Regular.ttf') }}" as="font" type="font/ttf" crossorigin>
 
         <!-- Scripts (តែ១ដងប៉ុណ្ណោះ!) -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
         <style>
             body, nav, div {
-                font-family: 'KhmerOSBattambang', 'Battambang', sans-serif;
+                font-family: 'Battambang', sans-serif;
             }
         </style>
     </head>
