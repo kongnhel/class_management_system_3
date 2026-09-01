@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\CourseOffering;
+use App\Models\Faculty;
 use App\Models\Program;
 use App\Services\StudentProgressionService;
 use Illuminate\Http\Request;
@@ -21,18 +23,37 @@ class StudentProgressionController extends Controller
      */
     public function index(Request $request)
     {
+        $facultyId = $request->input('faculty_id');
         $programId = $request->input('program_id');
-        $program = $programId ? Program::findOrFail($programId) : Program::first();
+        $courseId = $request->input('course_id');
+        $dayOfWeek = $request->input('day_of_week');
+        $search = $request->input('search');
+
+        $faculties = Faculty::orderBy('name_km')->get();
+
+        $programsQuery = Program::with('department');
+        if ($facultyId) {
+            $programsQuery->whereHas('department', fn ($q) => $q->where('faculty_id', $facultyId));
+        }
+        $programs = $programsQuery->orderBy('name_km')->get();
+
+        $program = $programId ? Program::findOrFail($programId) : $programs->first();
 
         if (! $program) {
             return redirect()->route('admin.manage-users')
                 ->with('error', 'សូមបង្កើតកម្មវិធីសិក្សាមុន។');
         }
 
-        $summary = $this->progressionService->getProgressionSummary($program);
-        $programs = Program::all();
+        $courseOfferings = CourseOffering::whereHas('targetPrograms', fn ($q) => $q->where('program_id', $program->id))
+            ->with(['course', 'schedules'])
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-        return view('admin.progression.index', compact('program', 'summary', 'programs'));
+        $filters = compact('facultyId', 'courseId', 'dayOfWeek', 'search');
+
+        $summary = $this->progressionService->getProgressionSummary($program, $filters);
+
+        return view('admin.progression.index', compact('program', 'summary', 'programs', 'faculties', 'courseOfferings', 'filters'));
     }
 
     /**

@@ -208,18 +208,44 @@ class StudentProgressionService
     /**
      * Get all students grouped by year level for a program.
      */
-    public function getProgressionSummary(Program $program): array
+    public function getProgressionSummary(Program $program, array $filters = []): array
     {
         $maxYear = $this->getMaxYearLevel($program);
         $summary = [];
 
-        // Load ALL active students for this program ONCE (with eager loading)
-        $allActiveStudents = User::where('role', 'student')
+        $query = User::where('role', 'student')
             ->whereHas('studentProgramEnrollments', function ($q) use ($program) {
                 $q->where('program_id', $program->id)->where('status', 'active');
             })
-            ->with(['studentProfile', 'studentProgramEnrollments'])
-            ->get();
+            ->with(['studentProfile', 'studentProgramEnrollments']);
+
+        // Search filter
+        if (! empty($filters['search'])) {
+            $search = $filters['search'];
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('student_id_code', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        // Course offering filter: only students enrolled in this course offering
+        if (! empty($filters['courseId'])) {
+            $enrolledStudentIds = \App\Models\StudentCourseEnrollment::where('course_offering_id', $filters['courseId'])
+                ->pluck('student_user_id');
+            $query->whereIn('users.id', $enrolledStudentIds);
+        }
+
+        // Day-of-week filter: only students whose course offerings have schedules on this day
+        if (! empty($filters['dayOfWeek'])) {
+            $offeringIdsWithDay = \App\Models\Schedule::where('day_of_week', $filters['dayOfWeek'])
+                ->pluck('course_offering_id');
+            $enrolledStudentIds = \App\Models\StudentCourseEnrollment::whereIn('course_offering_id', $offeringIdsWithDay)
+                ->pluck('student_user_id');
+            $query->whereIn('users.id', $enrolledStudentIds);
+        }
+
+        $allActiveStudents = $query->get();
 
         // Group by year level
         $groupedByYear = $allActiveStudents->groupBy(fn ($student) => $this->getYearLevel($student, $program));
@@ -233,12 +259,22 @@ class StudentProgressionService
         }
 
         // Graduated students (eager load to avoid N+1 in view)
-        $graduated = User::where('role', 'student')
+        $graduatedQuery = User::where('role', 'student')
             ->whereHas('studentProgramEnrollments', function ($q) use ($program) {
                 $q->where('program_id', $program->id)->where('status', 'graduated');
             })
-            ->with(['studentProfile', 'studentProgramEnrollments'])
-            ->get();
+            ->with(['studentProfile', 'studentProgramEnrollments']);
+
+        if (! empty($filters['search'])) {
+            $search = $filters['search'];
+            $graduatedQuery->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('student_id_code', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        $graduated = $graduatedQuery->get();
 
         $summary['graduated'] = [
             'count' => $graduated->count(),
