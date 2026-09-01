@@ -12,17 +12,19 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@100;300;400;700;900&display=swap" rel="stylesheet">
+
         <!-- Icons -->
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-
-        <link rel="preload" href="{{ asset('fonts/Battambang-Regular.ttf') }}" as="font" type="font/ttf" crossorigin>
 
         <!-- Scripts (តែ១ដងប៉ុណ្ណោះ!) -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
         <style>
             body, nav, div {
-                font-family: 'Battambang-Regular', sans-serif;
+                font-family: 'Battambang', sans-serif;
             }
         </style>
     </head>
