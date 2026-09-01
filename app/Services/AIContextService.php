@@ -37,7 +37,7 @@ class AIContextService
     protected function buildContext(User $user, string $chatOption): string
     {
         $context = "=== NMU Class Management System - Live Data ===\n";
-        $context .= "Current Date: ".now()->format('Y-m-d H:i')." (".now()->format('l').")\n";
+        $context .= 'Current Date: '.now()->format('Y-m-d H:i').' ('.now()->format('l').")\n";
 
         $currentYear = DB::table('academic_years')->where('is_current', true)->first();
         if ($currentYear) {
@@ -50,7 +50,7 @@ class AIContextService
             $context .= "\n=== ACADEMIC YEARS ===\n";
             foreach ($allYears as $y) {
                 $current = $y->is_current ? ' (CURRENT)' : '';
-                $context .= "- {$y->name} | Start: ".($y->start_date ?: 'N/A')." | End: ".($y->end_date ?: 'N/A')."{$current}\n";
+                $context .= "- {$y->name} | Start: ".($y->start_date ?: 'N/A').' | End: '.($y->end_date ?: 'N/A')."{$current}\n";
             }
         }
 
@@ -91,14 +91,14 @@ class AIContextService
                     $content = strip_tags($a->content_km ?? '');
                     $context .= "- [{$a->created_at}] {$a->title_km}";
                     if ($content) {
-                        $context .= ": " . Str::limit($content, 200);
+                        $context .= ': '.Str::limit($content, 200);
                     }
                     $context .= "\n";
                 }
             }
 
             // Add NMU website data
-            $context .= "\n" . $this->websiteService->getUniversityInfo();
+            $context .= "\n".$this->websiteService->getUniversityInfo();
 
         } catch (\Exception $e) {
             $context .= "\n(Database context unavailable: {$e->getMessage()})\n";
@@ -115,24 +115,24 @@ class AIContextService
         $context .= "=== STUDENT PROFILE ===\n";
         $context .= "Name: {$user->name}\n";
         $context .= "Role: Student\n";
-        $context .= "Student ID: ".($user->student_id_code ?: 'N/A')."\n";
-        $context .= "Generation: ".($user->generation ?: 'N/A')."\n";
+        $context .= 'Student ID: '.($user->student_id_code ?: 'N/A')."\n";
+        $context .= 'Generation: '.($user->generation ?: 'N/A')."\n";
 
         $profile = DB::table('student_profiles')->where('user_id', $user->id)->first();
         if ($profile) {
-            $context .= "Full Name (KM): ".($profile->full_name_km ?: 'N/A')."\n";
-            $context .= "Full Name (EN): ".($profile->full_name_en ?: 'N/A')."\n";
-            $context .= "Gender: ".($profile->gender ?: 'N/A')."\n";
-            $context .= "Phone: ".($profile->phone_number ?: 'N/A')."\n";
-            $context .= "Date of Birth: ".($profile->date_of_birth ?: 'N/A')."\n";
-            $context .= "Address: ".($profile->address ?: 'N/A')."\n";
+            $context .= 'Full Name (KM): '.($profile->full_name_km ?: 'N/A')."\n";
+            $context .= 'Full Name (EN): '.($profile->full_name_en ?: 'N/A')."\n";
+            $context .= 'Gender: '.($profile->gender ?: 'N/A')."\n";
+            $context .= 'Phone: '.($profile->phone_number ?: 'N/A')."\n";
+            $context .= 'Date of Birth: '.($profile->date_of_birth ?: 'N/A')."\n";
+            $context .= 'Address: '.($profile->address ?: 'N/A')."\n";
         }
 
         $program = DB::table('programs')->where('id', $user->program_id)->first();
         if ($program) {
             $context .= "Program: {$program->name_km} ({$program->name_en})\n";
-            $context .= "Degree Level: ".($program->degree_level ?: 'N/A')."\n";
-            $context .= "Duration: ".($program->duration_years ?: 'N/A')." years\n";
+            $context .= 'Degree Level: '.($program->degree_level ?: 'N/A')."\n";
+            $context .= 'Duration: '.($program->duration_years ?: 'N/A')." years\n";
 
             $dept = DB::table('departments')->where('id', $program->department_id)->first();
             if ($dept) {
@@ -144,17 +144,7 @@ class AIContextService
             }
         }
 
-        // All courses in system
-        $allCourses = DB::table('courses')->get();
-        if ($allCourses->isNotEmpty()) {
-            $context .= "\n=== ALL COURSES IN SYSTEM ({$allCourses->count()}) ===\n";
-            foreach ($allCourses as $c) {
-                $dept = DB::table('departments')->where('id', $c->department_id)->first();
-                $context .= "- [ID:{$c->id}] {$c->title_km} ({$c->title_en}) | Credits: ".($c->credits ?: '?')." | Code: ".($c->code ?? 'N/A')." | Dept: ".($dept->name_km ?? 'N/A')."\n";
-            }
-        }
-
-        // Enrolled courses
+        // Enrolled courses (with course details)
         $enrollments = DB::table('student_course_enrollments')
             ->join('course_offerings', 'student_course_enrollments.course_offering_id', '=', 'course_offerings.id')
             ->join('courses', 'course_offerings.course_id', '=', 'courses.id')
@@ -178,7 +168,7 @@ class AIContextService
             $context .= "\n=== ENROLLED COURSES ({$enrollments->count()} courses) ===\n";
             foreach ($enrollments as $e) {
                 $grade = $e->final_grade ?? 'Not graded';
-                $context .= "- [ID:{$e->offering_id}] {$e->course_name} ({$e->course_name_en}) | Section: {$e->section} | Credits: ".($e->credits ?: '?')." | Lecturer: ".($e->lecturer_name ?: 'TBA')." | Year: ".($e->academic_year ?: 'N/A')." | Semester: ".($e->semester ?: 'N/A')." | Grade: {$grade}\n";
+                $context .= "- [ID:{$e->offering_id}] {$e->course_name} ({$e->course_name_en}) | Section: {$e->section} | Credits: ".($e->credits ?: '?').' | Lecturer: '.($e->lecturer_name ?: 'TBA').' | Year: '.($e->academic_year ?: 'N/A').' | Semester: '.($e->semester ?: 'N/A')." | Grade: {$grade}\n";
             }
         }
 
@@ -188,7 +178,7 @@ class AIContextService
             ->selectRaw("COUNT(CASE WHEN status = 'present' THEN 1 END) as present_count")
             ->selectRaw("COUNT(CASE WHEN status = 'absent' THEN 1 END) as absent_count")
             ->selectRaw("COUNT(CASE WHEN status = 'permission' THEN 1 END) as permission_count")
-            ->selectRaw("COUNT(*) as total")
+            ->selectRaw('COUNT(*) as total')
             ->first();
 
         if ($attendanceOverall && $attendanceOverall->total > 0) {
@@ -210,7 +200,7 @@ class AIContextService
                 DB::raw("COUNT(CASE WHEN attendances.status = 'present' THEN 1 END) as present_count"),
                 DB::raw("COUNT(CASE WHEN attendances.status = 'absent' THEN 1 END) as absent_count"),
                 DB::raw("COUNT(CASE WHEN attendances.status = 'permission' THEN 1 END) as permission_count"),
-                DB::raw("COUNT(*) as total")
+                DB::raw('COUNT(*) as total')
             )
             ->groupBy('courses.title_km')
             ->get();
@@ -349,7 +339,7 @@ class AIContextService
                 'assignments.title_km as assignment_title',
                 'submissions.score',
                 'submissions.status',
-                'submissions.submitted_at'
+                'submissions.submitted_at',
             ]);
 
         if ($submissions->isNotEmpty()) {
@@ -372,11 +362,11 @@ class AIContextService
 
         $profile = DB::table('professor_profiles')->where('user_id', $user->id)->first();
         if ($profile) {
-            $context .= "Full Name (KM): ".($profile->full_name_km ?: 'N/A')."\n";
-            $context .= "Full Name (EN): ".($profile->full_name_en ?: 'N/A')."\n";
-            $context .= "Position: ".($profile->position ?: 'N/A')."\n";
-            $context .= "Qualifications: ".($profile->qualifications ?: 'N/A')."\n";
-            $context .= "Phone: ".($profile->phone_number ?: 'N/A')."\n";
+            $context .= 'Full Name (KM): '.($profile->full_name_km ?: 'N/A')."\n";
+            $context .= 'Full Name (EN): '.($profile->full_name_en ?: 'N/A')."\n";
+            $context .= 'Position: '.($profile->position ?: 'N/A')."\n";
+            $context .= 'Qualifications: '.($profile->qualifications ?: 'N/A')."\n";
+            $context .= 'Phone: '.($profile->phone_number ?: 'N/A')."\n";
         }
 
         $dept = DB::table('departments')->where('id', $user->department_id)->first();
@@ -394,7 +384,7 @@ class AIContextService
             $context .= "\n=== ALL COURSES IN SYSTEM ({$courses->count()}) ===\n";
             foreach ($courses as $c) {
                 $dept = DB::table('departments')->where('id', $c->department_id)->first();
-                $context .= "- [ID:{$c->id}] {$c->title_km} ({$c->title_en}) | Credits: ".($c->credits ?: '?')." | Code: ".($c->code ?? 'N/A')." | Dept: ".($dept->name_km ?? 'N/A')."\n";
+                $context .= "- [ID:{$c->id}] {$c->title_km} ({$c->title_en}) | Credits: ".($c->credits ?: '?').' | Code: '.($c->code ?? 'N/A').' | Dept: '.($dept->name_km ?? 'N/A')."\n";
             }
         }
 
@@ -427,8 +417,8 @@ class AIContextService
                 $totalStudents += $enrolled;
 
                 $context .= "\n--- [ID:{$o->id}] {$o->title_km} ({$o->title_en}) ---\n";
-                $context .= "Section: {$o->section} | Year: ".($o->academic_year ?: 'N/A')." | Semester: ".($o->semester ?: 'N/A')." | Credits: ".($o->credits ?: '?')." | Capacity: {$o->capacity} | Enrolled: {$enrolled}\n";
-                $context .= "Period: ".($o->start_date ?: 'N/A')." to ".($o->end_date ?: 'N/A')."\n";
+                $context .= "Section: {$o->section} | Year: ".($o->academic_year ?: 'N/A').' | Semester: '.($o->semester ?: 'N/A').' | Credits: '.($o->credits ?: '?')." | Capacity: {$o->capacity} | Enrolled: {$enrolled}\n";
+                $context .= 'Period: '.($o->start_date ?: 'N/A').' to '.($o->end_date ?: 'N/A')."\n";
 
                 // Students list
                 $students = DB::table('student_course_enrollments')
@@ -517,7 +507,7 @@ class AIContextService
             $context .= "\nTotal Students Across All Courses: {$totalStudents}\n";
         }
 
-        // Grading categories
+        // Grading categories (only for professor's own courses)
         $categories = DB::table('grading_categories')
             ->whereIn('course_offering_id', $offerings->pluck('id')->toArray())
             ->get(['name_km', 'weight_percentage', 'course_offering_id']);
@@ -526,23 +516,6 @@ class AIContextService
             $context .= "\n=== GRADING CATEGORIES ===\n";
             foreach ($categories as $c) {
                 $context .= "- [Offering:{$c->course_offering_id}] {$c->name_km} (Weight: {$c->weight_percentage}%)\n";
-            }
-        }
-
-        // All students in system (for search)
-        $allStudents = DB::table('users')
-            ->where('role', 'student')
-            ->leftJoin('student_profiles', 'users.id', '=', 'student_profiles.user_id')
-            ->leftJoin('programs', 'users.program_id', '=', 'programs.id')
-            ->select('users.name', 'users.student_id_code', 'student_profiles.full_name_km', 'programs.name_km as program')
-            ->orderBy('users.name')
-            ->limit(50)
-            ->get();
-
-        if ($allStudents->isNotEmpty()) {
-            $context .= "\n=== ALL STUDENTS IN SYSTEM ({$allStudents->count()}) ===\n";
-            foreach ($allStudents as $s) {
-                $context .= "- {$s->name} ({$s->full_name_km}) [{$s->student_id_code}] - ".($s->program ?: 'N/A')."\n";
             }
         }
 
@@ -561,7 +534,7 @@ class AIContextService
                 'assignments.title_km as assignment_title',
                 'submissions.score',
                 'submissions.status',
-                'submissions.submitted_at'
+                'submissions.submitted_at',
             ]);
 
         if ($submissions->isNotEmpty()) {
@@ -584,15 +557,15 @@ class AIContextService
 
         // System overview
         $userStats = DB::table('users')
-            ->selectRaw("role, COUNT(*) as count")
+            ->selectRaw('role, COUNT(*) as count')
             ->groupBy('role')
             ->pluck('count', 'role');
 
         $context .= "\n=== SYSTEM OVERVIEW ===\n";
-        $context .= "Total Users: ".$userStats->sum()."\n";
-        $context .= "Students: ".$userStats->get('student', 0)."\n";
-        $context .= "Professors: ".$userStats->get('professor', 0)."\n";
-        $context .= "Admins: ".$userStats->get('admin', 0)."\n";
+        $context .= 'Total Users: '.$userStats->sum()."\n";
+        $context .= 'Students: '.$userStats->get('student', 0)."\n";
+        $context .= 'Professors: '.$userStats->get('professor', 0)."\n";
+        $context .= 'Admins: '.$userStats->get('admin', 0)."\n";
 
         // All faculties
         $faculties = DB::table('faculties')->get();
@@ -625,7 +598,7 @@ class AIContextService
         $context .= "\n=== ALL COURSES ({$courses->count()}) ===\n";
         foreach ($courses as $c) {
             $dept = DB::table('departments')->where('id', $c->department_id)->first();
-            $context .= "- [ID:{$c->id}] {$c->title_km} ({$c->title_en}) | Credits: ".($c->credits ?: '?')." | Dept: ".($dept->name_km ?? 'N/A')."\n";
+            $context .= "- [ID:{$c->id}] {$c->title_km} ({$c->title_en}) | Credits: ".($c->credits ?: '?').' | Dept: '.($dept->name_km ?? 'N/A')."\n";
         }
 
         // Course offerings
@@ -646,19 +619,19 @@ class AIContextService
                 'course_offerings.academic_year',
                 'course_offerings.semester',
                 'lecturer.name as teacher_name',
-                'course_offerings.capacity'
+                'course_offerings.capacity',
             ]);
 
         foreach ($offerings as $o) {
             $enrolled = DB::table('student_course_enrollments')->where('course_offering_id', $o->id)->count();
-            $context .= "- [ID:{$o->id}] {$o->title_km} ({$o->title_en}) | Section: {$o->section} | Year: ".($o->academic_year ?: '?')." | Sem: ".($o->semester ?: '?')." | Lecturer: ".($o->teacher_name ?: 'TBA')." | Students: {$enrolled}/{$o->capacity}\n";
+            $context .= "- [ID:{$o->id}] {$o->title_km} ({$o->title_en}) | Section: {$o->section} | Year: ".($o->academic_year ?: '?').' | Sem: '.($o->semester ?: '?').' | Lecturer: '.($o->teacher_name ?: 'TBA')." | Students: {$enrolled}/{$o->capacity}\n";
         }
 
         // All rooms
         $rooms = DB::table('rooms')->get();
         $context .= "\n=== ROOMS ({$rooms->count()}) ===\n";
         foreach ($rooms as $r) {
-            $context .= "- [ID:{$r->id}] {$r->name} | Capacity: ".($r->capacity ?: 'N/A')." | Floor: ".($r->floor ?: 'N/A')."\n";
+            $context .= "- [ID:{$r->id}] {$r->name} | Capacity: ".($r->capacity ?: 'N/A').' | Floor: '.($r->floor ?: 'N/A')."\n";
         }
 
         // All professors
