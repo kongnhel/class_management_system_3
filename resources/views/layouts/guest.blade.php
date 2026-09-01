@@ -16,11 +16,13 @@
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
         <!-- Scripts (តែ១ដងប៉ុណ្ណោះ!) -->
+        <link rel="preload" href="/fonts/KhmerOSBattambang.woff2" as="font" type="font/woff2" crossorigin>
+
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
         <style>
             body, nav, div {
-                font-family: 'Battambang', sans-serif;
+                font-family: 'KhmerOSBattambang', 'Battambang', sans-serif;
             }
         </style>
     </head>
