@@ -229,6 +229,11 @@ class StudentProgressionService
             });
         }
 
+        // Generation filter
+        if (! empty($filters['generation'])) {
+            $query->where('generation', $filters['generation']);
+        }
+
         // Course offering filter: only students enrolled in this course offering
         if (! empty($filters['courseId'])) {
             $enrolledStudentIds = \App\Models\StudentCourseEnrollment::where('course_offering_id', $filters['courseId'])
@@ -236,9 +241,22 @@ class StudentProgressionService
             $query->whereIn('users.id', $enrolledStudentIds);
         }
 
-        // Day-of-week filter: only students whose course offerings have schedules on this day
-        if (! empty($filters['dayOfWeek'])) {
-            $offeringIdsWithDay = \App\Models\Schedule::where('day_of_week', $filters['dayOfWeek'])
+        // Semester filter: find course offerings for this program in the semester, then filter students
+        if (! empty($filters['semester'])) {
+            $offeringIds = CourseOffering::whereHas('targetPrograms', fn ($q) => $q->where('program_id', $program->id))
+                ->where('semester', $filters['semester'])
+                ->pluck('id');
+            $enrolledStudentIds = \App\Models\StudentCourseEnrollment::whereIn('course_offering_id', $offeringIds)
+                ->pluck('student_user_id');
+            $query->whereIn('users.id', $enrolledStudentIds);
+        }
+
+        // Schedule group filter: Mon-Fri or Sat-Sun
+        if (! empty($filters['scheduleGroup'])) {
+            $days = $filters['scheduleGroup'] === 'mon_fri'
+                ? ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+                : ['Saturday', 'Sunday'];
+            $offeringIdsWithDay = \App\Models\Schedule::whereIn('day_of_week', $days)
                 ->pluck('course_offering_id');
             $enrolledStudentIds = \App\Models\StudentCourseEnrollment::whereIn('course_offering_id', $offeringIdsWithDay)
                 ->pluck('student_user_id');

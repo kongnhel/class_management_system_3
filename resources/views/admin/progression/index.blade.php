@@ -23,12 +23,12 @@
         </div>
     </div>
 
-    <div class="py-8 bg-gray-50 min-h-screen">
+    <div class="py-8 bg-gray-50 min-h-screen" style="padding-bottom: 100px;">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
 
             {{-- Flash Messages --}}
             @if(session('success'))
-                <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000"
+                <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
                      x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
                      class="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex items-center justify-between">
                     <div class="flex items-center gap-3">
@@ -67,76 +67,107 @@
                     </div>
                     <div>
                         <h3 class="text-sm font-semibold text-gray-900">តម្រង់ទិស</h3>
-                        <p class="text-xs text-gray-400">ស្វែងរក និងច្រោះនិស្សិតតាមសាលា កម្មវិធី មុខវិជ្ជា ឬថ្ងៃ</p>
+                        <p class="text-xs text-gray-400">ស្វែងរក និងច្រោះនិស្សិតតាមសាលា កម្មវិធី ជំនាន់ ឬកាលវិភាគ</p>
                     </div>
                 </div>
                 <div class="p-6">
                     <form method="GET" action="{{ route('admin.progression.index') }}" data-admin-realtime-filter class="space-y-4">
-                        {{-- Row 1: Search + Faculty + Program --}}
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div class="relative">
-                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
-                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                                </span>
-                                <input type="text" name="search" value="{{ $filters['search'] ?? '' }}" placeholder="ស្វែងរកឈ្មោះ ឬអត្តលេខ..." autocomplete="off"
-                                       class="pl-10 pr-4 py-2.5 bg-gray-100 border-0 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-emerald-500 w-full transition-all">
+                        {{-- Row 1 --}}
+                        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+                            <div class="md:col-span-3">
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">ស្វែងរក</label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                                    </span>
+                                    <input type="text" name="search" value="{{ $filters['search'] ?? '' }}" placeholder="ឈ្មោះ ឬអត្តលេខ..." autocomplete="off"
+                                           class="pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full transition-all">
+                                </div>
                             </div>
-                            <select name="faculty_id"
-                                    class="py-2.5 bg-gray-100 border-0 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-emerald-500 w-full transition-all">
-                                <option value="">សាលាទាំងអស់</option>
-                                @foreach($faculties as $f)
-                                    <option value="{{ $f->id }}" {{ ($filters['facultyId'] ?? '') == $f->id ? 'selected' : '' }}>
-                                        {{ $f->name_km }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <select name="program_id"
-                                    id="progressionProgramFilter"
-                                    class="py-2.5 bg-gray-100 border-0 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-emerald-500 w-full transition-all">
-                                <option value="">កម្មវិធីសិក្សាទាំងអស់</option>
-                                @foreach($programs as $p)
-                                    <option value="{{ $p->id }}"
-                                            data-faculty-id="{{ $p->department->faculty_id ?? '' }}"
-                                            {{ $program->id == $p->id ? 'selected' : '' }}>
-                                        {{ $p->name_km }}
-                                    </option>
-                                @endforeach
-                            </select>
+                            <div class="md:col-span-2">
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">សាលា</label>
+                                <select name="faculty_id"
+                                        class="py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full transition-all">
+                                    <option value="">ទាំងអស់</option>
+                                    @foreach($faculties as $f)
+                                        <option value="{{ $f->id }}" {{ ($filters['facultyId'] ?? '') == $f->id ? 'selected' : '' }}>
+                                            {{ $f->name_km }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="md:col-span-3">
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">កម្មវិធីសិក្សា</label>
+                                <select name="program_id" id="progressionProgramFilter"
+                                        class="py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full transition-all">
+                                    <option value="">ទាំងអស់</option>
+                                    @foreach($programs as $p)
+                                        <option value="{{ $p->id }}"
+                                                data-faculty-id="{{ $p->department->faculty_id ?? '' }}"
+                                                {{ $program->id == $p->id ? 'selected' : '' }}>
+                                            {{ $p->name_km }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">ជំនាន់</label>
+                                <select name="generation"
+                                        class="py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full transition-all">
+                                    <option value="">ទាំងអស់</option>
+                                    @foreach($generations as $gen)
+                                        <option value="{{ $gen->name }}" {{ ($filters['generation'] ?? '') == $gen->name ? 'selected' : '' }}>
+                                            ជំនាន់ទី{{ $gen->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="md:col-span-2 flex items-end gap-2">
+                                <a href="{{ route('admin.progression.index', ['program_id' => $program->id]) }}"
+                                   class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl text-sm font-medium transition-all flex-1">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                                    កំណត់វិញ
+                                </a>
+                            </div>
                         </div>
-
-                        {{-- Row 2: Course Offering + Day of Week --}}
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <select name="course_id"
-                                    class="py-2.5 bg-gray-100 border-0 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-emerald-500 w-full transition-all">
-                                <option value="">មុខវិជ្ជាទាំងអស់</option>
-                                @foreach($courseOfferings as $co)
-                                    <option value="{{ $co->id }}" {{ ($filters['courseId'] ?? '') == $co->id ? 'selected' : '' }}>
-                                        {{ $co->course->title_km ?? 'N/A' }} ({{ $co->section ?? '-' }})
-                                    </option>
-                                @endforeach
-                            </select>
-                            <select name="day_of_week"
-                                    class="py-2.5 bg-gray-100 border-0 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-emerald-500 w-full transition-all">
-                                <option value="">ថ្ងៃទាំងអស់</option>
-                                <option value="Monday" {{ ($filters['dayOfWeek'] ?? '') == 'Monday' ? 'selected' : '' }}>ចន្ទ (Monday)</option>
-                                <option value="Tuesday" {{ ($filters['dayOfWeek'] ?? '') == 'Tuesday' ? 'selected' : '' }}>អាទិតុ (Tuesday)</option>
-                                <option value="Wednesday" {{ ($filters['dayOfWeek'] ?? '') == 'Wednesday' ? 'selected' : '' }}>ពុធ (Wednesday)</option>
-                                <option value="Thursday" {{ ($filters['dayOfWeek'] ?? '') == 'Thursday' ? 'selected' : '' }}>ព្រហស្បតិ៍ (Thursday)</option>
-                                <option value="Friday" {{ ($filters['dayOfWeek'] ?? '') == 'Friday' ? 'selected' : '' }}>សុក្រ (Friday)</option>
-                            </select>
-                            <div class="flex items-center gap-2">
+                        {{-- Row 2 --}}
+                        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+                            <div class="md:col-span-3">
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">មុខវិជ្ជា</label>
+                                <select name="course_id"
+                                        class="py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full transition-all">
+                                    <option value="">ទាំងអស់</option>
+                                    @foreach($courseOfferings as $co)
+                                        <option value="{{ $co->id }}" {{ ($filters['courseId'] ?? '') == $co->id ? 'selected' : '' }}>
+                                            {{ $co->course->title_km ?? 'N/A' }} ({{ $co->section ?? '-' }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">ឆមាស</label>
+                                <select name="semester"
+                                        class="py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full transition-all">
+                                    <option value="">ទាំងអស់</option>
+                                    <option value="ឆមាសទី១" {{ ($filters['semester'] ?? '') == 'ឆមាសទី១' ? 'selected' : '' }}>ឆមាសទី១</option>
+                                    <option value="ឆមាសទី២" {{ ($filters['semester'] ?? '') == 'ឆមាសទី២' ? 'selected' : '' }}>ឆមាសទី២</option>
+                                </select>
+                            </div>
+                            <div class="md:col-span-3">
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">កាលវិភាគសិក្សា</label>
+                                <select name="schedule_group"
+                                        class="py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full transition-all">
+                                    <option value="">ទាំងអស់</option>
+                                    <option value="mon_fri" {{ ($filters['scheduleGroup'] ?? '') == 'mon_fri' ? 'selected' : '' }}>ចន្ទ – សុក្រ (ថ្ងៃធ្វើការ)</option>
+                                    <option value="sat_sun" {{ ($filters['scheduleGroup'] ?? '') == 'sat_sun' ? 'selected' : '' }}>សៅរ៍ – អាទិត្យ (ថ្ងៃសម្រាក)</option>
+                                </select>
+                            </div>
+                            <div class="md:col-span-2">
                                 <button type="submit"
-                                        class="inline-flex items-center gap-2 bg-emerald-600 text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-emerald-700 transition-all shadow-sm shadow-emerald-200">
+                                        class="inline-flex items-center justify-center gap-2 w-full bg-emerald-600 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-emerald-700 transition-all shadow-sm shadow-emerald-200">
                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                                     ស្វែងរក
                                 </button>
-                                @if($filters['facultyId'] || $filters['courseId'] || $filters['dayOfWeek'] || $filters['search'])
-                                    <a href="{{ route('admin.progression.index', ['program_id' => $program->id]) }}"
-                                       class="inline-flex items-center gap-2 bg-gray-100 text-gray-600 px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-200 transition-all">
-                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                                        សម្អាត
-                                    </a>
-                                @endif
                             </div>
                         </div>
                     </form>
@@ -206,36 +237,141 @@
                 </div>
             </div>
 
-            {{-- Section 3: Student Lists --}}
-            <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-                <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
-                    <div class="h-8 w-8 bg-slate-900 rounded-lg flex items-center justify-center">
-                        <span class="text-white text-xs font-bold">③</span>
-                    </div>
-                    <div>
-                        <h3 class="text-sm font-semibold text-gray-900">បញ្ជីនិស្សិតតាមឆ្នាំ</h3>
-                        <p class="text-xs text-gray-400">បញ្ជីនិស្សិតដែលកំពុងសិក្សានៅក្នុងកម្មវិធីនេះ</p>
-                    </div>
-                </div>
-                <div class="p-6 space-y-6">
+            {{-- Section 3: Student Lists with Checkboxes --}}
+            <form method="POST" action="{{ route('admin.progression.executeAdvance') }}" id="advanceForm">
+                @csrf
+                <input type="hidden" name="program_id" value="{{ $program->id }}">
 
-                    @for($year = 1; $year <= $program->duration_years; $year++)
-                        @php
-                            $gen = $currentYearStart - $genBase - $year + 1;
-                            $yc = $yearColors[$year] ?? $yearColors[4];
-                        @endphp
-                        @if($summary[$year]['count'] > 0)
+                <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="h-8 w-8 bg-slate-900 rounded-lg flex items-center justify-center">
+                                <span class="text-white text-xs font-bold">③</span>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-semibold text-gray-900">បញ្ជីនិស្សិត</h3>
+                                <p class="text-xs text-gray-400">រើសនិស្សិតដែលចង់ជំរុញទៅឆ្នាំបន្ទាប់</p>
+                            </div>
+                        </div>
+                        <button type="button" onclick="selectAllStudents()" class="text-sm text-emerald-600 hover:text-emerald-700 font-medium">
+                            ជ្រើសរើសទាំងអស់
+                        </button>
+                    </div>
+                    <div class="p-6 space-y-6">
+
+                        @for($year = 1; $year <= $program->duration_years; $year++)
+                            @php
+                                $gen = $currentYearStart - $genBase - $year + 1;
+                                $yc = $yearColors[$year] ?? $yearColors[4];
+                            @endphp
+                            @if($summary[$year]['count'] > 0)
+                                <div>
+                                    <div class="flex items-center gap-3 mb-4">
+                                        <input type="checkbox" data-year-check="{{ $year }}" onchange="toggleYear({{ $year }}, this)"
+                                               class="rounded border-gray-300 text-emerald-500 focus:ring-emerald-500">
+                                        <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold {{ $yc['bg'] }} {{ $yc['text'] }}">
+                                            ឆ្នាំទី{{ $year }}
+                                        </span>
+                                        <span class="text-xs text-gray-400">ជំនាន់ទី{{ $gen }}</span>
+                                        <span class="text-xs text-gray-400">· {{ $summary[$year]['count'] }} និស្សិត</span>
+                                        <div class="flex-1 h-px bg-gradient-to-r from-gray-200 to-transparent"></div>
+                                    </div>
+
+                                    {{-- Desktop Table --}}
+                                    <div class="hidden md:block overflow-x-auto border border-gray-200 rounded-xl">
+                                        <table class="w-full">
+                                            <thead class="bg-gray-50">
+                                                <tr class="border-b border-gray-200">
+                                                    <th class="px-4 py-3 text-center w-10">
+                                                        <input type="checkbox" data-year-check="{{ $year }}" onchange="toggleYear({{ $year }}, this)"
+                                                               class="rounded border-gray-300 text-emerald-500 focus:ring-emerald-500">
+                                                    </th>
+                                                    <th class="px-6 py-3 text-left text-[11px] font-bold text-gray-500 uppercase">ល.រ</th>
+                                                    <th class="px-6 py-3 text-left text-[11px] font-bold text-gray-500 uppercase">ឈ្មោះ</th>
+                                                    <th class="px-6 py-3 text-left text-[11px] font-bold text-gray-500 uppercase">អត្តលេខ</th>
+                                                    <th class="px-6 py-3 text-left text-[11px] font-bold text-gray-500 uppercase">ជំនាន់</th>
+                                                    <th class="px-6 py-3 text-left text-[11px] font-bold text-gray-500 uppercase">ស្ថានភាព</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-gray-100">
+                                                @foreach($summary[$year]['students'] as $index => $student)
+                                                    @php $avatarColor = $studentAvatarColors[$year % 4]; @endphp
+                                                    <tr class="hover:bg-gray-50 transition">
+                                                        <td class="px-4 py-3.5 text-center">
+                                                            <input type="checkbox" name="student_ids[]" value="{{ $student->id }}"
+                                                                   data-year="{{ $year }}" class="student-cb rounded border-gray-300 text-emerald-500 focus:ring-emerald-500">
+                                                        </td>
+                                                        <td class="px-6 py-3.5 text-sm text-gray-400">{{ $index + 1 }}</td>
+                                                        <td class="px-6 py-3.5">
+                                                            <div class="flex items-center gap-3">
+                                                                <div class="h-8 w-8 rounded-lg {{ $avatarColor }} flex items-center justify-center font-semibold text-xs">
+                                                                    {{ mb_substr($student->name, 0, 1, 'UTF-8') }}
+                                                                </div>
+                                                                <div>
+                                                                    <p class="text-sm font-medium text-gray-900">{{ $student->name }}</p>
+                                                                    <p class="text-xs text-gray-400">{{ $student->email ?? '-' }}</p>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="px-6 py-3.5 text-sm text-gray-700 font-medium">{{ $student->student_id_code ?? '-' }}</td>
+                                                        <td class="px-6 py-3.5">
+                                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium {{ $yc['bg'] }} {{ $yc['text'] }}">
+                                                                ឆ្នាំទី{{ $year }}
+                                                            </span>
+                                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-50 text-gray-400 ml-1">
+                                                                ជំនាន់{{ $student->generation }}
+                                                            </span>
+                                                        </td>
+                                                        <td class="px-6 py-3.5">
+                                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-teal-50 text-teal-600">
+                                                                <span class="h-1.5 w-1.5 rounded-full bg-teal-500"></span>
+                                                                Active
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    {{-- Mobile Cards --}}
+                                    <div class="md:hidden border border-gray-200 rounded-xl divide-y divide-gray-100">
+                                        @foreach($summary[$year]['students'] as $student)
+                                            @php $avatarColor = $studentAvatarColors[$year % 4]; @endphp
+                                            <div class="px-4 py-3 hover:bg-gray-50 transition">
+                                                <div class="flex items-center gap-3">
+                                                    <input type="checkbox" name="student_ids[]" value="{{ $student->id }}"
+                                                           data-year="{{ $year }}" class="student-cb rounded border-gray-300 text-emerald-500 focus:ring-emerald-500">
+                                                    <div class="h-8 w-8 rounded-lg {{ $avatarColor }} flex items-center justify-center font-semibold text-xs">
+                                                        {{ mb_substr($student->name, 0, 1, 'UTF-8') }}
+                                                    </div>
+                                                    <div class="flex-1 min-w-0">
+                                                        <p class="text-sm font-medium text-gray-900">{{ $student->name }}</p>
+                                                        <p class="text-xs text-gray-400">{{ $student->student_id_code ?? '-' }} · ឆ្នាំទី{{ $year }} · ជំនាន់{{ $student->generation }}</p>
+                                                    </div>
+                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-teal-50 text-teal-600 flex-shrink-0">
+                                                        <span class="h-1.5 w-1.5 rounded-full bg-teal-500"></span>
+                                                        Active
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
+                        @endfor
+
+                        {{-- Graduated Students (no checkboxes) --}}
+                        @if($summary['graduated']['count'] > 0)
                             <div>
                                 <div class="flex items-center gap-3 mb-4">
-                                    <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold {{ $yc['bg'] }} {{ $yc['text'] }}">
-                                        ឆ្នាំទី{{ $year }}
+                                    <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-teal-50 text-teal-600">
+                                        បញ្ចប់ការសិក្សា
                                     </span>
-                                    <span class="text-xs text-gray-400">ជំនាន់ទី{{ $gen }}</span>
-                                    <span class="text-xs text-gray-400">· {{ $summary[$year]['count'] }} និស្សិត</span>
+                                    <span class="text-xs text-gray-400">· {{ $summary['graduated']['count'] }} និស្សិត</span>
                                     <div class="flex-1 h-px bg-gradient-to-r from-gray-200 to-transparent"></div>
                                 </div>
 
-                                {{-- Desktop Table --}}
                                 <div class="hidden md:block overflow-x-auto border border-gray-200 rounded-xl">
                                     <table class="w-full">
                                         <thead class="bg-gray-50">
@@ -243,150 +379,65 @@
                                                 <th class="px-6 py-3 text-left text-[11px] font-bold text-gray-500 uppercase">ល.រ</th>
                                                 <th class="px-6 py-3 text-left text-[11px] font-bold text-gray-500 uppercase">ឈ្មោះ</th>
                                                 <th class="px-6 py-3 text-left text-[11px] font-bold text-gray-500 uppercase">អត្តលេខ</th>
-                                                <th class="px-6 py-3 text-left text-[11px] font-bold text-gray-500 uppercase">ជំនាន់</th>
-                                                <th class="px-6 py-3 text-left text-[11px] font-bold text-gray-500 uppercase">ស្ថានភាព</th>
+                                                <th class="px-6 py-3 text-left text-[11px] font-bold text-gray-500 uppercase">ថ្ងៃបញ្ចប់</th>
                                             </tr>
                                         </thead>
                                         <tbody class="divide-y divide-gray-100">
-                                            @foreach($summary[$year]['students'] as $index => $student)
-                                                @php $avatarColor = $studentAvatarColors[$year % 4]; @endphp
+                                            @foreach($summary['graduated']['students'] as $index => $student)
                                                 <tr class="hover:bg-gray-50 transition">
                                                     <td class="px-6 py-3.5 text-sm text-gray-400">{{ $index + 1 }}</td>
                                                     <td class="px-6 py-3.5">
                                                         <div class="flex items-center gap-3">
-                                                            <div class="h-8 w-8 rounded-lg {{ $avatarColor }} flex items-center justify-center font-semibold text-xs">
+                                                            <div class="h-8 w-8 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center font-semibold text-xs">
                                                                 {{ mb_substr($student->name, 0, 1, 'UTF-8') }}
                                                             </div>
-                                                            <div>
-                                                                <p class="text-sm font-medium text-gray-900">{{ $student->name }}</p>
-                                                                <p class="text-xs text-gray-400">{{ $student->email ?? '-' }}</p>
-                                                            </div>
+                                                            <p class="text-sm font-medium text-gray-900">{{ $student->name }}</p>
                                                         </div>
                                                     </td>
                                                     <td class="px-6 py-3.5 text-sm text-gray-700 font-medium">{{ $student->student_id_code ?? '-' }}</td>
-                                                    <td class="px-6 py-3.5">
-                                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium {{ $yc['bg'] }} {{ $yc['text'] }}">
-                                                            ឆ្នាំទី{{ $year }}
-                                                        </span>
-                                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-50 text-gray-400 ml-1">
-                                                            ជំនាន់{{ $student->generation }}
-                                                        </span>
-                                                    </td>
-                                                    <td class="px-6 py-3.5">
-                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-teal-50 text-teal-600">
-                                                            <span class="h-1.5 w-1.5 rounded-full bg-teal-500"></span>
-                                                            Active
-                                                        </span>
-                                                    </td>
+                                                    <td class="px-6 py-3.5 text-sm text-gray-500">{{ $student->studentProgramEnrollments->firstWhere('status', 'graduated')?->graduation_date ?? '-' }}</td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
                                     </table>
                                 </div>
-
-                                {{-- Mobile Cards --}}
                                 <div class="md:hidden border border-gray-200 rounded-xl divide-y divide-gray-100">
-                                    @foreach($summary[$year]['students'] as $student)
-                                        @php $avatarColor = $studentAvatarColors[$year % 4]; @endphp
+                                    @foreach($summary['graduated']['students'] as $student)
                                         <div class="px-4 py-3 hover:bg-gray-50 transition">
-                                            <div class="flex items-center justify-between">
-                                                <div class="flex items-center gap-3">
-                                                    <div class="h-8 w-8 rounded-lg {{ $avatarColor }} flex items-center justify-center font-semibold text-xs">
-                                                        {{ mb_substr($student->name, 0, 1, 'UTF-8') }}
-                                                    </div>
-                                                    <div>
-                                                        <p class="text-sm font-medium text-gray-900">{{ $student->name }}</p>
-                                                        <p class="text-xs text-gray-400">{{ $student->student_id_code ?? '-' }} · ឆ្នាំទី{{ $year }} · ជំនាន់{{ $student->generation }}</p>
-                                                    </div>
+                                            <div class="flex items-center gap-3">
+                                                <div class="h-8 w-8 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center font-semibold text-xs">
+                                                    {{ mb_substr($student->name, 0, 1, 'UTF-8') }}
                                                 </div>
-                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-teal-50 text-teal-600">
-                                                    <span class="h-1.5 w-1.5 rounded-full bg-teal-500"></span>
-                                                    Active
-                                                </span>
+                                                <div>
+                                                    <p class="text-sm font-medium text-gray-900">{{ $student->name }}</p>
+                                                    <p class="text-xs text-gray-400">{{ $student->student_id_code ?? '-' }}</p>
+                                                </div>
                                             </div>
                                         </div>
                                     @endforeach
                                 </div>
                             </div>
                         @endif
-                    @endfor
 
-                    {{-- Graduated Students --}}
-                    @if($summary['graduated']['count'] > 0)
-                        <div>
-                            <div class="flex items-center gap-3 mb-4">
-                                <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-teal-50 text-teal-600">
-                                    បញ្ចប់ការសិក្សា
-                                </span>
-                                <span class="text-xs text-gray-400">· {{ $summary['graduated']['count'] }} និស្សិត</span>
-                                <div class="flex-1 h-px bg-gradient-to-r from-gray-200 to-transparent"></div>
+                        {{-- Empty State --}}
+                        @php
+                            $totalStudents = 0;
+                            for($y = 1; $y <= $program->duration_years; $y++) { $totalStudents += $summary[$y]['count']; }
+                        @endphp
+                        @if($totalStudents === 0 && $summary['graduated']['count'] === 0)
+                            <div class="py-16 text-center">
+                                <div class="h-16 w-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                    <svg class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/>
+                                    </svg>
+                                </div>
+                                <h3 class="text-sm font-semibold text-gray-900">មិនមាននិស្សិត</h3>
+                                <p class="text-sm text-gray-400 mt-1">មិនមាននិស្សិតសម្រាប់កម្មវិធីនេះទេ។</p>
                             </div>
-
-                            <div class="hidden md:block overflow-x-auto border border-gray-200 rounded-xl">
-                                <table class="w-full">
-                                    <thead class="bg-gray-50">
-                                        <tr class="border-b border-gray-200">
-                                            <th class="px-6 py-3 text-left text-[11px] font-bold text-gray-500 uppercase">ល.រ</th>
-                                            <th class="px-6 py-3 text-left text-[11px] font-bold text-gray-500 uppercase">ឈ្មោះ</th>
-                                            <th class="px-6 py-3 text-left text-[11px] font-bold text-gray-500 uppercase">អត្តលេខ</th>
-                                            <th class="px-6 py-3 text-left text-[11px] font-bold text-gray-500 uppercase">ថ្ងៃបញ្ចប់</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-gray-100">
-                                        @foreach($summary['graduated']['students'] as $index => $student)
-                                            <tr class="hover:bg-gray-50 transition">
-                                                <td class="px-6 py-3.5 text-sm text-gray-400">{{ $index + 1 }}</td>
-                                                <td class="px-6 py-3.5">
-                                                    <div class="flex items-center gap-3">
-                                                        <div class="h-8 w-8 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center font-semibold text-xs">
-                                                            {{ mb_substr($student->name, 0, 1, 'UTF-8') }}
-                                                        </div>
-                                                        <p class="text-sm font-medium text-gray-900">{{ $student->name }}</p>
-                                                    </div>
-                                                </td>
-                                                <td class="px-6 py-3.5 text-sm text-gray-700 font-medium">{{ $student->student_id_code ?? '-' }}</td>
-                                                <td class="px-6 py-3.5 text-sm text-gray-500">{{ $student->studentProgramEnrollments->firstWhere('status', 'graduated')?->graduation_date ?? '-' }}</td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="md:hidden border border-gray-200 rounded-xl divide-y divide-gray-100">
-                                @foreach($summary['graduated']['students'] as $student)
-                                    <div class="px-4 py-3 hover:bg-gray-50 transition">
-                                        <div class="flex items-center gap-3">
-                                            <div class="h-8 w-8 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center font-semibold text-xs">
-                                                {{ mb_substr($student->name, 0, 1, 'UTF-8') }}
-                                            </div>
-                                            <div>
-                                                <p class="text-sm font-medium text-gray-900">{{ $student->name }}</p>
-                                                <p class="text-xs text-gray-400">{{ $student->student_id_code ?? '-' }}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    @endif
-
-                    {{-- Empty State --}}
-                    @php
-                        $totalStudents = 0;
-                        for($y = 1; $y <= $program->duration_years; $y++) { $totalStudents += $summary[$y]['count']; }
-                    @endphp
-                    @if($totalStudents === 0 && $summary['graduated']['count'] === 0)
-                        <div class="py-16 text-center">
-                            <div class="h-16 w-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                                <svg class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/>
-                                </svg>
-                            </div>
-                            <h3 class="text-sm font-semibold text-gray-900">មិនមាននិស្សិត</h3>
-                            <p class="text-sm text-gray-400 mt-1">មិនមាននិស្សិតសម្រាប់កម្មវិធីនេះទេ។</p>
-                        </div>
-                    @endif
+                        @endif
+                    </div>
                 </div>
-            </div>
+            </form>
 
             {{-- Section 4: Actions --}}
             <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
@@ -396,15 +447,10 @@
                     </div>
                     <div>
                         <h3 class="text-sm font-semibold text-gray-900">សកម្មភាព</h3>
-                        <p class="text-xs text-gray-400">ជំរុញនិស្សិតទៅជំនាន់ថ្មី ឬបញ្ចប់ការសិក្សា</p>
+                        <p class="text-xs text-gray-400">បញ្ចប់ការសិក្សាដោយស្វ័យប្រវត្តិសម្រាប់និស្សិតឆ្នាំចុងក្រោយ</p>
                     </div>
                 </div>
-                <div class="p-6 flex flex-wrap gap-3">
-                    <a href="{{ route('admin.progression.advance', ['program_id' => $program->id]) }}"
-                       class="inline-flex items-center gap-2 bg-emerald-600 text-white px-6 py-3 rounded-xl font-medium text-sm hover:bg-emerald-700 shadow-sm shadow-emerald-200 transition-all">
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                        ជំរុញនិស្សិតទៅជំនាន់ថ្មី
-                    </a>
+                <div class="p-6">
                     <form action="{{ route('admin.progression.autoGraduate') }}" method="POST" class="inline"
                           onsubmit="return confirm('តើអ្នកប្រាកដទេ? និស្សិតឆ្នាំចុងក្រោយដែលមិនមាន F នឹងត្រូវបញ្ចប់ការសិក្សា។')">
                         @csrf
@@ -417,6 +463,36 @@
                 </div>
             </div>
 
+        </div>
+    </div>
+
+    {{-- Sticky Bottom Action Bar --}}
+    <div x-data="{ selectedCount: 0 }" x-init="
+            window.updateSelectedCount = function() {
+                selectedCount = document.querySelectorAll('.student-cb:checked').length;
+            }
+         "
+         x-show="selectedCount > 0" x-transition
+         class="fixed bottom-0 inset-x-0 z-50 bg-white border-t border-gray-200 shadow-lg shadow-gray-200/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="h-9 w-9 bg-emerald-50 rounded-lg flex items-center justify-center">
+                    <svg class="h-4 w-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                </div>
+                <p class="text-sm font-medium text-gray-700">
+                    <span x-text="selectedCount">0</span> និស្សិតត្រូវបានជ្រើសរើស
+                </p>
+            </div>
+            <div class="flex items-center gap-3">
+                <button type="button" onclick="clearAllStudents()" class="inline-flex items-center gap-2 bg-gray-100 text-gray-600 px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-200 transition-all">
+                    សម្អាត
+                </button>
+                <button type="submit" form="advanceForm"
+                        class="inline-flex items-center gap-2 bg-emerald-600 text-white px-6 py-2.5 rounded-xl font-medium text-sm hover:bg-emerald-700 shadow-sm shadow-emerald-200 transition-all">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    ជំរុញនិស្សិតដែលបានជ្រើសរើស
+                </button>
+            </div>
         </div>
     </div>
 
@@ -445,5 +521,49 @@
             facultySelect.addEventListener('change', filterPrograms);
             filterPrograms();
         })();
+
+        function toggleYear(year, source) {
+            document.querySelectorAll('.student-cb[data-year="' + year + '"]').forEach(function (cb) {
+                cb.checked = source.checked;
+            });
+            updateCount();
+        }
+
+        function selectAllStudents() {
+            document.querySelectorAll('.student-cb').forEach(function (cb) {
+                cb.checked = true;
+            });
+            document.querySelectorAll('[data-year-check]').forEach(function (cb) {
+                cb.checked = true;
+            });
+            updateCount();
+        }
+
+        function clearAllStudents() {
+            document.querySelectorAll('.student-cb').forEach(function (cb) {
+                cb.checked = false;
+            });
+            document.querySelectorAll('[data-year-check]').forEach(function (cb) {
+                cb.checked = false;
+            });
+            updateCount();
+        }
+
+        function updateCount() {
+            var count = document.querySelectorAll('.student-cb:checked').length;
+            document.querySelectorAll('[data-year-check]').forEach(function (yearCheck) {
+                var year = yearCheck.dataset.yearCheck;
+                var yearCbs = document.querySelectorAll('.student-cb[data-year="' + year + '"]');
+                var allChecked = yearCbs.length > 0 && Array.from(yearCbs).every(function (c) { return c.checked; });
+                yearCheck.checked = allChecked;
+            });
+            if (typeof window.updateSelectedCount === 'function') {
+                window.updateSelectedCount();
+            }
+        }
+
+        document.querySelectorAll('.student-cb').forEach(function (cb) {
+            cb.addEventListener('change', updateCount);
+        });
     </script>
 </x-app-layout>

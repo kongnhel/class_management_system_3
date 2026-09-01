@@ -5,6 +5,7 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use App\Models\CourseOffering;
 use App\Models\Faculty;
+use App\Models\Generation;
 use App\Models\Program;
 use App\Services\StudentProgressionService;
 use Illuminate\Http\Request;
@@ -26,10 +27,13 @@ class StudentProgressionController extends Controller
         $facultyId = $request->input('faculty_id');
         $programId = $request->input('program_id');
         $courseId = $request->input('course_id');
-        $dayOfWeek = $request->input('day_of_week');
+        $generation = $request->input('generation');
+        $semester = $request->input('semester');
+        $scheduleGroup = $request->input('schedule_group');
         $search = $request->input('search');
 
         $faculties = Faculty::orderBy('name_km')->get();
+        $generations = Generation::where('is_active', true)->orderByDesc('name')->get();
 
         $programsQuery = Program::with('department');
         if ($facultyId) {
@@ -49,11 +53,11 @@ class StudentProgressionController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        $filters = compact('facultyId', 'courseId', 'dayOfWeek', 'search');
+        $filters = compact('facultyId', 'courseId', 'generation', 'semester', 'scheduleGroup', 'search');
 
         $summary = $this->progressionService->getProgressionSummary($program, $filters);
 
-        return view('admin.progression.index', compact('program', 'summary', 'programs', 'faculties', 'courseOfferings', 'filters'));
+        return view('admin.progression.index', compact('program', 'summary', 'programs', 'faculties', 'courseOfferings', 'generations', 'filters'));
     }
 
     /**
