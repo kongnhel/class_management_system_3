@@ -24,7 +24,69 @@
                     passwordVisible: false,
                     passwordConfirmVisible: false,
                     passwordStrength: '',
-                    passwordStrengthColor: ''
+                    passwordStrengthColor: '',
+                    passwordValue: '',
+                    fieldErrors: {},
+                    touched: {},
+
+                    validateField(name) {
+                        let val = '';
+                        if (name === 'name') val = document.getElementById('name')?.value || '';
+                        else if (name === 'role') val = this.userRole;
+                        else if (name === 'email') val = document.getElementById('email')?.value || '';
+                        else if (name === 'password') val = this.passwordValue;
+                        else if (name === 'password_confirmation') val = document.getElementById('password_confirmation')?.value || '';
+                        else if (name === 'faculty_id') val = document.getElementById('faculty_id')?.value || '';
+                        else if (name === 'department_id') val = document.getElementById('department_id')?.value || '';
+                        else if (name === 'program_id') val = document.getElementById('program_id')?.value || '';
+                        else if (name === 'degree_level') val = document.getElementById('degree_level')?.value || '';
+                        else if (name === 'generation') val = document.getElementById('generation')?.value || '';
+
+                        let err = '';
+                        if (name === 'name') {
+                            if (!val.trim()) err = '{{ __("ឈ្មោះអ្នកប្រើប្រាស់ត្រូវតែបំពេញ") }}';
+                            else if (val.length > 255) err = '{{ __("ឈ្មោះមិនអាចធំជាង 255 តួអក្សរឡើយ") }}';
+                        } else if (name === 'role') {
+                            if (!val) err = '{{ __("សូមជ្រើសរើសតួនាទី") }}';
+                        } else if (name === 'email') {
+                            if ((this.userRole === 'admin' || this.userRole === 'professor') && !val.trim()) err = '{{ __("អ៊ីម៉ែលត្រូវតែបំពេញ") }}';
+                            else if (val && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) err = '{{ __("អ៊ីម៉ែលមិនត្រឹមត្រូវ") }}';
+                        } else if (name === 'password') {
+                            if ((this.userRole === 'admin' || this.userRole === 'professor')) {
+                                if (!val) err = '{{ __("ពាក្យសម្ងាត់ត្រូវតែបំពេញ") }}';
+                                else if (val.length < 8) err = '{{ __("ពាក្យសម្ងាត់ត្រូវតែមានយ៉ាងតិច 8 តួអក្សរ") }}';
+                                else if (!/[a-z]/.test(val)) err = '{{ __("ពាក្យសម្ងាត់ត្រូវតែមានអក្ខរាតូចយ៉ាងតិចមួយ") }}';
+                                else if (!/[A-Z]/.test(val)) err = '{{ __("ពាក្យសម្ងាត់ត្រូវតែមានអក្ខរាធ្ងន់យ៉ាងតិចមួយ") }}';
+                                else if (!/[0-9]/.test(val)) err = '{{ __("ពាក្យសម្ងាត់ត្រូវតែមានចំនួនយ៉ាងតិចមួយ") }}';
+                                else if (!/[@$!%*?&#]/.test(val)) err = '{{ __("ពាក្យសម្ងាត់ត្រូវតែមានសញ្ញាពិសេសយ៉ាងតិចមួយ") }}';
+                            }
+                        } else if (name === 'password_confirmation') {
+                            let pw = document.getElementById('password')?.value || '';
+                            if ((this.userRole === 'admin' || this.userRole === 'professor') && val !== pw) err = '{{ __("ពាក្យសម្ងាត់មិនត្រូវគ្នា") }}';
+                        } else if (name === 'faculty_id') {
+                            if (this.userRole === 'professor' && !val) err = '{{ __("សូមជ្រើសរើសមហាវិទ្យាល័យ") }}';
+                        } else if (name === 'department_id') {
+                            if (this.userRole === 'professor' && !val) err = '{{ __("សូមជ្រើសរើសដេប៉ាតឺម៉ង់") }}';
+                        } else if (name === 'program_id') {
+                            if (this.userRole === 'student' && !val) err = '{{ __("សូមជ្រើសរើសកម្មវិធីសិក្សា") }}';
+                        } else if (name === 'degree_level') {
+                            if (this.userRole === 'student' && !val) err = '{{ __("សូមជ្រើសរើសកម្រិតសញ្ញាបត្រ") }}';
+                        } else if (name === 'generation') {
+                            if (this.userRole === 'student' && !val) err = '{{ __("សូមជ្រើសរើសជំនាន់") }}';
+                        }
+
+                        if (err) this.fieldErrors[name] = err;
+                        else delete this.fieldErrors[name];
+                    },
+
+                    onBlur(name) {
+                        this.touched[name] = true;
+                        this.validateField(name);
+                    },
+
+                    onInput(name) {
+                        if (this.touched[name]) this.validateField(name);
+                    }
                 }" class="space-y-6">
                 @csrf
                 <input type="hidden" id="profile_picture_base64" name="profile_picture_base64" value="" />
@@ -42,21 +104,23 @@
                             <x-input-label for="name" class="font-semibold text-gray-700 mb-1.5">
                                 {{ __('ឈ្មោះអ្នកប្រើប្រាស់') }}
                             </x-input-label>
-                            <x-text-input id="name" class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 py-2.5 px-4 h-[50px]" type="text" name="name" :value="old('name')" placeholder="{{ __('បញ្ចូលឈ្មោះអ្នកប្រើប្រាស់') }}" required autofocus />
+                            <x-text-input id="name" class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 py-2.5 px-4 h-[50px]" type="text" name="name" :value="old('name')" placeholder="{{ __('បញ្ចូលឈ្មោះអ្នកប្រើប្រាស់') }}" required autofocus @blur="onBlur('name')" @input="onInput('name')" :class="fieldErrors.name ? 'border-red-400 focus:ring-red-500 focus:border-red-500' : ''" />
                             <x-input-error :messages="$errors->get('name')" class="mt-2" />
+                            <p x-show="fieldErrors.name" x-text="fieldErrors.name" class="text-sm text-red-600 mt-2"></p>
                         </div>
 
                         <div>
                             <x-input-label for="role" class="font-semibold text-gray-700 mb-1.5">
                                 {{ __('តួនាទី') }}
                             </x-input-label>
-                            <select id="role" name="role" x-model="userRole" class="block w-full border-gray-200 bg-white text-gray-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 rounded-xl shadow-sm transition py-2.5 px-4 h-[50px]" required>
+                            <select id="role" name="role" x-model="userRole" class="block w-full border-gray-200 bg-white text-gray-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 rounded-xl shadow-sm transition py-2.5 px-4 h-[50px]" required @blur="onBlur('role')" @change="touched.role = true; validateField('role'); Object.keys(fieldErrors).forEach(k => { if (k !== 'role') validateField(k); })" :class="fieldErrors.role ? 'border-red-400 focus:ring-red-500 focus:border-red-500' : ''">
                                 <option value="">{{ __('ជ្រើសរើសតួនាទី') }}</option>
                                 <option value="admin">Admin</option>
                                 <option value="professor">Professor</option>
                                 <option value="student">Student</option>
                             </select>
                             <x-input-error :messages="$errors->get('role')" class="mt-2" />
+                            <p x-show="fieldErrors.role" x-text="fieldErrors.role" class="text-sm text-red-600 mt-2"></p>
                         </div>
                     </div>
                 </div>
@@ -75,8 +139,9 @@
                             <x-input-label for="email" class="font-semibold text-gray-700 mb-1.5">
                                 <i class="fas fa-envelope mr-1.5 text-purple-500"></i> {{ __('អ៊ីម៉ែល') }}
                             </x-input-label>
-                            <x-text-input id="email" class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 py-2.5 px-4 h-[50px]" type="email" name="email" :value="old('email')" placeholder="example@gmail.com" />
+                            <x-text-input id="email" class="block w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 py-2.5 px-4 h-[50px]" type="email" name="email" :value="old('email')" placeholder="example@gmail.com" @blur="onBlur('email')" @input="onInput('email')" :class="fieldErrors.email ? 'border-red-400 focus:ring-red-500 focus:border-red-500' : ''" />
                             <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                            <p x-show="fieldErrors.email" x-text="fieldErrors.email" class="text-sm text-red-600 mt-2"></p>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -95,19 +160,23 @@
                                         placeholder="{{ __('បញ្ចូលពាក្យសម្ងាត់') }}"
                                         class="block w-full h-full rounded-xl border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 py-2.5 px-4 pr-12 shadow-sm text-gray-900 bg-white transition"
                                         required
+                                        @blur="onBlur('password')"
                                         @input="
                                             let v = $event.target.value;
+                                            passwordValue = v;
                                             let s = 0;
                                             if (/[A-Z]/.test(v)) s++;
                                             if (/[a-z]/.test(v)) s++;
                                             if (/[0-9]/.test(v)) s++;
                                             if (/[@$!%*?&]/.test(v)) s++;
                                             if (v.length >= 8) s++;
-                                            let levels = ['{{ __('ខ្សោយ') }}','{{ __('មធ្យម') }}','{{ __('ល្អ') }}','{{ __('ខ្លាំង') }}','{{ __('ខ្លាំងណាស់') }}'];
+                                            let levels = ['{{ __("ខ្សោយ") }}','{{ __("មធ្យម") }}','{{ __("ល្អ") }}','{{ __("ខ្លាំង") }}','{{ __("ខ្លាំងណាស់") }}'];
                                             let colors = ['text-red-400','text-yellow-400','text-green-400','text-green-500','text-green-600'];
                                             passwordStrength = v ? levels[s > 0 ? s - 1 : 0] : '';
                                             passwordStrengthColor = v ? colors[s > 0 ? s - 1 : 0] : '';
+                                            onInput('password');
                                         "
+                                        :class="fieldErrors.password ? 'border-red-400 focus:ring-red-500 focus:border-red-500' : ''"
                                     />
                                     <button
                                         type="button"
@@ -118,7 +187,31 @@
                                     </button>
                                 </div>
                                 <p x-show="passwordStrength" x-text="'{{ __('កម្លាំងពាក្យសម្ងាត់៖') }} ' + passwordStrength" :class="passwordStrengthColor" class="text-sm mt-2"></p>
+                                <div x-show="(userRole === 'admin' || userRole === 'professor') && passwordValue" class="mt-2 space-y-1">
+                                    <p class="text-xs font-bold text-gray-500 mb-1">{{ __('តម្រូវការពាក្យសម្ងាត់៖') }}</p>
+                                    <div class="flex items-center gap-2 text-xs" :class="passwordValue.length >= 8 ? 'text-green-600' : 'text-gray-400'">
+                                        <i class="fas" :class="passwordValue.length >= 8 ? 'fa-check-circle' : 'fa-circle'"></i>
+                                        <span>{{ __('យ៉ាងតិច ៨ តួអក្សរ') }}</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 text-xs" :class="/[a-z]/.test(passwordValue) ? 'text-green-600' : 'text-gray-400'">
+                                        <i class="fas" :class="/[a-z]/.test(passwordValue) ? 'fa-check-circle' : 'fa-circle'"></i>
+                                        <span>{{ __('អក្ខរាតូច') }}</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 text-xs" :class="/[A-Z]/.test(passwordValue) ? 'text-green-600' : 'text-gray-400'">
+                                        <i class="fas" :class="/[A-Z]/.test(passwordValue) ? 'fa-check-circle' : 'fa-circle'"></i>
+                                        <span>{{ __('អក្ខរាធ្ងន់') }}</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 text-xs" :class="/[0-9]/.test(passwordValue) ? 'text-green-600' : 'text-gray-400'">
+                                        <i class="fas" :class="/[0-9]/.test(passwordValue) ? 'fa-check-circle' : 'fa-circle'"></i>
+                                        <span>{{ __('ចំនួន') }}</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 text-xs" :class="/[@$!%*?&#]/.test(passwordValue) ? 'text-green-600' : 'text-gray-400'">
+                                        <i class="fas" :class="/[@$!%*?&#]/.test(passwordValue) ? 'fa-check-circle' : 'fa-circle'"></i>
+                                        <span>{{ __('សញ្ញាពិសេស (@$!%*?&)') }}</span>
+                                    </div>
+                                </div>
                                 <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                                <p x-show="fieldErrors.password" x-text="fieldErrors.password" class="text-sm text-red-600 mt-2"></p>
                             </div>
 
                             {{-- បញ្ជាក់ពាក្យសម្ងាត់ --}}
@@ -136,6 +229,9 @@
                                         placeholder="{{ __('វាយពាក្យសម្ងាត់ម្តងទៀត') }}"
                                         class="block w-full h-full rounded-xl border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 py-2.5 px-4 pr-12 shadow-sm text-gray-900 bg-white transition"
                                         required
+                                        @blur="onBlur('password_confirmation')"
+                                        @input="onInput('password_confirmation')"
+                                        :class="fieldErrors.password_confirmation ? 'border-red-400 focus:ring-red-500 focus:border-red-500' : ''"
                                     />
                                     <button
                                         type="button"
@@ -146,6 +242,7 @@
                                     </button>
                                 </div>
                                 <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+                                <p x-show="fieldErrors.password_confirmation" x-text="fieldErrors.password_confirmation" class="text-sm text-red-600 mt-2"></p>
                             </div>
                         </div>
                     </div>
@@ -172,18 +269,19 @@
                             <x-input-label for="program_id" class="font-semibold text-gray-700 mb-1.5">
                                 <i class="fas fa-graduation-cap mr-1.5 text-emerald-500"></i> {{ __('កម្មវិធីសិក្សា') }}
                             </x-input-label>
-                            <select id="program_id" name="program_id" class="block w-full border-gray-200 bg-white text-gray-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 rounded-xl shadow-sm transition py-2.5 px-4 h-[50px]" required>
+                            <select id="program_id" name="program_id" class="block w-full border-gray-200 bg-white text-gray-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 rounded-xl shadow-sm transition py-2.5 px-4 h-[50px]" required @blur="onBlur('program_id')" @change="touched.program_id = true; validateField('program_id')" :class="fieldErrors.program_id ? 'border-red-400 focus:ring-red-500 focus:border-red-500' : ''">
                                 <option value="">{{ __('ជ្រើសរើសកម្មវិធីសិក្សា') }}</option>
                                 @foreach($programs as $program)
                                     <option value="{{ $program->id }}">{{ $program->name_km }}</option>
                                 @endforeach
                             </select>
+                            <p x-show="fieldErrors.program_id" x-text="fieldErrors.program_id" class="text-sm text-red-600 mt-2"></p>
                         </div>
                         <div>
                             <x-input-label for="degree_level" class="font-semibold text-gray-700 mb-1.5">
                                 <i class="fas fa-award mr-1.5 text-emerald-500"></i> {{ __('កម្រិតសញ្ញាបត្រ') }}
                             </x-input-label>
-                            <select id="degree_level" name="degree_level" class="block w-full border-gray-200 bg-white text-gray-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 rounded-xl shadow-sm transition py-2.5 px-4 h-[50px]" required>
+                            <select id="degree_level" name="degree_level" class="block w-full border-gray-200 bg-white text-gray-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 rounded-xl shadow-sm transition py-2.5 px-4 h-[50px]" required @blur="onBlur('degree_level')" @change="touched.degree_level = true; validateField('degree_level')" :class="fieldErrors.degree_level ? 'border-red-400 focus:ring-red-500 focus:border-red-500' : ''">
                                 <option value="">{{ __('ជ្រើសរើសកម្រិតសញ្ញាបត្រ') }}</option>
                                 <option value="បរិញ្ញាបត្រ">{{ __('បរិញ្ញាបត្រ') }}</option>
                                 <option value="បរិញ្ញាបត្ររង">{{ __('បរិញ្ញាបត្ររង') }}</option>
@@ -192,17 +290,19 @@
                                 <option value="វិញ្ញាបនបត្រ">{{ __('វិញ្ញាបនបត្រ') }}</option>
                                 <option value="ផ្សេងៗ">{{ __('ផ្សេងៗ') }}</option>
                             </select>
+                            <p x-show="fieldErrors.degree_level" x-text="fieldErrors.degree_level" class="text-sm text-red-600 mt-2"></p>
                         </div>
                         <div>
                             <x-input-label for="generation" class="font-semibold text-gray-700 mb-1.5">
                                 <i class="fas fa-layer-group mr-1.5 text-emerald-500"></i> {{ __('ជំនាន់') }}
                             </x-input-label>
-                            <select id="generation" name="generation" class="block w-full border-gray-200 bg-white text-gray-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 rounded-xl shadow-sm transition py-2.5 px-4 h-[50px]" required>
+                            <select id="generation" name="generation" class="block w-full border-gray-200 bg-white text-gray-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 rounded-xl shadow-sm transition py-2.5 px-4 h-[50px]" required @blur="onBlur('generation')" @change="touched.generation = true; validateField('generation')" :class="fieldErrors.generation ? 'border-red-400 focus:ring-red-500 focus:border-red-500' : ''">
                                 <option value="">{{ __('ជ្រើសរើសជំនាន់') }}</option>
                                 @foreach(\App\Models\Generation::where('is_active', true)->orderByDesc('name')->get() as $gen)
                                     <option value="{{ $gen->name }}">{{ $gen->name }} ({{ __('ចូលរៀនឆ្នាំ') }} {{ $gen->join_year }})</option>
                                 @endforeach
                             </select>
+                            <p x-show="fieldErrors.generation" x-text="fieldErrors.generation" class="text-sm text-red-600 mt-2"></p>
                         </div>
                     </div>
                 </div>
@@ -220,21 +320,23 @@
                             <x-input-label for="faculty_id" class="font-semibold text-gray-700 mb-1.5">
                                 <i class="fas fa-university mr-1.5 text-emerald-500"></i> {{ __('មហាវិទ្យាល័យ') }}
                             </x-input-label>
-                            <select id="faculty_id" name="faculty_id" class="block w-full border-gray-200 bg-white text-gray-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 rounded-xl shadow-sm transition py-2.5 px-4 h-[50px]">
+                            <select id="faculty_id" name="faculty_id" class="block w-full border-gray-200 bg-white text-gray-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 rounded-xl shadow-sm transition py-2.5 px-4 h-[50px]" @blur="onBlur('faculty_id')" @change="touched.faculty_id = true; validateField('faculty_id')" :class="fieldErrors.faculty_id ? 'border-red-400 focus:ring-red-500 focus:border-red-500' : ''">
                                 <option value="">{{ __('ជ្រើសរើសមហាវិទ្យាល័យ') }}</option>
                                 @foreach($faculties as $faculty)
                                     <option value="{{ $faculty->id }}">{{ $faculty->name_km ?? $faculty->name_en }}</option>
                                 @endforeach
                             </select>
+                            <p x-show="fieldErrors.faculty_id" x-text="fieldErrors.faculty_id" class="text-sm text-red-600 mt-2"></p>
                         </div>
                         <div>
                             <x-input-label for="department_id" class="font-semibold text-gray-700 mb-1.5">
                                 <i class="fas fa-building mr-1.5 text-emerald-500"></i> {{ __('ដេប៉ាតឺម៉ង់') }}
                             </x-input-label>
-                            <select id="department_id" name="department_id" class="block w-full border-gray-200 bg-white text-gray-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 rounded-xl shadow-sm transition py-2.5 px-4 h-[50px]">
+                            <select id="department_id" name="department_id" class="block w-full border-gray-200 bg-white text-gray-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 rounded-xl shadow-sm transition py-2.5 px-4 h-[50px]" @blur="onBlur('department_id')" @change="touched.department_id = true; validateField('department_id')" :class="fieldErrors.department_id ? 'border-red-400 focus:ring-red-500 focus:border-red-500' : ''">
                                 <option value="">{{ __('សូមជ្រើសរើសដេប៉ាតឺម៉ង់') }}</option>
                             </select>
                             <x-input-error :messages="$errors->get('department_id')" class="mt-2" />
+                            <p x-show="fieldErrors.department_id" x-text="fieldErrors.department_id" class="text-sm text-red-600 mt-2"></p>
                         </div>
                     </div>
                 </div>
