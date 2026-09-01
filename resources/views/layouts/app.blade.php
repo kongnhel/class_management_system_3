@@ -26,8 +26,6 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-        <link rel="preload" href="/fonts/KhmerOSBattambang.woff2" as="font" type="font/woff2" crossorigin>
-
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 <style>
     /* Scrollbar សម្រាប់ Chat Box */
