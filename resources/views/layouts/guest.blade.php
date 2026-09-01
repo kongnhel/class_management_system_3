@@ -22,7 +22,7 @@
 
         <style>
             body, nav, div {
-                font-family: 'Battambang', sans-serif;
+                font-family: 'Battambang-Regular', sans-serif;
             }
         </style>
     </head>
