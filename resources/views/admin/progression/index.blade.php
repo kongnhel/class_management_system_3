@@ -158,8 +158,8 @@
                                 <select name="schedule_group"
                                         class="py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full transition-all">
                                     <option value="">ទាំងអស់</option>
-                                    <option value="mon_fri" {{ ($filters['scheduleGroup'] ?? '') == 'mon_fri' ? 'selected' : '' }}>ចន្ទ – សុក្រ (ថ្ងៃធ្វើការ)</option>
-                                    <option value="sat_sun" {{ ($filters['scheduleGroup'] ?? '') == 'sat_sun' ? 'selected' : '' }}>សៅរ៍ – អាទិត្យ (ថ្ងៃសម្រាក)</option>
+                                    <option value="mon_fri" {{ ($filters['scheduleGroup'] ?? '') == 'mon_fri' ? 'selected' : '' }}>ចន្ទ – សុក្រ</option>
+                                    <option value="sat_sun" {{ ($filters['scheduleGroup'] ?? '') == 'sat_sun' ? 'selected' : '' }}>សៅរ៍ – អាទិត្យ</option>
                                 </select>
                             </div>
                             <div class="md:col-span-2">
