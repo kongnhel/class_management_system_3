@@ -4,51 +4,87 @@
         $profileUrl = $user->userProfile?->profile_picture_url;
     @endphp
 
-    <div class="min-h-screen bg-[#f8fafc] py-12 font-sans antialiased">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            
-            {{-- Header Section --}}
-            <div class="mb-10 text-center md:text-left">
-                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">
-                    {{ __('profile_title') }}
-                </h1>
-                <p class="mt-2 text-slate-500">
-                    {{ __('profile_subtitle') }}
-                </p>
-            </div>
-
-            @if (session('success'))
-                <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 4000)" 
-                     class="mb-6 flex items-center p-4 bg-emerald-50 border-l-4 border-emerald-500 rounded-r-xl shadow-sm animate-fade-in-down">
-                    <svg class="h-5 w-5 text-emerald-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                    </svg>
-                    <span class="text-emerald-800 font-bold text-sm">{{ session('success') }}</span>
+    <div class="min-h-screen bg-gray-50">
+        {{-- Dark Gradient Header --}}
+        <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white pb-16 pt-10">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center gap-4">
+                    <a href="{{ url()->previous() }}" class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
+                        <i class="fas fa-arrow-left text-white"></i>
+                    </a>
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 flex items-center justify-center">
+                            <i class="fas fa-user-cog text-emerald-300 text-xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-3xl font-bold tracking-tight">{{ __('កែប្រែប្រវត្តិរូប') }}</h2>
+                            <p class="text-slate-400 mt-1 text-sm">{{ __('គ្រប់គ្រងព័ត៌មានផ្ទាល់ខ្លួន និងការកំណត់សុវត្ថិភាពរបស់អ្នក') }}</p>
+                        </div>
+                    </div>
                 </div>
+            </div>
+        </div>
+
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 pb-12 relative z-10">
+
+            {{-- Success Message --}}
+            @if (session('success'))
+            <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 4000)" class="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 mb-6">
+                <div class="flex items-start gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-check-circle text-emerald-500"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="font-bold text-gray-900 text-sm">{{ __('ជោគជ័យ!') }}</p>
+                        <p class="text-emerald-600 text-xs mt-1">{{ session('success') }}</p>
+                    </div>
+                    <button @click="show = false" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times text-xs"></i></button>
+                </div>
+            </div>
+            @endif
+
+            {{-- Error Banner --}}
+            @if ($errors->any())
+            <div x-data="{ show: true }" x-show="show" class="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 mb-6">
+                <div class="flex items-start gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-exclamation-circle text-red-500"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="font-bold text-gray-900 text-sm">{{ __('មានបញ្ហា!') }}</p>
+                        <ul class="text-red-600 text-xs mt-1 space-y-0.5">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    <button @click="show = false" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times text-xs"></i></button>
+                </div>
+            </div>
             @endif
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                
+
                 {{-- Left Side: Profile Summary Card --}}
                 <div class="lg:col-span-4 space-y-6">
-                    <div class="bg-white rounded-[2rem] shadow-sm border border-slate-200 overflow-hidden">
-                        <div class="h-32 bg-gradient-to-r from-slate-800 to-slate-900"></div>
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                        <div class="h-32 bg-gradient-to-br from-slate-800 to-slate-900"></div>
                         <div class="px-6 pb-8">
                             <div class="relative flex justify-center -mt-16 mb-6">
                                 <form method="post" action="{{ route('profile.update-picture') }}" enctype="multipart/form-data" id="picture-form">
                                     @csrf
                                     <div class="relative group cursor-pointer" id="profile-picture-container">
-                                        <div class="w-32 h-32 rounded-full border-4 border-white shadow-lg overflow-hidden bg-slate-100">
+                                        <div class="w-32 h-32 rounded-full border-4 border-white shadow-lg overflow-hidden bg-gray-100">
                                             @if ($profileUrl)
                                                 <img src="{{ $profileUrl }}" id="profile-picture-preview" class="w-full h-full object-cover">
                                             @else
-                                                <div id="profile-picture-placeholder" class="w-full h-full flex items-center justify-center text-3xl font-bold text-slate-400">
+                                                <div id="profile-picture-placeholder" class="w-full h-full flex items-center justify-center text-3xl font-bold text-gray-400">
                                                     {{ Str::upper(Str::substr($user->name, 0, 1)) }}
                                                 </div>
                                             @endif
                                         </div>
                                         <div class="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                            <i class="fas fa-camera text-white text-xl"></i>
                                         </div>
                                         <input id="profile_picture" name="" type="file" class="hidden" accept="image/*" />
                                         <input type="hidden" id="profile_picture_base64" name="profile_picture_base64" value="" />
@@ -56,10 +92,10 @@
                                 </form>
                             </div>
                             <div class="text-center">
-                                <h3 class="text-xl font-bold text-slate-900">{{ $user->name }}</h3>
-                                <p class="text-sm text-slate-500">{{ $user->email }}</p>
+                                <h3 class="text-xl font-bold text-gray-900">{{ $user->name }}</h3>
+                                <p class="text-sm text-gray-500">{{ $user->email }}</p>
                                 <div class="mt-4 inline-flex items-center px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold uppercase tracking-wider">
-                                    {{ Auth::user()->role ?? 'User Account' }}
+                                    {{ $user->role }}
                                 </div>
                             </div>
                         </div>
@@ -67,109 +103,135 @@
                 </div>
 
                 {{-- Right Side: Settings Forms --}}
-                <div class="lg:col-span-8 space-y-8">
-                    
-                    {{-- 1. Profile Information --}}
-                    <section class="bg-white rounded-[2rem] shadow-sm border border-slate-200 p-8">
-                        <div class="flex items-center gap-4 mb-8">
-                            <div class="p-3 bg-emerald-50 rounded-2xl">
-                                <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                <div class="lg:col-span-8 space-y-6">
+
+                    {{-- Section 1: Profile Information --}}
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
+                                <span class="text-emerald-600 font-bold text-sm">1</span>
                             </div>
                             <div>
-                                <h2 class="text-xl font-bold text-slate-900">{{ __('profile_basic_info') }}</h2>
-                                <p class="text-sm text-slate-500">{{ __('profile_basic_desc') }}</p>
+                                <h3 class="text-lg font-bold text-gray-900">{{ __('ព័ត៌មានមូលដ្ឋាន') }}</h3>
+                                <p class="text-xs text-gray-500">{{ __('កែប្រែឈ្មោះ និងអ៊ីម៉ែលរបស់អ្នក') }}</p>
                             </div>
                         </div>
 
-                        <form method="post" action="{{ route('profile.update') }}" class="space-y-6">
+                        <form method="post" action="{{ route('profile.update') }}" class="space-y-5">
                             @csrf @method('patch')
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 <div>
-                                    <x-input-label for="name" :value="__('profile_full_name')" class="text-slate-700 font-bold ml-1" />
-                                    <x-text-input id="name" name="name" type="text" class="mt-1.5 block w-full rounded-2xl border-slate-200 bg-slate-50/50 focus:bg-white transition-all shadow-sm" :value="old('name', $user->name)" :placeholder="__('full_name')" required autofocus />
+                                    <label for="name" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ឈ្មោះអ្នកប្រើប្រាស់') }} <span class="text-red-500">*</span></label>
+                                    <input id="name" name="name" type="text" value="{{ old('name', $user->name) }}" required autofocus
+                                        class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition text-sm px-4 py-2.5" />
                                     <x-input-error :messages="$errors->get('name')" class="mt-2" />
                                 </div>
                                 <div>
-                                    <x-input-label for="email" :value="__('profile_email')" class="text-slate-700 font-bold ml-1" />
-                                    <x-text-input id="email" name="email" type="email" class="mt-1.5 block w-full rounded-2xl border-slate-200 bg-slate-50/50 focus:bg-white transition-all shadow-sm" :value="old('email', $user->email)" placeholder="example@gmail.com" required />
+                                    <label for="email" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('អ៊ីម៉ែល') }} <span class="text-red-500">*</span></label>
+                                    <input id="email" name="email" type="email" value="{{ old('email', $user->email) }}" required placeholder="example@gmail.com"
+                                        class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition text-sm px-4 py-2.5" />
                                     <x-input-error :messages="$errors->get('email')" class="mt-2" />
                                 </div>
                             </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label class="block text-sm font-bold text-slate-700 ml-1 mb-1.5">{{ __('identifier') }}</label>
-                                    <input type="text" value="{{ $user->student_id_code }}" readonly disabled
-                                           class="mt-1.5 block w-full rounded-2xl border-slate-200 bg-slate-100 text-slate-500 px-4 py-2.5 cursor-not-allowed" />
-                                </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('លេខសម្គាល់') }}</label>
+                                <input type="text" value="{{ $user->student_id_code }}" readonly disabled
+                                    class="w-full rounded-xl bg-gray-50 border border-gray-200 text-gray-500 px-4 py-2.5 cursor-not-allowed text-sm" />
                             </div>
-                            <div class="flex justify-end pt-4">
-                                <x-primary-button class="bg-slate-900 hover:bg-slate-800 text-white rounded-xl px-8 py-3 font-bold transition-all shadow-lg shadow-slate-200">
-                                    {{ __('profile_save') }}
-                                </x-primary-button>
+                            <div class="flex justify-end">
+                                <button type="submit" class="inline-flex items-center gap-2 px-8 py-3 bg-emerald-600 rounded-xl font-bold text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all shadow-lg shadow-emerald-200 text-sm">
+                                    <i class="fas fa-save"></i> {{ __('រក្សាទុក') }}
+                                </button>
                             </div>
                         </form>
-                    </section>
+                    </div>
 
-                    {{-- 2. Password Security --}}
-                    <section class="bg-white rounded-[2rem] shadow-sm border border-slate-200 p-8">
-                        <div class="flex items-center gap-4 mb-8">
-                            <div class="p-3 bg-amber-50 rounded-2xl">
-                                <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                    {{-- Section 2: Password Security --}}
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center">
+                                <span class="text-purple-600 font-bold text-sm">2</span>
                             </div>
                             <div>
-                                <h2 class="text-xl font-bold text-slate-900">{{ __('profile_security') }}</h2>
-                                <p class="text-sm text-slate-500">{{ __('profile_security_desc') }}</p>
+                                <h3 class="text-lg font-bold text-gray-900">{{ __('ពាក្យសម្ងាត់ និងសុវត្ថិភាព') }}</h3>
+                                <p class="text-xs text-gray-500">{{ __('កំណត់ពាក្យសម្ងាត់ថ្មីសម្រាប់គណនីរបស់អ្នក') }}</p>
                             </div>
                         </div>
 
-                        <form method="post" action="{{ route('password.update') }}" class="space-y-6">
+                        <form method="post" action="{{ route('password.update') }}" class="space-y-5">
                             @csrf @method('put')
-                            <div class="space-y-5">
+                            <div>
+                                <label for="current_password" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ពាក្យសម្ងាត់បច្ចុប្បន្ន') }} <span class="text-red-500">*</span></label>
+                                <input id="current_password" name="current_password" type="password"
+                                    class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition text-sm px-4 py-2.5" />
+                                <x-input-error :messages="$errors->updatePassword->get('current_password')" class="mt-2" />
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 <div>
-                                    <x-input-label for="current_password" :value="__('profile_current_password')" class="text-slate-700 font-bold ml-1" />
-                                    <x-text-input id="current_password" name="current_password" type="password" class="mt-1.5 block w-full rounded-2xl border-slate-200 bg-slate-50/50 shadow-sm" :placeholder="__('current_password')" />
-                                    <x-input-error :messages="$errors->updatePassword->get('current_password')" class="mt-2" />
+                                    <label for="password" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ពាក្យសម្ងាត់ថ្មី') }} <span class="text-red-500">*</span></label>
+                                    <input id="password" name="password" type="password"
+                                        class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition text-sm px-4 py-2.5" />
+                                    <x-input-error :messages="$errors->updatePassword->get('password')" class="mt-2" />
                                 </div>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div>
-                                        <x-input-label for="password" :value="__('profile_new_password')" class="text-slate-700 font-bold ml-1" />
-                                        <x-text-input id="password" name="password" type="password" class="mt-1.5 block w-full rounded-2xl border-slate-200 bg-slate-50/50 shadow-sm" :placeholder="__('new_password')" />
-                                        <x-input-error :messages="$errors->updatePassword->get('password')" class="mt-2" />
-                                    </div>
-                                    <div>
-                                        <x-input-label for="password_confirmation" :value="__('profile_confirm_password')" class="text-slate-700 font-bold ml-1" />
-                                        <x-text-input id="password_confirmation" name="password_confirmation" type="password" class="mt-1.5 block w-full rounded-2xl border-slate-200 bg-slate-50/50 shadow-sm" :placeholder="__('confirm_new_password')" />
-                                    </div>
+                                <div>
+                                    <label for="password_confirmation" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('បញ្ជាក់ពាក្យសម្ងាត់ថ្មី') }} <span class="text-red-500">*</span></label>
+                                    <input id="password_confirmation" name="password_confirmation" type="password"
+                                        class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition text-sm px-4 py-2.5" />
                                 </div>
                             </div>
-                            <div class="flex justify-end pt-4">
-                                <x-primary-button class="bg-amber-600 hover:bg-amber-700 text-white rounded-xl px-8 py-3 font-bold transition-all shadow-lg shadow-amber-200">
-                                    {{ __('profile_update_password') }}
-                                </x-primary-button>
+                            <div class="flex justify-end">
+                                <button type="submit" class="inline-flex items-center gap-2 px-8 py-3 bg-purple-600 rounded-xl font-bold text-white hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all shadow-lg shadow-purple-200 text-sm">
+                                    <i class="fas fa-key"></i> {{ __('កែប្រែពាក្យសម្ងាត់') }}
+                                </button>
                             </div>
                         </form>
-                    </section>
+                    </div>
 
-                    {{-- 3. Danger Zone --}}
-                    <section class="bg-red-50/50 rounded-[2rem] border border-red-100 p-8">
-                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                            <div>
-                                <h2 class="text-lg font-bold text-red-700">{{ __('profile_delete_account') }}</h2>
-                                <p class="text-sm text-red-600/70">{{ __('profile_delete_warning') }}</p>
+                    {{-- Section 3: Danger Zone --}}
+                    <div class="bg-white rounded-2xl shadow-sm border border-red-200 p-6">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center">
+                                <span class="text-red-600 font-bold text-sm">3</span>
                             </div>
-                            <button x-data="" x-on:click.prevent="$dispatch('open-modal', 'confirm-user-deletion')" 
-                                    class="inline-flex justify-center items-center px-6 py-3 bg-white border border-red-200 text-red-600 rounded-xl font-bold hover:bg-red-600 hover:text-white transition-all shadow-sm">
-                                {{ __('profile_delete_btn') }}
+                            <div>
+                                <h3 class="text-lg font-bold text-red-700">{{ __('តំបន់គ្រោះថ្នាក់') }}</h3>
+                                <p class="text-xs text-red-500">{{ __('ការលុបគណនីមិនអាចដកហូតបានទេ') }}</p>
+                            </div>
+                        </div>
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div>
+                                <p class="text-sm text-gray-600">{{ __('ប្រសិនបើអ្នកលុបគណនី ទិន្នន័យទាំងអស់នឹងត្រូវបាត់បង់ជាអច្ឆិត្រ។') }}</p>
+                            </div>
+                            <button x-data="" x-on:click.prevent="$dispatch('open-modal', 'confirm-user-deletion')"
+                                class="inline-flex items-center gap-2 px-6 py-3 bg-white border border-red-200 text-red-600 rounded-xl font-bold hover:bg-red-50 transition-all shadow-sm text-sm flex-shrink-0">
+                                <i class="fas fa-trash-alt"></i> {{ __('លុបគណនី') }}
                             </button>
                         </div>
-                    </section>
+                    </div>
 
                 </div>
             </div>
         </div>
     </div>
 
-    {{-- File Preview & Compress Script --}}
+    {{-- Delete Account Modal --}}
+    <x-modal name="confirm-user-deletion" :show="false">
+        <form method="post" action="{{ route('profile.destroy') }}" class="p-6">
+            @csrf @method('delete')
+            <h2 class="text-lg font-bold text-gray-900">{{ __('តើអ្នកប្រាកដទេ?') }}</h2>
+            <p class="mt-1 text-sm text-gray-600">{{ __('សូមបញ្ចូលពាក្យសម្ងាត់ដើម្បីបញ្ជាក់ថាអ្នកពិតជាចង់លុបគណនីនេះ។') }}</p>
+            <div class="mt-4">
+                <x-input-label for="password" value="{{ __('ពាក្យសម្ងាត់') }}" class="sr-only" />
+                <x-text-input id="password" name="password" type="password" class="mt-1 block w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition text-sm px-4 py-2.5" placeholder="{{ __('បញ្ចូលពាក្យសម្ងាត់') }}" />
+                <x-input-error :messages="$errors->updatePassword->get('password')" class="mt-2" />
+            </div>
+            <div class="mt-6 flex justify-end gap-3">
+                <x-secondary-button x-on:click="$dispatch('close-modal')">{{ __('បោះបង់') }}</x-secondary-button>
+                <x-danger-button>{{ __('លុបគណនី') }}</x-danger-button>
+            </div>
+        </form>
+    </x-modal>
+
     <script>
         document.getElementById('profile-picture-container').onclick = function() { document.getElementById('profile_picture').click(); };
 
