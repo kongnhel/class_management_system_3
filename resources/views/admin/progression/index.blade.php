@@ -478,7 +478,7 @@
             }
          "
          x-show="selectedCount > 0" x-transition
-         class="fixed bottom-0 inset-x-0 z-50 bg-white border-t border-gray-200 shadow-lg shadow-gray-200/50">
+         class="fixed bottom-0 left-0 right-0 lg:left-72 z-50 bg-white border-t border-gray-200 shadow-lg shadow-gray-200/50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <div class="h-9 w-9 bg-emerald-50 rounded-lg flex items-center justify-center">

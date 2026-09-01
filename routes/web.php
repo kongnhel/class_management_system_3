@@ -232,6 +232,7 @@ Route::middleware(['auth', 'role:admin', 'throttle:120,1'])->prefix('admin')->na
 
     // Attendance Dashboard
     Route::get('/attendance/professor-checkins', [AdminAttendanceController::class, 'professorCheckins'])->name('attendance.professorCheckins');
+    Route::get('/attendance/professor-checkins/export', [AdminAttendanceController::class, 'exportProfessorCheckins'])->name('attendance.professorCheckinsExport');
     Route::get('/attendance', [AdminAttendanceController::class, 'index'])->name('attendance.index');
     Route::get('/attendance/{courseOffering}', [AdminAttendanceController::class, 'show'])->name('attendance.show');
     Route::get('/attendance/{courseOffering}/export', [AdminAttendanceController::class, 'exportAttendance'])->name('attendance.export');
