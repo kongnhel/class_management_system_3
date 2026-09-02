@@ -1,4 +1,4 @@
-﻿<x-app-layout>
+<x-app-layout>
     <div class="bg-gray-50 min-h-screen font-sans text-gray-900">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             {{-- Header --}}
@@ -210,6 +210,102 @@
                     </table>
                 </div>
             </div>
+
+            {{-- Re-Exam Results Section --}}
+            @php
+                $reExamEntries = [];
+                foreach ($students as $student) {
+                    foreach (['assignment', 'midterm', 'final'] as $type) {
+                        $cs = $student->component_status[$type] ?? null;
+                        if ($cs && ($cs['has_re_exam'] ?? false)) {
+                            $typeLabel = match($type) {
+                                'assignment' => __('កិច្ចការ'),
+                                'midterm' => __('ប្រឡងពាក់កណ្ដាល់'),
+                                'final' => __('ប្រឡងប្រចាំឆមាស'),
+                                default => ucfirst($type),
+                            };
+                            $reExamEntries[] = [
+                                'student' => $student,
+                                'type' => $type,
+                                'type_label' => $typeLabel,
+                                'original_score' => $cs['original_score'] ?? 0,
+                                're_exam_score' => $cs['re_exam_score'] ?? $cs['score'] ?? 0,
+                                'passing' => $cs['passing'] ?? false,
+                                'threshold' => \App\Services\GradingService::getPassThreshold($type),
+                            ];
+                        }
+                    }
+                }
+            @endphp
+            @if(count($reExamEntries) > 0)
+            <div class="mt-8 bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
+                            <i class="fas fa-redo text-amber-500 text-sm"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900">{{ __('លទ្ធផលប្រឡងសង') }}</h3>
+                    </div>
+                    <span class="px-3 py-1 rounded-full bg-amber-100 text-xs font-bold text-amber-600">{{ count($reExamEntries) }} {{ __('ករណី') }}</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead>
+                            <tr class="bg-gray-50">
+                                <th class="px-4 py-3 text-center text-[11px] font-bold text-gray-500 uppercase tracking-wider">#</th>
+                                <th class="px-4 py-3 text-left text-[11px] font-bold text-gray-500 uppercase tracking-wider">{{ __('ឈ្មោះ') }}</th>
+                                <th class="px-4 py-3 text-center text-[11px] font-bold text-amber-600 uppercase tracking-wider">{{ __('ប្រភេទ') }}</th>
+                                <th class="px-4 py-3 text-center text-[11px] font-bold text-rose-500 uppercase tracking-wider">{{ __('ពិន្ទុដើម') }}</th>
+                                <th class="px-4 py-3 text-center text-[11px] font-bold text-blue-600 uppercase tracking-wider">{{ __('ពិន្ទុប្រឡងសង') }}</th>
+                                <th class="px-4 py-3 text-center text-[11px] font-bold text-gray-500 uppercase tracking-wider">{{ __('ត្រូវការ') }}</th>
+                                <th class="px-4 py-3 text-center text-[11px] font-bold text-gray-600 uppercase tracking-wider">{{ __('លទ្ធផល') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-100">
+                            @foreach($reExamEntries as $idx => $entry)
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-4 py-3 text-center text-sm font-bold text-gray-400">{{ $idx + 1 }}</td>
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center flex-shrink-0">
+                                            <span class="text-white font-bold text-xs">{{ mb_substr($entry['student']->studentProfile?->full_name_km ?? $entry['student']->name, 0, 1) }}</span>
+                                        </div>
+                                        <div>
+                                            <div class="font-semibold text-sm text-gray-900">{{ $entry['student']->studentProfile?->full_name_km ?? $entry['student']->name }}</div>
+                                            <div class="text-[11px] text-gray-400">{{ $entry['student']->student_id_code ?? '' }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3 text-center">
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-600">{{ $entry['type_label'] }}</span>
+                                </td>
+                                <td class="px-4 py-3 text-center">
+                                    <span class="text-xs font-bold text-rose-500">{{ number_format($entry['original_score'], 1) }}</span>
+                                </td>
+                                <td class="px-4 py-3 text-center">
+                                    <span class="text-xs font-bold text-blue-600">{{ number_format($entry['re_exam_score'], 1) }}</span>
+                                </td>
+                                <td class="px-4 py-3 text-center">
+                                    <span class="text-xs font-bold text-gray-500">≥ {{ $entry['threshold'] }}</span>
+                                </td>
+                                <td class="px-4 py-3 text-center">
+                                    @if($entry['passing'])
+                                        <span class="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-emerald-100 text-emerald-700">
+                                            <i class="fas fa-check mr-0.5"></i> {{ __('ជាប់') }}
+                                        </span>
+                                    @else
+                                        <span class="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-rose-100 text-rose-700">
+                                            <i class="fas fa-times mr-0.5"></i> {{ __('មិនជាប់') }}
+                                        </span>
+                                    @endif
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            @endif
         </div>
     </div>
 </x-app-layout>
