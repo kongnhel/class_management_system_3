@@ -140,7 +140,7 @@
         var departmentSelect = document.getElementById('department_id');
 
         function filterDepartments(facultyId, selectedDeptId) {
-            departmentSelect.innerHTML = '<option value="">{{ __("ជ្រើសរើសមដេប៉ាតឺម៉ង់") }}</option>';
+            departmentSelect.innerHTML = '<option value="">{{ __("សូមជ្រើសរើសមហាវិទ្យាល័យមុន") }}</option>';
             var filtered = departments.filter(function(d) { return d.faculty_id == facultyId; });
             filtered.forEach(function(d) {
                 var opt = document.createElement('option');
