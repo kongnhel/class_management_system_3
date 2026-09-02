@@ -357,16 +357,20 @@
     // --- Draggable FAB ---
     function makeDraggable() {
         const container = document.getElementById('draggableChat');
-        if (!container) return;
+        const btn = document.getElementById('chatBtn');
+        if (!container || !btn) return;
 
         let isDragging = false;
-        let hasMoved = false;
+        let didDrag = false;
         let startX, startY, initialX, initialY;
+        let mousedownTime = 0;
         const DRAG_THRESHOLD = 5;
+        const LONG_PRESS_MS = 300;
 
         const startDrag = (e) => {
             isDragging = true;
-            hasMoved = false;
+            didDrag = false;
+            mousedownTime = Date.now();
             const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
             const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
             const rect = container.getBoundingClientRect();
@@ -382,9 +386,9 @@
             const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
             const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
             if (Math.abs(clientX - startX) > DRAG_THRESHOLD || Math.abs(clientY - startY) > DRAG_THRESHOLD) {
-                hasMoved = true;
+                didDrag = true;
             }
-            if (!hasMoved) return;
+            if (!didDrag) return;
             let x = Math.max(10, Math.min(initialX + clientX - startX, window.innerWidth - container.offsetWidth - 10));
             let y = Math.max(10, Math.min(initialY + clientY - startY, window.innerHeight - container.offsetHeight - 10));
             container.style.left = x + 'px';
@@ -398,25 +402,20 @@
             container.style.transition = 'all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28)';
         };
 
-        // Click handler — only opens chat if user didn't drag
-        const btn = document.getElementById('chatBtn');
-        if (btn) {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                if (hasMoved) {
-                    hasMoved = false;
-                    return;
-                }
-                hasMoved = false;
-                toggleAIChat();
-            });
-        }
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            var holdDuration = Date.now() - mousedownTime;
+            if (didDrag || holdDuration > LONG_PRESS_MS) {
+                return;
+            }
+            toggleAIChat();
+        });
 
-        container.addEventListener('mousedown', startDrag);
+        btn.addEventListener('mousedown', startDrag);
         document.addEventListener('mousemove', onDrag);
         document.addEventListener('mouseup', stopDrag);
-        container.addEventListener('touchstart', startDrag, { passive: false });
+        btn.addEventListener('touchstart', startDrag, { passive: false });
         document.addEventListener('touchmove', onDrag, { passive: false });
         document.addEventListener('touchend', stopDrag);
     }
