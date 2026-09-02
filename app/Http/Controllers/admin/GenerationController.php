@@ -69,10 +69,6 @@ class GenerationController extends Controller
 
         $status = $generation->is_active ? 'សកម្ម' : 'មិនសកម្ម';
 
-        if (request()->expectsJson()) {
-            return response()->json(['is_active' => $generation->is_active]);
-        }
-
         return redirect()->route('admin.generations.index')
             ->with('success', __('ជំនាន់នេះត្រូវបានកំណត់ជា :status។', ['status' => $status]));
     }

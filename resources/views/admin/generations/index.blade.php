@@ -91,27 +91,20 @@
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-2">
-                                    <div x-data="{ active: {{ Js::from($gen->is_active) }}, saving: false }" class="inline-flex">
-                                        <button type="button" :disabled="saving"
+                                    <div x-data="{ active: {{ Js::from($gen->is_active) }} }" class="inline-flex">
+                                        <button type="button"
                                             @click="
-                                                saving = true;
+                                                active = !active;
                                                 fetch('{{ route('admin.generations.toggle', $gen) }}', {
-                                                    method: 'PATCH',
-                                                    headers: {
-                                                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                                        'Accept': 'application/json'
-                                                    }
-                                                })
-                                                .then(function(r) {
-                                                    if (!r.ok) throw new Error('Toggle failed');
-                                                    return r.json();
-                                                })
-                                                .then(function(d) { active = d.is_active; saving = false; })
-                                                .catch(function() { saving = false; });
+                                                    method: 'POST',
+                                                    body: new URLSearchParams({
+                                                        '_token': '{{ csrf_token() }}',
+                                                        '_method': 'PATCH'
+                                                    })
+                                                }).then(function() { window.location.reload(); });
                                             "
-                                            class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 cursor-pointer disabled:opacity-50"
-                                            :class="active ? 'bg-emerald-500' : 'bg-gray-300'"
-                                            :title="active ? 'បិទសកម្មភាព' : 'បើកសកម្មភាព'">
+                                            class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 cursor-pointer"
+                                            :class="active ? 'bg-emerald-500' : 'bg-gray-300'">
                                             <span class="inline-block h-4 w-4 rounded-full bg-white shadow transition-transform duration-200"
                                                   :class="active ? 'translate-x-6' : 'translate-x-1'"></span>
                                         </button>
