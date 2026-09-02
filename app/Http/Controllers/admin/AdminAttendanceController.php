@@ -237,6 +237,16 @@ class AdminAttendanceController extends Controller
 
     public function exportProfessorCheckins(Request $request)
     {
+        $request->validate([
+            'semester' => 'required|string',
+            'academic_year' => 'required|string',
+            'day_type' => 'required|in:weekend,weekday',
+        ], [
+            'semester.required' => 'សូមជ្រើសរើសឆមាស',
+            'academic_year.required' => 'សូមជ្រើសរើសឆ្នាំសិក្សា',
+            'day_type.required' => 'សូមជ្រើសរើសប្រភេទថ្ងៃ',
+        ]);
+
         $query = AttendanceProfessor::with(['professor', 'courseOffering.course', 'courseOffering.targetPrograms']);
 
         if ($request->filled('search')) {
@@ -271,20 +281,27 @@ class AdminAttendanceController extends Controller
             $query->whereDate('verified_at', '<=', $request->input('date_to'));
         }
 
+        $semester = $request->input('semester');
+        $academicYear = $request->input('academic_year');
+        $dayType = $request->input('day_type');
+
         $checkins = $query->orderBy('verified_at', 'desc')->get();
 
+        // Filter by day_type (weekend/weekday) using Carbon
+        if ($dayType === 'weekend') {
+            $checkins = $checkins->filter(fn ($r) => $r->verified_at && \Carbon\Carbon::parse($r->verified_at)->isWeekend());
+        } elseif ($dayType === 'weekday') {
+            $checkins = $checkins->filter(fn ($r) => $r->verified_at && ! \Carbon\Carbon::parse($r->verified_at)->isWeekend());
+        }
+
         $now = \Carbon\Carbon::now('Asia/Phnom_Penh');
-        $monthStart = $now->copy()->startOfMonth();
-        $weekStart = $now->copy()->startOfWeek();
 
         $stats = [
-            'total' => AttendanceProfessor::count(),
-            'this_month' => AttendanceProfessor::where('verified_at', '>=', $monthStart)->count(),
-            'this_week' => AttendanceProfessor::where('verified_at', '>=', $weekStart)->count(),
-            'unique_professors' => AttendanceProfessor::where('verified_at', '>=', $monthStart)->distinct('professor_id')->count('professor_id'),
+            'total' => $checkins->count(),
         ];
 
-        $fileName = 'Professor_Checkins_'.$now->format('Y-m-d_H-i').'.xlsx';
+        $fileName = 'Professor_Checkins_'.$semester.'_'.$academicYear.'_'.$dayType.'_'.$now->format('Y-m-d_H-i').'.xlsx';
+        $fileName = str_replace([' ', '/', '\\'], '_', $fileName);
 
         return Excel::download(
             new \App\Exports\ProfessorCheckinsExcelExport($checkins, $stats),

@@ -15,10 +15,23 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
+                    @if(request('semester') && request('academic_year') && request('day_type'))
                     <a href="{{ route('admin.attendance.professorCheckinsExport', request()->query()) }}" class="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-all shadow-sm shadow-emerald-200">
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                         នាំចេញទាំងអស់
                     </a>
+                    @else
+                    <div class="relative group">
+                        <button type="button" disabled class="inline-flex items-center gap-2 bg-gray-300 text-gray-500 px-4 py-2.5 rounded-xl text-sm font-medium cursor-not-allowed">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            នាំចេញទាំងអស់
+                        </button>
+                        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs font-bold rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                            សូមជ្រើសរើសឆមាស ឆ្នាំសិក្សា និងប្រភេទថ្ងៃដើម្បីនាំចេញ
+                            <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-900"></div>
+                        </div>
+                    </div>
+                    @endif
                     @if(request('professor_id') && request('semester') && request('academic_year') && request('day_type'))
                         @php
                             $filteredProfessor = $professors->firstWhere('id', request('professor_id'));

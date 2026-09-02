@@ -58,7 +58,7 @@
                             <option value="weekend" {{ ($dayType ?? request('day_type')) == 'weekend' ? 'selected' : '' }}>ថ្ងៃសប្តាហ៍ (សៅរ៍-អាទិត្យ)</option>
                         </select>
                     </div>
-                    <div class="flex gap-2">
+                    <div class="flex gap-2 items-center">
                         <button type="submit" class="px-4 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-bold hover:bg-emerald-700 transition-all">
                             <i class="fas fa-search"></i>
                         </button>
@@ -67,6 +67,16 @@
                            class="px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-sm font-bold transition-all flex items-center gap-2">
                             <i class="fas fa-download"></i> {{ __('នាំចេញ XLSX') }}
                         </a>
+                        @else
+                        <div class="relative group">
+                            <button type="button" disabled class="px-4 py-2.5 bg-gray-300 text-gray-500 rounded-xl text-sm font-bold cursor-not-allowed flex items-center gap-2">
+                                <i class="fas fa-download"></i> {{ __('នាំចេញ XLSX') }}
+                            </button>
+                            <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs font-bold rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                                សូមជ្រើសរើសឆមាស ឆ្នាំសិក្សា និងប្រភេទថ្ងៃដើម្បីនាំចេញ
+                                <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-900"></div>
+                            </div>
+                        </div>
                         @endif
                     </div>
                 </form>
