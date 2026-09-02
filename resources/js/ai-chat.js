@@ -405,8 +405,7 @@
         btn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            var holdDuration = Date.now() - mousedownTime;
-            if (didDrag || holdDuration > LONG_PRESS_MS) {
+            if (didDrag) {
                 return;
             }
             toggleAIChat();
