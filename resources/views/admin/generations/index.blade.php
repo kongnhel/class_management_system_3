@@ -96,15 +96,16 @@
                                             @click="
                                                 saving = true;
                                                 fetch('{{ route('admin.generations.toggle', $gen) }}', {
-                                                    method: 'POST',
+                                                    method: 'PATCH',
                                                     headers: {
-                                                        'Content-Type': 'application/json',
                                                         'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                                        'X-HTTP-Method-Override': 'PATCH',
                                                         'Accept': 'application/json'
                                                     }
                                                 })
-                                                .then(function(r) { return r.json(); })
+                                                .then(function(r) {
+                                                    if (!r.ok) throw new Error('Toggle failed');
+                                                    return r.json();
+                                                })
                                                 .then(function(d) { active = d.is_active; saving = false; })
                                                 .catch(function() { saving = false; });
                                             "
