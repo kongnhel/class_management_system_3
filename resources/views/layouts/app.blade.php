@@ -135,13 +135,46 @@
                 });
             };
 
+            const syncSidebarActiveState = () => {
+                const currentPath = window.location.pathname.replace(/\/+$/, '');
+                const sidebarLinks = document.querySelector('.sidebar-links');
+                if (!sidebarLinks) return;
+
+                sidebarLinks.querySelectorAll('a').forEach((link) => {
+                    try {
+                        const linkUrl = new URL(link.href, window.location.href);
+                        const linkPath = linkUrl.pathname.replace(/\/+$/, '');
+                        const isExact = linkPath === currentPath;
+                        const isWildcard = link.classList.contains('sidebar-wildcard') && currentPath.startsWith(linkPath + '/');
+                        const isActive = isExact || isWildcard;
+
+                        link.classList.toggle('sidebar-active', isActive);
+                        if (isActive) {
+                            link.setAttribute('data-current', '');
+                        } else {
+                            link.removeAttribute('data-current');
+                        }
+                    } catch (e) {
+                        // skip invalid URLs
+                    }
+                });
+            };
+
             document.addEventListener('alpine:navigating', saveSidebarScrollPosition);
             document.addEventListener('livewire:navigated', () => {
                 window.dispatchEvent(new CustomEvent('close-sidebar'));
                 syncSidebarTabState();
+                syncSidebarActiveState();
                 restoreSidebarScrollPosition();
                 window.scrollTo(0, 0);
             });
+
+            // Also sync on initial load (not just after Livewire navigation)
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', syncSidebarActiveState);
+            } else {
+                syncSidebarActiveState();
+            }
 
             const bindSidebarScrollListener = () => {
                 const sidebarLinks = getSidebarLinks();
