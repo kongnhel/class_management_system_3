@@ -130,11 +130,6 @@
                                         <div class="p-3 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-500/20">
                                             <i class="fas fa-graduation-cap text-lg"></i>
                                         </div>
-                                        @if($program->pathwayProgram)
-                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-purple-100 text-purple-700">
-                                                <i class="fas fa-link"></i> {{ __('ផ្លូវបន្ត') }}
-                                            </span>
-                                        @endif
                                     </div>
                                     <h3 class="text-lg font-bold text-gray-900 leading-tight group-hover:text-emerald-600 transition-colors">{{ $program->name_km }}</h3>
                                     <p class="text-sm text-gray-500 mt-1">{{ $program->name_en }}</p>
@@ -152,12 +147,6 @@
                                         <i class="fas fa-award text-gray-400 w-4"></i>
                                         <span class="text-gray-600">{{ $program->degree_level }}</span>
                                     </div>
-                                    @if($program->pathwayProgram)
-                                        <div class="flex items-center gap-2 text-sm">
-                                            <i class="fas fa-arrow-right text-purple-400 w-4"></i>
-                                            <span class="text-purple-600">{{ __('ផ្លូវបន្ត') }}: {{ $program->pathwayProgram->name_km }}</span>
-                                        </div>
-                                    @endif
                                 </div>
                                 <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
                                     <div class="flex items-center gap-1.5">
@@ -187,7 +176,6 @@
                                         <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('ដេប៉ាតឺម៉ង់') }}</th>
                                         <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('រយៈពេល') }}</th>
                                         <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('កម្រិតសញ្ញាបត្រ') }}</th>
-                                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('ផ្លូវបន្ត') }}</th>
                                         <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('សកម្មភាព') }}</th>
                                     </tr>
                                 </thead>
@@ -205,15 +193,6 @@
                                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
                                                 {{ $program->degree_level }}
                                             </span>
-                                        </td>
-                                        <td class="px-6 py-4 text-sm">
-                                            @if($program->pathwayProgram)
-                                                <span class="inline-flex items-center gap-1 text-purple-600 font-medium">
-                                                    <i class="fas fa-link text-[10px]"></i> {{ $program->pathwayProgram->name_km }}
-                                                </span>
-                                            @else
-                                                <span class="text-gray-400">-</span>
-                                            @endif
                                         </td>
                                         <td class="px-6 py-4 text-center">
                                             <div class="flex items-center justify-center gap-2">
