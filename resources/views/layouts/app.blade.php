@@ -366,6 +366,27 @@
                 return url;
             }
 
+            function exportBtnUrl(url) {
+                var exportBase = document.querySelector('[data-admin-export-btn] a[data-export-active]');
+                if (!exportBase || !exportBase.dataset.exportHref) {
+                    // Store original href on first call
+                    var link = document.querySelector('[data-admin-export-btn] a[data-export-active]');
+                    if (link && link.getAttribute('href') !== '#') {
+                        link.dataset.exportHref = link.getAttribute('href');
+                    }
+                }
+                var base = (exportBase && exportBase.dataset.exportHref) || '/admin/attendance/professor-checkins/export';
+                var exportUrl = new URL(base, window.location.href);
+                if (url.searchParams.has('semester')) exportUrl.searchParams.set('semester', url.searchParams.get('semester'));
+                if (url.searchParams.has('academic_year')) exportUrl.searchParams.set('academic_year', url.searchParams.get('academic_year'));
+                if (url.searchParams.has('day_type')) exportUrl.searchParams.set('day_type', url.searchParams.get('day_type'));
+                if (url.searchParams.has('professor_id')) exportUrl.searchParams.set('professor_id', url.searchParams.get('professor_id'));
+                if (url.searchParams.has('search')) exportUrl.searchParams.set('search', url.searchParams.get('search'));
+                if (url.searchParams.has('date_from')) exportUrl.searchParams.set('date_from', url.searchParams.get('date_from'));
+                if (url.searchParams.has('date_to')) exportUrl.searchParams.set('date_to', url.searchParams.get('date_to'));
+                return exportUrl;
+            }
+
             function fetchAdminResults(url, form) {
                 var container = document.querySelector('[data-admin-results]');
                 if (!container) return;
@@ -400,6 +421,28 @@
                     container.innerHTML = nextContainer.innerHTML;
                     if (window.Alpine && Alpine.initTree) Alpine.initTree(container);
                     window.history.replaceState({}, '', url.toString());
+
+                    // Toggle export button visibility based on URL params
+                    var exportWrapper = document.querySelector('[data-admin-export-btn]');
+                    if (exportWrapper) {
+                        var params = new URLSearchParams(url.search);
+                        var hasAll = params.has('semester') && params.has('academic_year') && params.has('day_type')
+                                    && params.get('semester') && params.get('academic_year') && params.get('day_type');
+                        var activeBtn = exportWrapper.querySelector('[data-export-active]');
+                        var disabledBtn = exportWrapper.querySelector('[data-export-disabled]');
+                        if (activeBtn && disabledBtn) {
+                            activeBtn.classList.toggle('hidden', !hasAll);
+                            activeBtn.classList.toggle('bg-emerald-500', hasAll);
+                            activeBtn.classList.toggle('hover:bg-emerald-600', hasAll);
+                            activeBtn.classList.toggle('text-white', hasAll);
+                            activeBtn.classList.toggle('shadow-sm', hasAll);
+                            activeBtn.classList.toggle('shadow-emerald-200', hasAll);
+                            if (hasAll) {
+                                activeBtn.href = exportBtnUrl(url);
+                            }
+                            disabledBtn.classList.toggle('hidden', hasAll);
+                        }
+                    }
                 })
                 .catch(function (error) {
                     if (error.name !== 'AbortError') window.location.assign(url.toString());
