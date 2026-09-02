@@ -74,7 +74,7 @@
                         </div>
                         <div>
                             <select name="faculty_id" class="w-full sm:w-56 px-3 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-gray-50 transition">
-                                <option value=""> {{ __('មហាវិទ្យាល័យ') }}</option>
+                                <option value=""> {{ __('មហាវិទ្យាល័យទាំងអស់') }}</option>
                                 @foreach($faculties as $faculty)
                                     <option value="{{ $faculty->id }}" {{ request('faculty_id') == $faculty->id ? 'selected' : '' }}>{{ $faculty->name_km }}</option>
                                 @endforeach
