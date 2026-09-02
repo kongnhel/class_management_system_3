@@ -398,18 +398,19 @@
             container.style.transition = 'all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28)';
         };
 
-        // Intercept click after drag — capture phase fires before onclick attribute
+        // Click handler — only opens chat if user didn't drag
         const btn = document.getElementById('chatBtn');
         if (btn) {
             btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 if (hasMoved) {
-                    e.stopPropagation();
-                    e.preventDefault();
                     hasMoved = false;
-                    return false;
+                    return;
                 }
                 hasMoved = false;
-            }, true);
+                toggleAIChat();
+            });
         }
 
         container.addEventListener('mousedown', startDrag);
