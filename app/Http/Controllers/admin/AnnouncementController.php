@@ -20,9 +20,9 @@ class AnnouncementController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('title_km', 'like', "%{$search}%")
-                  ->orWhere('title_en', 'like', "%{$search}%")
-                  ->orWhere('content_km', 'like', "%{$search}%")
-                  ->orWhere('target_role', 'like', "%{$search}%");
+                    ->orWhere('title_en', 'like', "%{$search}%")
+                    ->orWhere('content_km', 'like', "%{$search}%")
+                    ->orWhere('target_role', 'like', "%{$search}%");
             });
         }
 

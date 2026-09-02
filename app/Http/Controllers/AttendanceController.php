@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AttendanceCard;
 use App\Models\AttendanceQrToken;
 use App\Models\AttendanceRecord;
 use App\Models\AttendanceSession;
-use App\Models\AttendanceCard;
 use App\Models\StudentCourseEnrollment;
 use Carbon\Carbon;
 use Illuminate\Http\Request;

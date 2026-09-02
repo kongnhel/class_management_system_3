@@ -23,11 +23,11 @@ class DepartmentController extends Controller
         if ($search = $request->input('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('name_km', 'like', "%{$search}%")
-                  ->orWhere('name_en', 'like', "%{$search}%")
-                  ->orWhereHas('faculty', function ($fq) use ($search) {
-                      $fq->where('name_km', 'like', "%{$search}%")
-                        ->orWhere('name_en', 'like', "%{$search}%");
-                  });
+                    ->orWhere('name_en', 'like', "%{$search}%")
+                    ->orWhereHas('faculty', function ($fq) use ($search) {
+                        $fq->where('name_km', 'like', "%{$search}%")
+                            ->orWhere('name_en', 'like', "%{$search}%");
+                    });
             });
         }
 
@@ -62,7 +62,8 @@ class DepartmentController extends Controller
 
         try {
             $this->logCreated($department);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+        }
 
         return redirect()->route('admin.manage-departments')->with('success', __('ដេប៉ាតឺម៉ង់ត្រូវបានបង្កើតដោយជោគជ័យ។'));
     }
@@ -90,7 +91,8 @@ class DepartmentController extends Controller
 
         try {
             $this->logUpdated($department, $oldAttributes);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+        }
 
         return redirect()->route('admin.manage-departments')->with('success', __('ដេប៉ាតឺម៉ង់ត្រូវបានកែប្រែដោយជោគជ័យ។'));
     }
@@ -130,7 +132,8 @@ class DepartmentController extends Controller
 
             try {
                 $this->logAction('delete', null, $oldAttributes, null, "Deleted department: {$deptName}");
-            } catch (\Exception $e) {}
+            } catch (\Exception $e) {
+            }
 
             return redirect()->route('admin.manage-departments')->with('success', __('ដេប៉ាតឺម៉ង់ត្រូវបានលុបដោយជោគជ័យ។'));
 

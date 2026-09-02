@@ -113,7 +113,7 @@ class NmuWebsiteService
         try {
             $response = Http::timeout(15)->get(self::BASE_URL);
             if ($response->failed()) {
-                return "Unable to fetch news from NMU website.";
+                return 'Unable to fetch news from NMU website.';
             }
 
             $html = $response->body();
@@ -129,20 +129,22 @@ class NmuWebsiteService
 
             $count = 0;
             foreach ($recentNews as $date => $title) {
-                if ($count >= $limit) break;
+                if ($count >= $limit) {
+                    break;
+                }
                 $news .= "- [{$date}] {$title}\n";
                 $count++;
             }
 
             return $news;
         } catch (\Exception $e) {
-            return "Unable to fetch news from NMU website.";
+            return 'Unable to fetch news from NMU website.';
         }
     }
 
     protected function getFallbackInfo(): string
     {
-        return "=== NMU WEBSITE INFO (CACHED) ===
+        return '=== NMU WEBSITE INFO (CACHED) ===
 Name: សាកលវិទ្យាល័យជាតិមានជ័យ (National Meanchey University)
 Address: ផ្លូវជាតិលេខ៥ សង្កាត់ទឹកថ្លា ខេត្តបន្ទាយមាជ័យ
 Phone: 017868626
@@ -158,6 +160,6 @@ FACULTIES:
 6. សាលាក្រោយបរិញ្ញាបត្រ
 
 VISION: To be a public institution that trains, educates, and researches with excellence, responding to national and regional labor market needs.
-";
+';
     }
 }

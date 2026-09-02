@@ -19,12 +19,12 @@
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                         នាំចេញទាំងអស់
                     </a>
-                    @if(request('professor_id'))
+                    @if(request('professor_id') && request('semester') && request('academic_year') && request('day_type'))
                         @php
                             $filteredProfessor = $professors->firstWhere('id', request('professor_id'));
                         @endphp
                         @if($filteredProfessor)
-                        <a href="{{ route('admin.attendance.professorExport', $filteredProfessor->id, array_filter(['semester' => request('semester'), 'academic_year' => request('academic_year')])) }}" class="inline-flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-all shadow-sm shadow-blue-200">
+                        <a href="{{ route('admin.attendance.professorExport', $filteredProfessor->id, ['semester' => request('semester'), 'academic_year' => request('academic_year'), 'day_type' => request('day_type')]) }}" class="inline-flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-all shadow-sm shadow-blue-200">
                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                             នាំចេញ {{ $filteredProfessor->name }}
                         </a>
@@ -85,6 +85,28 @@
                                     <option value="">ទាំងអស់</option>
                                     <option value="ឆមាសទី១" {{ request('semester') == 'ឆមាសទី១' ? 'selected' : '' }}>ឆមាសទី១</option>
                                     <option value="ឆមាសទី២" {{ request('semester') == 'ឆមាសទី២' ? 'selected' : '' }}>ឆមាសទី២</option>
+                                </select>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">ឆ្នាំសិក្សា</label>
+                                <select name="academic_year"
+                                        class="py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full transition-all">
+                                    <option value="">ទាំងអស់</option>
+                                    @php
+                                        $years = \App\Models\CourseOffering::whereNotNull('academic_year')->distinct()->pluck('academic_year')->sortDesc();
+                                    @endphp
+                                    @foreach($years as $year)
+                                        <option value="{{ $year }}" {{ request('academic_year') == $year ? 'selected' : '' }}>{{ $year }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">ប្រភេទថ្ងៃ</label>
+                                <select name="day_type"
+                                        class="py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full transition-all">
+                                    <option value="">ទាំងអស់</option>
+                                    <option value="weekday" {{ request('day_type') == 'weekday' ? 'selected' : '' }}>ថ្ងៃសិក្សា (ចន្ទ-សុក្រ)</option>
+                                    <option value="weekend" {{ request('day_type') == 'weekend' ? 'selected' : '' }}>ថ្ងៃសប្តាហ៍ (សៅរ៍-អាទិត្យ)</option>
                                 </select>
                             </div>
                             <div class="md:col-span-2">

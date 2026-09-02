@@ -9,7 +9,6 @@ use App\Models\Program;
 use App\Models\User;
 use App\Services\StudentIdGeneratorService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\Shared\Date as ExcelDate;
@@ -50,6 +49,7 @@ class BulkImportController extends Controller
             $validated = $request->validate($rules);
         } catch (\Illuminate\Validation\ValidationException $e) {
             $messages = collect($e->validator->errors()->all())->implode(' • ');
+
             return redirect()->route('admin.import.index')->with('error', $messages);
         }
 
@@ -107,6 +107,7 @@ class BulkImportController extends Controller
                     if (empty($rowData['name'])) {
                         $errors[] = 'Row '.($index + 1).': ឈ្មោះមិនអាចទទេបាន';
                         $skipped++;
+
                         continue;
                     }
 
@@ -117,12 +118,13 @@ class BulkImportController extends Controller
                     }
 
                     // Only use email from Excel — no auto-generation
-                    $email = !empty($rowData['email']) ? $rowData['email'] : null;
+                    $email = ! empty($rowData['email']) ? $rowData['email'] : null;
 
                     // Check for duplicate email only if provided
                     if ($email && User::where('email', $email)->exists()) {
                         $errors[] = 'Row '.($index + 1).": អ៊ីម៉ែលមានរួចហើយ ({$email})";
                         $skipped++;
+
                         continue;
                     }
 
@@ -152,7 +154,7 @@ class BulkImportController extends Controller
                         // Auto-enroll in all matching course offerings for this program
                         $matchingOfferings = \App\Models\CourseOffering::whereHas('targetPrograms', function ($q) use ($request) {
                             $q->where('course_offering_program.program_id', $request->program_id)
-                              ->where('course_offering_program.generation', $request->generation);
+                                ->where('course_offering_program.generation', $request->generation);
                         })->get();
 
                         foreach ($matchingOfferings as $offering) {
@@ -179,11 +181,11 @@ class BulkImportController extends Controller
 
                     // Create profile
                     $profileData = [
-                        'full_name_km' => !empty($rowData['full_name_km']) ? $rowData['full_name_km'] : null,
-                        'full_name_en' => !empty($rowData['full_name_en']) ? $rowData['full_name_en'] : null,
+                        'full_name_km' => ! empty($rowData['full_name_km']) ? $rowData['full_name_km'] : null,
+                        'full_name_en' => ! empty($rowData['full_name_en']) ? $rowData['full_name_en'] : null,
                         'gender' => $gender,
-                        'phone_number' => !empty($rowData['phone']) ? $rowData['phone'] : null,
-                        'address' => !empty($rowData['address']) ? $rowData['address'] : null,
+                        'phone_number' => ! empty($rowData['phone']) ? $rowData['phone'] : null,
+                        'address' => ! empty($rowData['address']) ? $rowData['address'] : null,
                         'date_of_birth' => $this->normalizeDateOfBirth($rowData['date_of_birth'] ?? null),
                     ];
 

@@ -3,9 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\AcademicYear;
-use App\Models\Announcement;
 use App\Models\Assignment;
-use App\Models\AttendanceProfessor;
 use App\Models\Course;
 use App\Models\CourseOffering;
 use App\Models\Department;
@@ -13,7 +11,6 @@ use App\Models\Exam;
 use App\Models\ExamResult;
 use App\Models\Faculty;
 use App\Models\GradingCategory;
-use App\Models\Notification;
 use App\Models\Program;
 use App\Models\Quiz;
 use App\Models\Room;
@@ -40,7 +37,7 @@ class ClassManagementDataSeeder extends Seeder
         foreach ($faculties as $f) {
             Faculty::updateOrCreate(['id' => $f['id']], $f);
         }
-        $this->command->info('  Faculties: ' . count($faculties));
+        $this->command->info('  Faculties: '.count($faculties));
 
         // ---------- Departments ----------
         $departments = [
@@ -50,7 +47,7 @@ class ClassManagementDataSeeder extends Seeder
         foreach ($departments as $d) {
             Department::updateOrCreate(['id' => $d['id']], $d);
         }
-        $this->command->info('  Departments: ' . count($departments));
+        $this->command->info('  Departments: '.count($departments));
 
         // ---------- Programs ----------
         $programs = [
@@ -61,7 +58,7 @@ class ClassManagementDataSeeder extends Seeder
         foreach ($programs as $p) {
             Program::updateOrCreate(['id' => $p['id']], $p);
         }
-        $this->command->info('  Programs: ' . count($programs));
+        $this->command->info('  Programs: '.count($programs));
 
         // ---------- Users (Professors) ----------
         $professors = [
@@ -86,7 +83,7 @@ class ClassManagementDataSeeder extends Seeder
                 ]
             );
         }
-        $this->command->info('  Professors: ' . count($professors));
+        $this->command->info('  Professors: '.count($professors));
 
         // ---------- Users (Students) ----------
         $students = [
@@ -127,7 +124,7 @@ class ClassManagementDataSeeder extends Seeder
                 $user->save();
             }
         }
-        $this->command->info('  Students: ' . count($students));
+        $this->command->info('  Students: '.count($students));
 
         // ---------- User Profiles ----------
         $profiles = [
@@ -141,7 +138,7 @@ class ClassManagementDataSeeder extends Seeder
         foreach ($profiles as $p) {
             UserProfile::updateOrCreate(['user_id' => $p['user_id']], $p);
         }
-        $this->command->info('  User Profiles: ' . count($profiles));
+        $this->command->info('  User Profiles: '.count($profiles));
 
         // ---------- Academic Year ----------
         AcademicYear::updateOrCreate(
@@ -158,7 +155,7 @@ class ClassManagementDataSeeder extends Seeder
         foreach ($rooms as $r) {
             Room::updateOrCreate(['id' => $r['id']], $r);
         }
-        $this->command->info('  Rooms: ' . count($rooms));
+        $this->command->info('  Rooms: '.count($rooms));
 
         // ---------- Courses ----------
         $courses = [
@@ -171,7 +168,7 @@ class ClassManagementDataSeeder extends Seeder
         foreach ($courses as $c) {
             Course::updateOrCreate(['id' => $c['id']], $c);
         }
-        $this->command->info('  Courses: ' . count($courses));
+        $this->command->info('  Courses: '.count($courses));
 
         // ---------- Course-Program mapping ----------
         $coursePrograms = [
@@ -191,7 +188,7 @@ class ClassManagementDataSeeder extends Seeder
                 $cp
             );
         }
-        $this->command->info('  Course-Program mappings: ' . count($coursePrograms));
+        $this->command->info('  Course-Program mappings: '.count($coursePrograms));
 
         // ---------- Course Offerings ----------
         $offerings = [
@@ -203,7 +200,7 @@ class ClassManagementDataSeeder extends Seeder
         foreach ($offerings as $o) {
             CourseOffering::updateOrCreate(['id' => $o['id']], $o);
         }
-        $this->command->info('  Course Offerings: ' . count($offerings));
+        $this->command->info('  Course Offerings: '.count($offerings));
 
         // ---------- Course Offering-Program mapping ----------
         $offeringPrograms = [
@@ -220,7 +217,7 @@ class ClassManagementDataSeeder extends Seeder
                 $op
             );
         }
-        $this->command->info('  Offering-Program mappings: ' . count($offeringPrograms));
+        $this->command->info('  Offering-Program mappings: '.count($offeringPrograms));
 
         // ---------- Schedules ----------
         $schedules = [
@@ -236,7 +233,7 @@ class ClassManagementDataSeeder extends Seeder
         foreach ($schedules as $s) {
             Schedule::updateOrCreate(['id' => $s['id']], $s);
         }
-        $this->command->info('  Schedules: ' . count($schedules));
+        $this->command->info('  Schedules: '.count($schedules));
 
         // ---------- Student Program Enrollments ----------
         $studentIds = [16, 17, 18, 19, 20, 21, 24, 27, 28, 29, 36];
@@ -250,7 +247,7 @@ class ClassManagementDataSeeder extends Seeder
                 ['program_id' => $studentProgramMap[$sid], 'enrollment_date' => '2026-01-23', 'status' => 'active']
             );
         }
-        $this->command->info('  Student Program Enrollments: ' . count($studentIds));
+        $this->command->info('  Student Program Enrollments: '.count($studentIds));
 
         // ---------- Student Course Enrollments ----------
         $enrollmentData = [
@@ -269,7 +266,7 @@ class ClassManagementDataSeeder extends Seeder
                 ['student_id' => $e[0], 'is_class_leader' => $e[2], 'enrollment_date' => '2026-02-24', 'status' => 'enrolled']
             );
         }
-        $this->command->info('  Student Course Enrollments: ' . count($enrollmentData));
+        $this->command->info('  Student Course Enrollments: '.count($enrollmentData));
 
         // ---------- Grading Categories ----------
         $gradingCategories = [
@@ -310,7 +307,7 @@ class ClassManagementDataSeeder extends Seeder
                 $gc
             );
         }
-        $this->command->info('  Grading Categories: ' . count($gradingCategories));
+        $this->command->info('  Grading Categories: '.count($gradingCategories));
 
         // ---------- Exams ----------
         $exams = [
@@ -321,7 +318,7 @@ class ClassManagementDataSeeder extends Seeder
         foreach ($exams as $e) {
             Exam::updateOrCreate(['id' => $e['id']], $e);
         }
-        $this->command->info('  Exams: ' . count($exams));
+        $this->command->info('  Exams: '.count($exams));
 
         // ---------- Assignments ----------
         $assignmentCategory = GradingCategory::where('course_id', 10)->where('name_en', 'Assignment')->first();
@@ -384,7 +381,7 @@ class ClassManagementDataSeeder extends Seeder
                 $er
             );
         }
-        $this->command->info('  Exam Results: ' . count($examResults));
+        $this->command->info('  Exam Results: '.count($examResults));
 
         $this->command->info('Class Management Data seeded successfully!');
     }

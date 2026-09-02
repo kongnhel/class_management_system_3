@@ -114,7 +114,7 @@ class ProfessorNotificationController extends Controller
         $courseOfferingIds = \App\Models\StudentCourseEnrollment::where('student_user_id', $user->id)->pluck('course_offering_id');
         $announcements = \App\Models\Announcement::where(function ($q) use ($user) {
             $q->where('target_role', 'all')
-              ->orWhere('target_role', $user->role);
+                ->orWhere('target_role', $user->role);
         })->with('poster')->get();
 
         $combinedReceived = collect();
@@ -183,6 +183,7 @@ class ProfessorNotificationController extends Controller
 
         if ($notification) {
             $notification->markAsRead();
+
             return response()->json(['success' => true]);
         }
 

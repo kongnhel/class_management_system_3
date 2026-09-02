@@ -297,22 +297,32 @@ class AdminAttendanceController extends Controller
      */
     public function exportProfessorAttendance(Request $request, int $professorId)
     {
+        $request->validate([
+            'semester' => 'required|string',
+            'academic_year' => 'required|string',
+            'day_type' => 'required|in:weekend,weekday',
+        ], [
+            'semester.required' => 'សូមជ្រើសរើសឆមាស',
+            'academic_year.required' => 'សូមជ្រើសរើសឆ្នាំសិក្សា',
+            'day_type.required' => 'សូមជ្រើសរើសប្រភេទថ្ងៃ',
+        ]);
+
         $professor = \App\Models\User::findOrFail($professorId);
+
+        $semester = $request->input('semester');
+        $academicYear = $request->input('academic_year');
+        $dayType = $request->input('day_type');
 
         $query = AttendanceProfessor::with(['courseOffering.course', 'courseOffering.targetPrograms'])
             ->where('professor_id', $professorId);
 
-        if ($request->filled('semester')) {
-            $query->whereHas('courseOffering', function ($q) use ($request) {
-                $q->where('semester', $request->input('semester'));
-            });
-        }
+        $query->whereHas('courseOffering', function ($q) use ($semester) {
+            $q->where('semester', $semester);
+        });
 
-        if ($request->filled('academic_year')) {
-            $query->whereHas('courseOffering', function ($q) use ($request) {
-                $q->where('academic_year', $request->input('academic_year'));
-            });
-        }
+        $query->whereHas('courseOffering', function ($q) use ($academicYear) {
+            $q->where('academic_year', $academicYear);
+        });
 
         $attendances = $query->orderBy('verified_at', 'desc')->get();
 
@@ -320,14 +330,12 @@ class AdminAttendanceController extends Controller
             'total' => $attendances->count(),
         ];
 
-        $semester = $request->input('semester');
-        $academicYear = $request->input('academic_year');
         $professorName = $professor->name;
-        $fileName = 'Professor_Attendance_'.$professorName.'_'.$semester.'_'.$academicYear.'.xlsx';
+        $fileName = 'Professor_Attendance_'.$professorName.'_'.$semester.'_'.$academicYear.'_'.$dayType.'.xlsx';
         $fileName = str_replace([' ', '/', '\\'], '_', $fileName);
 
         return Excel::download(
-            new \App\Exports\ProfessorAttendanceExcelExport($attendances, $stats, $professorName, $semester, $academicYear),
+            new \App\Exports\ProfessorAttendanceExcelExport($attendances, $stats, $professorName, $semester, $academicYear, $dayType),
             $fileName
         );
     }

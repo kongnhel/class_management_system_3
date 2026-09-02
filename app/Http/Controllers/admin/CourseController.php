@@ -8,8 +8,6 @@ use App\Models\Department;
 use App\Models\Faculty;
 use App\Models\Program;
 use App\Models\Room;
-use App\Models\StudentProfile;
-use App\Models\User;
 use Illuminate\Http\Request;
 
 class CourseController extends Controller
@@ -40,10 +38,10 @@ class CourseController extends Controller
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('title_km', 'like', "%{$search}%")
-                  ->orWhere('title_en', 'like', "%{$search}%")
-                  ->orWhereHas('department', function ($dq) use ($search) {
-                      $dq->where('name_km', 'like', "%{$search}%");
-                  });
+                    ->orWhere('title_en', 'like', "%{$search}%")
+                    ->orWhereHas('department', function ($dq) use ($search) {
+                        $dq->where('name_km', 'like', "%{$search}%");
+                    });
             });
         }
 

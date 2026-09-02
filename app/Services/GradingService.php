@@ -27,16 +27,22 @@ class GradingService
      * Max scores: assignment=20, midterm=15, final=50, attendance=15.
      */
     public const ASSIGNMENT_PASS = 12;
+
     public const MIDTERM_PASS = 9;
+
     public const FINAL_PASS = 30;
+
     public const ATTENDANCE_PASS = 10;
 
     /**
      * Max scores for each critical component.
      */
     public const ASSIGNMENT_MAX = 20;
+
     public const MIDTERM_MAX = 15;
+
     public const FINAL_MAX = 50;
+
     public const ATTENDANCE_MAX = 15;
 
     /*
@@ -167,11 +173,10 @@ class GradingService
     /**
      * Check all critical components for a student in a course offering.
      *
-     * @param float $attendanceScore  Attendance score (0-15)
-     * @param array $assessmentScores  Collection/array of ExamResult-like objects with score_obtained, assessment_type, and related assessment
-     * @param User|null $student      Student user (for loading re-exam results)
-     * @param int|null $courseOfferingId  Course offering ID (for loading re-exam results)
-     *
+     * @param  float  $attendanceScore  Attendance score (0-15)
+     * @param  array  $assessmentScores  Collection/array of ExamResult-like objects with score_obtained, assessment_type, and related assessment
+     * @param  User|null  $student  Student user (for loading re-exam results)
+     * @param  int|null  $courseOfferingId  Course offering ID (for loading re-exam results)
      * @return array{
      *     assignment: array{score: float, passing: bool, has_re_exam: bool, re_exam_score: float|null},
      *     midterm: array{score: float, passing: bool, has_re_exam: bool, re_exam_score: float|null},
@@ -271,11 +276,7 @@ class GradingService
      * Calculate the final grade for a student in a course offering,
      * considering critical component rules and re-exam results.
      *
-     * @param float $attendanceScore
-     * @param $assessmentScores  Collection/array of ExamResult-like objects
-     * @param User|null $student
-     * @param int|null $courseOfferingId
-     *
+     * @param  $assessmentScores  Collection/array of ExamResult-like objects
      * @return array{
      *     letter_grade: string,
      *     is_passing: bool,

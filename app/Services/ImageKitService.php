@@ -90,15 +90,16 @@ class ImageKitService
     /**
      * Upload a base64-encoded image to ImageKit (bypasses PHP upload_max_filesize).
      *
-     * @param string $base64Data  Data URL or raw base64 string
-     * @param string $folder      ImageKit folder
-     * @param string $fileName    Base file name
-     * @return string|null        URL of the uploaded file or null on failure
+     * @param  string  $base64Data  Data URL or raw base64 string
+     * @param  string  $folder  ImageKit folder
+     * @param  string  $fileName  Base file name
+     * @return string|null URL of the uploaded file or null on failure
      */
     public function uploadBase64(string $base64Data, string $folder = '/uploads', string $fileName = ''): ?string
     {
         if (empty($this->privateKey)) {
             Log::warning('ImageKit upload skipped: IMAGEKIT_PRIVATE_KEY is not set in config');
+
             return null;
         }
 
@@ -112,6 +113,7 @@ class ImageKitService
         $contents = base64_decode($base64Data, true);
         if ($contents === false) {
             Log::error('ImageKit base64 decode failed');
+
             return null;
         }
 
@@ -154,10 +156,12 @@ class ImageKitService
                 return $response->json()['url'];
             } else {
                 Log::error('ImageKit base64 Upload Failed: '.$response->body());
+
                 return null;
             }
         } catch (\Exception $e) {
             Log::error('ImageKit base64 Upload Error: '.$e->getMessage());
+
             return null;
         }
     }

@@ -12,7 +12,6 @@ use App\Models\Schedule;
 use App\Models\StudentCourseEnrollment;
 use App\Models\Submission;
 use App\Models\User;
-use Illuminate\Support\Collection;
 
 class ProfessorDashboardService
 {

@@ -73,7 +73,7 @@ return [
         //     'R' => 'KhmerOSbattambang.ttf',
         //     'B' => 'KhmerOSBattambang-Bold.ttf',
         //     'useOTL' => 0xFF,
-            // ],
+        // ],
         // ],
 
     ],

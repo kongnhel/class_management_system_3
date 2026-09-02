@@ -64,6 +64,7 @@ class OtpController extends Controller
             if (request()->ajax()) {
                 return response()->json(['status' => 'error', 'message' => 'សូមចូលប្រព័ន្ធម្តងទៀត។'], 401);
             }
+
             return redirect()->route('login');
         }
 
@@ -79,6 +80,7 @@ class OtpController extends Controller
             if (request()->ajax()) {
                 return response()->json(['status' => 'error', 'message' => 'សូមរង់ចាំមួយភ្លែតមុននឹងស្នើរកូដថ្មី។']);
             }
+
             return back()->with('warning', 'សូមរង់ចាំមួយភ្លែតមុននឹងស្នើរកូដថ្មី។');
         }
 
@@ -134,26 +136,31 @@ class OtpController extends Controller
     protected function maskPhone(string $phone): string
     {
         $len = strlen($phone);
-        if ($len <= 4) return $phone;
+        if ($len <= 4) {
+            return $phone;
+        }
 
-        $visible = substr($phone, 0, 3) . str_repeat('*', $len - 5) . substr($phone, -2);
+        $visible = substr($phone, 0, 3).str_repeat('*', $len - 5).substr($phone, -2);
+
         return $visible;
     }
 
     protected function maskEmail(string $email): string
     {
         $parts = explode('@', $email);
-        if (count($parts) !== 2) return $email;
+        if (count($parts) !== 2) {
+            return $email;
+        }
 
         $name = $parts[0];
         $domain = $parts[1];
 
         if (strlen($name) <= 2) {
-            $masked = $name[0] . '**';
+            $masked = $name[0].'**';
         } else {
-            $masked = $name[0] . str_repeat('*', strlen($name) - 2) . $name[strlen($name) - 1];
+            $masked = $name[0].str_repeat('*', strlen($name) - 2).$name[strlen($name) - 1];
         }
 
-        return $masked . '@' . $domain;
+        return $masked.'@'.$domain;
     }
 }

@@ -2,21 +2,20 @@
 
 namespace App\Exports;
 
-use App\Models\Assignment;
-use App\Models\Exam;
-use App\Models\Quiz;
-use App\Models\User;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class AssessmentGradesExport implements FromCollection, WithHeadings, WithStyles
 {
     protected $assessment;
+
     protected string $type;
+
     protected Collection $students;
+
     protected Collection $results;
 
     public function __construct($assessment, string $type, Collection $students, Collection $results)
@@ -36,6 +35,7 @@ class AssessmentGradesExport implements FromCollection, WithHeadings, WithStyles
     {
         return $this->students->map(function ($student) {
             $scoreRecord = $this->results->get($student->id);
+
             return [
                 'id' => $student->id,
                 'student_id_code' => $student->student_id_code,

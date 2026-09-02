@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('attendance_professors', function (Blueprint $table) {
-            if (!Schema::hasColumn('attendance_professors', 'verified_date')) {
+            if (! Schema::hasColumn('attendance_professors', 'verified_date')) {
                 $table->date('verified_date')->nullable()->after('verified_at');
             } else {
                 $table->date('verified_date')->nullable()->change();

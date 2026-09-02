@@ -10,10 +10,6 @@
                 <p class="text-slate-500">{{ __('កំណត់ត្រាចុះវត្តមានទាំងអស់') }}</p>
             </div>
             <div class="flex items-center gap-3">
-                <a href="{{ route('professor.attendance.export', request()->query()) }}"
-                   class="px-5 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl font-bold transition-all flex items-center gap-2 shadow-sm shadow-emerald-200">
-                    <i class="fas fa-download"></i> {{ __('នាំចេញ XLSX') }}
-                </a>
                 <a wire:navigate href="{{ route('professor.dashboard') }}"
                    class="px-5 py-3 bg-white border border-slate-200 rounded-2xl font-bold text-slate-700 hover:bg-slate-50 transition-all flex items-center gap-2">
                     <i class="fas fa-arrow-left"></i> {{ __('ត្រឡប់ក្រោយ') }}
@@ -28,6 +24,53 @@
             @if(session('success'))
                 <div class="bg-emerald-500 text-white p-4 rounded-2xl mb-6">{{ session('success') }}</div>
             @endif
+
+            <div class="bg-white rounded-2xl border border-slate-100 p-5 mb-6">
+                <form method="GET" action="{{ route('professor.attendance.history') }}" class="flex flex-col sm:flex-row gap-3 items-end">
+                    <div class="flex-1">
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1 block">ឆមាស</label>
+                        <select name="semester"
+                                class="py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full transition-all">
+                            <option value="">ទាំងអស់</option>
+                            <option value="ឆមាសទី១" {{ ($semester ?? request('semester')) == 'ឆមាសទី១' ? 'selected' : '' }}>ឆមាសទី១</option>
+                            <option value="ឆមាសទី២" {{ ($semester ?? request('semester')) == 'ឆមាសទី២' ? 'selected' : '' }}>ឆមាសទី២</option>
+                        </select>
+                    </div>
+                    <div class="flex-1">
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1 block">ឆ្នាំសិក្សា</label>
+                        <select name="academic_year"
+                                class="py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full transition-all">
+                            <option value="">ទាំងអស់</option>
+                            @php
+                                $years = \App\Models\CourseOffering::whereNotNull('academic_year')->distinct()->pluck('academic_year')->sortDesc();
+                            @endphp
+                            @foreach($years as $year)
+                                <option value="{{ $year }}" {{ ($academicYear ?? request('academic_year')) == $year ? 'selected' : '' }}>{{ $year }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="flex-1">
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1 block">ប្រភេទថ្ងៃ</label>
+                        <select name="day_type"
+                                class="py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full transition-all">
+                            <option value="">ទាំងអស់</option>
+                            <option value="weekday" {{ ($dayType ?? request('day_type')) == 'weekday' ? 'selected' : '' }}>ថ្ងៃសិក្សា (ចន្ទ-សុក្រ)</option>
+                            <option value="weekend" {{ ($dayType ?? request('day_type')) == 'weekend' ? 'selected' : '' }}>ថ្ងៃសប្តាហ៍ (សៅរ៍-អាទិត្យ)</option>
+                        </select>
+                    </div>
+                    <div class="flex gap-2">
+                        <button type="submit" class="px-4 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-bold hover:bg-emerald-700 transition-all">
+                            <i class="fas fa-search"></i>
+                        </button>
+                        @if(($semester ?? request('semester')) && ($academicYear ?? request('academic_year')) && ($dayType ?? request('day_type')))
+                        <a href="{{ route('professor.attendance.export', ['semester' => $semester ?? request('semester'), 'academic_year' => $academicYear ?? request('academic_year'), 'day_type' => $dayType ?? request('day_type')]) }}"
+                           class="px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-sm font-bold transition-all flex items-center gap-2">
+                            <i class="fas fa-download"></i> {{ __('នាំចេញ XLSX') }}
+                        </a>
+                        @endif
+                    </div>
+                </form>
+            </div>
 
             {{-- Summary Stats --}}
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">

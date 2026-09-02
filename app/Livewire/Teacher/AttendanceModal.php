@@ -51,6 +51,7 @@ class AttendanceModal extends Component
     {
         if (! $this->courseId) {
             $this->scanStatus = 'no_schedule';
+
             return;
         }
 
@@ -64,6 +65,7 @@ class AttendanceModal extends Component
         if (! $schedule) {
             $this->scanStatus = 'no_schedule';
             $this->scheduleInfo = null;
+
             return;
         }
 

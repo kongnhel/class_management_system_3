@@ -18,8 +18,8 @@ class ProgramController extends Controller
         if ($search = $request->input('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('name_km', 'like', "%{$search}%")
-                  ->orWhere('name_en', 'like', "%{$search}%")
-                  ->orWhere('degree_level', 'like', "%{$search}%");
+                    ->orWhere('name_en', 'like', "%{$search}%")
+                    ->orWhere('degree_level', 'like', "%{$search}%");
             });
         }
 

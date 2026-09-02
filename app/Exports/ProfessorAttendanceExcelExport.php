@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithDrawings;
@@ -21,13 +22,16 @@ class ProfessorAttendanceExcelExport implements FromCollection, WithDrawings, Wi
 
     protected ?string $academicYear;
 
-    public function __construct(Collection $attendances, array $stats, string $professorName, ?string $semester = null, ?string $academicYear = null)
+    protected ?string $dayType;
+
+    public function __construct(Collection $attendances, array $stats, string $professorName, ?string $semester = null, ?string $academicYear = null, ?string $dayType = null)
     {
         $this->attendances = $attendances;
         $this->stats = $stats;
         $this->professorName = $professorName;
         $this->semester = $semester;
         $this->academicYear = $academicYear;
+        $this->dayType = $dayType;
     }
 
     public function collection(): Collection
@@ -96,7 +100,12 @@ class ProfessorAttendanceExcelExport implements FromCollection, WithDrawings, Wi
         $sheet->mergeCells("A8:{$lastCol}8");
         $semesterLabel = $this->semester ? " ឆមាស {$this->semester}" : '';
         $yearLabel = $this->academicYear ? " ឆ្នាំសិក្សា {$this->academicYear}" : '';
-        $sheet->setCellValue('A8', "របាយការណ៍វត្តមានគ្រូបង្រៀន{$semesterLabel}{$yearLabel}");
+        $dayTypeLabel = match ($this->dayType) {
+            'weekend' => ' (ថ្ងៃសប្តាហ៍)',
+            'weekday' => ' (ថ្ងៃសិក្សា)',
+            default => '',
+        };
+        $sheet->setCellValue('A8', "របាយការណ៍វត្តមានគ្រូបង្រៀន{$semesterLabel}{$yearLabel}{$dayTypeLabel}");
         $sheet->getStyle('A8')->applyFromArray([
             'font' => ['name' => $khmerFont, 'size' => 11, 'bold' => true],
             'alignment' => ['horizontal' => 'center', 'vertical' => 'center'],
@@ -145,7 +154,15 @@ class ProfessorAttendanceExcelExport implements FromCollection, WithDrawings, Wi
             ],
         ];
 
-        foreach ($this->attendances as $index => $record) {
+        // Apply day_type filter
+        $records = $this->attendances;
+        if ($this->dayType === 'weekend') {
+            $records = $records->filter(fn ($r) => $r->verified_at && Carbon::parse($r->verified_at)->isWeekend());
+        } elseif ($this->dayType === 'weekday') {
+            $records = $records->filter(fn ($r) => $r->verified_at && ! Carbon::parse($r->verified_at)->isWeekend());
+        }
+
+        foreach ($records as $index => $record) {
             $rowNum = $dataStartRow + $index;
 
             $courseTitle = $record->courseOffering->course->title_km ?? $record->courseOffering->course->title_en ?? 'N/A';
@@ -174,7 +191,7 @@ class ProfessorAttendanceExcelExport implements FromCollection, WithDrawings, Wi
             $sheet->getRowDimension($rowNum)->setRowHeight(21.75);
         }
 
-        $dataEndRow = $dataStartRow + $this->attendances->count() - 1;
+        $dataEndRow = $dataStartRow + $records->count() - 1;
         $footerRow = $dataEndRow + 2;
 
         $sheet->mergeCells("A{$footerRow}:C{$footerRow}");
@@ -184,7 +201,7 @@ class ProfessorAttendanceExcelExport implements FromCollection, WithDrawings, Wi
             'alignment' => ['horizontal' => 'right', 'vertical' => 'center'],
         ]);
 
-        $sheet->setCellValue("D{$footerRow}", $this->stats['total'] ?? $this->attendances->count());
+        $sheet->setCellValue("D{$footerRow}", $records->count());
         $sheet->getStyle("D{$footerRow}:{$lastCol}{$footerRow}")->applyFromArray([
             'font' => ['name' => $khmerFont, 'size' => 10, 'bold' => true],
             'alignment' => ['horizontal' => 'center'],

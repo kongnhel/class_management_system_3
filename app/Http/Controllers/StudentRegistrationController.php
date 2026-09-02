@@ -7,7 +7,6 @@ use App\Models\Program;
 use App\Models\StudentCourseEnrollment;
 use App\Models\StudentProgramEnrollment;
 use App\Models\User;
-use App\Services\OtpService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -47,59 +46,59 @@ class StudentRegistrationController extends Controller
             'degree_level' => 'required|string|max:50',
         ]);
 
-try {
-                DB::transaction(function () use ($request) {
-                    $user = User::where('student_id_code', $request->student_id_code)->firstOrFail();
+        try {
+            DB::transaction(function () use ($request) {
+                $user = User::where('student_id_code', $request->student_id_code)->firstOrFail();
 
-                    $user->forceFill([
-                        'name' => $request->name,
-                        'email' => $request->email,
-                        'program_id' => $request->program_id,
-                        'generation' => $request->generation,
-                        'password' => Hash::make($request->password),
-                    ])->save();
+                $user->forceFill([
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'program_id' => $request->program_id,
+                    'generation' => $request->generation,
+                    'password' => Hash::make($request->password),
+                ])->save();
 
-                    StudentProgramEnrollment::firstOrCreate([
-                        'student_user_id' => $user->id,
-                        'program_id' => $request->program_id,
-                    ], [
-                        'degree_level' => $request->degree_level,
-                        'enrollment_date' => now(),
-                        'status' => 'active',
-                    ]);
+                StudentProgramEnrollment::firstOrCreate([
+                    'student_user_id' => $user->id,
+                    'program_id' => $request->program_id,
+                ], [
+                    'degree_level' => $request->degree_level,
+                    'enrollment_date' => now(),
+                    'status' => 'active',
+                ]);
 
-                    $courseOfferings = CourseOffering::whereHas('targetPrograms', function ($query) use ($request) {
-                        $query->where('course_offering_program.program_id', $request->program_id)
-                              ->where('course_offering_program.generation', $request->generation);
-                    })->get();
+                $courseOfferings = CourseOffering::whereHas('targetPrograms', function ($query) use ($request) {
+                    $query->where('course_offering_program.program_id', $request->program_id)
+                        ->where('course_offering_program.generation', $request->generation);
+                })->get();
 
-                    foreach ($courseOfferings as $offering) {
-                        $alreadyEnrolled = StudentCourseEnrollment::where('student_user_id', $user->id)
-                            ->where('course_offering_id', $offering->id)
-                            ->exists();
-                        if (!$alreadyEnrolled) {
-                            StudentCourseEnrollment::create([
-                                'student_user_id' => $user->id,
-                                'student_id' => $user->id,
-                                'course_offering_id' => $offering->id,
-                                'enrollment_date' => now(),
-                                'status' => 'enrolled',
-                            ]);
-                        }
+                foreach ($courseOfferings as $offering) {
+                    $alreadyEnrolled = StudentCourseEnrollment::where('student_user_id', $user->id)
+                        ->where('course_offering_id', $offering->id)
+                        ->exists();
+                    if (! $alreadyEnrolled) {
+                        StudentCourseEnrollment::create([
+                            'student_user_id' => $user->id,
+                            'student_id' => $user->id,
+                            'course_offering_id' => $offering->id,
+                            'enrollment_date' => now(),
+                            'status' => 'enrolled',
+                        ]);
                     }
+                }
 
-                    event(new Registered($user));
-                    Auth::login($user);
-                });
+                event(new Registered($user));
+                Auth::login($user);
+            });
 
-                $user = Auth::user();
+            $user = Auth::user();
 
-                return redirect()->intended(route('dashboard', absolute: false))
-                    ->with('success', 'ចុះឈ្មោះជោគជ័យ!');
+            return redirect()->intended(route('dashboard', absolute: false))
+                ->with('success', 'ចុះឈ្មោះជោគជ័យ!');
 
-            } catch (\Exception $e) {
-                return back()->with('error', 'Error: '.$e->getMessage());
-            }
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error: '.$e->getMessage());
+        }
     }
 
     public function checkStudent($code): JsonResponse

@@ -20,4 +20,3 @@ class FacultyFactory extends Factory
         ];
     }
 }
-

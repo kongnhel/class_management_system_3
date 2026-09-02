@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\AttendanceQrToken;
 use App\Models\AttendanceRecord;
 use App\Models\AttendanceSession;
-use App\Models\CourseOffering;
 use App\Models\Schedule;
 use App\Models\StudentCourseEnrollment;
 use App\Services\AttendanceSessionService;
@@ -125,7 +124,10 @@ class AttendanceApiController extends Controller
                 $avatarPic = $record->student->avatar ?? null;
                 $profilePic = null;
                 foreach ([$studentProfilePic, $userProfilePic, $avatarPic] as $pic) {
-                    if (!empty($pic) && $pic !== 'null') { $profilePic = $pic; break; }
+                    if (! empty($pic) && $pic !== 'null') {
+                        $profilePic = $pic;
+                        break;
+                    }
                 }
 
                 $remarks = trim((string) $record->remarks);
@@ -194,6 +196,7 @@ class AttendanceApiController extends Controller
 
         if ($now->lt($windowStart)) {
             $minutesUntil = $now->diffInMinutes($windowStart);
+
             return response()->json([
                 'available' => false,
                 'status' => 'not_started',

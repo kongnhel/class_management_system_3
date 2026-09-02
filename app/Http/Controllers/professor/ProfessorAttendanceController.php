@@ -302,26 +302,14 @@ class ProfessorAttendanceController extends Controller
     /**
      * Display professor's attendance history
      */
-    public function history()
-    {
-        $attendances = AttendanceProfessor::with(['courseOffering.course', 'courseOffering.targetPrograms'])
-            ->where('professor_id', auth()->id())
-            ->orderBy('verified_at', 'desc')
-            ->paginate(15);
-
-        return view('professor.attendance.history', compact('attendances'));
-    }
-
-    /**
-     * Export professor's attendance history to Excel
-     */
-    public function exportAttendance(Request $request)
+    public function history(Request $request)
     {
         $query = AttendanceProfessor::with(['courseOffering.course', 'courseOffering.targetPrograms'])
             ->where('professor_id', auth()->id());
 
         $semester = $request->input('semester');
         $academicYear = $request->input('academic_year');
+        $dayType = $request->input('day_type');
 
         if ($semester) {
             $query->whereHas('courseOffering', function ($q) use ($semester) {
@@ -335,6 +323,41 @@ class ProfessorAttendanceController extends Controller
             });
         }
 
+        $attendances = $query->orderBy('verified_at', 'desc')->paginate(15);
+
+        return view('professor.attendance.history', compact('attendances', 'semester', 'academicYear', 'dayType'));
+    }
+
+    /**
+     * Export professor's attendance history to Excel
+     */
+    public function exportAttendance(Request $request)
+    {
+        $request->validate([
+            'semester' => 'required|string',
+            'academic_year' => 'required|string',
+            'day_type' => 'required|in:weekend,weekday',
+        ], [
+            'semester.required' => 'សូមជ្រើសរើសឆមាស',
+            'academic_year.required' => 'សូមជ្រើសរើសឆ្នាំសិក្សា',
+            'day_type.required' => 'សូមជ្រើសរើសប្រភេទថ្ងៃ',
+        ]);
+
+        $semester = $request->input('semester');
+        $academicYear = $request->input('academic_year');
+        $dayType = $request->input('day_type');
+
+        $query = AttendanceProfessor::with(['courseOffering.course', 'courseOffering.targetPrograms'])
+            ->where('professor_id', auth()->id());
+
+        $query->whereHas('courseOffering', function ($q) use ($semester) {
+            $q->where('semester', $semester);
+        });
+
+        $query->whereHas('courseOffering', function ($q) use ($academicYear) {
+            $q->where('academic_year', $academicYear);
+        });
+
         $attendances = $query->orderBy('verified_at', 'desc')->get();
 
         $professorName = auth()->user()->name;
@@ -343,11 +366,11 @@ class ProfessorAttendanceController extends Controller
             'total' => $attendances->count(),
         ];
 
-        $fileName = 'Professor_Attendance_'.$professorName.'_'.$semester.'_'.$academicYear.'.xlsx';
+        $fileName = 'Professor_Attendance_'.$professorName.'_'.$semester.'_'.$academicYear.'_'.$dayType.'.xlsx';
         $fileName = str_replace([' ', '/', '\\'], '_', $fileName);
 
         return Excel::download(
-            new \App\Exports\ProfessorAttendanceExcelExport($attendances, $stats, $professorName, $semester, $academicYear),
+            new \App\Exports\ProfessorAttendanceExcelExport($attendances, $stats, $professorName, $semester, $academicYear, $dayType),
             $fileName
         );
     }

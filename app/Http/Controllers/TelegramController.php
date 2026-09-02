@@ -8,9 +8,7 @@ use Illuminate\Http\Request;
 
 class TelegramController extends Controller
 {
-    public function __construct(private readonly TelegramBotService $telegram)
-    {
-    }
+    public function __construct(private readonly TelegramBotService $telegram) {}
 
     public function handleWebhook(Request $request)
     {

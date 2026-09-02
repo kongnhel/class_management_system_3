@@ -7,13 +7,15 @@ use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithDrawings;
 use Maatwebsite\Excel\Concerns\WithStyles;
-use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class AdminAttendanceExcelExport implements FromCollection, WithStyles, WithDrawings
+class AdminAttendanceExcelExport implements FromCollection, WithDrawings, WithStyles
 {
     protected CourseOffering $courseOffering;
+
     protected Collection $studentAttendance;
+
     protected array $stats;
 
     public function __construct(CourseOffering $courseOffering, Collection $studentAttendance, array $stats)
@@ -31,11 +33,11 @@ class AdminAttendanceExcelExport implements FromCollection, WithStyles, WithDraw
     public function drawings(): array
     {
         $logoPath = public_path('assets/image/nmu_Logo.png');
-        if (!file_exists($logoPath)) {
+        if (! file_exists($logoPath)) {
             return [];
         }
 
-        $logo = new Drawing();
+        $logo = new Drawing;
         $logo->setName('NMU Logo');
         $logo->setDescription('National Meanchey University Logo');
         $logo->setPath($logoPath);
@@ -88,7 +90,7 @@ class AdminAttendanceExcelExport implements FromCollection, WithStyles, WithDraw
 
         $sheet->mergeCells('A7:B7');
         $facultyName = $this->courseOffering->course->department->faculty->name_km ?? 'មហាវិទ្យាល័យ';
-        $sheet->setCellValue('A7', 'ទីតាំង៖ ' . $facultyName);
+        $sheet->setCellValue('A7', 'ទីតាំង៖ '.$facultyName);
         $sheet->getStyle('A7')->applyFromArray([
             'font' => ['name' => $khmerFont, 'size' => 8],
             'alignment' => ['horizontal' => 'left'],
@@ -176,7 +178,7 @@ class AdminAttendanceExcelExport implements FromCollection, WithStyles, WithDraw
         $sheet->setCellValue("D{$footerRow}", $this->stats['total_records']);
         $sheet->setCellValue("E{$footerRow}", $this->stats['present_total']);
         $sheet->setCellValue("F{$footerRow}", $this->stats['absent_total']);
-        $sheet->setCellValue("G{$footerRow}", $this->stats['overall_rate'] . '%');
+        $sheet->setCellValue("G{$footerRow}", $this->stats['overall_rate'].'%');
         $sheet->getStyle("D{$footerRow}:{$lastCol}{$footerRow}")->applyFromArray([
             'font' => ['name' => $khmerFont, 'size' => 10, 'bold' => true],
             'alignment' => ['horizontal' => 'center'],

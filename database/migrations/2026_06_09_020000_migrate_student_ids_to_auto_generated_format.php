@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        $generator = new StudentIdGeneratorService();
+        $generator = new StudentIdGeneratorService;
         $generator->migrateExistingStudents();
     }
 

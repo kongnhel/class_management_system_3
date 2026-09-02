@@ -1,4 +1,5 @@
 <?php
+
 $content = file_get_contents('test_output.pdf');
 if (strpos($content, 'KhmerOSbattambang') !== false) {
     echo "Font name found in PDF\n";

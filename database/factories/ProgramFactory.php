@@ -24,4 +24,3 @@ class ProgramFactory extends Factory
         ];
     }
 }
-

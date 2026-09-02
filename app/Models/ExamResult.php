@@ -56,7 +56,7 @@ class ExamResult extends Model
 
     public function getCourseOfferingIdAttribute()
     {
-        return match($this->assessment_type) {
+        return match ($this->assessment_type) {
             'assignment' => $this->assignment?->course_offering_id,
             'exam' => $this->exam?->course_offering_id,
             'quiz' => $this->quiz?->course_offering_id,
@@ -66,8 +66,12 @@ class ExamResult extends Model
 
     public function getDisplayTypeAttribute()
     {
-        if ($this->assessment_type === 'assignment') return 'Assignment';
-        if ($this->assessment_type === 'quiz') return 'Quiz';
+        if ($this->assessment_type === 'assignment') {
+            return 'Assignment';
+        }
+        if ($this->assessment_type === 'quiz') {
+            return 'Quiz';
+        }
 
         if ($this->assessment_type === 'exam') {
             $titleEn = strtolower($this->exam?->title_en ?? '');
@@ -90,7 +94,7 @@ class ExamResult extends Model
 
     public function getCourseIdAttribute()
     {
-        return match($this->assessment_type) {
+        return match ($this->assessment_type) {
             'assignment' => $this->assignment?->courseOffering?->course_id,
             'exam' => $this->exam?->courseOffering?->course_id,
             'quiz' => $this->quiz?->courseOffering?->course_id,
@@ -100,7 +104,7 @@ class ExamResult extends Model
 
     public function getCreditsAttribute()
     {
-        return match($this->assessment_type) {
+        return match ($this->assessment_type) {
             'assignment' => $this->assignment?->courseOffering?->course?->credits ?? 3,
             'exam' => $this->exam?->courseOffering?->course?->credits ?? 3,
             'quiz' => $this->quiz?->courseOffering?->course?->credits ?? 3,
@@ -110,7 +114,7 @@ class ExamResult extends Model
 
     public function getMaxScoreAttribute()
     {
-        return match($this->assessment_type) {
+        return match ($this->assessment_type) {
             'assignment' => $this->assignment?->max_score ?? 0,
             'exam' => $this->exam?->max_score ?? 0,
             'quiz' => $this->quiz?->max_score ?? 0,

@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Student;
 use App\Http\Controllers\Controller;
 use App\Models\CourseOffering;
 use App\Models\ExamResult;
-use App\Models\Quiz;
 use App\Models\StudentCourseEnrollment;
 use App\Models\User;
 use App\Services\GradingService;
@@ -48,8 +47,7 @@ class StudentGradeController extends Controller
             $courseId = $offering->course_id;
             $items = $filteredResults->where('course_offering_id', $offering->id)->values();
             $resultFor = function (string $type, int $assessmentId) use ($items) {
-                return $items->first(fn ($result) =>
-                    $result->assessment_type === $type && (int) $result->assessment_id === $assessmentId
+                return $items->first(fn ($result) => $result->assessment_type === $type && (int) $result->assessment_id === $assessmentId
                 );
             };
 

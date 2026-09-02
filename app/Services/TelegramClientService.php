@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Log;
 class TelegramClientService
 {
     protected string $phpBinary;
+
     protected string $scriptPath;
 
     public function __construct()
@@ -44,12 +45,14 @@ class TelegramClientService
      */
     public function get2faHint(): string
     {
-        $hintFile = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'tg_otp_2fa_hint.json';
+        $hintFile = sys_get_temp_dir().DIRECTORY_SEPARATOR.'tg_otp_2fa_hint.json';
         if (file_exists($hintFile)) {
             $data = json_decode(file_get_contents($hintFile), true);
             @unlink($hintFile);
+
             return $data['hint'] ?? '';
         }
+
         return '';
     }
 
@@ -58,7 +61,7 @@ class TelegramClientService
      */
     protected function runBridge(string $mode, string $phone, ?string $code = null): array
     {
-        $tmpFile = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'tg_otp_result.json';
+        $tmpFile = sys_get_temp_dir().DIRECTORY_SEPARATOR.'tg_otp_result.json';
 
         // Remove old temp file before running
         if (file_exists($tmpFile)) {
@@ -108,7 +111,7 @@ class TelegramClientService
             @unlink($tmpFile);
         }
 
-        if (! is_array($result) || !isset($result['success'])) {
+        if (! is_array($result) || ! isset($result['success'])) {
             Log::error('Telegram CLI bridge: failed to read result', [
                 'mode' => $mode,
                 'phone' => $phone,

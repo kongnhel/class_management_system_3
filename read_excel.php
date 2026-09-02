@@ -1,5 +1,6 @@
 <?php
-require __DIR__ . '/vendor/autoload.php';
+
+require __DIR__.'/vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
@@ -16,7 +17,7 @@ echo "Rows: $highestRow, Columns: $highestColumn\n\n";
 for ($row = 1; $row <= min($highestRow, 30); $row++) {
     $rowData = [];
     for ($col = 'A'; $col <= $highestColumn; $col++) {
-        $rowData[] = $sheet->getCell($col . $row)->getValue();
+        $rowData[] = $sheet->getCell($col.$row)->getValue();
     }
-    echo "Row $row: " . implode(' | ', $rowData) . "\n";
+    echo "Row $row: ".implode(' | ', $rowData)."\n";
 }

@@ -9,8 +9,11 @@ use Illuminate\Support\Facades\Mail;
 class OtpService
 {
     const OTP_LENGTH = 5;
+
     const OTP_EXPIRY_MINUTES = 10;
+
     const OTP_MAX_ATTEMPTS = 5;
+
     const OTP_RESEND_COOLDOWN_SECONDS = 60;
 
     public function generateOtp(): string
@@ -20,7 +23,7 @@ class OtpService
 
     public function sendOtp(User $user, string $method = 'email'): bool
     {
-        $cooldownKey = 'otp_cooldown_' . $user->id;
+        $cooldownKey = 'otp_cooldown_'.$user->id;
         if (Cache::has($cooldownKey)) {
             return false;
         }
@@ -60,6 +63,7 @@ class OtpService
         if (! hash_equals($user->otp_code, $otp)) {
             $user->increment('otp_attempts');
             $remaining = self::OTP_MAX_ATTEMPTS - ($user->otp_attempts);
+
             return ['success' => false, 'message' => "កូដ OTP មិនត្រឹមត្រូវ។ នៅសល់ {$remaining} ឱកាស។"];
         }
 
@@ -93,12 +97,12 @@ class OtpService
     protected function sendEmailOtp(User $user, string $otp): void
     {
         try {
-            Mail::raw("កូដផ្ទៀងផ្ទាត់របស់អ្នកគឺ: {$otp}\nកូដនេះនឹងផុតកំណត់នៅក្នុង " . self::OTP_EXPIRY_MINUTES . " នាទី។", function ($message) use ($user) {
+            Mail::raw("កូដផ្ទៀងផ្ទាត់របស់អ្នកគឺ: {$otp}\nកូដនេះនឹងផុតកំណត់នៅក្នុង ".self::OTP_EXPIRY_MINUTES.' នាទី។', function ($message) use ($user) {
                 $message->to($user->email)
                     ->subject('កូដផ្ទៀងផ្ទាត់ NMU');
             });
         } catch (\Exception $e) {
-            \Log::error('OTP Email Error: ' . $e->getMessage());
+            \Log::error('OTP Email Error: '.$e->getMessage());
         }
     }
 
@@ -114,7 +118,7 @@ class OtpService
 
             $message = "🔐 *កូដផ្ទៀងផ្ទាត់ NMU*\n\n";
             $message .= "កូដរបស់អ្នកគឺ: `{$otp}`\n";
-            $message .= "ផុតកំណត់ក្នុង " . self::OTP_EXPIRY_MINUTES . " នាទី។";
+            $message .= 'ផុតកំណត់ក្នុង '.self::OTP_EXPIRY_MINUTES.' នាទី។';
 
             $url = "https://api.telegram.org/bot{$botToken}/sendMessage";
             \Http::post($url, [
@@ -123,7 +127,7 @@ class OtpService
                 'parse_mode' => 'Markdown',
             ]);
         } catch (\Exception $e) {
-            \Log::error('OTP Telegram Error: ' . $e->getMessage());
+            \Log::error('OTP Telegram Error: '.$e->getMessage());
         }
     }
 }

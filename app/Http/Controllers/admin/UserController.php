@@ -312,7 +312,7 @@ class UserController extends Controller
             // Auto-enroll in all matching existing course offerings
             $matchingOfferings = \App\Models\CourseOffering::whereHas('targetPrograms', function ($q) use ($request) {
                 $q->where('course_offering_program.program_id', $request->program_id)
-                  ->where('course_offering_program.generation', $request->generation);
+                    ->where('course_offering_program.generation', $request->generation);
             })->get();
 
             foreach ($matchingOfferings as $offering) {
@@ -340,12 +340,12 @@ class UserController extends Controller
 
             $profile->user_id = $user->id;
 
-        if ($request->filled('profile_picture_base64')) {
-            $url = $this->imageKitService->uploadProfilePictureBase64($request->input('profile_picture_base64'));
-            if ($url) {
-                $profile->profile_picture_url = $url;
-            }
-        } elseif ($request->hasFile('profile_picture')) {
+            if ($request->filled('profile_picture_base64')) {
+                $url = $this->imageKitService->uploadProfilePictureBase64($request->input('profile_picture_base64'));
+                if ($url) {
+                    $profile->profile_picture_url = $url;
+                }
+            } elseif ($request->hasFile('profile_picture')) {
                 $url = $this->imageKitService->uploadProfilePicture($request->file('profile_picture'));
                 if ($url) {
                     $profile->profile_picture_url = $url;
@@ -401,10 +401,10 @@ class UserController extends Controller
             'date_of_birth' => $profile->date_of_birth ?? '',
             'faculty_id' => $user->department?->faculty_id ?? '',
             'profile_picture_url' => $profile->profile_picture_url ?? '',
-            'programs' => Program::all()->map(fn($p) => ['id' => $p->id, 'name' => $p->name_km ?? $p->name_en]),
-            'departments' => Department::all()->map(fn($d) => ['id' => $d->id, 'name' => $d->name_km ?? $d->name_en, 'faculty_id' => $d->faculty_id]),
-            'faculties' => \App\Models\Faculty::all()->map(fn($f) => ['id' => $f->id, 'name' => $f->name_km ?? $f->name_en]),
-            'generations' => \App\Models\Generation::where('is_active', true)->orderByDesc('name')->get()->map(fn($g) => ['name' => $g->name, 'join_year' => $g->join_year ?? '']),
+            'programs' => Program::all()->map(fn ($p) => ['id' => $p->id, 'name' => $p->name_km ?? $p->name_en]),
+            'departments' => Department::all()->map(fn ($d) => ['id' => $d->id, 'name' => $d->name_km ?? $d->name_en, 'faculty_id' => $d->faculty_id]),
+            'faculties' => \App\Models\Faculty::all()->map(fn ($f) => ['id' => $f->id, 'name' => $f->name_km ?? $f->name_en]),
+            'generations' => \App\Models\Generation::where('is_active', true)->orderByDesc('name')->get()->map(fn ($g) => ['name' => $g->name, 'join_year' => $g->join_year ?? '']),
         ]);
     }
 
@@ -524,6 +524,7 @@ class UserController extends Controller
             if (request()->ajax()) {
                 return response()->json(['success' => false, 'message' => 'អ្នកមិនអាចលុបគណនីផ្ទាល់ខ្លួនបានទេ។']);
             }
+
             return redirect()->route('admin.manage-users')
                 ->with('error', __('អ្នកមិនអាចលុបគណនីផ្ទាល់ខ្លួនបានទេ។'));
         }

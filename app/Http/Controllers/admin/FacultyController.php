@@ -48,7 +48,8 @@ class FacultyController extends Controller
 
         try {
             $this->logCreated($faculty);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+        }
 
         return redirect()->route('admin.manage-faculties')->with('success', __('មហាវិទ្យាល័យត្រូវបានបង្កើតដោយជោគជ័យ។'));
     }
@@ -66,7 +67,8 @@ class FacultyController extends Controller
 
         try {
             $this->logUpdated($faculty, $oldAttributes);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+        }
 
         return redirect()->route('admin.manage-faculties')->with('success', __('មហាវិទ្យាល័យត្រូវបានកែប្រែដោយជោគជ័យ។'));
     }
@@ -92,7 +94,8 @@ class FacultyController extends Controller
 
             try {
                 $this->logAction('delete', null, $oldAttributes, null, "Deleted faculty: {$faculty->name_km}");
-            } catch (\Exception $e) {}
+            } catch (\Exception $e) {
+            }
 
             return redirect()->route('admin.manage-faculties')
                 ->with('success', __('មហាវិទ្យាល័យនិងទិន្នន័យដែលពាក់ព័ន្ធទាំងអស់ត្រូវបានលុបដោយជោគជ័យ។'));

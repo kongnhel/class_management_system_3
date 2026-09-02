@@ -55,7 +55,7 @@ class SmartAssistantController extends Controller
             // Add website search data for search mode
             if ($request->option === 'search') {
                 $websiteData = $this->websiteService->searchNmuData($request->message);
-                $dbContext .= "\n\n=== NMU WEBSITE SEARCH RESULTS ===\n" . $websiteData;
+                $dbContext .= "\n\n=== NMU WEBSITE SEARCH RESULTS ===\n".$websiteData;
             }
 
             $conversationId = $this->getConversationId($user->id);
@@ -198,7 +198,7 @@ class SmartAssistantController extends Controller
 
         $basePrompt = "You are NMU Smart Assistant, an AI helper for National Meanchey University (សាកលវិទ្យាល័យជាតិមានជ័យ). You speak Khmer and English. You have access to the university's database and website data.";
 
-        $pronounRule = <<<EOD
+        $pronounRule = <<<'EOD'
 
 --- ការប្រើសព្វនាម (ផ្អែកលើ តួនាទី និង ភេទ) ---
 សូមប្រើសព្វនាមឱ្យបានត្រឹមត្រូវទៅតាមតួនាទី និងភេទរបស់អ្នកប្រើប្រាស់៖
@@ -208,10 +208,10 @@ class SmartAssistantController extends Controller
 EOD;
 
         $optionPrompt = match ($option) {
-            'info' => "You provide information about students, professors, courses, grades, attendance, schedules, and university data. Answer questions using the database context provided. Be helpful and accurate. Use data from the context to answer questions.",
-            'process' => "You explain how to use the Class Management System. Guide users through features like: creating assessments, grading students, taking attendance, enrolling courses, importing data, exporting reports. Be step-by-step and clear.",
-            'search' => "You are a search assistant. When users ask about specific data (students, professors, courses, grades, attendance, schedules, university info), search through the provided database context and website data to find matching records. Present results in a clear, organized format. If asked about university information, use the NMU website data. Search comprehensively across all available data.",
-            default => "You are a helpful assistant for NMU Class Management System.",
+            'info' => 'You provide information about students, professors, courses, grades, attendance, schedules, and university data. Answer questions using the database context provided. Be helpful and accurate. Use data from the context to answer questions.',
+            'process' => 'You explain how to use the Class Management System. Guide users through features like: creating assessments, grading students, taking attendance, enrolling courses, importing data, exporting reports. Be step-by-step and clear.',
+            'search' => 'You are a search assistant. When users ask about specific data (students, professors, courses, grades, attendance, schedules, university info), search through the provided database context and website data to find matching records. Present results in a clear, organized format. If asked about university information, use the NMU website data. Search comprehensively across all available data.',
+            default => 'You are a helpful assistant for NMU Class Management System.',
         };
 
         return "{$basePrompt}\n\nRole: {$roleName}\nUser Gender: {$userGender}\n{$pronounRule}\n\n{$optionPrompt}";

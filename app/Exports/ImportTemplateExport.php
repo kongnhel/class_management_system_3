@@ -3,11 +3,11 @@
 namespace App\Exports;
 
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithMapping;
+use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class ImportTemplateExport implements WithHeadings, WithStyles, WithMapping
+class ImportTemplateExport implements WithHeadings, WithMapping, WithStyles
 {
     public function headings(): array
     {
