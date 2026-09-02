@@ -237,6 +237,7 @@ Route::middleware(['auth', 'role:admin', 'throttle:120,1'])->prefix('admin')->na
     // Attendance Dashboard
     Route::get('/attendance/professor-checkins', [AdminAttendanceController::class, 'professorCheckins'])->name('attendance.professorCheckins');
     Route::get('/attendance/professor-checkins/export', [AdminAttendanceController::class, 'exportProfessorCheckins'])->name('attendance.professorCheckinsExport');
+    Route::get('/attendance/professor/{professorId}/export', [AdminAttendanceController::class, 'exportProfessorAttendance'])->name('attendance.professorExport');
     Route::get('/attendance', [AdminAttendanceController::class, 'index'])->name('attendance.index');
     Route::get('/attendance/{courseOffering}', [AdminAttendanceController::class, 'show'])->name('attendance.show');
     Route::get('/attendance/{courseOffering}/export', [AdminAttendanceController::class, 'exportAttendance'])->name('attendance.export');
@@ -402,6 +403,9 @@ Route::get('/professor/course-offering/{offering_id}/export', [CourseOfferingCon
 Route::get('/professor/attendance/history', [ProfessorAttendanceController::class, 'history'])
     ->middleware(['auth', 'role:professor'])
     ->name('professor.attendance.history');
+Route::get('/professor/attendance/export', [ProfessorAttendanceController::class, 'exportAttendance'])
+    ->middleware(['auth', 'role:professor'])
+    ->name('professor.attendance.export');
 
 Route::middleware(['auth', 'role:student', 'throttle:120,1'])->prefix('student')->name('student.')->group(function () {
     Route::get('/dashboard', [StudentController::class, 'dashboard'])->name('dashboard');

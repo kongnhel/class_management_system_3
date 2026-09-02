@@ -9,6 +9,7 @@ use App\Services\AttendanceSessionService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Excel;
 use Illuminate\Validation\Rule;
 
 class ProfessorAttendanceController extends Controller
@@ -37,9 +38,9 @@ class ProfessorAttendanceController extends Controller
 
         // Get student IDs from either single or multiple selection
         $studentIds = [];
-        if (!empty($request->student_user_ids)) {
+        if (! empty($request->student_user_ids)) {
             $studentIds = array_filter(explode(',', $request->student_user_ids));
-        } elseif (!empty($request->student_user_id)) {
+        } elseif (! empty($request->student_user_id)) {
             $studentIds = [$request->student_user_id];
         }
 
@@ -49,7 +50,9 @@ class ProfessorAttendanceController extends Controller
 
         foreach ($studentIds as $studentId) {
             $studentId = trim($studentId);
-            if (empty($studentId)) continue;
+            if (empty($studentId)) {
+                continue;
+            }
 
             AttendanceRecord::updateOrInsert(
                 [
@@ -307,5 +310,45 @@ class ProfessorAttendanceController extends Controller
             ->paginate(15);
 
         return view('professor.attendance.history', compact('attendances'));
+    }
+
+    /**
+     * Export professor's attendance history to Excel
+     */
+    public function exportAttendance(Request $request)
+    {
+        $query = AttendanceProfessor::with(['courseOffering.course', 'courseOffering.targetPrograms'])
+            ->where('professor_id', auth()->id());
+
+        $semester = $request->input('semester');
+        $academicYear = $request->input('academic_year');
+
+        if ($semester) {
+            $query->whereHas('courseOffering', function ($q) use ($semester) {
+                $q->where('semester', $semester);
+            });
+        }
+
+        if ($academicYear) {
+            $query->whereHas('courseOffering', function ($q) use ($academicYear) {
+                $q->where('academic_year', $academicYear);
+            });
+        }
+
+        $attendances = $query->orderBy('verified_at', 'desc')->get();
+
+        $professorName = auth()->user()->name;
+
+        $stats = [
+            'total' => $attendances->count(),
+        ];
+
+        $fileName = 'Professor_Attendance_'.$professorName.'_'.$semester.'_'.$academicYear.'.xlsx';
+        $fileName = str_replace([' ', '/', '\\'], '_', $fileName);
+
+        return Excel::download(
+            new \App\Exports\ProfessorAttendanceExcelExport($attendances, $stats, $professorName, $semester, $academicYear),
+            $fileName
+        );
     }
 }

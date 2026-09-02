@@ -1,4 +1,4 @@
-﻿<x-app-layout>
+<x-app-layout>
     <style>
         .font-khmer { font-family: 'Battambang', 'Hanuman', sans-serif; }
     </style>
@@ -9,10 +9,16 @@
                 <h2 class="font-black text-3xl text-slate-800">{{ __('ប្រវត្តិវត្តមានរបស់លោកគ្រូ') }}</h2>
                 <p class="text-slate-500">{{ __('កំណត់ត្រាចុះវត្តមានទាំងអស់') }}</p>
             </div>
-            <a wire:navigate href="{{ route('professor.dashboard') }}"
-               class="px-5 py-3 bg-white border border-slate-200 rounded-2xl font-bold text-slate-700 hover:bg-slate-50 transition-all flex items-center gap-2">
-                <i class="fas fa-arrow-left"></i> {{ __('ត្រឡប់ក្រោយ') }}
-            </a>
+            <div class="flex items-center gap-3">
+                <a href="{{ route('professor.attendance.export', request()->query()) }}"
+                   class="px-5 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl font-bold transition-all flex items-center gap-2 shadow-sm shadow-emerald-200">
+                    <i class="fas fa-download"></i> {{ __('នាំចេញ XLSX') }}
+                </a>
+                <a wire:navigate href="{{ route('professor.dashboard') }}"
+                   class="px-5 py-3 bg-white border border-slate-200 rounded-2xl font-bold text-slate-700 hover:bg-slate-50 transition-all flex items-center gap-2">
+                    <i class="fas fa-arrow-left"></i> {{ __('ត្រឡប់ក្រោយ') }}
+                </a>
+            </div>
         </div>
     </x-slot>
 

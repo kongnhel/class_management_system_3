@@ -291,4 +291,44 @@ class AdminAttendanceController extends Controller
             $fileName
         );
     }
+
+    /**
+     * Export a single professor's attendance history to Excel
+     */
+    public function exportProfessorAttendance(Request $request, int $professorId)
+    {
+        $professor = \App\Models\User::findOrFail($professorId);
+
+        $query = AttendanceProfessor::with(['courseOffering.course', 'courseOffering.targetPrograms'])
+            ->where('professor_id', $professorId);
+
+        if ($request->filled('semester')) {
+            $query->whereHas('courseOffering', function ($q) use ($request) {
+                $q->where('semester', $request->input('semester'));
+            });
+        }
+
+        if ($request->filled('academic_year')) {
+            $query->whereHas('courseOffering', function ($q) use ($request) {
+                $q->where('academic_year', $request->input('academic_year'));
+            });
+        }
+
+        $attendances = $query->orderBy('verified_at', 'desc')->get();
+
+        $stats = [
+            'total' => $attendances->count(),
+        ];
+
+        $semester = $request->input('semester');
+        $academicYear = $request->input('academic_year');
+        $professorName = $professor->name;
+        $fileName = 'Professor_Attendance_'.$professorName.'_'.$semester.'_'.$academicYear.'.xlsx';
+        $fileName = str_replace([' ', '/', '\\'], '_', $fileName);
+
+        return Excel::download(
+            new \App\Exports\ProfessorAttendanceExcelExport($attendances, $stats, $professorName, $semester, $academicYear),
+            $fileName
+        );
+    }
 }

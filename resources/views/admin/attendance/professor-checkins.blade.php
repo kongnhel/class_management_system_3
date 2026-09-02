@@ -17,8 +17,19 @@
                 <div class="flex items-center gap-3">
                     <a href="{{ route('admin.attendance.professorCheckinsExport', request()->query()) }}" class="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-all shadow-sm shadow-emerald-200">
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                        នាំចេញ XLSX
+                        នាំចេញទាំងអស់
                     </a>
+                    @if(request('professor_id'))
+                        @php
+                            $filteredProfessor = $professors->firstWhere('id', request('professor_id'));
+                        @endphp
+                        @if($filteredProfessor)
+                        <a href="{{ route('admin.attendance.professorExport', $filteredProfessor->id, array_filter(['semester' => request('semester'), 'academic_year' => request('academic_year')])) }}" class="inline-flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-all shadow-sm shadow-blue-200">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            នាំចេញ {{ $filteredProfessor->name }}
+                        </a>
+                        @endif
+                    @endif
                     <a href="{{ route('admin.attendance.index') }}" class="inline-flex items-center gap-2 bg-white/10 backdrop-blur text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-white/20 transition-all">
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
                         ត្រឡប់ក្រោយ
