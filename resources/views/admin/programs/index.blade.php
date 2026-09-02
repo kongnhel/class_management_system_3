@@ -303,36 +303,35 @@
             if (e.key === 'Escape') closeDeleteModal();
         });
 
-        // Faculty → Department cascading filter
-        document.getElementById('faculty-filter').addEventListener('change', function() {
-            const facultyId = this.value;
-            const deptSelect = document.getElementById('department-filter');
-            const currentDept = deptSelect.value;
+        // Faculty → Department cascading filter (client-side, no extra AJAX)
+        (function() {
+            var facultySelect = document.getElementById('faculty-filter');
+            var deptSelect = document.getElementById('department-filter');
+            if (!facultySelect || !deptSelect) return;
 
-            if (!facultyId) {
-                Array.from(deptSelect.options).forEach(opt => {
-                    if (opt.value) opt.style.display = '';
-                });
-            } else {
-                Array.from(deptSelect.options).forEach(opt => {
-                    if (!opt.value) return;
-                    const deptFacultyId = parseInt(opt.dataset.facultyId);
-                    opt.style.display = deptFacultyId == facultyId ? '' : 'none';
-                });
-                if (currentDept) {
-                    const selectedOpt = deptSelect.querySelector(`option[value="${currentDept}"]`);
-                    if (selectedOpt && selectedOpt.style.display === 'none') {
-                        deptSelect.value = '';
-                    }
-                }
-            }
-        });
+            var allDepts = {!! json_encode($departments->map(fn($d) => ['id' => $d->id, 'name_km' => $d->name_km, 'faculty_id' => $d->faculty_id])) !!};
+            var currentDept = '{{ request("department_id") }}';
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const facultyFilter = document.getElementById('faculty-filter');
-            if (facultyFilter.value) {
-                facultyFilter.dispatchEvent(new Event('change'));
+            function rebuildDeptDropdown(facultyId) {
+                deptSelect.innerHTML = '<option value="">{{ __("ទាំងអស់") }}</option>';
+                var depts = facultyId
+                    ? allDepts.filter(function(d) { return d.faculty_id == facultyId; })
+                    : allDepts;
+                depts.forEach(function(d) {
+                    var sel = (d.id == currentDept) ? 'selected' : '';
+                    deptSelect.innerHTML += '<option value="' + d.id + '" ' + sel + '>' + d.name_km + '</option>';
+                });
             }
-        });
+
+            facultySelect.addEventListener('change', function() {
+                currentDept = '';
+                rebuildDeptDropdown(this.value);
+            });
+
+            // On load: sync department dropdown if faculty is pre-selected
+            if (facultySelect.value) {
+                rebuildDeptDropdown(facultySelect.value);
+            }
+        })();
     </script>
 </x-app-layout>
