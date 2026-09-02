@@ -38,7 +38,7 @@ class GenerationController extends Controller
         }
 
         $request->validate([
-            'name' => 'required|integer|min:1|max:99|unique:generations,name,' . $generation->id,
+            'name' => 'required|integer|min:1|max:99|unique:generations,name,'.$generation->id,
         ]);
 
         $generation->update([
@@ -68,6 +68,10 @@ class GenerationController extends Controller
         $generation->update(['is_active' => ! $generation->is_active]);
 
         $status = $generation->is_active ? 'សកម្ម' : 'មិនសកម្ម';
+
+        if (request()->expectsJson()) {
+            return response()->json(['is_active' => $generation->is_active]);
+        }
 
         return redirect()->route('admin.generations.index')
             ->with('success', __('ជំនាន់នេះត្រូវបានកំណត់ជា :status។', ['status' => $status]));

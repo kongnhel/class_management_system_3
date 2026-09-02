@@ -91,12 +91,30 @@
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-2">
-                                    <form action="{{ route('admin.generations.toggle', $gen) }}" method="POST" class="inline-flex">
-                                        @csrf @method('PATCH')
-                                        <button type="submit" class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors {{ $gen->is_active ? 'bg-emerald-500' : 'bg-gray-300' }}" title="{{ $gen->is_active ? 'បិទសកម្មភាព' : 'បើកសកម្មភាព' }}">
-                                            <span class="inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform {{ $gen->is_active ? 'translate-x-6' : 'translate-x-1' }}"></span>
+                                    <div x-data="{ active: {{ Js::from($gen->is_active) }}, saving: false }" class="inline-flex">
+                                        <button type="button" :disabled="saving"
+                                            @click="
+                                                saving = true;
+                                                fetch('{{ route('admin.generations.toggle', $gen) }}', {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                                        'X-HTTP-Method-Override': 'PATCH',
+                                                        'Accept': 'application/json'
+                                                    }
+                                                })
+                                                .then(function(r) { return r.json(); })
+                                                .then(function(d) { active = d.is_active; saving = false; })
+                                                .catch(function() { saving = false; });
+                                            "
+                                            class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 cursor-pointer disabled:opacity-50"
+                                            :class="active ? 'bg-emerald-500' : 'bg-gray-300'"
+                                            :title="active ? 'បិទសកម្មភាព' : 'បើកសកម្មភាព'">
+                                            <span class="inline-block h-4 w-4 rounded-full bg-white shadow transition-transform duration-200"
+                                                  :class="active ? 'translate-x-6' : 'translate-x-1'"></span>
                                         </button>
-                                    </form>
+                                    </div>
                                     @if($gen->students_count === 0)
                                         <button type="button" onclick="openEditModal({{ $gen->id }}, {{ $gen->name }})" class="text-emerald-500 hover:text-emerald-700 transition" title="{{ __('កែប្រែ') }}">
                                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
