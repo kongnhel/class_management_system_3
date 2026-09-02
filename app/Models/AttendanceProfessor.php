@@ -10,6 +10,10 @@ class AttendanceProfessor extends Model
         'professor_id', 'course_offering_id', 'session_id', 'verified_date', 'lat', 'lng', 'verified_at',
     ];
 
+    protected $casts = [
+        'verified_at' => 'datetime',
+    ];
+
     public function professor()
     {
         return $this->belongsTo(User::class, 'professor_id');
