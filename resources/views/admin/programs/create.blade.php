@@ -69,7 +69,7 @@
                             <label for="faculty_id" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('សាលា') }} <span class="text-red-500">*</span></label>
                             <select id="faculty_id" required
                                 class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
-                                <option value="">{{ __('ជ្រើសរើសសាលា') }}</option>
+                                <option value="">{{ __('ជ្រើសរើសមហាវិទ្យាល័យ') }}</option>
                                 @foreach ($faculties as $faculty)
                                     <option value="{{ $faculty->id }}" {{ old('faculty_id') == $faculty->id ? 'selected' : '' }}>
                                         {{ $faculty->name_km }} ({{ $faculty->name_en }})
@@ -140,7 +140,7 @@
         var departmentSelect = document.getElementById('department_id');
 
         function filterDepartments(facultyId, selectedDeptId) {
-            departmentSelect.innerHTML = '<option value="">{{ __("ជ្រើសរើសសាលាមុន") }}</option>';
+            departmentSelect.innerHTML = '<option value="">{{ __("ជ្រើសរើសមហាវិទ្យាល័យមុន") }}</option>';
             var filtered = departments.filter(function(d) { return d.faculty_id == facultyId; });
             filtered.forEach(function(d) {
                 var opt = document.createElement('option');
