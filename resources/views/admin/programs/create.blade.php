@@ -66,7 +66,7 @@
 
                         {{-- Faculty --}}
                         <div>
-                            <label for="faculty_id" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('សាលា') }} <span class="text-red-500">*</span></label>
+                            <label for="faculty_id" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('មហាវិទ្យាល័យ') }} <span class="text-red-500">*</span></label>
                             <select id="faculty_id" required
                                 class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
                                 <option value="">{{ __('ជ្រើសរើសមហាវិទ្យាល័យ') }}</option>
@@ -83,7 +83,7 @@
                             <label for="department_id" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ដេប៉ាតឺម៉ង់') }} <span class="text-red-500">*</span></label>
                             <select id="department_id" name="department_id" required
                                 class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
-                                <option value="">{{ __('សូមជ្រើសរើសសាលាមុន') }}</option>
+                                <option value="">{{ __('សូមជ្រើសរើសមហាវិទ្យាល័យមុន') }}</option>
                             </select>
                             @error('department_id') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                         </div>
