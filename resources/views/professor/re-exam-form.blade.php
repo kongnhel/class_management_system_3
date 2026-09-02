@@ -101,8 +101,9 @@
 
                             {{-- Failed Components --}}
                             <div class="p-6 space-y-4">
-                                @foreach($studentData['failed_items'] as $item)
+                                @foreach($studentData['failed_items'] as $idx => $item)
                                     @php
+                                        $i = $loop->parent->index . '_' . $idx;
                                         $typeLabel = match($item['assessment_type']) {
                                             'assignment' => __('កិច្ចការ'),
                                             'midterm' => __('ប្រឡងពាក់កណ្ដាល់'),
@@ -110,34 +111,32 @@
                                             default => ucfirst($item['assessment_type']),
                                         };
                                     @endphp
-                                    <div class="flex flex-col sm:flex-row sm:items-center gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
-                                        <div class="flex-1 min-w-0">
-                                            <div class="flex items-center gap-2 mb-1">
-                                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-600">{{ $typeLabel }}</span>
-                                                @if($item['has_re_exam'])
-                                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-600">{{ __('ប្រឡងសងរួច') }}</span>
-                                                @endif
-                                            </div>
-                                            <p class="text-sm font-semibold text-gray-800 truncate">{{ $item['title'] }}</p>
-                                            <div class="flex items-center gap-3 mt-1 text-xs text-gray-400">
-                                                <span>{{ __('ពិន្ទុបច្ចុប្បន្ន') }}: <span class="font-bold text-red-500">{{ number_format($item['current_score'], 1) }}</span> / {{ $item['max_score'] }}</span>
-                                                <span>·</span>
-                                                <span>{{ __('ត្រូវការ') }}: <span class="font-bold text-amber-600">≥ {{ $item['threshold'] }}</span></span>
-                                            </div>
+                                    <div class="p-4 bg-gray-50 rounded-xl border border-gray-100">
+                                        <div class="flex items-center gap-2 mb-2">
+                                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-600">{{ $typeLabel }}</span>
+                                            @if($item['has_re_exam'])
+                                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-600">{{ __('ប្រឡងសងរួច') }}</span>
+                                            @endif
                                         </div>
-                                        <div class="w-full sm:w-40">
+                                        <p class="text-sm font-semibold text-gray-800 mb-2">{{ $item['title'] }}</p>
+                                        <div class="flex items-center gap-3 mb-3 text-xs text-gray-400">
+                                            <span>{{ __('ពិន្ទុបច្ចុប្បន្ន') }}: <span class="font-bold text-red-500">{{ number_format($item['current_score'], 1) }}</span> / {{ $item['max_score'] }}</span>
+                                            <span>·</span>
+                                            <span>{{ __('ត្រូវការ') }}: <span class="font-bold text-amber-600">≥ {{ $item['threshold'] }}</span></span>
+                                        </div>
+                                        <div>
                                             <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">{{ __('ពិន្ទុប្រឡងសង') }}</label>
                                             <input type="number"
-                                                name="scores[][new_score]"
+                                                name="scores[{{ $i }}][new_score]"
                                                 min="0"
                                                 max="{{ $item['max_score'] }}"
                                                 step="0.5"
                                                 value="{{ $item['has_re_exam'] ? $item['current_score'] : '' }}"
-                                                class="w-full border-gray-200 rounded-lg text-sm focus:ring-amber-500 focus:border-amber-500"
+                                                class="w-full sm:w-48 border-gray-200 rounded-lg text-sm focus:ring-amber-500 focus:border-amber-500"
                                                 placeholder="0 - {{ $item['max_score'] }}">
-                                            <input type="hidden" name="scores[][student_user_id]" value="{{ $student->id }}">
-                                            <input type="hidden" name="scores[][assessment_type]" value="{{ $item['assessment_type'] }}">
-                                            <input type="hidden" name="scores[][assessment_id]" value="{{ $item['assessment_id'] }}">
+                                            <input type="hidden" name="scores[{{ $i }}][student_user_id]" value="{{ $student->id }}">
+                                            <input type="hidden" name="scores[{{ $i }}][assessment_type]" value="{{ $item['assessment_type'] }}">
+                                            <input type="hidden" name="scores[{{ $i }}][assessment_id]" value="{{ $item['assessment_id'] }}">
                                         </div>
                                     </div>
                                 @endforeach

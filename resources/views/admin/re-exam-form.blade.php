@@ -101,8 +101,9 @@
 
                             {{-- Failed Components --}}
                             <div class="p-6 space-y-4">
-                                @foreach($studentData['failed_items'] as $item)
+                                @foreach($studentData['failed_items'] as $idx => $item)
                                     @php
+                                        $i = $loop->parent->index . '_' . $idx;
                                         $typeLabel = match($item['assessment_type']) {
                                             'assignment' => __('កិច្ចការ'),
                                             'midterm' => __('ប្រឡងពាក់កណ្ដាល់'),
@@ -126,16 +127,16 @@
                                         <div>
                                             <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">{{ __('ពិន្ទុប្រឡងសង') }}</label>
                                             <input type="number"
-                                                name="scores[][new_score]"
+                                                name="scores[{{ $i }}][new_score]"
                                                 min="0"
                                                 max="{{ $item['max_score'] }}"
                                                 step="0.5"
                                                 value="{{ $item['has_re_exam'] ? $item['current_score'] : '' }}"
                                                 class="w-full sm:w-48 border-gray-200 rounded-lg text-sm focus:ring-amber-500 focus:border-amber-500"
                                                 placeholder="0 - {{ $item['max_score'] }}">
-                                            <input type="hidden" name="scores[][student_user_id]" value="{{ $student->id }}">
-                                            <input type="hidden" name="scores[][assessment_type]" value="{{ $item['assessment_type'] }}">
-                                            <input type="hidden" name="scores[][assessment_id]" value="{{ $item['assessment_id'] }}">
+                                            <input type="hidden" name="scores[{{ $i }}][student_user_id]" value="{{ $student->id }}">
+                                            <input type="hidden" name="scores[{{ $i }}][assessment_type]" value="{{ $item['assessment_type'] }}">
+                                            <input type="hidden" name="scores[{{ $i }}][assessment_id]" value="{{ $item['assessment_id'] }}">
                                         </div>
                                     </div>
                                 @endforeach
