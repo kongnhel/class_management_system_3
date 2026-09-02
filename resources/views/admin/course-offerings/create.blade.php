@@ -510,7 +510,7 @@
                     }).join('') + '</div>';
                 }
                 if (!payload.conflict && payload.times_match_session === false) {
-                    html += warnBox('info', '{{ __("ℹ ចំណាំ៖ ម៉ោងដែលបានជ្រើសរើសមិនត្រូវនឹង Session ៩០ នាទីស្តង់ដារណាមួយឡើយ (អាចប្រើបាន ប៉ុណ្ណោះសិន)។") }}');
+                    html += warnBox('info', '{{ __("ℹ ចំណាំ៖ ម៉ោងដែលបានជ្រើសរើសដែលមិនត្រូវនឹង Session ៩០ នាទី គឺមិនមែនជាម៉ោង ស្តង់ដារណាឡើយ។") }}');
                 }
 
                 el.innerHTML = html;

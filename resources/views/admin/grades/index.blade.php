@@ -57,7 +57,7 @@
                                 <i class="fas fa-sync-alt"></i>
                             </a>
                             <button type="submit" class="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-bold px-4 py-2.5 rounded-xl transition-all shadow-md text-sm whitespace-nowrap">
-                                <i class="fas fa-filter mr-1"></i> {{ __('តម្រង់ទិស') }}
+                                <i class="fas fa-filter mr-1"></i> {{ __('តម្រង់') }}
                             </button>
                         </div>
                     </div>

@@ -9,7 +9,7 @@
      style="bottom: 24px; right: 24px; touch-action: none;">
 
     <div class="mb-3 bg-gray-900 text-white px-4 py-2.5 rounded-2xl shadow-xl text-xs font-medium opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 pointer-events-none relative mr-2 whitespace-nowrap">
-        {{ __('សួរអ្វីមួយទៅកាន់ AI...') }}
+        {{ __('AI Chatbot assistant ​​​ហ្នឹងមកដល់ក្នុងពេលឆាប់ៗនេះ') }}
         <div class="absolute -bottom-1 right-4 w-2 h-2 bg-gray-900 rotate-45"></div>
     </div>
 

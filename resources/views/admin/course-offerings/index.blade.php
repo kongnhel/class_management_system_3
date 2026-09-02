@@ -413,7 +413,7 @@
             </div>
 
             <div class="schedule-title-block">
-                <h1 class="font-moul">{{ __('តារាងវិភាគកម្មធ៌មឆមាសទី') }}{{ request('semester') == 'ឆមាសទី២' ? '២' : '១' }} / Timetable Semester {{ request('semester') == 'ឆមាសទី២' ? '2' : '1' }}</h1>
+                <h1 class="font-moul">{{ __('តារាងកាលវិភាគប្រចាំឆមាសទី') }}{{ request('semester') == 'ឆមាសទី២' ? '២' : '១' }} / Timetable Semester {{ request('semester') == 'ឆមាសទី២' ? '2' : '1' }}</h1>
                 <p>{{ __('ជំនាន់ទី') }}{{ request('generation', '...') }} {{ $currentFacultyName }} {{ __('ឆ្នាំសិក្សា') }} {{ request('academic_year', date('Y').'-'.date('Y')+1) }}</p>
             </div>
         </div>

@@ -133,7 +133,7 @@
                         </label>
                         <select name="role" required class="w-full rounded-xl border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 text-sm">
                             <option value="student" @if(old('role','student')=='student') selected @endif>សិស្ស</option>
-                            <option value="professor" @if(old('role')=='professor') selected @endif>សាស្ត្រាចារ្យ</option>
+                            <!-- <option value="professor" @if(old('role')=='professor') selected @endif>សាស្ត្រាចារ្យ</option> -->
                         </select>
                     </div>
 
