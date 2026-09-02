@@ -105,8 +105,8 @@
                                             "
                                             class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 cursor-pointer"
                                             :class="active ? 'bg-emerald-500' : 'bg-gray-300'">
-                                            <span class="inline-block h-4 w-4 rounded-full bg-white shadow transition-transform duration-200"
-                                                  :class="active ? 'translate-x-6' : 'translate-x-1'"></span>
+                                            <span class="inline-block h-4 w-4 rounded-full bg-white shadow transition-all duration-200"
+                                                  :style="active ? 'transform: translateX(24px)' : 'transform: translateX(4px)'"></span>
                                         </button>
                                     </div>
                                     @if($gen->students_count === 0)
