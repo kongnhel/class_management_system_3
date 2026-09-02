@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\professor;
+namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Assignment;
@@ -13,32 +13,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class ProfessorReExamController extends Controller
+class AdminReExamController extends Controller
 {
-    private function authorizeCourseOffering(CourseOffering $courseOffering): void
-    {
-        if (Auth::user()->isAdmin() || $courseOffering->lecturer_user_id === Auth::id()) {
-            return;
-        }
-        abort(403, __('អ្នកមិនមានសិទ្ធិចូលប្រើប្រាស់មុខវិជ្ជានេះទេ។'));
-    }
-
-    /**
-     * Show the re-exam form for a course offering.
-     * Lists students who failed critical components (assignment/midterm/final).
-     */
     public function showForm($offeringId)
     {
         $offering = CourseOffering::with(['course', 'assignments', 'exams'])
             ->findOrFail($offeringId);
 
-        $this->authorizeCourseOffering($offering);
-
         $enrollments = \App\Models\StudentCourseEnrollment::where('course_offering_id', $offeringId)
             ->with('student')
             ->get();
 
-        // Get existing re-exam results for this offering
         $existingReExams = ReExamResult::where('course_offering_id', $offeringId)
             ->get()
             ->keyBy(fn ($r) => $r->student_user_id.'_'.$r->assessment_type);
@@ -51,7 +36,6 @@ class ProfessorReExamController extends Controller
 
             $attendanceScore = $student->getAttendanceScoreByCourse($offering->id);
 
-            // Get all exam results for this student in this offering
             $examResults = ExamResult::where('student_user_id', $student->id)
                 ->where(function ($q) use ($offering) {
                     $q->where(function ($q2) use ($offering) {
@@ -74,10 +58,8 @@ class ProfessorReExamController extends Controller
                 $offering->id
             );
 
-            // Build per-assessment data for failed components
             $failedItems = [];
             foreach ($componentStatus['needs_re_exam'] as $type) {
-                // Find the assessment(s) of this type
                 if ($type === 'assignment') {
                     foreach ($offering->assignments as $assignment) {
                         $result = $examResults->first(fn ($r) => $r->assessment_type === 'assignment' && $r->assessment_id === $assignment->id);
@@ -120,23 +102,18 @@ class ProfessorReExamController extends Controller
                 'attendance_score' => $attendanceScore,
                 'attendance_passing' => $componentStatus['attendance']['passing'],
                 'failed_items' => $failedItems,
-                'total_score' => 0, // will be recalculated
+                'total_score' => 0,
             ];
         })->filter()->values();
 
-        // Filter to only students with at least one failed critical component (non-attendance)
         $studentsWithFailed = $studentsData->filter(fn ($s) => count($s['failed_items']) > 0);
 
-        return view('professor.re-exam-form', compact('offering', 'studentsWithFailed'));
+        return view('admin.re-exam-form', compact('offering', 'studentsWithFailed'));
     }
 
-    /**
-     * Store re-exam scores for students.
-     */
     public function store(Request $request, $offeringId)
     {
         $offering = CourseOffering::findOrFail($offeringId);
-        $this->authorizeCourseOffering($offering);
 
         $request->validate([
             'scores' => 'required|array',
@@ -156,22 +133,18 @@ class ProfessorReExamController extends Controller
                 $assessmentId = $entry['assessment_id'];
                 $newScore = (float) $entry['new_score'];
 
-                // Determine max score and threshold
                 $maxScore = match ($type) {
                     'assignment' => Assignment::find($assessmentId)?->max_score ?? 20,
                     'midterm', 'final' => Exam::find($assessmentId)?->max_score ?? ($type === 'midterm' ? 15 : 50),
                     default => 100,
                 };
 
-                // Cap score at max_score
                 $newScore = min($newScore, $maxScore);
 
-                // Skip if score is 0 (no re-exam entered)
                 if ($newScore <= 0) {
                     continue;
                 }
 
-                // Update or create re-exam result (one attempt enforced by unique constraint)
                 ReExamResult::updateOrCreate(
                     [
                         'student_user_id' => $studentId,
@@ -188,7 +161,7 @@ class ProfessorReExamController extends Controller
             }
         });
 
-        return redirect()->route('professor.re-exam-form', $offeringId)
+        return redirect()->route('admin.grades.re-exam-form', $offeringId)
             ->with('success', __('រក្សាទុកពិន្ទុប្រឡងសងបានជោគជ័យ។'));
     }
 }

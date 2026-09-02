@@ -21,7 +21,7 @@
                     <a href="{{ route('admin.grades.export', $courseOffering->id) }}" class="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-5 py-2.5 rounded-xl font-bold shadow-md transition-all text-sm">
                         <i class="fas fa-download"></i> {{ __('ទាញយក Excel') }}
                     </a>
-                    <a href="{{ route('professor.re-exam-form', $courseOffering->id) }}" class="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white px-5 py-2.5 rounded-xl font-bold shadow-md transition-all text-sm">
+                    <a href="{{ route('admin.grades.re-exam-form', $courseOffering->id) }}" class="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white px-5 py-2.5 rounded-xl font-bold shadow-md transition-all text-sm">
                         <i class="fas fa-redo"></i> {{ __('ប្រឡងសង') }}
                     </a>
                     <a href="{{ route('admin.grades.index') }}" class="flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-700 px-5 py-2.5 rounded-xl font-bold shadow-sm border border-gray-200 transition-all text-sm">

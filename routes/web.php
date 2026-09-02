@@ -4,6 +4,7 @@ use App\Http\Controllers\admin\AcademicYearController;
 use App\Http\Controllers\admin\AdminAttendanceController;
 use App\Http\Controllers\admin\AdminController;
 use App\Http\Controllers\admin\AdminGradeController;
+use App\Http\Controllers\admin\AdminReExamController;
 use App\Http\Controllers\admin\AnnouncementController;
 use App\Http\Controllers\admin\BulkImportController;
 use App\Http\Controllers\admin\CourseController;
@@ -21,29 +22,29 @@ use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\professor\ProfessorAttendanceController;
 use App\Http\Controllers\professor\ProfessorController;
 use App\Http\Controllers\professor\ProfessorCourseOfferingController;
+use App\Http\Controllers\professor\ProfessorDashboardController;
 use App\Http\Controllers\professor\ProfessorGradeController;
 use App\Http\Controllers\professor\ProfessorNotificationController;
 use App\Http\Controllers\professor\ProfessorProfileController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\StudentRegistrationController;
 use App\Http\Controllers\SmartAssistantController;
+use App\Http\Controllers\Student\AttendanceCardController;
 use App\Http\Controllers\Student\NotificationController;
 use App\Http\Controllers\Student\StudentAttendanceController;
 use App\Http\Controllers\Student\StudentController;
 use App\Http\Controllers\Student\StudentGradeController;
 use App\Http\Controllers\Student\StudentRoomController;
-use App\Http\Controllers\Student\AttendanceCardController;
 use App\Http\Controllers\StudentProfileController;
+use App\Http\Controllers\StudentRegistrationController;
 use App\Http\Controllers\TelegramController;
-use App\Http\Controllers\professor\ProfessorDashboardController;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/vendor/livewire/livewire.js', function () {
     $path = base_path('vendor/livewire/livewire/dist/livewire.js');
-    
-    if (!File::exists($path)) {
+
+    if (! File::exists($path)) {
         abort(404);
     }
 
@@ -69,6 +70,7 @@ Route::get('/locale/{locale}', function (string $locale) {
     }
     session(['locale' => $locale]);
     app()->setLocale($locale);
+
     return redirect()->back();
 })->name('locale.switch');
 
@@ -229,6 +231,8 @@ Route::middleware(['auth', 'role:admin', 'throttle:120,1'])->prefix('admin')->na
     Route::get('/grades', [AdminGradeController::class, 'index'])->name('grades.index');
     Route::get('/grades/{courseOffering}', [AdminGradeController::class, 'show'])->name('grades.show');
     Route::get('/grades/{courseOffering}/export', [AdminGradeController::class, 'exportGrades'])->name('grades.export');
+    Route::get('/grades/{courseOffering}/re-exam', [AdminReExamController::class, 'showForm'])->name('grades.re-exam-form');
+    Route::post('/grades/{courseOffering}/re-exam', [AdminReExamController::class, 'store'])->name('grades.re-exam-store');
 
     // Attendance Dashboard
     Route::get('/attendance/professor-checkins', [AdminAttendanceController::class, 'professorCheckins'])->name('attendance.professorCheckins');
