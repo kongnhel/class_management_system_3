@@ -54,7 +54,7 @@ class AttendanceApiController extends Controller
 
         $qrSvg = (string) QrCode::size(300)
             ->margin(2)
-            ->generate($token);
+            ->generate($token->token_code);
 
         $offering->loadMissing('course');
         $courseName = $offering->course?->title_en ?? 'N/A';
@@ -92,7 +92,7 @@ class AttendanceApiController extends Controller
 
         $qrSvg = (string) QrCode::size(300)
             ->margin(2)
-            ->generate($token);
+            ->generate($token->token_code);
 
         return response()->json([
             'success' => true,

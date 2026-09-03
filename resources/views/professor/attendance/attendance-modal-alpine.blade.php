@@ -37,39 +37,50 @@
                                     <p class="text-emerald-300 text-xs lg:text-sm font-bold uppercase truncate max-w-[240px] lg:max-w-none" x-text="courseName"></p>
                                 </div>
 
-                                {{-- Two scan options side by side --}}
-                                <div class="grid grid-cols-2 gap-3 w-full items-start">
+                                {{-- Scan Mode Toggle --}}
+                                <div class="flex items-center gap-1 p-1 bg-slate-800/80 rounded-xl mb-3 w-full max-w-[280px]">
+                                    <button @click="scanMode = 'qr'; closeCardScanner();"
+                                            :class="scanMode === 'qr' ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : 'text-slate-400 hover:text-white'"
+                                            class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
+                                        QR
+                                    </button>
+                                    <button @click="scanMode = 'card'; $nextTick(() => startCardScanner());"
+                                            :class="scanMode === 'card' ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' : 'text-slate-400 hover:text-white'"
+                                            class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                                        Student Card
+                                    </button>
+                                </div>
 
-                                    {{-- QR Code (student scans) --}}
-                                    <div class="flex flex-col items-center">
-                                        <p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">QR</p>
-                                        <div class="relative group w-full">
-                                            <div class="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-purple-500 rounded-2xl blur opacity-30"></div>
-                                            <div class="relative bg-white p-1.5 rounded-xl shadow-2xl">
-                                                <div class="relative rounded-lg aspect-square bg-white flex items-center justify-center [&_svg]:w-full [&_svg]:h-full">
-                                                    <div x-html="qrSvg"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="mt-2 w-full">
-                                            <div class="flex items-center justify-between text-slate-400 text-[9px] mb-1 px-1">
-                                                <span>ប្តូរថ្មី</span>
-                                                <span class="font-mono text-white font-bold"><span x-text="qrTimeLeft">10</span>s</span>
-                                            </div>
-                                            <div class="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
-                                                <div class="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 transition-all duration-1000 ease-linear"
-                                                     :style="'width: ' + (qrTimeLeft / 10 * 100) + '%'"></div>
+                                {{-- QR Code Panel --}}
+                                <div x-show="scanMode === 'qr'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="flex flex-col items-center w-full">
+                                    <div class="relative group w-full max-w-[240px]">
+                                        <div class="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-purple-500 rounded-2xl blur opacity-30"></div>
+                                        <div class="relative bg-white p-1.5 rounded-xl shadow-2xl">
+                                            <div class="relative rounded-lg aspect-square bg-white flex items-center justify-center [&_svg]:w-full [&_svg]:h-full">
+                                                <div x-html="qrSvg"></div>
                                             </div>
                                         </div>
                                     </div>
-
-                                    {{-- Student Card scanner (professor scans) --}}
-                                    <div class="flex flex-col items-center">
-                                        <p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Student Card</p>
-                                        <div class="relative rounded-2xl overflow-hidden bg-black aspect-square shadow-inner w-full">
-                                            <div id="card-scanner-reader" class="w-full h-full absolute inset-0"></div>
+                                    <div class="mt-2 w-full max-w-[240px]">
+                                        <div class="flex items-center justify-between text-slate-400 text-[9px] mb-1 px-1">
+                                            <span>ប្តូរថ្មី</span>
+                                            <span class="font-mono text-white font-bold"><span x-text="qrTimeLeft">10</span>s</span>
+                                        </div>
+                                        <div class="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
+                                            <div class="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 transition-all duration-1000 ease-linear"
+                                                 :style="'width: ' + (qrTimeLeft / 10 * 100) + '%'"></div>
                                         </div>
                                     </div>
+                                </div>
+
+                                {{-- Student Card Scanner Panel --}}
+                                <div x-show="scanMode === 'card'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="flex flex-col items-center w-full">
+                                    <div class="relative rounded-2xl overflow-hidden bg-black shadow-inner w-full max-w-[240px] aspect-square">
+                                        <div id="card-scanner-reader" class="w-full h-full absolute inset-0"></div>
+                                    </div>
+                                    <p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 mt-2">ស្កែនប័ណ្ណសិស្ស</p>
                                 </div>
                             </div>
                         </div>
@@ -294,6 +305,7 @@ function attendanceModal() {
         qrDuration: 15,
         cardScanner: null,
         inlineScannerRunning: false,
+        scanMode: 'qr',
         _scanCooldown: false,
 
         async open(courseOfferingId, scheduleId, readOnly = false) {
@@ -333,11 +345,6 @@ function attendanceModal() {
 
             this.fetchStudents();
             this.startPolling();
-
-            if (!readOnly) {
-                await this.$nextTick();
-                this.startCardScanner();
-            }
         },
 
         async startCardScanner() {
