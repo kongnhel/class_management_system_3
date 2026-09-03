@@ -194,7 +194,7 @@ class ProfessorGradeController extends Controller
 
             $headerMap = [];
             for ($col = 'D'; $col <= $highestColumn; $col++) {
-                $cellValue = trim($sheet->getCell($col.'8')->getValue() ?? '');
+                $cellValue = trim($sheet->getCell($col.'10')->getValue() ?? '');
                 if ($cellValue === '' || $cellValue === 'វត្តមាន' || $cellValue === 'ពិន្ទុសរុប' || $cellValue === 'ចំណាត់ថ្នាក់') {
                     $headerMap[$col] = $cellValue;
 
@@ -250,8 +250,8 @@ class ProfessorGradeController extends Controller
 
             DB::beginTransaction();
 
-            // Read data rows starting from row 10
-            for ($row = 10; $row <= $highestRow; $row++) {
+            // Read data rows starting from row 12 (after merged headers at rows 10-11)
+            for ($row = 12; $row <= $highestRow; $row++) {
                 $nameCell = trim($sheet->getCell('B'.$row)->getValue() ?? '');
                 if ($nameCell === '' || $nameCell === 'មធ្យមភាគរួម' || $nameCell === 'អ្នកប្រឡងជាប់ / ធ្លាក់') {
                     continue;
