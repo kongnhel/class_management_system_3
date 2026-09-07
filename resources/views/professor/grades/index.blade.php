@@ -43,31 +43,16 @@
     @php
         $totalStudents = count($students);
         $totalSum = 0;
-        $totalMax = 0;
         $passCount = 0;
         $failCount = 0;
         $highestScore = 0;
         $lowestScore = $totalStudents > 0 ? 999999 : 0;
 
         foreach ($students as $student) {
-            $attendanceScore = $student->getAttendanceScoreByCourse($courseOffering->id);
-            $baseScore = $attendanceScore;
-            $quizBonus = 0;
-            foreach ($assessments as $assessment) {
-                $type = ($assessment instanceof \App\Models\Assignment) ? 'assignment' : (($assessment instanceof \App\Models\Quiz) ? 'quiz' : 'exam');
-                $score = $gradebook[$student->id][$type . '_' . $assessment->id] ?? 0;
-                if ($type === 'quiz') {
-                    $quizBonus += $score;
-                } else {
-                    $baseScore += $score;
-                }
-            }
-            $rowTotal = min($baseScore + $quizBonus, 100);
+            $rowTotal = $student->temp_total ?? 0;
             $totalSum += $rowTotal;
-            $totalMax += 100;
             if ($rowTotal > $highestScore) $highestScore = $rowTotal;
             if ($rowTotal < $lowestScore) $lowestScore = $rowTotal;
-            // Use isPassing from controller (includes assessment-level check)
             if ($student->isPassing) {
                 $passCount++;
             } else {
@@ -251,16 +236,8 @@
 
                 @forelse ($students as $student)
                     @php
-                        $attendanceScore = $student->getAttendanceScoreByCourse($courseOffering->id);
-                        $baseScore = $attendanceScore;
-                        $quizBonus = 0;
-                        foreach($assessments as $assessment) {
-                            $type = ($assessment instanceof \App\Models\Assignment) ? 'assignment' : (($assessment instanceof \App\Models\Quiz) ? 'quiz' : 'exam');
-                            $score = $gradebook[$student->id][$type . '_' . $assessment->id] ?? 0;
-                            if ($type === 'quiz') { $quizBonus += $score; } else { $baseScore += $score; }
-                        }
-                        $rowTotal = min($baseScore + $quizBonus, 100);
-                        $grade = \App\Services\GradingService::getLetterGrade($rowTotal);
+                        $rowTotal = $student->temp_total ?? 0;
+                        $grade = $student->letterGrade ?? \App\Services\GradingService::getLetterGrade($rowTotal);
                     @endphp
                     <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden student-card"
                          data-name="{{ mb_strtolower($student->profile->full_name_km ?? $student->name ?? '', 'UTF-8') }}"
@@ -374,8 +351,6 @@
                             @foreach($students as $student)
                                 @php
                                     $attendanceScore = $student->getAttendanceScoreByCourse($courseOffering->id);
-                                    $baseScore = $attendanceScore;
-                                    $quizBonus = 0;
                                 @endphp
                                 <tr>
                                     <td class="border border-black px-1 py-0.5" style="font-size:10px;">{{ $loop->iteration }}</td>
@@ -386,17 +361,12 @@
                                         @php
                                             $type = ($assessment instanceof \App\Models\Assignment) ? 'assignment' : (($assessment instanceof \App\Models\Quiz) ? 'quiz' : 'exam');
                                             $score = $gradebook[$student->id][$type . '_' . $assessment->id] ?? 0;
-                                            if ($type === 'quiz') { $quizBonus += $score; } else { $baseScore += $score; }
                                         @endphp
                                         <td class="border border-black px-1 py-0.5" style="font-size:10px;">{{ $score > 0 ? number_format($score, 1) : '' }}</td>
                                     @endforeach
                                     <td class="border border-black px-1 py-0.5" style="font-size:10px;">{{ $attendanceScore > 0 ? number_format($attendanceScore, 1) : '' }}</td>
-                                    @php
-                                        $rowTotal = min($baseScore + $quizBonus, 100);
-                                        $grade = \App\Services\GradingService::getLetterGrade($rowTotal);
-                                    @endphp
-                                    <td class="border border-black px-1 py-0.5 font-bold" style="font-size:10px;">{{ number_format($rowTotal, 1) }}</td>
-                                    <td class="border border-black px-1 py-0.5 font-bold" style="font-size:10px;">{{ $grade }}</td>
+                                    <td class="border border-black px-1 py-0.5 font-bold" style="font-size:10px;">{{ number_format($student->temp_total ?? 0, 1) }}</td>
+                                    <td class="border border-black px-1 py-0.5 font-bold" style="font-size:10px;">{{ $student->letterGrade ?? '' }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -492,19 +462,9 @@
                             @forelse ($students as $student)
                                 @php
                                     $attendanceScore = $student->getAttendanceScoreByCourse($courseOffering->id);
-                                    $baseScore = $attendanceScore;
-                                    $quizBonus = 0;
-                                    $studentScores = [];
-                                    foreach ($assessments as $assessment) {
-                                        $type = ($assessment instanceof \App\Models\Assignment) ? 'assignment' : (($assessment instanceof \App\Models\Quiz) ? 'quiz' : 'exam');
-                                        $score = $gradebook[$student->id][$type . '_' . $assessment->id] ?? 0;
-                                        $studentScores[$type . '_' . $assessment->id] = ['type' => $type, 'score' => $score];
-                                        if ($type === 'quiz') { $quizBonus += $score; } else { $baseScore += $score; }
-                                    }
-                                    $rowTotal = min($baseScore + $quizBonus, 100);
-                                    $grade = \App\Services\GradingService::getLetterGrade($rowTotal);
-                                    // Use isPassing from controller (includes assessment-level check)
-                                    $isPassing = $student->isPassing;
+                                    $rowTotal = $student->temp_total ?? 0;
+                                    $grade = $student->letterGrade ?? \App\Services\GradingService::getLetterGrade($rowTotal);
+                                    $isPassing = $student->isPassing ?? false;
                                 @endphp
                                 <tr class="hover:bg-slate-50/50 transition-colors duration-150 group student-row"
                                     data-name="{{ mb_strtolower($student->profile->full_name_km ?? $student->name ?? '', 'UTF-8') }}"

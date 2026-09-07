@@ -199,30 +199,23 @@ class ProfessorGradeExcelExport implements FromCollection, WithDrawings, WithSty
             // Assessment scores
             $colOffset = 4;
             $attendanceScore = $student->getAttendanceScoreByCourse($this->courseOffering->id);
-            $baseScore = $attendanceScore;
-            $quizBonus = 0;
 
             foreach ($this->assessments as $a) {
                 $type = ($a instanceof Assignment) ? 'assignment' : (($a instanceof Quiz) ? 'quiz' : 'exam');
                 $score = $this->gradebook[$student->id][$type.'_'.$a->id] ?? 0;
                 $sheet->setCellValue($this->colLetter($colOffset).$rowNum, $score > 0 ? $score : '');
                 $colOffset++;
-                if ($type === 'quiz') {
-                    $quizBonus += $score;
-                } else {
-                    $baseScore += $score;
-                }
             }
 
             // វត្តមាន (Attendance)
             $sheet->setCellValue($this->colLetter($colOffset).$rowNum, $attendanceScore > 0 ? $attendanceScore : '');
             $colOffset++;
-            // ពិន្ទុសរុប (Total)
-            $total = min($baseScore + $quizBonus, 100);
+            // ពិន្ទុសរុប (Total) — use pre-computed value from GradingService
+            $total = $student->temp_total ?? 0;
             $sheet->setCellValue($this->colLetter($colOffset).$rowNum, round($total, 1));
             $colOffset++;
-            // ចំណាត់ថ្នាក់ (Grade)
-            $sheet->setCellValue($this->colLetter($colOffset).$rowNum, GradingService::getLetterGrade($total));
+            // ចំណាត់ថ្នាក់ (Grade) — use pre-computed value from GradingService
+            $sheet->setCellValue($this->colLetter($colOffset).$rowNum, $student->letterGrade ?? GradingService::getLetterGrade($total));
 
             // Style data row
             $sheet->getStyle("A{$rowNum}:{$lastCol}{$rowNum}")->applyFromArray([
@@ -244,38 +237,14 @@ class ProfessorGradeExcelExport implements FromCollection, WithDrawings, WithSty
         $totalCol = $this->colLetter(5 + $assessmentCount);
         $gradeCol = $this->colLetter(6 + $assessmentCount);
 
-        // Calculate stats
-        $totals = $this->students->mapWithKeys(function ($s) {
-            $att = $s->getAttendanceScoreByCourse($this->courseOffering->id);
-            $base = $att;
-            $quiz = 0;
-            foreach ($this->assessments as $a) {
-                $type = ($a instanceof Assignment) ? 'assignment' : (($a instanceof Quiz) ? 'quiz' : 'exam');
-                $score = $this->gradebook[$s->id][$type.'_'.$a->id] ?? 0;
-                if ($type === 'quiz') {
-                    $quiz += $score;
-                } else {
-                    $base += $score;
-                }
-            }
-
-            return [$s->id => min($base + $quiz, 100)];
-        });
+        // Calculate stats using pre-computed values from GradingService
+        $totals = $this->students->mapWithKeys(fn ($s) => [$s->id => $s->temp_total ?? 0]);
 
         $avgTotal = $totals->count() > 0 ? round($totals->avg(), 1) : 0;
 
-        // Count pass/fail using GradingService + assessment-level check
-        $passCount = 0;
-        $failCount = 0;
-        foreach ($this->students as $student) {
-            $totalScore = $totals[$student->id] ?? 0;
-            $letterGrade = \App\Services\GradingService::getLetterGrade($totalScore);
-            if (! \App\Services\GradingService::isPassing($letterGrade)) {
-                $failCount++;
-            } else {
-                $passCount++;
-            }
-        }
+        // Count pass/fail using pre-computed isPassing from GradingService
+        $passCount = $this->students->where('isPassing', true)->count();
+        $failCount = $this->students->where('isPassing', false)->count();
 
         // Average row
         $sheet->mergeCells("A{$footerRow}:D{$footerRow}");

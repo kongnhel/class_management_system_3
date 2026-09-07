@@ -751,33 +751,37 @@ class ProfessorController extends Controller
 
         // ២. រៀបចំ Gradebook និងគណនាពិន្ទុ
         $gradebook = [];
-        $students = $courseOffering->studentCourseEnrollments->map(function ($enrollment) use ($assessments, $allResults, &$gradebook, $offering_id) {
+        $students = $courseOffering->studentCourseEnrollments->map(function ($enrollment) use ($assessments, $allResults, &$gradebook, $offering_id, $courseOffering) {
             $student = $enrollment->student;
 
-            // ប្រើ Method ដែលអ្នកមានស្រាប់សម្រាប់ពិន្ទុវត្តមាន
-            $attendanceScore = $student->getAttendanceScoreByCourse($offering_id);
-            $totalScore = $attendanceScore;
+            $attendanceScore = (float) ($student->getAttendanceScoreByCourse($offering_id) ?? 0);
+
+            $studentResults = $allResults->where('student_user_id', $student->id);
 
             foreach ($assessments as $assessment) {
-                // កំណត់ប្រភេទឱ្យត្រូវតាម Database (assignment, quiz, exam)
                 $type = ($assessment instanceof \App\Models\Assignment) ? 'assignment' :
                        (($assessment instanceof \App\Models\Quiz) ? 'quiz' : 'exam');
 
-                // ស្វែងរកពិន្ទុពី Collection ដែលយើងទាញទុកមុននេះ
-                $score = $allResults->where('assessment_id', $assessment->id)
-                    ->where('student_user_id', $student->id)
+                $scoreRecord = $studentResults->where('assessment_id', $assessment->id)
                     ->where('assessment_type', $type)
-                    ->first()?->score_obtained ?? 0;
+                    ->first();
 
-                // រក្សាទុកក្នុង Array សម្រាប់ផ្ញើទៅ Blade
+                $score = $scoreRecord ? (float) $scoreRecord->score_obtained : 0;
                 $gradebook[$student->id][$type.'_'.$assessment->id] = $score;
-
-                // បូកបញ្ចូលក្នុងពិន្ទុសរុប
-                $totalScore += (float) $score;
             }
 
+            $gradeResult = \App\Services\GradingService::calculateFinalGrade(
+                $attendanceScore,
+                $studentResults,
+                $student,
+                $courseOffering->id
+            );
+
             $student->temp_attendance = $attendanceScore;
-            $student->temp_total = $totalScore;
+            $student->temp_total = (float) $gradeResult['total_score'];
+            $student->letterGrade = $gradeResult['letter_grade'];
+            $student->isPassing = $gradeResult['is_passing'];
+            $student->component_status = $gradeResult['component_status'];
 
             return $student;
         });
@@ -785,14 +789,9 @@ class ProfessorController extends Controller
         // ៣. តម្រៀប Ranking តាមពិន្ទុសរុប
         $students = $students->sortByDesc('temp_total')->values();
 
-        // ៤. ផ្ដល់ Rank និង Grade
+        // ៤. ផ្ដល់ Rank
         foreach ($students as $index => $student) {
             $student->rank = $index + 1;
-            $ts = $student->temp_total;
-
-            $letterGrade = \App\Services\GradingService::getLetterGrade($ts);
-            $student->letterGrade = $letterGrade;
-            $student->isPassing = \App\Services\GradingService::isPassing($letterGrade);
         }
 
         // ៥. បង្កើត HTML សម្រាប់ Word

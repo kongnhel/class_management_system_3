@@ -14,6 +14,7 @@ class ExamResult extends Model
     protected $fillable = ['assessment_id', 'assessment_type', 'student_user_id', 'score_obtained', 'notes', 'recorded_at'];
 
     protected $casts = [
+        'score_obtained' => 'float',
         'recorded_at' => 'datetime',
     ];
 

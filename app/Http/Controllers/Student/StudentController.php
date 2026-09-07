@@ -145,36 +145,34 @@ class StudentController extends Controller
                 $total = min($att + $nonQuiz + $quiz, 100);
                 $letterGrade = \App\Services\GradingService::getLetterGrade($total);
 
-                $grade = \App\Services\GradingService::isPassing($letterGrade) ? 'P' : 'F';
-
-                return ['total' => $total, 'grade' => $grade, 'credits' => $items->first()['credits'] ?? 3];
+                return ['total' => $total, 'grade' => $letterGrade, 'credits' => $items->first()['credits'] ?? 3];
             });
 
             $averageScore = round($courseGrades->avg('total'), 1);
             $totalCredits = $courseGrades->sum('credits');
-            $weightedPoints = $courseGrades->sum(fn ($g) => ($g['grade'] === 'P' ? 2.0 : 0.0) * $g['credits']);
+
+            $gradePoints = ['A+' => 4.0, 'A' => 4.0, 'A-' => 3.7, 'B+' => 3.5, 'B' => 3.0, 'B-' => 2.7, 'C+' => 2.5, 'C' => 2.0, 'C-' => 1.7, 'D+' => 1.5, 'D' => 1.0, 'D-' => 0.7, 'F' => 0.0];
+            $weightedPoints = $courseGrades->sum(fn ($g) => ($gradePoints[$g['grade']] ?? 0.0) * $g['credits']);
             $gpa = $totalCredits > 0 ? round($weightedPoints / $totalCredits, 2) : 0;
             $overallGrade = \App\Services\GradingService::getLetterGrade($averageScore);
 
-            // Rank
+            // Rank — compute per-course totals using GradingService for each peer
             $peerIds = StudentCourseEnrollment::whereIn('course_offering_id', $enrolledOfferingIds)->pluck('student_user_id')->unique();
             $rankings = $peerIds->map(function ($peerId) use ($enrolledOfferingIds) {
                 $peer = \App\Models\User::find($peerId);
                 if (! $peer) {
                     return ['id' => $peerId, 'total' => 0];
                 }
-                $assessQuery = function ($q) use ($enrolledOfferingIds) {
-                    $q->select('id')->from('assignments')->whereIn('course_offering_id', $enrolledOfferingIds)
-                        ->union(DB::table('quizzes')->select('id')->whereIn('course_offering_id', $enrolledOfferingIds))
-                        ->union(DB::table('exams')->select('id')->whereIn('course_offering_id', $enrolledOfferingIds));
-                };
-                $nonQuiz = \App\Models\ExamResult::where('student_user_id', $peerId)->where('assessment_type', '!=', 'quiz')
-                    ->whereIn('assessment_id', $assessQuery)->sum('score_obtained');
-                $quiz = \App\Models\ExamResult::where('student_user_id', $peerId)->where('assessment_type', 'quiz')
-                    ->whereIn('assessment_id', $assessQuery)->sum('score_obtained');
-                $att = $peer->getAttendanceScoreByCourse($enrolledOfferingIds->first());
-
-                return ['id' => $peerId, 'total' => min((float) $nonQuiz + (float) $quiz + (float) $att, 100)];
+                $totalAcrossCourses = 0;
+                foreach ($enrolledOfferingIds as $offeringId) {
+                    $att = (float) ($peer->getAttendanceScoreByCourse($offeringId) ?? 0);
+                    $studentResults = \App\Models\ExamResult::where('student_user_id', $peerId)->get();
+                    $gradeResult = \App\Services\GradingService::calculateFinalGrade(
+                        $att, $studentResults, $peer, $offeringId
+                    );
+                    $totalAcrossCourses += (float) $gradeResult['total_score'];
+                }
+                return ['id' => $peerId, 'total' => $totalAcrossCourses];
             })->sortByDesc('total')->values();
             $totalClassmates = $rankings->count();
             $rankIndex = $rankings->search(fn ($r) => $r['id'] == $studentId);

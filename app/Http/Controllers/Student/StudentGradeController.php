@@ -102,18 +102,16 @@ class StudentGradeController extends Controller
                 : collect();
             $rankings = $enrollments->map(function ($enrol) use ($offeringId) {
                 $student = User::find($enrol->student_user_id);
-                $att = $student ? $student->getAttendanceScoreByCourse($offeringId) : 0;
-                $nonQuiz = ExamResult::where('student_user_id', $enrol->student_user_id)->where('assessment_type', '!=', 'quiz')
-                    ->whereIn('assessment_id', function ($q) use ($offeringId) {
-                        $q->select('id')->from('assignments')->where('course_offering_id', $offeringId)
-                            ->union(DB::table('exams')->select('id')->where('course_offering_id', $offeringId));
-                    })->sum('score_obtained');
-                $quiz = ExamResult::where('student_user_id', $enrol->student_user_id)->where('assessment_type', 'quiz')
-                    ->whereIn('assessment_id', function ($q) use ($offeringId) {
-                        $q->select('id')->from('quizzes')->where('course_offering_id', $offeringId);
-                    })->sum('score_obtained');
+                if (! $student) {
+                    return ['id' => $enrol->student_user_id, 'total' => 0];
+                }
+                $att = (float) ($student->getAttendanceScoreByCourse($offeringId) ?? 0);
+                $studentResults = ExamResult::where('student_user_id', $enrol->student_user_id)->get();
+                $gradeResult = GradingService::calculateFinalGrade(
+                    $att, $studentResults, $student, $offeringId
+                );
 
-                return ['id' => $enrol->student_user_id, 'total' => min((float) $att + (float) $nonQuiz + (float) $quiz, 100)];
+                return ['id' => $enrol->student_user_id, 'total' => (float) $gradeResult['total_score']];
             })->sortByDesc('total')->values();
 
             $rankIndex = $rankings->search(fn ($r) => $r['id'] == $user->id);
@@ -156,17 +154,12 @@ class StudentGradeController extends Controller
             }
             $total = 0;
             foreach ($filteredOfferingIds as $offeringId) {
-                $nonQuiz = ExamResult::where('student_user_id', $peerId)->where('assessment_type', '!=', 'quiz')
-                    ->whereIn('assessment_id', function ($q) use ($offeringId) {
-                        $q->select('id')->from('assignments')->where('course_offering_id', $offeringId)
-                            ->union(DB::table('exams')->select('id')->where('course_offering_id', $offeringId));
-                    })->sum('score_obtained');
-                $quiz = ExamResult::where('student_user_id', $peerId)->where('assessment_type', 'quiz')
-                    ->whereIn('assessment_id', function ($q) use ($offeringId) {
-                        $q->select('id')->from('quizzes')->where('course_offering_id', $offeringId);
-                    })->sum('score_obtained');
-                $att = $peer->getAttendanceScoreByCourse($offeringId);
-                $total += min((float) $nonQuiz + (float) $quiz + (float) $att, 100);
+                $att = (float) ($peer->getAttendanceScoreByCourse($offeringId) ?? 0);
+                $peerResults = ExamResult::where('student_user_id', $peerId)->get();
+                $gradeResult = GradingService::calculateFinalGrade(
+                    $att, $peerResults, $peer, $offeringId
+                );
+                $total += (float) $gradeResult['total_score'];
             }
 
             return ['id' => $peerId, 'total' => $total];

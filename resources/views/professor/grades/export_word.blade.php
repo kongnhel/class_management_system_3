@@ -184,8 +184,6 @@
             @foreach ($students as $index => $student)
                 @php 
                     $attendanceScore = $student->getAttendanceScoreByCourse($courseOffering->id);
-                    $baseScore = $attendanceScore;
-                    $quizBonus = 0;
                 @endphp
                 <tr>
                     <td class="col-no">{{ $index + 1 }}</td>
@@ -202,7 +200,6 @@
                         @php 
                             $type = ($assessment instanceof \App\Models\Assignment) ? 'assignment' : (($assessment instanceof \App\Models\Quiz) ? 'quiz' : 'exam');
                             $score = $gradebook[$student->id][$type . '_' . $assessment->id] ?? null;
-                            if ($type === 'quiz') { $quizBonus += ($score ?? 0); } else { $baseScore += ($score ?? 0); }
                         @endphp
                         <td class="col-course {{ is_null($score) ? 'missing-grade' : '' }}">
                             @if(!is_null($score))
@@ -226,11 +223,10 @@
                         </td>
                     @endforeach
 
-                    @php $rowTotal = min($baseScore + $quizBonus, 100); @endphp
-                    <td class="col-total">{{ number_format($rowTotal, 1) }}</td>
+                    <td class="col-total">{{ number_format($student->temp_total ?? 0, 1) }}</td>
 
                     @php
-                        $grade = \App\Services\GradingService::getLetterGrade($rowTotal);
+                        $grade = $student->letterGrade ?? \App\Services\GradingService::getLetterGrade($student->temp_total ?? 0);
 
                         $gradeClass = match(true) {
                             $grade === 'A' => 'grade-a',
@@ -239,8 +235,7 @@
                             default => 'grade-f'
                         };
 
-                        // Use isPassing from controller (includes assessment-level check)
-                        $isPassing = $student->isPassing;
+                        $isPassing = $student->isPassing ?? false;
                     @endphp
                     <td class="col-grade {{ $gradeClass }}">{{ $grade }}</td>
                     <td class="col-rank">{{ $index + 1 }}</td>

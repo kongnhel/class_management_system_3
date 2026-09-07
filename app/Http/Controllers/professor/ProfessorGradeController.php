@@ -65,34 +65,37 @@ class ProfessorGradeController extends Controller
             ->get();
 
         $gradebook = [];
-        $students = $courseOffering->studentCourseEnrollments->map(function ($enrollment) use ($assessments, $allResults, &$gradebook, $offering_id) {
+        $students = $courseOffering->studentCourseEnrollments->map(function ($enrollment) use ($assessments, $allResults, &$gradebook, $offering_id, $courseOffering) {
             $student = $enrollment->student;
 
             $attendanceScore = (float) ($student->getAttendanceScoreByCourse($offering_id) ?? 0);
-            $baseScore = $attendanceScore;
-            $quizBonus = 0;
+
+            $studentResults = $allResults->where('student_user_id', $student->id);
 
             foreach ($assessments as $assessment) {
                 $type = ($assessment instanceof \App\Models\Assignment) ? 'assignment' :
                        (($assessment instanceof \App\Models\Quiz) ? 'quiz' : 'exam');
 
-                $scoreRecord = $allResults->where('assessment_id', $assessment->id)
-                    ->where('student_user_id', $student->id)
+                $scoreRecord = $studentResults->where('assessment_id', $assessment->id)
                     ->where('assessment_type', $type)
                     ->first();
 
                 $score = $scoreRecord ? (float) $scoreRecord->score_obtained : 0;
                 $gradebook[$student->id][$type.'_'.$assessment->id] = $score;
-
-                if ($type === 'quiz') {
-                    $quizBonus += $score;
-                } else {
-                    $baseScore += $score;
-                }
             }
 
-            $totalScore = min($baseScore + $quizBonus, 100);
-            $student->temp_total = (float) $totalScore;
+            $gradeResult = \App\Services\GradingService::calculateFinalGrade(
+                $attendanceScore,
+                $studentResults,
+                $student,
+                $courseOffering->id
+            );
+
+            $student->temp_total = (float) $gradeResult['total_score'];
+            $student->letterGrade = $gradeResult['letter_grade'];
+            $student->isPassing = $gradeResult['is_passing'];
+            $student->component_status = $gradeResult['component_status'];
+            $student->failed_components = $gradeResult['failed_components'];
 
             return $student;
         });
@@ -101,9 +104,6 @@ class ProfessorGradeController extends Controller
 
         foreach ($students as $index => $student) {
             $student->rank = $index + 1;
-            $letterGrade = GradingService::getLetterGrade($student->temp_total);
-            $student->letterGrade = $letterGrade;
-            $student->isPassing = GradingService::isPassing($letterGrade);
         }
 
         return view('professor.grades.index', compact('courseOffering', 'students', 'assessments', 'gradebook'));
@@ -142,22 +142,23 @@ class ProfessorGradeController extends Controller
             }
         }
 
-        $students = $enrollments->map(function ($e) use ($gradebook, $assessments) {
+        $students = $enrollments->map(function ($e) use ($gradebook, $assessments, $allResults, $courseOffering) {
             $student = $e->student;
-            $attendanceScore = $student->getAttendanceScoreByCourse($e->course_offering_id);
-            $baseScore = $attendanceScore;
-            $quizBonus = 0;
-            foreach ($assessments as $a) {
-                $type = ($a instanceof Assignment) ? 'assignment' : (($a instanceof Quiz) ? 'quiz' : 'exam');
-                $score = $gradebook[$student->id][$type.'_'.$a->id] ?? 0;
-                if ($type === 'quiz') {
-                    $quizBonus += $score;
-                } else {
-                    $baseScore += $score;
-                }
-            }
-            $total = min($baseScore + $quizBonus, 100);
-            $student->temp_total = $total;
+            $attendanceScore = (float) ($student->getAttendanceScoreByCourse($e->course_offering_id) ?? 0);
+
+            $studentResults = $allResults->where('student_user_id', $student->id);
+
+            $gradeResult = \App\Services\GradingService::calculateFinalGrade(
+                $attendanceScore,
+                $studentResults,
+                $student,
+                $courseOffering->id
+            );
+
+            $student->temp_total = (float) $gradeResult['total_score'];
+            $student->letterGrade = $gradeResult['letter_grade'];
+            $student->isPassing = $gradeResult['is_passing'];
+            $student->component_status = $gradeResult['component_status'];
 
             return $student;
         })->sortByDesc('temp_total')->values();
@@ -902,30 +903,33 @@ class ProfessorGradeController extends Controller
             ->get();
 
         $gradebook = [];
-        $students = $courseOffering->studentCourseEnrollments->map(function ($enrollment) use ($assessments, $allResults, &$gradebook, $offering_id) {
+        $students = $courseOffering->studentCourseEnrollments->map(function ($enrollment) use ($assessments, $allResults, &$gradebook, $offering_id, $courseOffering) {
             $student = $enrollment->student;
             $attendanceScore = (float) ($student->getAttendanceScoreByCourse($offering_id) ?? 0);
-            $baseScore = $attendanceScore;
-            $quizBonus = 0;
+
+            $studentResults = $allResults->where('student_user_id', $student->id);
 
             foreach ($assessments as $assessment) {
                 $type = ($assessment instanceof Assignment) ? 'assignment' :
                        (($assessment instanceof Quiz) ? 'quiz' : 'exam');
-                $scoreRecord = $allResults->where('assessment_id', $assessment->id)
-                    ->where('student_user_id', $student->id)
+                $scoreRecord = $studentResults->where('assessment_id', $assessment->id)
                     ->where('assessment_type', $type)
                     ->first();
                 $score = $scoreRecord ? (float) $scoreRecord->score_obtained : 0;
                 $gradebook[$student->id][$type.'_'.$assessment->id] = $score;
-                if ($type === 'quiz') {
-                    $quizBonus += $score;
-                } else {
-                    $baseScore += $score;
-                }
             }
 
-            $totalScore = min($baseScore + $quizBonus, 100);
-            $student->temp_total = (float) $totalScore;
+            $gradeResult = \App\Services\GradingService::calculateFinalGrade(
+                $attendanceScore,
+                $studentResults,
+                $student,
+                $courseOffering->id
+            );
+
+            $student->temp_total = (float) $gradeResult['total_score'];
+            $student->letterGrade = $gradeResult['letter_grade'];
+            $student->isPassing = $gradeResult['is_passing'];
+            $student->component_status = $gradeResult['component_status'];
 
             return $student;
         });
@@ -933,9 +937,6 @@ class ProfessorGradeController extends Controller
         $students = $students->sortByDesc('temp_total')->values();
         foreach ($students as $index => $student) {
             $student->rank = $index + 1;
-            $letterGrade = GradingService::getLetterGrade($student->temp_total);
-            $student->letterGrade = $letterGrade;
-            $student->isPassing = GradingService::isPassing($letterGrade);
         }
 
         return view('professor.grades.print', compact('courseOffering', 'students', 'assessments', 'gradebook'));
