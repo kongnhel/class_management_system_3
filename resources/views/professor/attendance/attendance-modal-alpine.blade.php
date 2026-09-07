@@ -70,7 +70,12 @@
                                         </div>
                                         <div class="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
                                             <div class="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 transition-all duration-1000 ease-linear"
-                                                 :style="'width: ' + (qrTimeLeft / 10 * 100) + '%'"></div>
+                                                 :class="qrError ? 'bg-red-500' : ''"
+                                                 :style="'width: ' + (qrTimeLeft / qrDuration * 100) + '%'"></div>
+                                        </div>
+                                        <div x-show="qrError" x-transition class="mt-2 flex items-center justify-center gap-1.5 text-red-400 text-[10px] font-bold">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                            <span>មិនអាចប្តូរ QR បានទេ សូមព្យាយាមម្តងទៀត</span>
                                         </div>
                                     </div>
                                 </div>
@@ -81,6 +86,11 @@
                                         <div id="card-scanner-reader" class="w-full h-full absolute inset-0"></div>
                                     </div>
                                     <p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 mt-2">ស្កែនប័ណ្ណសិស្ស</p>
+                                    <div x-show="cardScanStatus" x-transition
+                                         :class="cardScanStatus === 'success' ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : 'bg-red-500/10 border-red-500/30 text-red-400'"
+                                         class="mt-2 px-3 py-2 rounded-xl border text-[10px] font-bold text-center max-w-[240px] w-full">
+                                        <span x-text="cardScanMessage"></span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -306,6 +316,9 @@ function attendanceModal() {
         cardScanner: null,
         inlineScannerRunning: false,
         scanMode: 'qr',
+        qrError: false,
+        cardScanStatus: null,
+        cardScanMessage: '',
         _scanCooldown: false,
 
         async open(courseOfferingId, scheduleId, readOnly = false) {
@@ -333,11 +346,11 @@ function attendanceModal() {
                         this.courseName = data.course_name;
                         this.sessionId = data.session_id;
                         this.qrDuration = data.expires_in || 15;
+                        this.startQrCountdown();
                     }
                 } catch (e) {
                     console.error('Failed to start session:', e);
                 }
-                this.startQrCountdown();
             } else {
                 this.courseName = 'ប្រវត្តិវត្តមាន';
                 this.stopPolling();
@@ -392,13 +405,19 @@ function attendanceModal() {
                 const data = await response.json();
                 if (data.success) {
                     this.playScanSound();
+                    this.cardScanStatus = 'success';
+                    this.cardScanMessage = '✓ ' + (data.student?.name ?? 'សិស្ស') + ' បានចុះវត្តមាន';
                     await this.fetchStudents();
+                } else {
+                    this.cardScanStatus = 'error';
+                    this.cardScanMessage = data.message || 'មានបញ្ហា';
                 }
             } catch (e) {
-                // failed scan: no visible status bar, just ignore
+                this.cardScanStatus = 'error';
+                this.cardScanMessage = 'មានបញ្ហាក្នុងការតភ្ជាប់';
             } finally {
-                // keep the scanner camera open for the next student
                 setTimeout(() => { this._scanCooldown = false; }, 1200);
+                setTimeout(() => { this.cardScanStatus = null; this.cardScanMessage = ''; }, 3000);
             }
         },
 
@@ -447,9 +466,13 @@ function attendanceModal() {
                 if (data.success) {
                     this.qrSvg = data.qr_svg;
                     this.qrDuration = data.expires_in || 15;
+                    this.qrError = false;
+                } else {
+                    this.qrError = true;
                 }
             } catch (e) {
                 console.error('Failed to refresh QR:', e);
+                this.qrError = true;
             }
         },
 
