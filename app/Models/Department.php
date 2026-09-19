@@ -14,6 +14,9 @@ class Department extends Model
         'name_km',
         'name_en',
         'head_user_id',
+        'degree_level',
+        'duration_years',
+        'pathway_department_id',
     ];
 
     /*
@@ -22,35 +25,49 @@ class Department extends Model
     |--------------------------------------------------------------------------
     */
 
-    /**
-     * Get the faculty that the department belongs to.
-     */
     public function faculty()
     {
         return $this->belongsTo(Faculty::class);
     }
 
-    /**
-     * Get the user (head) that leads the department.
-     */
     public function head()
     {
         return $this->belongsTo(User::class, 'head_user_id');
     }
 
     /**
-     * Get the programs for the department.
+     * The pathway department that leads into this department.
      */
-    public function programs()
+    public function pathwayDepartment()
     {
-        return $this->hasMany(Program::class);
+        return $this->belongsTo(Department::class, 'pathway_department_id');
     }
 
     /**
-     * Get the courses for the department.
+     * Departments that accept students from this department via pathway.
      */
+    public function pathwayDepartments()
+    {
+        return $this->hasMany(Department::class, 'pathway_department_id');
+    }
+
     public function courses()
     {
         return $this->hasMany(Course::class);
+    }
+
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
+
+    public function courseOfferings()
+    {
+        return $this->hasMany(CourseOffering::class);
+    }
+
+    public function studentDepartmentEnrollments()
+    {
+        return $this->hasMany(StudentDepartmentEnrollment::class);
     }
 }

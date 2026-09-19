@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Program;
+use App\Models\Department;
 use App\Models\User;
 
 test('registration screen can be rendered', function () {
@@ -10,13 +10,13 @@ test('registration screen can be rendered', function () {
 });
 
 test('new users can register', function () {
-    $program = Program::factory()->create();
+    $department = Department::factory()->create();
     $student = User::factory()->state([
         'name' => null,
         'email' => null,
         'password' => null,
         'role' => 'student',
-        'program_id' => $program->id,
+        'department_id' => $department->id,
         'generation' => '1',
     ])->create();
 
@@ -26,7 +26,7 @@ test('new users can register', function () {
         'email' => 'test@example.com',
         'password' => 'password',
         'password_confirmation' => 'password',
-        'program_id' => $program->id,
+        'department_id' => $department->id,
         'generation' => '1',
         'degree_level' => 'បរិញ្ញាបត្រ',
     ]);

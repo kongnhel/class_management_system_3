@@ -4,9 +4,9 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\CourseOffering;
+use App\Models\Department;
 use App\Models\Faculty;
 use App\Models\Generation;
-use App\Models\Program;
 use App\Services\StudentProgressionService;
 use Illuminate\Http\Request;
 
@@ -19,13 +19,10 @@ class StudentProgressionController extends Controller
         $this->progressionService = $progressionService;
     }
 
-    /**
-     * Display progression dashboard for a program.
-     */
     public function index(Request $request)
     {
         $facultyId = $request->input('faculty_id');
-        $programId = $request->input('program_id');
+        $departmentId = $request->input('department_id');
         $courseId = $request->input('course_id');
         $generation = $request->input('generation');
         $semester = $request->input('semester');
@@ -35,81 +32,68 @@ class StudentProgressionController extends Controller
         $faculties = Faculty::orderBy('name_km')->get();
         $generations = Generation::where('is_active', true)->orderByDesc('name')->get();
 
-        $programsQuery = Program::with('department');
-        if ($facultyId) {
-            $programsQuery->whereHas('department', fn ($q) => $q->where('faculty_id', $facultyId));
-        }
-        $programs = $programsQuery->orderBy('name_km')->get();
+        $allDepartments = Department::with('faculty')->orderBy('name_km')->get();
 
-        $program = $programId ? Program::findOrFail($programId) : $programs->first();
+        $department = $departmentId ? Department::findOrFail($departmentId) : $departments->first();
 
-        if (! $program) {
+        if (! $department) {
             return redirect()->route('admin.manage-users')
-                ->with('error', 'សូមបង្កើតកម្មវិធីសិក្សាមុន។');
+                ->with('error', 'សូមបង្កើតមុខវិជ្ជាមុន។');
         }
 
-        $courseOfferings = CourseOffering::whereHas('targetPrograms', fn ($q) => $q->where('program_id', $program->id))
+        $courseOfferings = CourseOffering::where('department_id', $department->id)
             ->with(['course', 'schedules'])
             ->orderBy('created_at', 'desc')
             ->get();
 
         $filters = compact('facultyId', 'courseId', 'generation', 'semester', 'scheduleGroup', 'search');
 
-        $summary = $this->progressionService->getProgressionSummary($program, $filters);
+        $summary = $this->progressionService->getProgressionSummary($department, $filters);
 
-        return view('admin.progression.index', compact('program', 'summary', 'programs', 'faculties', 'courseOfferings', 'generations', 'filters'));
+        return view('admin.progression.index', compact('department', 'summary', 'faculties', 'courseOfferings', 'generations', 'filters', 'allDepartments'));
     }
 
-    /**
-     * Show advance form for a specific program and year.
-     */
     public function advance(Request $request)
     {
-        $programId = $request->input('program_id');
-        $program = Program::findOrFail($programId);
+        $departmentId = $request->input('department_id');
+        $department = Department::findOrFail($departmentId);
 
-        $eligibleStudents = $this->progressionService->getAllEligibleStudents($program);
-        $heldBackStudents = $this->progressionService->getAllHeldBackStudents($program);
-        $maxYear = $this->progressionService->getMaxYearLevel($program);
+        $eligibleStudents = $this->progressionService->getAllEligibleStudents($department);
+        $heldBackStudents = $this->progressionService->getAllHeldBackStudents($department);
+        $maxYear = $this->progressionService->getMaxYearLevel($department);
 
         return view('admin.progression.advance', compact(
-            'program', 'eligibleStudents', 'heldBackStudents', 'maxYear'
+            'department', 'eligibleStudents', 'heldBackStudents', 'maxYear'
         ));
     }
 
-    /**
-     * Execute the advancement.
-     */
     public function executeAdvance(Request $request)
     {
         $request->validate([
-            'program_id' => 'required|exists:programs,id',
+            'department_id' => 'required|exists:departments,id',
             'student_ids' => 'required|array|min:1',
             'student_ids.*' => 'exists:users,id',
         ]);
 
-        $program = Program::findOrFail($request->program_id);
+        $department = Department::findOrFail($request->department_id);
         $studentIds = collect($request->student_ids);
 
-        $advanced = $this->progressionService->advanceStudents($studentIds, $program);
+        $advanced = $this->progressionService->advanceStudents($studentIds, $department);
 
-        return redirect()->route('admin.progression.index', ['program_id' => $program->id])
+        return redirect()->route('admin.progression.index', ['department_id' => $department->id])
             ->with('success', "បានជំរុញនិស្សិត {$advanced} នាក់ទៅជំនាន់ថ្មីដោយជោគជ័យ។");
     }
 
-    /**
-     * Auto-graduate eligible students.
-     */
     public function autoGraduate(Request $request)
     {
         $request->validate([
-            'program_id' => 'required|exists:programs,id',
+            'department_id' => 'required|exists:departments,id',
         ]);
 
-        $program = Program::findOrFail($request->program_id);
-        $graduated = $this->progressionService->autoGraduateStudents($program);
+        $department = Department::findOrFail($request->department_id);
+        $graduated = $this->progressionService->autoGraduateStudents($department);
 
-        return redirect()->route('admin.progression.index', ['program_id' => $program->id])
+        return redirect()->route('admin.progression.index', ['department_id' => $department->id])
             ->with('success', "បានបញ្ចប់ការសិក្សាដោយជោគជ័យចំពោះនិស្សិត {$graduated} នាក់។");
     }
 }

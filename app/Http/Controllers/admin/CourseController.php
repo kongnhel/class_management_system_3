@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\Models\Department;
 use App\Models\Faculty;
-use App\Models\Program;
 use App\Models\Room;
 use Illuminate\Http\Request;
 
@@ -16,12 +15,12 @@ class CourseController extends Controller
     {
         $search = $request->input('search', '');
         $facultyId = $request->input('faculty_id', '');
-        $programId = $request->input('program_id', '');
+        $departmentId = $request->input('department_id', '');
         $room = Room::all();
         $faculties = Faculty::all();
-        $programs = Program::with('department')->orderByDesc('name_km')->get();
+        $allDepartments = Department::orderByDesc('name_km')->get();
 
-        $query = Course::with(['department', 'programs']);
+        $query = Course::with(['department']);
 
         if ($facultyId) {
             $query->whereHas('department', function ($dq) use ($facultyId) {
@@ -29,10 +28,8 @@ class CourseController extends Controller
             });
         }
 
-        if ($programId) {
-            $query->whereHas('programs', function ($pq) use ($programId) {
-                $pq->where('programs.id', $programId);
-            });
+        if ($departmentId) {
+            $query->where('department_id', $departmentId);
         }
 
         if ($search) {
@@ -47,46 +44,22 @@ class CourseController extends Controller
 
         $coursesData = $query->orderBy('department_id')->get();
 
-        $flattenedCourses = $coursesData->flatMap(function ($course) {
-            if ($course->programs->isEmpty()) {
-                return [$course];
-            }
-
-            return $course->programs->map(function ($program) use ($course) {
-                $clone = clone $course;
-                $clone->assigned_program_name = $program->name_km;
-
-                return $clone;
-            });
-        });
-
-        $coursesGrouped = $flattenedCourses->groupBy([
-            function ($item) {
-                return $item->assigned_program_name ?? __('មិនទាន់មានកម្មវិធីសិក្សា');
-            },
-            function ($item) {
-                return $item->generation ? __('ជំនាន់ទី').' '.$item->generation : __('មិនទាន់កំណត់ជំនាន់');
-            },
+        $coursesGrouped = $coursesData->groupBy([
+            fn ($course) => $course->department->name_km ?? __('មិនទាន់មានដេប៉ាតឺម៉ង់'),
         ]);
 
-        return view('admin.courses.index', compact('coursesGrouped', 'room', 'search', 'faculties', 'facultyId', 'programs', 'programId'));
+        return view('admin.courses.index', compact('coursesGrouped', 'room', 'search', 'faculties', 'facultyId', 'departmentId', 'allDepartments'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         $departments = Department::all();
-        $programs = Program::all();
-        $generations = \App\Models\Generation::where('is_active', true)->orderByDesc('name')->pluck('name')->toArray();
 
-        return view('admin.courses.create', compact('departments', 'programs', 'generations'));
+        return view('admin.courses.create', compact('departments'));
     }
 
     public function store(Request $request)
     {
-        // 1. Validation
         $request->validate([
             'title_km' => 'required|string|max:255',
             'title_en' => 'required|string|max:255',
@@ -94,14 +67,11 @@ class CourseController extends Controller
             'description_en' => 'nullable|string',
             'credits' => 'required|numeric|min:0.5',
             'department_id' => 'required|exists:departments,id',
-            'program_id' => 'required|array|min:1',
-            'program_id.*' => 'required|exists:programs,id',
-            'generation' => 'nullable|string|max:255',
         ]);
 
-        $course = Course::create($request->except('program_id'));
-
-        $course->programs()->sync($request->program_id);
+        Course::create($request->only([
+            'title_km', 'title_en', 'description_km', 'description_en', 'credits', 'department_id',
+        ]));
 
         return redirect()->route('admin.manage-courses')
             ->with('success', __('មុខវិជ្ជាត្រូវបានបង្កើតដោយជោគជ័យ។'));
@@ -115,13 +85,8 @@ class CourseController extends Controller
     public function edit(Course $course)
     {
         $departments = Department::all();
-        $programs = Program::all();
 
-        $generations = \App\Models\Generation::where('is_active', true)->orderByDesc('name')->pluck('name')->toArray();
-
-        $selectedPrograms = $course->programs->pluck('id')->toArray();
-
-        return view('admin.courses.edit', compact('course', 'departments', 'programs', 'generations', 'selectedPrograms'));
+        return view('admin.courses.edit', compact('course', 'departments'));
     }
 
     public function update(Request $request, Course $course)
@@ -133,22 +98,11 @@ class CourseController extends Controller
             'description_en' => 'nullable|string',
             'credits' => 'required|numeric|min:0.5',
             'department_id' => 'required|exists:departments,id',
-            'program_ids' => 'required|array',
-            'program_ids.*' => 'exists:programs,id',
-            'generation' => 'nullable|string|max:255',
         ]);
 
         $course->update($request->only([
-            'title_km',
-            'title_en',
-            'description_km',
-            'description_en',
-            'credits',
-            'department_id',
-            'generation',
+            'title_km', 'title_en', 'description_km', 'description_en', 'credits', 'department_id',
         ]));
-
-        $course->programs()->sync($request->program_ids);
 
         return redirect()->route('admin.manage-courses')
             ->with('success', __('មុខវិជ្ជាត្រូវបានកែប្រែដោយជោគជ័យ។'));

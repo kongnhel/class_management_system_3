@@ -7,7 +7,7 @@
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
             {{-- Academic Info Card --}}
-            @if($studentProgramEnrollment)
+            @if($studentDepartmentEnrollment)
             <div class="bg-white shadow-xl shadow-slate-200/50 rounded-[2rem] overflow-hidden border border-slate-100 mb-6">
                 <div class="px-8 py-6 border-b border-slate-100">
                     <h3 class="text-lg font-black text-slate-800 flex items-center gap-2">
@@ -16,14 +16,14 @@
                     </h3>
                 </div>
                 <div class="px-8 py-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                    {{-- Program --}}
+                    {{-- Department --}}
                     <div class="flex items-start gap-3">
                         <div class="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center flex-shrink-0 mt-0.5">
                             <i class="fas fa-book-open text-emerald-600 text-sm"></i>
                         </div>
                         <div>
-                            <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest">{{ __('កម្មវិធីសិក្សា') }}</p>
-                            <p class="text-sm font-bold text-slate-800 mt-0.5">{{ $studentProgramEnrollment->program->name_km ?? 'N/A' }}</p>
+                            <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest">{{ __('មុខវិជ្ជា') }}</p>
+                            <p class="text-sm font-bold text-slate-800 mt-0.5">{{ $studentDepartmentEnrollment->department->name_km ?? 'N/A' }}</p>
                         </div>
                     </div>
                     {{-- Faculty --}}
@@ -33,17 +33,7 @@
                         </div>
                         <div>
                             <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest">{{ __('មហាវិទ្យាល័យ') }}</p>
-                            <p class="text-sm font-bold text-slate-800 mt-0.5">{{ $studentProgramEnrollment->program->department?->faculty?->name_km ?? 'N/A' }}</p>
-                        </div>
-                    </div>
-                    {{-- Department --}}
-                    <div class="flex items-start gap-3">
-                        <div class="w-9 h-9 rounded-xl bg-violet-50 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <i class="fas fa-sitemap text-violet-600 text-sm"></i>
-                        </div>
-                        <div>
-                            <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest">{{ __('ជំនាញ') }}</p>
-                            <p class="text-sm font-bold text-slate-800 mt-0.5">{{ $studentProgramEnrollment->program->department?->name_km ?? 'N/A' }}</p>
+                            <p class="text-sm font-bold text-slate-800 mt-0.5">{{ $studentDepartmentEnrollment->department?->faculty?->name_km ?? 'N/A' }}</p>
                         </div>
                     </div>
                     {{-- Degree Level --}}
@@ -53,7 +43,7 @@
                         </div>
                         <div>
                             <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest">{{ __('កម្រិតសិក្សា') }}</p>
-                            <p class="text-sm font-bold text-slate-800 mt-0.5">{{ $studentProgramEnrollment->degree_level ?? 'N/A' }}</p>
+                            <p class="text-sm font-bold text-slate-800 mt-0.5">{{ $studentDepartmentEnrollment->degree_level ?? 'N/A' }}</p>
                         </div>
                     </div>
                     {{-- Generation --}}

@@ -10,11 +10,11 @@
                         </svg>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-bold text-white">ជំរុញនិស្សិត — {{ $program->name_km }}</h1>
+                        <h1 class="text-2xl font-bold text-white">ជំរុញនិស្សិត — {{ $department->name_km }}</h1>
                         <p class="mt-1 text-sm text-slate-400">ជ្រើសរើសនិស្សិតដែលចង់ជំរុញ ឬបញ្ចប់ការសិក្សា</p>
                     </div>
                 </div>
-                <a href="{{ route('admin.progression.index', ['program_id' => $program->id]) }}" class="inline-flex items-center gap-2 bg-white/10 backdrop-blur text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-white/20 transition-all">
+                <a href="{{ route('admin.progression.index', ['department_id' => $department->id]) }}" class="inline-flex items-center gap-2 bg-white/10 backdrop-blur text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-white/20 transition-all">
                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
                     ត្រឡប់ក្រោយ
                 </a>
@@ -98,7 +98,7 @@
 
                     <form id="advanceForm" action="{{ route('admin.progression.executeAdvance') }}" method="POST">
                         @csrf
-                        <input type="hidden" name="program_id" value="{{ $program->id }}">
+                        <input type="hidden" name="department_id" value="{{ $department->id }}">
 
                         {{-- Desktop Table --}}
                         <div class="hidden md:block overflow-x-auto">

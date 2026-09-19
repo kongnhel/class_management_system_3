@@ -12,7 +12,6 @@ use App\Http\Controllers\admin\CourseOfferingController;
 use App\Http\Controllers\admin\DepartmentController;
 use App\Http\Controllers\admin\FacultyController;
 use App\Http\Controllers\admin\GenerationController;
-use App\Http\Controllers\admin\ProgramController;
 use App\Http\Controllers\admin\RoomController;
 use App\Http\Controllers\admin\StudentProgressionController;
 use App\Http\Controllers\admin\TransitionController;
@@ -131,7 +130,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::middleware(['auth', 'role:admin', 'throttle:120,1'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
-    Route::get('/get-courses-by-program-and-generation', [CourseOfferingController::class, 'getCoursesByProgramAndGeneration'])->name('get-courses-by-program-and-generation');
     Route::get('/users', [UserController::class, 'manageUsers'])->name('manage-users');
     Route::get('/users/create', [UserController::class, 'createUser'])->name('create-user');
     Route::get('/users/preview-student-id', [UserController::class, 'previewStudentId'])->name('preview-student-id');
@@ -164,13 +162,6 @@ Route::middleware(['auth', 'role:admin', 'throttle:120,1'])->prefix('admin')->na
     Route::put('/departments/{department}', [DepartmentController::class, 'update'])->name('update-department');
     Route::delete('/departments/{department}', [DepartmentController::class, 'destroy'])->name('delete-department');
     Route::get('/get-departments-by-faculty/{faculty}', [DepartmentController::class, 'getDepartmentsByFaculty'])->name('get-departments-by-faculty');
-
-    Route::get('/programs', [ProgramController::class, 'index'])->name('manage-programs');
-    Route::get('/programs/create', [ProgramController::class, 'create'])->name('create-program');
-    Route::post('/programs', [ProgramController::class, 'store'])->name('store-program');
-    Route::get('/programs/{program}/edit', [ProgramController::class, 'edit'])->name('edit-program');
-    Route::put('/programs/{program}', [ProgramController::class, 'update'])->name('update-program');
-    Route::delete('/programs/{program}', [ProgramController::class, 'destroy'])->name('delete-program');
 
     // Generations
     Route::get('/generations', [GenerationController::class, 'index'])->name('generations.index');
@@ -215,7 +206,7 @@ Route::middleware(['auth', 'role:admin', 'throttle:120,1'])->prefix('admin')->na
     Route::delete('/announcements/{announcement}', [AnnouncementController::class, 'destroy'])->name('announcements.destroy');
 
     Route::get('/users/search', [UserController::class, 'searchUsers'])->name('users.search');
-    Route::get('/get-courses-by-program/{program}', [AdminController::class, 'getCoursesByProgram'])->name('get-courses-by-program');
+    Route::get('/get-courses-by-department/{department}', [AdminController::class, 'getCoursesByDepartment'])->name('get-courses-by-department');
     Route::get('/course-offerings/{courseOffering}', [CourseOfferingController::class, 'show'])->name('show-course-offering');
 
     // Academic Year Management
@@ -269,7 +260,6 @@ Route::middleware(['auth', 'role:professor', 'throttle:120,1'])->prefix('profess
 
     Route::get('/dashboard', ProfessorDashboardController::class)->name('dashboard');
     Route::get('/view-departments', [ProfessorController::class, 'viewDepartments'])->name('view-departments');
-    Route::get('/view-programs', [ProfessorController::class, 'viewPrograms'])->name('view-programs');
     Route::get('/view-courses', [ProfessorController::class, 'viewCourses'])->name('view-courses');
     Route::get('/view-all-course-offerings', [ProfessorController::class, 'viewAllCourseOfferings'])->name('view-all-course-offerings');
     Route::get('/all-students', [ProfessorController::class, 'allStudents'])->name('all-students');
@@ -414,9 +404,9 @@ Route::middleware(['auth', 'role:student', 'throttle:120,1'])->prefix('student')
     Route::get('/my-enrolled-courses', [StudentGradeController::class, 'myEnrolledCourses'])->name('my-enrolled-courses');
     Route::get('/my-schedule', [StudentGradeController::class, 'mySchedule'])->name('my-schedule');
     Route::get('/{studentId}/enrolled-courses', [StudentGradeController::class, 'enrolledCourses'])->name('enrolled_courses');
-    Route::get('/available-programs', [StudentGradeController::class, 'availablePrograms'])->name('available_programs');
+    Route::get('/available-departments', [StudentGradeController::class, 'availableDepartments'])->name('available_departments');
     Route::post('/enroll-self', [StudentGradeController::class, 'enrollSelf'])->name('enroll_self');
-    Route::post('/enroll-program', [StudentGradeController::class, 'enrollProgram'])->name('enroll-program');
+    Route::post('/enroll-department', [StudentGradeController::class, 'enrollDepartment'])->name('enroll-department');
     Route::get('profile', [StudentProfileController::class, 'show'])->name('profile.show');
     Route::get('profile/edit', [StudentProfileController::class, 'edit'])->name('profile.edit');
     Route::put('profile', [StudentProfileController::class, 'update'])->name('profile.update');

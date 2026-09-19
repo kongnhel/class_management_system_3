@@ -78,7 +78,6 @@
                                     <div class="space-y-2 mb-6">
                                         <p class="text-gray-700 font-medium"><span class="font-bold text-gray-800">{{ __('មហាវិទ្យាល័យ') }}</span>: <span class="text-gray-600">{{ $department->faculty->name_km ?? 'N/A' }}</span></p>
                                         {{-- <p class="text-gray-700 font-medium"><span class="font-bold text-gray-800">{{ __('ប្រធានដេប៉ាតឺម៉ង់') }}</span>: <span class="text-gray-600">{{ $department->head->name ?? 'N/A' }}</span></p> --}}
-                                        {{-- <p class="text-gray-700 font-medium"><span class="font-bold text-gray-800">{{ __('កម្មវិធីសិក្សាសរុប') }}</span>: <span class="text-gray-600">{{ $department->programs_count ?? 'N/A' }}</span></p> --}}
                                     </div>
                                     <div class="flex justify-end space-x-3 mt-auto">
                                         {{-- <a href="{{ route('professor.view-departments', $department->id) }}" class="p-3 bg-gray-100 rounded-full text-emerald-600 hover:bg-gray-200 transition duration-150 ease-in-out" title="{{ __('មើល') }}">

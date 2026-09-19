@@ -37,17 +37,13 @@ class Faculty extends Model
         return $this->hasMany(Department::class);
     }
 
-    public function programs()
+    public function courses()
     {
-        return $this->hasManyThrough(Program::class, Department::class);
+        return $this->hasManyThrough(Course::class, Department::class);
     }
-    // public function courses()
-    // {
-    //     return $this->hasManyThrough(Course::class, Program::class);
-    // }
-    // public function courseOfferings()
-    // {
-    //     return $this->hasManyThrough(CourseOffering::class, Course::class);
-    // }
 
+    public function courseOfferings()
+    {
+        return $this->hasManyThrough(CourseOffering::class, Course::class);
+    }
 }

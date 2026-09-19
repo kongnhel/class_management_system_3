@@ -8,7 +8,7 @@ use App\Models\CourseOffering;
 use App\Models\Exam;
 use App\Models\ExamResult;
 use App\Models\Generation;
-use App\Models\Program;
+use App\Models\Department;
 use App\Models\Quiz;
 use App\Services\GradingService;
 use Illuminate\Http\Request;
@@ -18,7 +18,7 @@ class AdminGradeController extends Controller
 {
     public function index(Request $request)
     {
-        $query = CourseOffering::with(['course', 'lecturer', 'targetPrograms'])
+        $query = CourseOffering::with(['course', 'lecturer', 'department'])
             ->selectRaw('course_offerings.*, (SELECT COUNT(DISTINCT student_user_id) FROM student_course_enrollments WHERE student_course_enrollments.course_offering_id = course_offerings.id) as student_course_enrollments_count')
             ->whereHas('course')
             ->whereHas('lecturer');
@@ -35,10 +35,8 @@ class AdminGradeController extends Controller
             });
         }
 
-        if ($request->filled('program_id')) {
-            $query->whereHas('targetPrograms', function ($q) use ($request) {
-                $q->where('program_id', $request->input('program_id'));
-            });
+        if ($request->filled('department_id')) {
+            $query->where('department_id', $request->input('department_id'));
         }
 
         if ($request->filled('semester')) {
@@ -50,9 +48,7 @@ class AdminGradeController extends Controller
         }
 
         if ($request->filled('generation')) {
-            $query->whereHas('targetPrograms', function ($q) use ($request) {
-                $q->where('generation', $request->input('generation'));
-            });
+            $query->where('generation', $request->input('generation'));
         }
 
         $courseOfferings = $query->orderBy('academic_year', 'desc')
@@ -60,10 +56,10 @@ class AdminGradeController extends Controller
             ->paginate(20)
             ->appends($request->query());
 
-        $programs = Program::orderBy('name_km')->get();
+        $departments = Department::orderBy('name_km')->get();
         $generations = Generation::where('is_active', true)->orderByDesc('name')->get();
 
-        return view('admin.grades.index', compact('courseOfferings', 'programs', 'generations'));
+        return view('admin.grades.index', compact('courseOfferings', 'departments', 'generations'));
     }
 
     public function show(CourseOffering $courseOffering)
@@ -71,7 +67,7 @@ class AdminGradeController extends Controller
         $courseOffering->load([
             'course',
             'lecturer',
-            'targetPrograms',
+            'department',
             'studentCourseEnrollments.student.studentProfile',
         ]);
 
@@ -162,7 +158,7 @@ class AdminGradeController extends Controller
         $courseOffering->load([
             'course',
             'lecturer',
-            'targetPrograms',
+            'department',
             'studentCourseEnrollments.student.studentProfile',
         ]);
 

@@ -62,8 +62,7 @@
                         else if (name === 'password') val = this.passwordValue;
                         else if (name === 'password_confirmation') val = document.getElementById('password_confirmation')?.value || '';
                         else if (name === 'faculty_id') val = document.getElementById('faculty_id')?.value || '';
-                        else if (name === 'department_id') val = document.getElementById('department_id')?.value || '';
-                        else if (name === 'program_id') val = document.getElementById('program_id')?.value || '';
+                        else if (name === 'department_id') val = document.getElementById('student_department_id')?.value || document.getElementById('professor_department_id')?.value || '';
                         else if (name === 'degree_level') val = document.getElementById('degree_level')?.value || '';
                         else if (name === 'generation') val = document.getElementById('generation')?.value || '';
 
@@ -91,9 +90,7 @@
                         } else if (name === 'faculty_id') {
                             if (this.userRole === 'professor' && !val) err = '{{ __("សូមជ្រើសរើសមហាវិទ្យាល័យ") }}';
                         } else if (name === 'department_id') {
-                            if (this.userRole === 'professor' && !val) err = '{{ __("សូមជ្រើសរើសដេប៉ាតឺម៉ង់") }}';
-                        } else if (name === 'program_id') {
-                            if (this.userRole === 'student' && !val) err = '{{ __("សូមជ្រើសរើសកម្មវិធីសិក្សា") }}';
+                            if (this.userRole === 'student' && !val) err = '{{ __("សូមជ្រើសរើសដេប៉ាតឺម៉ង់") }}';
                         } else if (name === 'degree_level') {
                             if (this.userRole === 'student' && !val) err = '{{ __("សូមជ្រើសរើសកម្រិតសញ្ញាបត្រ") }}';
                         } else if (name === 'generation') {
@@ -155,7 +152,8 @@
                 </div>
 
                 {{-- Section 2A: Account Info (Admin/Professor) --}}
-                <div x-show="userRole === 'admin' || userRole === 'professor'" x-cloak x-transition class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                <template x-if="userRole === 'admin' || userRole === 'professor'">
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                     <div class="flex items-center gap-3 mb-6">
                         <div class="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center">
                             <span class="text-purple-600 font-bold text-sm">2</span>
@@ -256,120 +254,186 @@
                         </div>
                     </div>
                 </div>
+                </template>
 
                 {{-- Section 2B: Student Info --}}
-                <div x-show="userRole === 'student'" x-cloak x-transition class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
-                            <span class="text-emerald-600 font-bold text-sm">2</span>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-bold text-gray-900">{{ __('ព័ត៌មាននិស្សិត') }}</h3>
-                            <p class="text-xs text-gray-500">{{ __('កំណត់កម្មវិធីសិក្សា និងព័ត៌មានសិក្សា') }}</p>
-                        </div>
-                    </div>
+                <template x-if="userRole === 'student'" x-init="$nextTick(() => {
+                    const departmentSelect = document.getElementById('student_department_id');
+                    const degreeSelect = document.getElementById('degree_level');
+                    const generationSelect = document.getElementById('generation');
+                    const previewEl = document.getElementById('preview-student-id');
+                    let previewTimer = null;
 
-                    <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4 mb-5">
-                        <p class="text-sm text-emerald-700 flex items-center gap-2">
-                            <i class="fas fa-info-circle"></i>
-                            {{ __('លេខសម្គាល់និស្សិត៖') }} <span id="preview-student-id" class="font-bold text-emerald-800 font-mono">—</span>
-                        </p>
-                    </div>
+                    function fetchPreview() {
+                        const departmentId = departmentSelect?.value;
+                        const degreeLevel = degreeSelect?.value;
+                        const generation = generationSelect?.value;
+                        if (!departmentId || !degreeLevel || !generation) { previewEl.textContent = '—'; return; }
+                        clearTimeout(previewTimer);
+                        previewTimer = setTimeout(() => {
+                            fetch('{{ route('admin.preview-student-id') }}?department_id=' + departmentId + '&degree_level=' + encodeURIComponent(degreeLevel) + '&generation=' + generation, {
+                                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+                            })
+                            .then(res => res.json())
+                            .then(data => { if (data.student_id) previewEl.textContent = data.student_id; })
+                            .catch(() => { previewEl.textContent = '—'; });
+                        }, 300);
+                    }
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-                        <div>
-                            <label for="program_id" class="block text-sm font-bold text-gray-700 mb-1.5">
-                                <i class="fas fa-graduation-cap mr-1.5 text-emerald-500"></i> {{ __('កម្មវិធីសិក្សា') }} <span class="text-red-500">*</span>
-                            </label>
-                            <select id="program_id" name="program_id"
-                                class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition text-sm px-4 py-2.5"
-                                required @blur="onBlur('program_id')" @change="touched.program_id = true; validateField('program_id')"
-                                x-bind:class="fieldErrors.program_id ? 'ring-2 ring-red-400 bg-red-50' : ''">
-                                <option value="">{{ __('ជ្រើសរើសកម្មវិធីសិក្សា') }}</option>
-                                @foreach($programs as $program)
-                                    <option value="{{ $program->id }}">{{ $program->name_km }}</option>
-                                @endforeach
-                            </select>
-                            <p x-show="fieldErrors.program_id" x-text="fieldErrors.program_id" class="text-sm text-red-600 mt-2"></p>
+                    if (departmentSelect) departmentSelect.addEventListener('change', fetchPreview);
+                    if (degreeSelect) degreeSelect.addEventListener('change', fetchPreview);
+                    if (generationSelect) generationSelect.addEventListener('change', fetchPreview);
+                })">
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
+                                <span class="text-emerald-600 font-bold text-sm">2</span>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-900">{{ __('ព័ត៌មាននិស្សិត') }}</h3>
+                                <p class="text-xs text-gray-500">{{ __('កំណត់កម្មវិធីសិក្សា និងព័ត៌មានសិក្សា') }}</p>
+                            </div>
                         </div>
-                        <div>
-                            <label for="degree_level" class="block text-sm font-bold text-gray-700 mb-1.5">
-                                <i class="fas fa-award mr-1.5 text-emerald-500"></i> {{ __('កម្រិតសញ្ញាបត្រ') }} <span class="text-red-500">*</span>
-                            </label>
-                            <select id="degree_level" name="degree_level"
-                                class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition text-sm px-4 py-2.5"
-                                required @blur="onBlur('degree_level')" @change="touched.degree_level = true; validateField('degree_level')"
-                                x-bind:class="fieldErrors.degree_level ? 'ring-2 ring-red-400 bg-red-50' : ''">
-                                <option value="">{{ __('ជ្រើសរើសកម្រិតសញ្ញាបត្រ') }}</option>
-                                <option value="បរិញ្ញាបត្រ">{{ __('បរិញ្ញាបត្រ') }}</option>
-                                <option value="បរិញ្ញាបត្ររង">{{ __('បរិញ្ញាបត្ររង') }}</option>
-                                <option value="អនុបណ្ឌិត">{{ __('អនុបណ្ឌិត') }}</option>
-                                <option value="បណ្ឌិត">{{ __('បណ្ឌិត') }}</option>
-                                <option value="វិញ្ញាបនបត្រ">{{ __('វិញ្ញាបនបត្រ') }}</option>
-                                <option value="ផ្សេងៗ">{{ __('ផ្សេងៗ') }}</option>
-                            </select>
-                            <p x-show="fieldErrors.degree_level" x-text="fieldErrors.degree_level" class="text-sm text-red-600 mt-2"></p>
+
+                        <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4 mb-5">
+                            <p class="text-sm text-emerald-700 flex items-center gap-2">
+                                <i class="fas fa-info-circle"></i>
+                                {{ __('លេខសម្គាល់និស្សិត៖') }} <span id="preview-student-id" class="font-bold text-emerald-800 font-mono">—</span>
+                            </p>
                         </div>
-                        <div>
-                            <label for="generation" class="block text-sm font-bold text-gray-700 mb-1.5">
-                                <i class="fas fa-layer-group mr-1.5 text-emerald-500"></i> {{ __('ជំនាន់') }} <span class="text-red-500">*</span>
-                            </label>
-                            <select id="generation" name="generation"
-                                class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition text-sm px-4 py-2.5"
-                                required @blur="onBlur('generation')" @change="touched.generation = true; validateField('generation')"
-                                x-bind:class="fieldErrors.generation ? 'ring-2 ring-red-400 bg-red-50' : ''">
-                                <option value="">{{ __('ជ្រើសរើសជំនាន់') }}</option>
-                                @foreach(\App\Models\Generation::where('is_active', true)->orderByDesc('name')->get() as $gen)
-                                    <option value="{{ $gen->name }}">{{ $gen->name }} ({{ __('ចូលរៀនឆ្នាំ') }} {{ $gen->join_year }})</option>
-                                @endforeach
-                            </select>
-                            <p x-show="fieldErrors.generation" x-text="fieldErrors.generation" class="text-sm text-red-600 mt-2"></p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                            <div>
+                                <label for="student_department_id" class="block text-sm font-bold text-gray-700 mb-1.5">
+                                    <i class="fas fa-graduation-cap mr-1.5 text-emerald-500"></i> {{ __('ដេប៉ាតឺម៉ង់') }} <span class="text-red-500">*</span>
+                                </label>
+                                <select id="student_department_id" name="department_id"
+                                    class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition text-sm px-4 py-2.5"
+                                    required @blur="onBlur('department_id')" @change="touched.department_id = true; validateField('department_id')"
+                                    x-bind:class="fieldErrors.department_id ? 'ring-2 ring-red-400 bg-red-50' : ''">
+                                    <option value="">{{ __('ជ្រើសរើសដេប៉ាតឺម៉ង់') }}</option>
+                                    @foreach($departments as $dept)
+                                        <option value="{{ $dept->id }}">{{ $dept->name_km }}</option>
+                                    @endforeach
+                                </select>
+                                <x-input-error :messages="$errors->get('department_id')" class="mt-2" />
+                                <p x-show="fieldErrors.department_id" x-text="fieldErrors.department_id" class="text-sm text-red-600 mt-2"></p>
+                            </div>
+                            <div>
+                                <label for="degree_level" class="block text-sm font-bold text-gray-700 mb-1.5">
+                                    <i class="fas fa-award mr-1.5 text-emerald-500"></i> {{ __('កម្រិតសញ្ញាបត្រ') }} <span class="text-red-500">*</span>
+                                </label>
+                                <select id="degree_level" name="degree_level"
+                                    class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition text-sm px-4 py-2.5"
+                                    required @blur="onBlur('degree_level')" @change="touched.degree_level = true; validateField('degree_level')"
+                                    x-bind:class="fieldErrors.degree_level ? 'ring-2 ring-red-400 bg-red-50' : ''">
+                                    <option value="">{{ __('ជ្រើសរើសកម្រិតសញ្ញាបត្រ') }}</option>
+                                    <option value="បរិញ្ញាបត្រ">{{ __('បរិញ្ញាបត្រ') }}</option>
+                                    <option value="បរិញ្ញាបត្ររង">{{ __('បរិញ្ញាបត្ររង') }}</option>
+                                    <option value="វិញ្ញាបនបត្រ">{{ __('វិញ្ញាបនបត្រ') }}</option>
+                                    <option value="ផ្សេងៗ">{{ __('ផ្សេងៗ') }}</option>
+                                </select>
+                                <p x-show="fieldErrors.degree_level" x-text="fieldErrors.degree_level" class="text-sm text-red-600 mt-2"></p>
+                            </div>
+                            <div>
+                                <label for="generation" class="block text-sm font-bold text-gray-700 mb-1.5">
+                                    <i class="fas fa-layer-group mr-1.5 text-emerald-500"></i> {{ __('ជំនាន់') }} <span class="text-red-500">*</span>
+                                </label>
+                                <select id="generation" name="generation"
+                                    class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition text-sm px-4 py-2.5"
+                                    required @blur="onBlur('generation')" @change="touched.generation = true; validateField('generation')"
+                                    x-bind:class="fieldErrors.generation ? 'ring-2 ring-red-400 bg-red-50' : ''">
+                                    <option value="">{{ __('ជ្រើសរើសជំនាន់') }}</option>
+                                    @foreach(\App\Models\Generation::where('is_active', true)->orderByDesc('name')->get() as $gen)
+                                        <option value="{{ $gen->name }}">{{ $gen->name }} ({{ __('ចូលរៀនឆ្នាំ') }} {{ $gen->join_year }})</option>
+                                    @endforeach
+                                </select>
+                                <p x-show="fieldErrors.generation" x-text="fieldErrors.generation" class="text-sm text-red-600 mt-2"></p>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </template>
 
                 {{-- Section 2C: Professor Info --}}
-                <div x-show="userRole === 'professor'" x-cloak x-transition class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
-                            <span class="text-emerald-600 font-bold text-sm">2</span>
+                <template x-if="userRole === 'professor'" x-init="$nextTick(() => {
+                    const facultySelect = document.getElementById('faculty_id');
+                    const departmentSelect = document.getElementById('professor_department_id');
+                    const oldFacultyId = '{{ old('faculty_id') }}';
+                    const oldDepartmentId = '{{ old('department_id') }}';
+
+                    function updateDepartments(facultyId, defaultDepartmentId = null) {
+                        if (!departmentSelect) return;
+                        departmentSelect.innerHTML = '<option value=\"{{ __("កំពុងទាញយក...") }}\"></option>';
+                        departmentSelect.disabled = true;
+
+                        if (!facultyId) {
+                            departmentSelect.innerHTML = '<option value=\"{{ __("សូមជ្រើសរើសមហាវិទ្យាល័យជាមុនសិន") }}\"></option>';
+                            return;
+                        }
+
+                        fetch('/admin/get-departments-by-faculty/' + facultyId)
+                            .then(response => response.json())
+                            .then(departments => {
+                                departmentSelect.innerHTML = '<option value=\"{{ __("ជ្រើសរើសដេប៉ាតឺម៉ង់") }}\"></option>';
+                                departments.forEach(department => {
+                                    const option = document.createElement('option');
+                                    option.value = department.id;
+                                    option.textContent = department.name_km || department.name_en;
+                                    if (department.id == defaultDepartmentId) option.selected = true;
+                                    departmentSelect.appendChild(option);
+                                });
+                                departmentSelect.disabled = false;
+                            })
+                            .catch(error => console.error('Error fetching departments:', error));
+                    }
+
+                    if (facultySelect) {
+                        facultySelect.addEventListener('change', function() { updateDepartments(this.value); });
+                        if (oldFacultyId) updateDepartments(oldFacultyId, oldDepartmentId);
+                    }
+                })">
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
+                                <span class="text-emerald-600 font-bold text-sm">2</span>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-900">{{ __('ព័ត៌មានសាស្ត្រាចារ្យ') }}</h3>
+                                <p class="text-xs text-gray-500">{{ __('កំណត់មហាវិទ្យាល័យ និងដេប៉ាតឺម៉ង់') }}</p>
+                            </div>
                         </div>
-                        <div>
-                            <h3 class="text-lg font-bold text-gray-900">{{ __('ព័ត៌មានសាស្ត្រាចារ្យ') }}</h3>
-                            <p class="text-xs text-gray-500">{{ __('កំណត់មហាវិទ្យាល័យ និងដេប៉ាតឺម៉ង់') }}</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label for="faculty_id" class="block text-sm font-bold text-gray-700 mb-1.5">
+                                    <i class="fas fa-university mr-1.5 text-emerald-500"></i> {{ __('មហាវិទ្យាល័យ') }} <span class="text-red-500">*</span>
+                                </label>
+                                <select id="faculty_id" name="faculty_id"
+                                    class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition text-sm px-4 py-2.5"
+                                    @blur="onBlur('faculty_id')" @change="touched.faculty_id = true; validateField('faculty_id')"
+                                    x-bind:class="fieldErrors.faculty_id ? 'ring-2 ring-red-400 bg-red-50' : ''">
+                                    <option value="">{{ __('ជ្រើសរើសមហាវិទ្យាល័យ') }}</option>
+                                    @foreach($faculties as $faculty)
+                                        <option value="{{ $faculty->id }}">{{ $faculty->name_km ?? $faculty->name_en }}</option>
+                                    @endforeach
+                                </select>
+                                <p x-show="fieldErrors.faculty_id" x-text="fieldErrors.faculty_id" class="text-sm text-red-600 mt-2"></p>
+                            </div>
+                            <div>
+                                <label for="professor_department_id" class="block text-sm font-bold text-gray-700 mb-1.5">
+                                    <i class="fas fa-building mr-1.5 text-emerald-500"></i> {{ __('ដេប៉ាតឺម៉ង់') }} <span class="text-red-500">*</span>
+                                </label>
+                                <select id="professor_department_id" name="department_id"
+                                    class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition text-sm px-4 py-2.5"
+                                    @blur="onBlur('department_id')" @change="touched.department_id = true; validateField('department_id')"
+                                    x-bind:class="fieldErrors.department_id ? 'ring-2 ring-red-400 bg-red-50' : ''">
+                                    <option value="">{{ __('សូមជ្រើសរើសដេប៉ាតឺម៉ង់') }}</option>
+                                </select>
+                                <x-input-error :messages="$errors->get('department_id')" class="mt-2" />
+                                <p x-show="fieldErrors.department_id" x-text="fieldErrors.department_id" class="text-sm text-red-600 mt-2"></p>
+                            </div>
                         </div>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div>
-                            <label for="faculty_id" class="block text-sm font-bold text-gray-700 mb-1.5">
-                                <i class="fas fa-university mr-1.5 text-emerald-500"></i> {{ __('មហាវិទ្យាល័យ') }} <span class="text-red-500">*</span>
-                            </label>
-                            <select id="faculty_id" name="faculty_id"
-                                class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition text-sm px-4 py-2.5"
-                                @blur="onBlur('faculty_id')" @change="touched.faculty_id = true; validateField('faculty_id')"
-                                x-bind:class="fieldErrors.faculty_id ? 'ring-2 ring-red-400 bg-red-50' : ''">
-                                <option value="">{{ __('ជ្រើសរើសមហាវិទ្យាល័យ') }}</option>
-                                @foreach($faculties as $faculty)
-                                    <option value="{{ $faculty->id }}">{{ $faculty->name_km ?? $faculty->name_en }}</option>
-                                @endforeach
-                            </select>
-                            <p x-show="fieldErrors.faculty_id" x-text="fieldErrors.faculty_id" class="text-sm text-red-600 mt-2"></p>
-                        </div>
-                        <div>
-                            <label for="department_id" class="block text-sm font-bold text-gray-700 mb-1.5">
-                                <i class="fas fa-building mr-1.5 text-emerald-500"></i> {{ __('ដេប៉ាតឺម៉ង់') }} <span class="text-red-500">*</span>
-                            </label>
-                            <select id="department_id" name="department_id"
-                                class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition text-sm px-4 py-2.5"
-                                @blur="onBlur('department_id')" @change="touched.department_id = true; validateField('department_id')"
-                                x-bind:class="fieldErrors.department_id ? 'ring-2 ring-red-400 bg-red-50' : ''">
-                                <option value="">{{ __('សូមជ្រើសរើសដេប៉ាតឺម៉ង់') }}</option>
-                            </select>
-                            <x-input-error :messages="$errors->get('department_id')" class="mt-2" />
-                            <p x-show="fieldErrors.department_id" x-text="fieldErrors.department_id" class="text-sm text-red-600 mt-2"></p>
-                        </div>
-                    </div>
-                </div>
+                </template>
 
                 {{-- Section 3: Profile Info --}}
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
@@ -480,86 +544,6 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const facultySelect = document.getElementById('faculty_id');
-            const departmentSelect = document.getElementById('department_id');
-            const oldFacultyId = '{{ old('faculty_id') }}';
-            const oldDepartmentId = '{{ old('department_id') }}';
-
-            function updateDepartments(facultyId, defaultDepartmentId = null) {
-                if (!departmentSelect) return;
-                departmentSelect.innerHTML = '<option value="">{{ __("កំពុងទាញយក...") }}</option>';
-                departmentSelect.disabled = true;
-
-                if (!facultyId) {
-                    departmentSelect.innerHTML = '<option value="">{{ __("សូមជ្រើសរើសមហាវិទ្យាល័យជាមុនសិន") }}</option>';
-                    return;
-                }
-
-                fetch(`/admin/get-departments-by-faculty/${facultyId}`)
-                    .then(response => response.json())
-                    .then(departments => {
-                        departmentSelect.innerHTML = '<option value="">{{ __("ជ្រើសរើសដេប៉ាតឺម៉ង់") }}</option>';
-                        departments.forEach(department => {
-                            const option = document.createElement('option');
-                            option.value = department.id;
-                            option.textContent = department.name_km || department.name_en;
-                            if (department.id == defaultDepartmentId) {
-                                option.selected = true;
-                            }
-                            departmentSelect.appendChild(option);
-                        });
-                        departmentSelect.disabled = false;
-                    })
-                    .catch(error => console.error('Error fetching departments:', error));
-            }
-
-            if (facultySelect) {
-                facultySelect.addEventListener('change', function() {
-                    updateDepartments(this.value);
-                });
-                if (oldFacultyId) {
-                    updateDepartments(oldFacultyId, oldDepartmentId);
-                }
-            }
-        });
-
-        // Student ID Preview
-        const programSelect = document.getElementById('program_id');
-        const degreeSelect = document.getElementById('degree_level');
-        const generationSelect = document.getElementById('generation');
-        const previewEl = document.getElementById('preview-student-id');
-        let previewTimer = null;
-
-        function fetchPreview() {
-            const programId = programSelect?.value;
-            const degreeLevel = degreeSelect?.value;
-            const generation = generationSelect?.value;
-
-            if (!programId || !degreeLevel || !generation) {
-                previewEl.textContent = '—';
-                return;
-            }
-
-            clearTimeout(previewTimer);
-            previewTimer = setTimeout(() => {
-                fetch('{{ route("admin.preview-student-id") }}?program_id=' + programId + '&degree_level=' + encodeURIComponent(degreeLevel) + '&generation=' + generation, {
-                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.student_id) {
-                        previewEl.textContent = data.student_id;
-                    }
-                })
-                .catch(() => { previewEl.textContent = '—'; });
-            }, 300);
-        }
-
-        if (programSelect) programSelect.addEventListener('change', fetchPreview);
-        if (degreeSelect) degreeSelect.addEventListener('change', fetchPreview);
-        if (generationSelect) generationSelect.addEventListener('change', fetchPreview);
-
         window._compressToBase64 = function(file) {
             return new Promise(function(resolve, reject) {
                 var reader = new FileReader();

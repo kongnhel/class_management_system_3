@@ -165,9 +165,7 @@
                                         $endTime = \Carbon\Carbon::parse($schedules->max('end_time'));
                                         $isCompletedToday = $schedules->contains('is_completed_today', true);
                                         $enrolledCount = $courseOffering->studentCourseEnrollments->count() ?? 0;
-                                        $programName = $courseOffering->targetPrograms->first()?->name_km
-                                            ?? $courseOffering->course->programs->first()?->name_km
-                                            ?? '...';
+                                        $departmentName = $courseOffering->department?->name_km ?? '...';
                                         $now = \Carbon\Carbon::now('Asia/Phnom_Penh');
                                         $scanWindowStart = $startTime->copy()->subMinutes(5);
                                         $scanWindowEnd = $endTime->copy()->addMinutes(10);
@@ -188,7 +186,7 @@
                                                 <div class="min-w-0">
                                                     <h3 class="font-bold text-gray-800 text-sm leading-tight">{{ $courseOffering->course->title_km ?? ($courseOffering->course->title_en ?? $courseOffering->course->name) }}</h3>
                                                     <div class="flex flex-wrap gap-2 mt-1.5 text-[11px] text-gray-500 font-semibold">
-                                                        <span class="inline-flex items-center gap-1 bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-md">{{ $programName }}</span>
+                                                        <span class="inline-flex items-center gap-1 bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-md">{{ $departmentName }}</span>
                                                         <span class="inline-flex items-center gap-1"><i class="fas fa-user-graduate text-gray-300"></i> {{ $enrolledCount }} {{ __('នាក់') }}</span>
                                                     </div>
                                                 </div>

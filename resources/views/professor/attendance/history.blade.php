@@ -132,7 +132,7 @@
                                 </h4>
                                 <div class="flex items-center gap-2 mt-1.5 flex-wrap">
                                     @php
-                                        $gen = $att->courseOffering?->generation ?? $att->courseOffering?->targetPrograms->first()?->pivot?->generation ?? null;
+                                        $gen = $att->courseOffering?->generation;
                                     @endphp
                                     @if($gen)
                                         <span class="inline-flex items-center gap-1 bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full text-[10px] font-bold">

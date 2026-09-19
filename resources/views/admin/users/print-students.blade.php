@@ -81,8 +81,8 @@
         $totalStudents = $students->count();
         $maleCount = $students->filter(fn($s) => ($s->studentProfile->gender ?? $s->profile?->gender) === 'male')->count();
         $femaleCount = $totalStudents - $maleCount;
-        $programName = $program?->name_km ?? ($students->first()?->program->name_km ?? __('មិនកំណត់'));
-        $facultyName = $program?->department->faculty->name_km ?? ($students->first()?->program->department->faculty->name_km ?? __('មិនកំណត់'));
+        $departmentName = $department?->name_km ?? ($students->first()?->department->name_km ?? __('មិនកំណត់'));
+        $facultyName = $department?->faculty->name_km ?? ($students->first()?->department->faculty->name_km ?? __('មិនកំណត់'));
         $generationDisplay = $generation ?? ($students->first()?->generation ?? __('មិនកំណត់'));
         $currentYear = \Carbon\Carbon::now()->year + 543;
         $academicYearName = $currentAcademicYear?->name ?? $currentYear . ' - ' . ($currentYear + 1);
@@ -110,7 +110,7 @@
     </div>
 
     <div class="info-row">
-        <span>{{ __('កម្មវិធីសិក្សា៖') }} <strong>{{ $programName }}</strong></span>
+        <span>{{ __('ដេប៉ាតឺម៉ង់៖') }} <strong>{{ $departmentName }}</strong></span>
         <span>{{ __('ជំនាន់ទី៖') }} <strong>{{ $generationDisplay }}</strong></span>
         <span>{{ __('សរុប៖') }} <strong>{{ $totalStudents }}</strong> {{ __('នាក់') }} ({{ __('ប្រុស') }} <strong>{{ $maleCount }}</strong> {{ __('នាក់') }}, {{ __('ស្រី') }} <strong>{{ $femaleCount }}</strong> {{ __('នាក់') }})</span>
     </div>

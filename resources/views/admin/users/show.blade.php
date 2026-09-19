@@ -114,7 +114,7 @@
                                     </span>
                                     <div>
                                         <p class="font-bold text-gray-800">{{ $offering->course?->title_km ?? 'N/A' }}</p>
-                                        <p class="text-sm text-gray-500">{{ $offering->program->name_km ?? 'N/A' }} ({{ $offering->academic_year }})</p>
+                                        <p class="text-sm text-gray-500">{{ $offering->department->name_km ?? 'N/A' }} ({{ $offering->academic_year }})</p>
                                     </div>
                                 </div>
                                 <a href="{{ route('admin.show-course-offering', $offering->id) }}" class="text-emerald-600 hover:text-emerald-700 font-semibold text-sm">{{ __('មើលលម្អិត') }} &rarr;</a>
@@ -145,7 +145,7 @@
                                     </span>
                                     <div>
                                         <p class="font-bold text-gray-800">{{ $enrollment->courseOffering->course->title_km ?? 'N/A' }}</p>
-                                        <p class="text-sm text-gray-500">{{ $enrollment->courseOffering->program->name_km ?? 'N/A' }} ({{ $enrollment->courseOffering->academic_year }})</p>
+                                        <p class="text-sm text-gray-500">{{ $enrollment->courseOffering->department->name_km ?? 'N/A' }} ({{ $enrollment->courseOffering->academic_year }})</p>
                                     </div>
                                 </div>
                                 <a href="{{ route('admin.show-course-offering', $enrollment->courseOffering->id) }}" class="text-emerald-600 hover:text-emerald-700 font-semibold text-sm">{{ __('មើលលម្អិត') }} &rarr;</a>
@@ -160,7 +160,7 @@
                 </div>
 
                 {{-- Academic History --}}
-                @if($user->studentProgramEnrollments->count() > 0)
+                @if($user->studentDepartmentEnrollments->count() > 0)
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                         <div class="flex items-center gap-3 mb-6">
                             <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-purple-100 text-purple-600">
@@ -169,7 +169,7 @@
                             <h3 class="text-xl font-bold text-gray-900">{{ __('ប្រវត្តិសិក្សា') }}</h3>
                         </div>
                         <div class="space-y-3">
-                            @foreach($user->studentProgramEnrollments as $enrollment)
+                            @foreach($user->studentDepartmentEnrollments as $enrollment)
                                 <div class="flex items-center gap-4 p-4 rounded-xl {{ $enrollment->status === 'active' ? 'bg-green-50 border border-green-200' : 'bg-gray-50 border border-gray-200' }}">
                                     <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 {{ $enrollment->status === 'active' ? 'bg-green-500 text-white' : 'bg-gray-400 text-white' }}">
                                         @if($enrollment->status === 'graduated')
@@ -179,9 +179,9 @@
                                         @endif
                                     </div>
                                     <div class="flex-1">
-                                        <p class="font-semibold text-gray-800">{{ $enrollment->program->name_km ?? 'N/A' }}</p>
+                                        <p class="font-semibold text-gray-800">{{ $enrollment->department->name_km ?? 'N/A' }}</p>
                                         <p class="text-sm text-gray-500">
-                                            {{ __('កម្រិត៖') }} {{ $enrollment->program->degree_level ?? 'N/A' }}
+                                            {{ __('កម្រិត៖') }} {{ $enrollment->department->degree_level ?? 'N/A' }}
                                             @if($enrollment->starting_year_level > 1)
                                                 · {{ __('ចាប់ផ្តើមពីឆ្នាំទី') }} {{ $enrollment->starting_year_level }}
                                             @endif
@@ -202,7 +202,7 @@
                 @endif
 
                 {{-- Transition Button --}}
-                @if($isEligibleForTransition && $transitionPrograms->count() > 0)
+                @if($isEligibleForTransition && $transitionDepartments->count() > 0)
                     <div class="bg-gradient-to-r from-emerald-50 to-emerald-50 border border-emerald-200 rounded-2xl p-6">
                         <div class="flex items-start gap-4">
                             <div class="w-12 h-12 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0">

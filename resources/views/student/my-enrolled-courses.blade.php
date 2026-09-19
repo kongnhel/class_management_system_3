@@ -13,11 +13,11 @@
             <div class="bg-white overflow-hidden shadow-xl md:shadow-2xl p-4 md:p-8 lg:p-12 border border-gray-100">
                 
                 {{-- 1. Program Information --}}
-                @if ($studentProgram)
+                @if ($studentDepartment)
                     <div class="flex flex-col md:flex-row justify-between items-center mb-6 md:mb-10 pb-5 border-b border-gray-200">
                         <h3 class="text-xl md:text-3xl font-extrabold text-green-700 mb-4 md:mb-0 flex items-center">
                             <i class="fas fa-graduation-cap text-xl md:text-3xl mr-3 text-green-600"></i>
-                            {{ __('ជំនាញ') }}: {{ $studentProgram->name_km }}
+                            {{ __('ជំនាញ') }}: {{ $studentDepartment->name_km }}
                         </h3>
                     </div>
                 @else

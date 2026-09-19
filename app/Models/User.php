@@ -24,7 +24,6 @@ class User extends Authenticatable
         'role',
         'student_id_code',
         'department_id',
-        'program_id',
         'generation',
         'google_id',
         'avatar',
@@ -108,19 +107,11 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the department that the professor user belongs to.
+     * Get the department that the user belongs to.
      */
     public function department()
     {
         return $this->belongsTo(Department::class);
-    }
-
-    /**
-     * Get the program that the student user belongs to.
-     */
-    public function program()
-    {
-        return $this->belongsTo(Program::class);
     }
 
     /**
@@ -188,18 +179,6 @@ class User extends Authenticatable
         return $this->morphMany(Notification::class, 'notifiable');
     }
 
-    public function programs()
-    {
-        return $this->hasManyThrough(
-            Program::class,
-            CourseOffering::class,
-            'lecturer_user_id',
-            'id',
-            'id',
-            'program_id',
-        );
-    }
-
     public function studentProfile()
     {
         return $this->hasOne(StudentProfile::class);
@@ -230,7 +209,6 @@ class User extends Authenticatable
         );
     }
 
-    // You may also have other relationships here, like department() or program()
     // You can also add the studentCourseEnrollments relationship here for consistency
 
     // app/Models/User.php
@@ -297,10 +275,10 @@ class User extends Authenticatable
      */
 
     /**
-     * បន្ថែម Relationship ទៅកាន់តារាង StudentProgramEnrollment
+     * បន្ថែម Relationship ទៅកាន់តារាង StudentDepartmentEnrollment
      */
-    public function studentProgramEnrollments()
+    public function studentDepartmentEnrollments()
     {
-        return $this->hasMany(\App\Models\StudentProgramEnrollment::class, 'student_user_id');
+        return $this->hasMany(\App\Models\StudentDepartmentEnrollment::class, 'student_user_id');
     }
 }

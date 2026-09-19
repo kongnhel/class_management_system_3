@@ -207,19 +207,19 @@ class StudentGradeController extends Controller
         $enrolledOfferingIds = StudentCourseEnrollment::where('student_user_id', $user->id)->pluck('course_offering_id');
         $schedules = \App\Models\Schedule::whereIn('course_offering_id', $enrolledOfferingIds)
             ->whereHas('courseOffering.course')
-            ->with(['room', 'courseOffering.course', 'courseOffering.lecturer', 'courseOffering.targetPrograms'])
+            ->with(['room', 'courseOffering.course', 'courseOffering.lecturer', 'courseOffering.department'])
             ->orderByRaw("FIELD(day_of_week, 'Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday')")
             ->orderBy('start_time')
             ->get();
-        $studentProgram = $user->program;
+        $studentDepartment = $user->department;
 
         $semester = $schedules->first()?->courseOffering?->semester ?? '';
         $semesterNum = str_replace('ឆមាសទី', '', $semester);
 
-        $generation = $schedules->first()?->courseOffering?->targetPrograms?->first()?->pivot?->generation ?? '';
+        $generation = $schedules->first()?->courseOffering?->generation ?? '';
         $startDate = $schedules->first()?->courseOffering?->start_date ?? now();
 
-        return view('student.my-schedule', compact('schedules', 'studentProgram', 'semester', 'semesterNum', 'user', 'generation', 'startDate'));
+        return view('student.my-schedule', compact('schedules', 'studentDepartment', 'semester', 'semesterNum', 'user', 'generation', 'startDate'));
     }
 
     public function enrolledCourses($studentId)
@@ -353,11 +353,11 @@ class StudentGradeController extends Controller
         return view('student.my-assessments', compact('assessmentsByCourse'));
     }
 
-    public function availablePrograms()
+    public function availableDepartments()
     {
-        $programs = \App\Models\Program::with('department')->get();
+        $departments = \App\Models\Department::all();
 
-        return view('student.available-programs', compact('programs'));
+        return view('student.available-departments', compact('departments'));
     }
 
     public function availableCourses()
@@ -365,7 +365,8 @@ class StudentGradeController extends Controller
         $user = Auth::user();
         $enrolledIds = StudentCourseEnrollment::where('student_user_id', $user->id)->pluck('course_offering_id');
         $courses = CourseOffering::with(['course', 'lecturer'])->withCount('studentCourseEnrollments')
-            ->whereHas('targetPrograms', fn ($q) => $q->where('program_id', $user->program_id)->where('generation', $user->generation))
+            ->where('department_id', $user->department_id)
+            ->where('generation', $user->generation)
             ->whereHas('course')
             ->where('end_date', '>=', now())->whereNotIn('id', $enrolledIds)->get();
 
@@ -381,9 +382,8 @@ class StudentGradeController extends Controller
             ->where(function ($query) {
                 $query->whereNull('end_date')->orWhere('end_date', '>=', now());
             })
-            ->whereHas('targetPrograms', fn ($query) => $query
-                ->where('program_id', $user->program_id)
-                ->where('generation', $user->generation))
+            ->where('department_id', $user->department_id)
+            ->where('generation', $user->generation)
             ->exists();
 
         abort_unless($eligible, 403);
@@ -397,17 +397,14 @@ class StudentGradeController extends Controller
         return back()->with('success', __('ចុះឈ្មោះជោគជ័យ។'));
     }
 
-    public function enrollProgram(Request $request)
+    public function enrollDepartment(Request $request)
     {
-        $request->validate(['program_id' => 'required|exists:programs,id']);
         $user = Auth::user();
-
-        abort_unless((int) $request->program_id === (int) $user->program_id, 403);
 
         $gen = $user->generation;
         $offerings = CourseOffering::where(function ($query) {
             $query->whereNull('end_date')->orWhere('end_date', '>=', now());
-        })->whereHas('targetPrograms', fn ($q) => $q->where('program_id', $request->program_id)->where('generation', $gen))->get();
+        })->where('department_id', $user->department_id)->where('generation', $gen)->get();
         $enrolled = 0;
         foreach ($offerings as $offering) {
             $exists = StudentCourseEnrollment::where('student_user_id', $user->id)->where('course_offering_id', $offering->id)->exists();
@@ -426,8 +423,8 @@ class StudentGradeController extends Controller
         $enrollments = StudentCourseEnrollment::where('student_user_id', $user->id)
             ->whereHas('courseOffering.course')
             ->with(['courseOffering.course', 'courseOffering.lecturer'])->paginate(10);
-        $studentProgram = $user->program;
+        $studentDepartment = $user->department;
 
-        return view('student.my-enrolled-courses', compact('enrollments', 'studentProgram'));
+        return view('student.my-enrolled-courses', compact('enrollments', 'studentDepartment'));
     }
 }

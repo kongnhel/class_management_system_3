@@ -79,26 +79,9 @@
                                 <label for="credits" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ក្រេឌីត') }} <span class="text-red-500">*</span></label>
                                 <input type="number" name="credits" id="credits"
                                        class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition text-sm"
-                                       value="{{ old('credits') }}" min="0.5" step="0.1" required placeholder="{{ __('៤.០') }}">
+                                       value="{{ old('credits') }}" min="0.5" step="any" required placeholder="{{ __('៤.០') }}">
                                 <p class="text-xs text-gray-400 mt-1">{{ __('ឧ. ៤.០, ៣.០, ២.៥') }}</p>
                                 @error('credits')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            {{-- Generation --}}
-                            <div>
-                                <label for="generation" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ជំនាន់') }}</label>
-                                <select name="generation" id="generation"
-                                        class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition text-sm">
-                                    <option value="">{{ __('ជ្រើសរើសជំនាន់') }}</option>
-                                    @foreach ($generations as $generation)
-                                        <option value="{{ $generation }}" {{ old('generation') == $generation ? 'selected' : '' }}>
-                                            {{ $generation }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('generation')
                                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                 @enderror
                             </div>
@@ -127,38 +110,6 @@
                                     @endforeach
                                 </select>
                                 @error('department_id')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            {{-- Multi-Program Selection --}}
-                            <div x-data="{ selectedPrograms: {{ json_encode(old('program_id', [''])) }} }">
-                                <label class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('កម្មវិធីសិក្សា') }} <span class="text-red-500">*</span></label>
-                                <div class="space-y-3">
-                                    <template x-for="(item, index) in selectedPrograms" :key="index">
-                                        <div class="flex items-center gap-2">
-                                            <select name="program_id[]"
-                                                    class="flex-1 min-w-0 rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition text-sm" required>
-                                                <option value="">{{ __('ជ្រើសរើសកម្មវិធីសិក្សា') }}</option>
-                                                @foreach($programs as $program)
-                                                    <option value="{{ $program->id }}" x-bind:selected="item == {{ $program->id }}">
-                                                        {{ $program->name_km }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                            <button type="button" @click="selectedPrograms.splice(index, 1)" x-show="selectedPrograms.length > 1"
-                                                    class="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors flex-shrink-0">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                            </button>
-                                        </div>
-                                    </template>
-                                    <button type="button" @click="selectedPrograms.push('')"
-                                            class="inline-flex items-center px-3 py-1.5 bg-emerald-50 text-emerald-600 rounded-xl text-xs font-bold hover:bg-emerald-100 transition-all border border-emerald-200">
-                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                                        {{ __('បន្ថែមកម្មវិធីសិក្សា') }}
-                                    </button>
-                                </div>
-                                @error('program_id')
                                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                 @enderror
                             </div>

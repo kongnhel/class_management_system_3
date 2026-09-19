@@ -304,7 +304,7 @@ class ProfessorAttendanceController extends Controller
      */
     public function history(Request $request)
     {
-        $query = AttendanceProfessor::with(['courseOffering.course', 'courseOffering.targetPrograms'])
+        $query = AttendanceProfessor::with(['courseOffering.course', 'courseOffering.department'])
             ->where('professor_id', auth()->id());
 
         $semester = $request->input('semester');
@@ -347,7 +347,7 @@ class ProfessorAttendanceController extends Controller
         $academicYear = $request->input('academic_year');
         $dayType = $request->input('day_type');
 
-        $query = AttendanceProfessor::with(['courseOffering.course', 'courseOffering.targetPrograms'])
+        $query = AttendanceProfessor::with(['courseOffering.course', 'courseOffering.department'])
             ->where('professor_id', auth()->id());
 
         $query->whereHas('courseOffering', function ($q) use ($semester) {

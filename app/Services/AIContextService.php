@@ -128,17 +128,13 @@ class AIContextService
             $context .= 'Address: '.($profile->address ?: 'N/A')."\n";
         }
 
-        $program = DB::table('programs')->where('id', $user->program_id)->first();
+        $program = DB::table('departments')->where('id', $user->department_id)->first();
         if ($program) {
-            $context .= "Program: {$program->name_km} ({$program->name_en})\n";
+            $context .= "Department: {$program->name_km} ({$program->name_en})\n";
             $context .= 'Degree Level: '.($program->degree_level ?: 'N/A')."\n";
             $context .= 'Duration: '.($program->duration_years ?: 'N/A')." years\n";
 
-            $dept = DB::table('departments')->where('id', $program->department_id)->first();
-            if ($dept) {
-                $context .= "Department: {$dept->name_km} ({$dept->name_en})\n";
-            }
-            $faculty = DB::table('faculties')->where('id', $dept->faculty_id ?? null)->first();
+            $faculty = DB::table('faculties')->where('id', $program->faculty_id ?? null)->first();
             if ($faculty) {
                 $context .= "Faculty: {$faculty->name_km} ({$faculty->name_en})\n";
             }
@@ -313,14 +309,14 @@ class AIContextService
             }
         }
 
-        // Student program enrollments
-        $programEnrollments = DB::table('student_program_enrollments')
-            ->join('programs', 'student_program_enrollments.program_id', '=', 'programs.id')
-            ->where('student_program_enrollments.student_user_id', $user->id)
-            ->get(['programs.name_km as program_name', 'student_program_enrollments.starting_year_level', 'student_program_enrollments.enrollment_date', 'student_program_enrollments.status']);
+        // Student department enrollments
+        $programEnrollments = DB::table('student_department_enrollments')
+            ->join('departments', 'student_department_enrollments.department_id', '=', 'departments.id')
+            ->where('student_department_enrollments.student_user_id', $user->id)
+            ->get(['departments.name_km as program_name', 'student_department_enrollments.starting_year_level', 'student_department_enrollments.enrollment_date', 'student_department_enrollments.status']);
 
         if ($programEnrollments->isNotEmpty()) {
-            $context .= "\n=== PROGRAM ENROLLMENTS ===\n";
+            $context .= "\n=== DEPARTMENT ENROLLMENTS ===\n";
             foreach ($programEnrollments as $pe) {
                 $context .= "- {$pe->program_name} | Year Level: {$pe->starting_year_level} | Enrolled: {$pe->enrollment_date} | Status: {$pe->status}\n";
             }
@@ -572,25 +568,15 @@ class AIContextService
         $context .= "\n=== FACULTIES ({$faculties->count()}) ===\n";
         foreach ($faculties as $f) {
             $deptCount = DB::table('departments')->where('faculty_id', $f->id)->count();
-            $programCount = DB::table('programs')->where('faculty_id', $f->id)->count();
-            $context .= "- [ID:{$f->id}] {$f->name_km} ({$f->name_en}) | Departments: {$deptCount} | Programs: {$programCount}\n";
+            $context .= "- [ID:{$f->id}] {$f->name_km} ({$f->name_en}) | Departments: {$deptCount}\n";
         }
 
-        // All departments
+        // All departments (with program info)
         $departments = DB::table('departments')->get();
         $context .= "\n=== DEPARTMENTS ({$departments->count()}) ===\n";
         foreach ($departments as $d) {
-            $profCount = DB::table('users')->where('role', 'professor')->where('department_id', $d->id)->count();
             $studentCount = DB::table('users')->where('role', 'student')->where('department_id', $d->id)->count();
-            $context .= "- [ID:{$d->id}] {$d->name_km} ({$d->name_en}) | Professors: {$profCount} | Students: {$studentCount}\n";
-        }
-
-        // All programs
-        $programs = DB::table('programs')->get();
-        $context .= "\n=== PROGRAMS ({$programs->count()}) ===\n";
-        foreach ($programs as $p) {
-            $studentCount = DB::table('users')->where('role', 'student')->where('program_id', $p->id)->count();
-            $context .= "- [ID:{$p->id}] {$p->name_km} ({$p->name_en}) | Level: ".($p->degree_level ?: 'N/A')." | Students: {$studentCount} | Duration: ".($p->duration_years ?: '?')." years\n";
+            $context .= "- [ID:{$d->id}] {$d->name_km} ({$d->name_en}) | Level: ".($d->degree_level ?: 'N/A')." | Students: {$studentCount} | Duration: ".($d->duration_years ?: '?')." years\n";
         }
 
         // All courses

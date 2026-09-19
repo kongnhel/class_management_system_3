@@ -167,7 +167,54 @@
                 syncSidebarActiveState();
                 restoreSidebarScrollPosition();
                 window.scrollTo(0, 0);
+                initDepartmentFilters();
             });
+
+            function initDepartmentFilters() {
+                document.querySelectorAll('script[type="application/json"][data-dept-filter]').forEach(function (dataEl) {
+                    var ALL_DEPTS;
+                    try { ALL_DEPTS = JSON.parse(dataEl.textContent); } catch (e) { return; }
+                    if (!Array.isArray(ALL_DEPTS) || !ALL_DEPTS.length) return;
+
+                    var container = dataEl.closest('[data-dept-filter-container]');
+                    if (!container) return;
+                    var facultySelect = container.querySelector('select[data-dept-faculty]');
+                    var deptSelect = container.querySelector('select[data-dept-department]');
+                    if (!facultySelect || !deptSelect) return;
+
+                    if (deptSelect.dataset.deptFilterInit) return;
+                    deptSelect.dataset.deptFilterInit = '1';
+
+                    var allLabel = deptSelect.options[0] ? deptSelect.options[0].textContent : 'ទាំងអស់';
+
+                    function filter() {
+                        var fid = facultySelect.value;
+                        var cur = deptSelect.value;
+                        deptSelect.innerHTML = '<option value="">' + allLabel + '</option>';
+                        ALL_DEPTS.filter(function (d) { return !fid || String(d.faculty_id) === String(fid); })
+                            .forEach(function (d) {
+                                var el = document.createElement('option');
+                                el.value = d.id;
+                                el.textContent = d.name;
+                                if (d.faculty_id) el.dataset.facultyId = d.faculty_id;
+                                deptSelect.appendChild(el);
+                            });
+                        if (cur && deptSelect.querySelector('option[value="' + cur + '"]')) {
+                            deptSelect.value = cur;
+                        } else {
+                            deptSelect.value = '';
+                        }
+                    }
+
+                    facultySelect.addEventListener('change', filter);
+                    filter();
+
+                    var results = document.querySelector('[data-admin-results]');
+                    if (results) {
+                        new MutationObserver(filter).observe(results, { childList: true });
+                    }
+                });
+            }
 
             // Also sync on initial load (not just after Livewire navigation)
             if (document.readyState === 'loading') {
@@ -189,6 +236,7 @@
                 bindSidebarScrollListener();
                 syncSidebarTabState();
                 restoreSidebarScrollPosition();
+                initDepartmentFilters();
             });
 
             bindSidebarScrollListener();

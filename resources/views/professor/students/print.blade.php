@@ -81,8 +81,8 @@
         $totalStudents = $students->count();
         $maleCount = $students->filter(fn($s) => ($s->studentProfile->gender ?? $s->profile?->gender) === 'male')->count();
         $femaleCount = $totalStudents - $maleCount;
-        $programName = $courseOffering->course->title_km ?? $courseOffering->course->title_en ?? 'មិនកំណត់';
-        $generationDisplay = $courseOffering->generation ?? $courseOffering->targetPrograms->pluck('generation')->filter()->first() ?? 'មិនកំណត់';
+        $departmentName = $courseOffering->course->title_km ?? $courseOffering->course->title_en ?? 'មិនកំណត់';
+        $generationDisplay = $courseOffering->generation ?? 'មិនកំណត់';
         $currentYear = \Carbon\Carbon::now()->year + 543;
         $academicYear = $courseOffering->academic_year ?? ($currentYear . ' - ' . ($currentYear + 1));
 
@@ -108,7 +108,7 @@
     </div>
 
     <div class="info-row">
-        <span>មុខវិជ្ជា៖ <strong>{{ $programName }}</strong></span>
+        <span>មុខវិជ្ជា៖ <strong>{{ $departmentName }}</strong></span>
         <span>ជំនាន់ទី៖ <strong>{{ $generationDisplay }}</strong></span>
         <span>សរុប៖ <strong>{{ $totalStudents }}</strong> នាក់ (ប្រុស <strong>{{ $maleCount }}</strong> នាក់, ស្រី <strong>{{ $femaleCount }}</strong> នាក់)</span>
     </div>

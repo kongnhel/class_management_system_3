@@ -611,11 +611,11 @@ class ProfessorGradeController extends Controller
         $type = ucfirst(strtolower($rawType));
 
         if ($type === 'Assignment') {
-            $assessment = \App\Models\Assignment::with('courseOffering.targetPrograms')->findOrFail($id);
+            $assessment = \App\Models\Assignment::with('courseOffering.department')->findOrFail($id);
         } elseif ($type === 'Quiz') {
-            $assessment = \App\Models\Quiz::with('courseOffering.targetPrograms')->findOrFail($id);
+            $assessment = \App\Models\Quiz::with('courseOffering.department')->findOrFail($id);
         } else {
-            $assessment = \App\Models\Exam::with('courseOffering.targetPrograms')->findOrFail($id);
+            $assessment = \App\Models\Exam::with('courseOffering.department')->findOrFail($id);
             $type = 'Exam';
         }
 
@@ -889,7 +889,7 @@ class ProfessorGradeController extends Controller
             'lecturer',
             'studentCourseEnrollments.student.studentProfile',
             'studentCourseEnrollments.student.profile',
-            'studentCourseEnrollments.student.program.department.faculty',
+            'studentCourseEnrollments.student.department.faculty',
         ])->findOrFail($offering_id);
 
         $this->authorizeCourseOffering($courseOffering);

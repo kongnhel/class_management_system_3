@@ -109,9 +109,13 @@
             </div>
             @endif
 
-            <form action="{{ route('admin.course-offerings.update', $courseOffering->id) }}" method="POST" class="space-y-6">
+            <form action="{{ route('admin.course-offerings.update', $courseOffering->id) }}" method="POST" class="space-y-6" data-dept-filter-container>
                 @csrf
                 @method('PUT')
+
+                <script type="application/json" data-dept-filter>
+                    {!! $departments->map(fn($d) => ['id' => $d->id, 'name' => $d->name_km, 'faculty_id' => $d->faculty_id])->toJson() !!}
+                </script>
 
                 {{-- Section 1: Basic Info --}}
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
@@ -131,24 +135,46 @@
                     </div>
                 </div>
 
-                {{-- Section 2: Target Programs --}}
+                {{-- Section 2: Department & Generation --}}
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                    <div class="flex items-center justify-between mb-6">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
-                                <span class="text-emerald-600 font-bold text-sm">2</span>
-                            </div>
-                            <div>
-                                <h3 class="text-lg font-bold text-gray-900">{{ __('កម្មវិធីសិក្សា និងជំនាន់') }}</h3>
-                                <p class="text-xs text-gray-500">{{ __('កំណត់ជំនាញ និងជំនាន់ដែលគោលដៅ') }}</p>
-                            </div>
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
+                            <span class="text-emerald-600 font-bold text-sm">2</span>
                         </div>
-                        <button type="button" id="add-program" class="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-600 rounded-xl text-sm font-bold hover:bg-emerald-100 transition-colors">
-                            <i class="fas fa-plus text-xs"></i> <span>{{ __('បន្ថែម') }}</span>
-                        </button>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900">{{ __('នាយកដ្ឋាន និងជំនាន់') }}</h3>
+                            <p class="text-xs text-gray-500">{{ __('កំណត់នាយកដ្ឋាន និងជំនាន់ដែលគោលដៅ') }}</p>
+                        </div>
                     </div>
-                    <div id="programs-container" class="space-y-3"></div>
-                    @error('target_programs') <p class="text-red-500 text-xs mt-2 italic">* {{ $message }}</p> @enderror
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <label for="faculty_id" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('មហាវិទ្យាល័យ') }} <span class="text-red-500">*</span></label>
+                            <select id="faculty_id" data-dept-faculty class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm" required>
+                                <option value="">{{ __('ជ្រើសរើសមហាវិទ្យាល័យ') }}</option>
+                                @foreach($faculties as $faculty)
+                                    <option value="{{ $faculty->id }}" {{ old('faculty_id', $courseOffering->department->faculty_id ?? '') == $faculty->id ? 'selected' : '' }}>{{ $faculty->name_km }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label for="generation" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ជំនាន់') }} <span class="text-red-500">*</span></label>
+                            <select id="generation" name="generation" required class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm">
+                                <option value="">-- {{ __('ជ្រើសរើសជំនាន់') }} --</option>
+                                @foreach($generations as $gen)
+                                    <option value="{{ $gen->name }}" {{ old('generation', $courseOffering->generation) == $gen->name ? 'selected' : '' }}>G{{ $gen->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label for="department_id" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('នាយកដ្ឋាន') }} <span class="text-red-500">*</span></label>
+                            <select id="department_id" name="department_id" data-dept-department class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm" required>
+                                <option value="">{{ __('ជ្រើសរើសនាយកដ្ឋាន') }}</option>
+                                @foreach($departments as $dept)
+                                    <option value="{{ $dept->id }}" data-faculty-id="{{ $dept->faculty_id }}" {{ old('department_id', $courseOffering->department_id) == $dept->id ? 'selected' : '' }}>{{ $dept->name_km }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
                 </div>
 
                 {{-- Section 3 & 4: Details & Schedules --}}
@@ -247,7 +273,7 @@
 
 <script>
         function removeRow(btn) {
-            const row = btn.closest('.schedule-item, .session-row, [id^="program-row-"]');
+            const row = btn.closest('.schedule-item, .session-row');
             row.style.opacity = '0';
             row.style.transform = 'scale(0.95)';
             row.style.transition = 'all 0.2s ease';
@@ -272,8 +298,6 @@
         }
 
         document.addEventListener('DOMContentLoaded', function () {
-            const allPrograms = {!! json_encode($programs) !!};
-            const existingPrograms = {!! json_encode($courseOffering->targetPrograms) !!};
             const rooms = {!! json_encode($rooms->map(fn($r) => ['id' => $r->id, 'room_number' => $r->room_number])) !!};
 
             const academicYearSelect = document.getElementById('academic_year');
@@ -290,56 +314,6 @@
                 }
             });
             if (academicYearSelect.value) academicYearSelect.dispatchEvent(new Event('change'));
-
-            const programsContainer = document.getElementById('programs-container');
-            const addProgramBtn = document.getElementById('add-program');
-            let programIndex = 0;
-
-            function addProgramRow(data = {}) {
-                const rowId = `program-row-${programIndex}`;
-                const div = document.createElement('div');
-                div.className = 'flex items-center gap-3 bg-gray-50 p-4 rounded-xl border border-gray-200';
-                div.id = rowId;
-
-                let optionsHtml = `<option value="">{{ __('ជ្រើសរើសជំនាញ') }}</option>`;
-                allPrograms.forEach(p => {
-                    const pId = data.pivot ? data.id : data.program_id;
-                    const selected = (pId == p.id) ? 'selected' : '';
-                    optionsHtml += `<option value="${p.id}" ${selected}>${p.name_km ?? p.name}</option>`;
-                });
-                const genValue = data.pivot ? data.pivot.generation : (data.generation || '');
-
-                div.innerHTML = `
-                    <div class="flex-grow grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('ជំនាញ') }}</label>
-                            <select name="target_programs[${programIndex}][program_id]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>${optionsHtml}</select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('ជំនាន់') }}</label>
-                            <input type="text" name="target_programs[${programIndex}][generation]" value="${genValue}" placeholder="{{ __('ឧ. 16') }}" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>
-                        </div>
-                    </div>
-                    <button type="button" onclick="document.getElementById('${rowId}').remove()" class="text-gray-400 hover:text-red-500 transition-colors mt-5">
-                        <i class="fas fa-times-circle text-sm"></i>
-                    </button>
-                `;
-                programsContainer.appendChild(div);
-                programIndex++;
-            }
-
-            addProgramBtn.addEventListener('click', () => addProgramRow());
-
-            if (existingPrograms && existingPrograms.length > 0) {
-                existingPrograms.forEach(p => addProgramRow(p));
-            } else {
-                const oldPrograms = {!! json_encode(old('target_programs', [])) !!};
-                if (Object.keys(oldPrograms).length > 0) {
-                    Object.values(oldPrograms).forEach(p => addProgramRow(p));
-                } else {
-                    addProgramRow();
-                }
-            }
 
             // ──────────────────────────────────────────────
             // Schedule

@@ -78,17 +78,6 @@
 
     {{-- Chat Box --}}
     <div id="chat-box" class="flex-grow overflow-y-auto p-5 space-y-4 bg-[#f8fafc] custom-scrollbar">
-        {{-- Welcome Message --}}
-        <div class="flex items-start gap-3 animate-fade-in">
-            <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center flex-shrink-0 shadow-md">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-            </div>
-            <div class="bg-white border border-gray-100 rounded-2xl rounded-tl-md p-4 shadow-sm max-w-[85%]">
-                <p class="text-sm text-gray-700 leading-relaxed">{{ __('ស្វាគមន៍! ខ្ញុំជា AI Assistant របស់ NMU។ ខ្ញុំអាចជួយអ្នកពីព័ត៌មានសិស្ស និងសាស្ត្រាចារ្យ ការស្វែងរក ឬបង្រៀនរបៀបប្រើប្រាស់ប្រព័ន្ធ។') }}</p>
-            </div>
-        </div>
     </div>
 
     {{-- Thinking Indicator + Stop Button --}}

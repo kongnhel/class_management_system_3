@@ -63,16 +63,11 @@ class SmartAssistantController extends Controller
             // Build the system prompt based on option
             $systemPrompt = $this->buildSystemPrompt($request->option, $user);
 
-            // Get user gender for Dify inputs
-            $user->load('profile', 'studentProfile');
-            $profile = $user->role === 'student' ? $user->studentProfile : $user->profile;
-            $userGender = $profile->gender ?? 'unknown';
-
             $payload = [
                 'inputs' => [
                     'user_name' => $user->name,
                     'user_role' => $user->role,
-                    'user_gender' => $userGender,
+                    'user_gender' => $this->getUserGender($user),
                     'chat_option' => $request->option,
                     'db_context' => $dbContext,
                     'system_prompt' => $systemPrompt,
@@ -191,10 +186,7 @@ class SmartAssistantController extends Controller
             default => 'User',
         };
 
-        // Get user gender from profile
-        $user->load('profile', 'studentProfile');
-        $profile = $role === 'student' ? $user->studentProfile : $user->profile;
-        $userGender = $profile->gender ?? '';
+        $userGender = $this->getUserGender($user);
 
         $basePrompt = "You are NMU Smart Assistant, an AI helper for National Meanchey University (សាកលវិទ្យាល័យជាតិមានជ័យ). You speak Khmer and English. You have access to the university's database and website data.";
 
@@ -215,6 +207,14 @@ EOD;
         };
 
         return "{$basePrompt}\n\nRole: {$roleName}\nUser Gender: {$userGender}\n{$pronounRule}\n\n{$optionPrompt}";
+    }
+
+    private function getUserGender($user): string
+    {
+        $user->load('profile', 'studentProfile');
+        $profile = $user->role === 'student' ? $user->studentProfile : $user->profile;
+
+        return $profile->gender ?? 'unknown';
     }
 
     private function getConversationId($userId)

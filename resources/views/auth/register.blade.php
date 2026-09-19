@@ -75,17 +75,17 @@
                         </div>
                     </div>
 
-                    {{-- Program + Degree Level + Generation --}}
+                    {{-- Department + Degree Level + Generation --}}
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('កម្មវិធីសិក្សា') }}</label>
-                            <select name="program_id" required class="block w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none">
-                                <option value="">{{ __('ជ្រើសរើសកម្មវិធី') }}</option>
-                                @foreach ($programs as $program)
-                                    <option value="{{ $program->id }}" {{ old('program_id') == $program->id ? 'selected' : '' }}>{{ $program->name_km }}</option>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('មុខវិជ្ជា') }}</label>
+                            <select name="department_id" required class="block w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none">
+                                <option value="">{{ __('ជ្រើសរើសមុខវិជ្ជា') }}</option>
+                                @foreach ($departments as $department)
+                                    <option value="{{ $department->id }}" {{ old('department_id') == $department->id ? 'selected' : '' }}>{{ $department->name_km }}</option>
                                 @endforeach
                             </select>
-                            <x-input-error :messages="$errors->get('program_id')" class="mt-1 text-xs text-red-500" />
+                            <x-input-error :messages="$errors->get('department_id')" class="mt-1 text-xs text-red-500" />
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('កម្រិតសញ្ញាបត្រ') }}</label>
@@ -225,7 +225,7 @@
                                     }).then((result) => {
                                         if (result.isConfirmed) {
                                             document.querySelector('input[name="name"]').value = data.name;
-                                            document.querySelector('select[name="program_id"]').value = data.program_id;
+                                            document.querySelector('select[name="department_id"]').value = data.department_id;
                                             document.querySelector('select[name="generation"]').value = data.generation;
                                             Swal.fire({ title: 'អរគុណ!', text: 'សូមបន្តបង្កើតអ៊ីមែល និងពាក្យសម្ងាត់របស់អ្នក។', icon: 'success', timer: 2000, showConfirmButton: false });
                                         } else {

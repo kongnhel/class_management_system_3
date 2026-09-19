@@ -69,7 +69,7 @@
 
                 {{-- Academic Section --}}
                 @php
-                    $academicRoutes = ['admin.academic-years.*', 'admin.manage-courses', 'admin.manage-course-offerings', 'admin.manage-programs', 'admin.manage-faculties', 'admin.manage-departments', 'admin.rooms.*', 'admin.generations.*'];
+                    $academicRoutes = ['admin.academic-years.*', 'admin.manage-courses', 'admin.manage-course-offerings', 'admin.manage-faculties', 'admin.manage-departments', 'admin.rooms.*', 'admin.generations.*'];
                     $isAcademicOpen = request()->routeIs($academicRoutes);
                 @endphp
                 <div x-data="{
@@ -101,11 +101,6 @@
                            class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all {{ request()->routeIs('admin.manage-departments') ? 'bg-green-600 text-white shadow-md shadow-green-600/20' : 'text-gray-400 hover:bg-slate-700/50 hover:text-white' }}">
                             <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
                             <span>{{ __('nav_department_management') }}</span>
-                        </a>
-                        <a wire:navigate href="{{ route('admin.manage-programs') }}"
-                           class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all {{ request()->routeIs('admin.manage-programs') ? 'bg-green-600 text-white shadow-md shadow-green-600/20' : 'text-gray-400 hover:bg-slate-700/50 hover:text-white' }}">
-                            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
-                            <span>{{ __('nav_program_management') }}</span>
                         </a>
                         <a wire:navigate href="{{ route('admin.generations.index') }}"
                            class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all {{ request()->routeIs('admin.generations.*') ? 'bg-green-600 text-white shadow-md shadow-green-600/20' : 'text-gray-400 hover:bg-slate-700/50 hover:text-white' }}">

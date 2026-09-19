@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\Program;
+use App\Models\Department;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
@@ -12,25 +12,24 @@ class StudentIdGeneratorService
      * Map degree_level (Khmer) to ID prefix.
      */
     protected static array $prefixMap = [
-        'បរិញ្ញាបត្រ' => 'B',  // Bachelor's Degree
-        'បរិញ្ញាបត្ររង' => 'A',  // Associate Degree
-        'អនុបណ្ឌិត' => 'M',  // Master's Degree
-        'បណ្ឌិត' => 'D',  // Doctorate (PhD)
-        'វិញ្ញាបនបត្រ' => 'L',  // Diploma/Certificate
-        'ផ្សេងៗ' => 'X',  // Other
+        'បរិញ្ញាបត្រ' => 'B',
+        'បរិញ្ញាបត្ររង' => 'A',
+        'អនុបណ្ឌិត' => 'M',
+        'បណ្ឌិត' => 'D',
+        'វិញ្ញាបនបត្រ' => 'L',
+        'ផ្សេងៗ' => 'X',
     ];
 
     /**
      * Generate a student ID code.
      *
      * Format: [Prefix]-[GenerationRoman]-[Serial6Digit]
-     * Example: B-XVI-004686
      */
-    public function generate(int $programId, int|string $generation, ?string $degreeLevel = null): string
+    public function generate(int $departmentId, int|string $generation, ?string $degreeLevel = null): string
     {
         if (! $degreeLevel) {
-            $program = Program::findOrFail($programId);
-            $degreeLevel = $program->degree_level;
+            $department = Department::findOrFail($departmentId);
+            $degreeLevel = $department->degree_level;
         }
         $prefix = $this->getPrefix($degreeLevel);
         $romanGen = $this->toRoman((int) $generation);
@@ -72,7 +71,6 @@ class StudentIdGeneratorService
 
     /**
      * Get the next serial number for a given prefix and Roman generation.
-     * Queries existing student_id_code values matching the pattern.
      */
     public function getNextSerial(string $prefix, string $romanGen): int
     {
@@ -86,7 +84,6 @@ class StudentIdGeneratorService
             return 1;
         }
 
-        // Extract the serial part (after the last hyphen)
         $parts = explode('-', $lastCode);
         $lastSerial = (int) end($parts);
 
@@ -95,12 +92,11 @@ class StudentIdGeneratorService
 
     /**
      * One-time migration: assign new-format IDs to all existing students.
-     * Returns the number of students updated.
      */
     public function migrateExistingStudents(): int
     {
         $students = User::where('role', 'student')
-            ->whereNotNull('program_id')
+            ->whereNotNull('department_id')
             ->whereNotNull('generation')
             ->orderBy('id')
             ->get();
@@ -109,14 +105,12 @@ class StudentIdGeneratorService
 
         DB::transaction(function () use ($students, &$updated) {
             foreach ($students as $student) {
-                // Skip students that already have a valid new-format ID
                 if ($student->student_id_code && preg_match('/^[A-Z]-[A-Z]+-\d{6}$/', $student->student_id_code)) {
                     continue;
                 }
 
-                $newId = $this->generate($student->program_id, $student->generation);
+                $newId = $this->generate($student->department_id, $student->generation);
 
-                // Ensure uniqueness (handle edge case of duplicates)
                 while (User::where('student_id_code', $newId)->where('id', '!=', $student->id)->exists()) {
                     $parts = explode('-', $newId);
                     $nextSerial = (int) end($parts) + 1;

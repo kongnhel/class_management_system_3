@@ -79,8 +79,8 @@
         $totalStudents = $students->count();
         $currentYear = \Carbon\Carbon::now()->year + 543;
         $academicYearName = $courseOffering->academic_year ?? ($currentYear . ' - ' . ($currentYear + 1));
-        $programNames = $students->pluck('program.name_km')->filter()->unique()->values()->implode(', ');
-        $facultyNames = $students->pluck('program.department.faculty.name_km')->filter()->unique()->values()->implode(', ');
+        $departmentNames = $students->pluck('department.name_km')->filter()->unique()->values()->implode(', ');
+        $facultyNames = $students->pluck('department.faculty.name_km')->filter()->unique()->values()->implode(', ');
         $generationNames = $students->pluck('generation')->filter()->unique()->values()->implode(', ');
         $lecturerName = $courseOffering->lecturer->name ?? '';
 
@@ -130,7 +130,7 @@
 
     <div class="info-row">
         <span>គ្រូបង្រៀន៖ <strong>{{ $lecturerName }}</strong></span>
-        <span>កម្មវិធីសិក្សា៖ <strong>{{ $programNames }}</strong></span>
+        <span>កម្មវិធីសិក្សា៖ <strong>{{ $departmentNames }}</strong></span>
         <span>ជំនាន់៖ <strong>{{ $generationNames }}</strong></span>
         <span>សរុប៖ <strong>{{ $totalStudents }}</strong> នាក់ | ជាប់ <strong>{{ $passCount }}</strong> | ធ្លាក់ <strong>{{ $failCount }}</strong></span>
     </div>

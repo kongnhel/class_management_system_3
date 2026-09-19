@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\CourseOffering;
-use App\Models\Program;
+use App\Models\Department;
 use App\Models\StudentCourseEnrollment;
-use App\Models\StudentProgramEnrollment;
+use App\Models\StudentDepartmentEnrollment;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\JsonResponse;
@@ -19,13 +19,13 @@ class StudentRegistrationController extends Controller
 {
     public function create()
     {
-        $programs = Program::all();
+        $departments = Department::all();
         $generations = \App\Models\Generation::where('is_active', true)
             ->orderByDesc('name')
             ->pluck('name')
             ->toArray();
 
-        return view('auth.register', compact('programs', 'generations'));
+        return view('auth.register', compact('departments', 'generations'));
     }
 
     public function store(Request $request)
@@ -40,7 +40,7 @@ class StudentRegistrationController extends Controller
             ],
             'email' => 'required|email|unique:users,email',
             'name' => 'required|string|max:255',
-            'program_id' => 'required|exists:programs,id',
+            'department_id' => 'required|exists:departments,id',
             'password' => ['required', 'confirmed', 'min:8'],
             'generation' => 'required|string',
             'degree_level' => 'required|string|max:50',
@@ -53,24 +53,23 @@ class StudentRegistrationController extends Controller
                 $user->forceFill([
                     'name' => $request->name,
                     'email' => $request->email,
-                    'program_id' => $request->program_id,
+                    'department_id' => $request->department_id,
                     'generation' => $request->generation,
                     'password' => Hash::make($request->password),
                 ])->save();
 
-                StudentProgramEnrollment::firstOrCreate([
+                StudentDepartmentEnrollment::firstOrCreate([
                     'student_user_id' => $user->id,
-                    'program_id' => $request->program_id,
+                    'department_id' => $request->department_id,
                 ], [
                     'degree_level' => $request->degree_level,
                     'enrollment_date' => now(),
                     'status' => 'active',
                 ]);
 
-                $courseOfferings = CourseOffering::whereHas('targetPrograms', function ($query) use ($request) {
-                    $query->where('course_offering_program.program_id', $request->program_id)
-                        ->where('course_offering_program.generation', $request->generation);
-                })->get();
+                $courseOfferings = CourseOffering::where('department_id', $request->department_id)
+                    ->where('generation', $request->generation)
+                    ->get();
 
                 foreach ($courseOfferings as $offering) {
                     $alreadyEnrolled = StudentCourseEnrollment::where('student_user_id', $user->id)
@@ -105,15 +104,15 @@ class StudentRegistrationController extends Controller
     {
         $student = User::where('student_id_code', $code)
             ->where('role', 'student')
-            ->with('program')
+            ->with('department')
             ->first();
 
         if ($student) {
             return response()->json([
                 'success' => true,
                 'name' => $student->name,
-                'program_id' => $student->program_id,
-                'program_name' => $student->program->name_km ?? '',
+                'department_id' => $student->department_id,
+                'department_name' => $student->department->name_km ?? '',
                 'generation' => $student->generation,
             ]);
         }

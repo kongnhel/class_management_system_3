@@ -11,7 +11,6 @@ use App\Models\CourseOffering;
 use App\Models\Department;
 use App\Models\Exam;
 use App\Models\ExamResult;
-use App\Models\Program;
 use App\Models\Quiz;
 use App\Models\Schedule;
 use App\Models\StudentCourseEnrollment;
@@ -37,7 +36,7 @@ class ProfessorController extends Controller
             $query->where('lecturer_user_id', $user->id);
         })
             ->where('day_of_week', $todayName)
-            ->with(['courseOffering.course.programs', 'courseOffering.targetPrograms', 'room'])
+            ->with(['courseOffering.course', 'room'])
             ->orderBy('start_time', 'asc')
             ->get();
 
@@ -179,14 +178,13 @@ class ProfessorController extends Controller
     {
         $user = Auth::user();
 
-        // ១. បន្ថែម Relationship 'studentProgramEnrollments.program' ដើម្បីបង្ហាញព័ត៌មាន Program និង Generation
         $courseOffering = CourseOffering::where('id', $offering_id)
             ->where('lecturer_user_id', $user->id)
             ->with([
                 'course',
-                'targetPrograms',
+                'department',
                 'studentCourseEnrollments.student.studentProfile',
-                'studentCourseEnrollments.student.studentProgramEnrollments.program', //
+                'studentCourseEnrollments.student.studentDepartmentEnrollments.department',
             ])
             ->firstOrFail();
 
@@ -203,8 +201,8 @@ class ProfessorController extends Controller
             $student = $enrollment->student;
 
             // Compute year level
-            if ($student->program) {
-                $student->computed_year_level = $progressionService->getYearLevel($student, $student->program);
+            if ($student->department) {
+                $student->computed_year_level = $progressionService->getYearLevel($student, $student->department);
             } else {
                 $student->computed_year_level = null;
             }
@@ -270,7 +268,7 @@ class ProfessorController extends Controller
         $user = Auth::user();
 
         $allCourseOfferings = CourseOffering::where('lecturer_user_id', $user->id)
-            ->with(['course', 'targetPrograms'])
+            ->with(['course', 'department'])
             ->paginate(10);
 
         $allAssignments = Assignment::whereHas('courseOffering', function ($q) use ($user) {
@@ -294,7 +292,6 @@ class ProfessorController extends Controller
         })->with(['student', 'courseOffering.course'])->paginate(10);
 
         $allDepartments = Department::all();
-        $allPrograms = Program::all();
         $allCourses = Course::all();
 
         return view('professor.all-data-view', compact(
@@ -305,7 +302,6 @@ class ProfessorController extends Controller
             'allAttendance',
             'allGrades',
             'allDepartments',
-            'allPrograms',
             'allCourses'
         ));
     }
@@ -316,13 +312,13 @@ class ProfessorController extends Controller
             abort(404);
         }
 
-        $student->loadMissing('studentProfile', 'studentProgramEnrollments.program.department.faculty');
+        $student->loadMissing('studentProfile', 'studentDepartmentEnrollments.department.faculty');
 
         // Compute year level
         $computedYearLevel = null;
-        if ($student->program) {
+        if ($student->department) {
             $computedYearLevel = app(\App\Services\StudentProgressionService::class)
-                ->getYearLevel($student, $student->program);
+                ->getYearLevel($student, $student->department);
         }
 
         return view('professor.students.show_profile', compact('courseOffering', 'student', 'computedYearLevel'));
@@ -334,19 +330,19 @@ class ProfessorController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $courseOffering->load(['targetPrograms', 'course.programs']);
+        $courseOffering->load(['department', 'course']);
 
         $studentIds = $courseOffering->studentCourseEnrollments()->pluck('student_user_id');
         $students = User::whereIn('id', $studentIds)
-            ->with(['studentProfile', 'studentProgramEnrollments.program'])
+            ->with(['studentProfile', 'studentDepartmentEnrollments.department'])
             ->orderBy('name', 'asc')
             ->paginate(10);
 
         // Compute year levels
         $progressionService = app(\App\Services\StudentProgressionService::class);
         $students->getCollection()->transform(function ($student) use ($progressionService) {
-            if ($student->program) {
-                $student->computed_year_level = $progressionService->getYearLevel($student, $student->program);
+            if ($student->department) {
+                $student->computed_year_level = $progressionService->getYearLevel($student, $student->department);
             } else {
                 $student->computed_year_level = null;
             }
@@ -365,9 +361,9 @@ class ProfessorController extends Controller
 
         $courseOffering->load([
             'course',
-            'targetPrograms',
+            'department',
             'studentCourseEnrollments.student.studentProfile',
-            'studentCourseEnrollments.student.studentProgramEnrollments.program',
+            'studentCourseEnrollments.student.studentDepartmentEnrollments.department',
             'studentCourseEnrollments.student.profile',
         ]);
 
@@ -378,8 +374,8 @@ class ProfessorController extends Controller
         // Compute year levels
         $progressionService = app(\App\Services\StudentProgressionService::class);
         $students->each(function ($student) use ($progressionService) {
-            if ($student->program) {
-                $student->computed_year_level = $progressionService->getYearLevel($student, $student->program);
+            if ($student->department) {
+                $student->computed_year_level = $progressionService->getYearLevel($student, $student->department);
             } else {
                 $student->computed_year_level = null;
             }
@@ -572,7 +568,7 @@ class ProfessorController extends Controller
 
     public function printAttendanceReport($courseOfferingId)
     {
-        $courseOffering = CourseOffering::with(['course', 'program.department.faculty'])->findOrFail($courseOfferingId);
+        $courseOffering = CourseOffering::with(['course', 'department.faculty'])->findOrFail($courseOfferingId);
 
         $students = User::whereHas('enrolledCourses', function ($query) use ($courseOfferingId) {
             $query->where('course_offering_id', $courseOfferingId);
@@ -713,7 +709,7 @@ class ProfessorController extends Controller
             ->with([
                 'course',
                 'studentCourseEnrollments.student.studentProfile',
-                'studentCourseEnrollments.student.studentProgramEnrollments.program',
+                'studentCourseEnrollments.student.studentDepartmentEnrollments.department',
             ])->firstOrFail();
 
         $students = $courseOffering->studentCourseEnrollments;

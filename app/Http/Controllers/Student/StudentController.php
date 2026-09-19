@@ -48,31 +48,32 @@ class StudentController extends Controller
             ->orderBy('start_time', 'asc')
             ->get();
 
-        // Student program
-        $studentProgramEnrollment = \App\Models\StudentProgramEnrollment::where('student_user_id', $studentId)
-            ->where('status', 'active')->with('program')->first();
-        $studentProgram = $studentProgramEnrollment?->program;
+        // Student department enrollment
+        $studentDepartmentEnrollment = \App\Models\StudentDepartmentEnrollment::where('student_user_id', $studentId)
+            ->where('status', 'active')->with('department')->first();
+        $studentDepartment = $studentDepartmentEnrollment?->department;
 
         // Computed year level
         $computedYearLevel = null;
-        if ($studentProgram) {
+        if ($studentDepartment) {
             $progressionService = app(\App\Services\StudentProgressionService::class);
-            $computedYearLevel = $progressionService->getYearLevel($user, $studentProgram);
+            $computedYearLevel = $progressionService->getYearLevel($user, $studentDepartment);
         }
 
         // Available courses for self-enrollment
-        $availableCoursesInProgram = collect([]);
-        if ($studentProgram) {
+        $availableCoursesInDepartment = collect([]);
+        if ($studentDepartment) {
             $enrolledIds = StudentCourseEnrollment::where('student_user_id', $studentId)->pluck('course_offering_id');
-            $availableCoursesInProgram = CourseOffering::with(['course', 'lecturer'])->withCount('studentCourseEnrollments')
-                ->whereHas('targetPrograms', fn ($q) => $q->where('program_id', $user->program_id)->where('generation', $user->generation))
+            $availableCoursesInDepartment = CourseOffering::with(['course', 'lecturer'])->withCount('studentCourseEnrollments')
+                ->where('department_id', $user->department_id)
+                ->where('generation', $user->generation)
                 ->whereHas('course')
                 ->where('end_date', '>=', now())->whereNotIn('id', $enrolledIds)->get();
         }
 
         // Course progress
         $completedCoursesCount = StudentCourseEnrollment::where('student_user_id', $studentId)->where('status', 'completed')->count();
-        $totalCoursesInProgram = $studentProgram ? CourseOffering::whereHas('targetPrograms', fn ($q) => $q->where('program_id', $studentProgram->id))->distinct('course_id')->count() : 0;
+        $totalCoursesInDepartment = $studentDepartment ? CourseOffering::where('department_id', $studentDepartment->id)->distinct('course_id')->count() : 0;
 
         // Notifications
         $allAnnouncements = Announcement::where('target_role', 'all')->orWhere('target_role', 'student')
@@ -181,8 +182,8 @@ class StudentController extends Controller
 
         return view('student.dashboard', compact(
             'user', 'totalPresent', 'totalAbsent', 'totalPermission',
-            'enrolledCourses', 'upcomingSchedules', 'studentProgram', 'availableCoursesInProgram',
-            'completedCoursesCount', 'totalCoursesInProgram', 'combinedFeed', 'todayName',
+            'enrolledCourses', 'upcomingSchedules', 'studentDepartment', 'availableCoursesInDepartment',
+            'completedCoursesCount', 'totalCoursesInDepartment', 'combinedFeed', 'todayName',
             'attendanceScore', 'gpa', 'averageScore', 'overallRank', 'totalClassmates', 'overallGrade',
             'computedYearLevel'
         ));

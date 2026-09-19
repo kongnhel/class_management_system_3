@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\Models\CourseOffering;
 use App\Models\Department;
-use App\Models\Program;
 use Illuminate\Support\Facades\Auth;
 
 class ProfessorCourseOfferingController extends Controller
@@ -22,11 +21,6 @@ class ProfessorCourseOfferingController extends Controller
         return view('professor.my-course-offerings', compact('courseOfferings'));
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Professor Management Functionality (Placeholders - will be expanded)
-    |--------------------------------------------------------------------------
-    */
     public function viewDepartments()
     {
         $departments = Department::with('faculty', 'head')->paginate(10);
@@ -34,33 +28,13 @@ class ProfessorCourseOfferingController extends Controller
         return view('professor.departments.index', compact('departments'));
     }
 
-    /**
-     * Display programs for professors.
-     */
-    public function viewPrograms()
-    {
-        $programs = Program::with('department')->paginate(10);
-
-        return view('professor.programs.index', compact('programs'));
-    }
-
-    /**
-     * Display courses for professors.
-     */
     public function viewCourses()
     {
-        $courses = Course::with('department', 'program')->paginate(10);
+        $user = Auth::user();
+        $courses = Course::whereHas('courseOfferings', fn ($q) => $q->where('lecturer_user_id', $user->id))
+            ->with('department')
+            ->paginate(10);
 
         return view('professor.courses.index', compact('courses'));
-    }
-
-    /**
-     * Display all course offerings (not just the ones taught by the professor).
-     */
-    public function viewAllCourseOfferings()
-    {
-        $courseOfferings = CourseOffering::with('course', 'lecturer')->whereHas('course')->whereHas('lecturer')->paginate(10);
-
-        return view('professor.all-course-offerings.index', compact('courseOfferings'));
     }
 }

@@ -73,9 +73,9 @@
                     editDepartments: [],
                     editForm: {
                         id: '', name: '', email: '', role: 'admin', password: '', password_confirmation: '',
-                        program_id: '', department_id: '', generation: '', faculty_id: '',
+                        department_id: '', generation: '', faculty_id: '',
                         full_name_km: '', full_name_en: '', gender: '', phone_number: '', address: '', date_of_birth: '',
-                        programs: [], departments: [], faculties: [], generations: []
+                        departments: [], faculties: [], generations: []
                     },
 
                     init() {
@@ -103,7 +103,7 @@
                         <button @click="window.location.href = '{{ route('admin.users.export') }}?tab=' + activeTab + 
                             '&search={{ request('search') }}' + 
                             '&generation={{ request('generation') }}' + 
-                            '&program_id={{ request('program_id') }}'"
+                            '&department_id={{ request('department_id') }}'"
                            class="w-full md:w-auto inline-flex items-center justify-center px-6 py-3 bg-emerald-600 border border-transparent rounded-2xl font-bold text-sm text-white hover:bg-emerald-700 active:scale-95 transition-all duration-200 shadow-lg shadow-emerald-200">
                             <i class="fas fa-file-excel mr-2 text-lg"></i> 
                             {{ __('ទាញយក Excel') }}
@@ -394,12 +394,12 @@
                                     </div>
 
                                     <div class="flex-1 min-w-[200px]">
-                                        <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">{{ __('កម្មវិធីសិក្សា') }}</label>
-                                        <select name="program_id" onchange="this.form.requestSubmit()" class="w-full border-gray-200 rounded-xl text-sm focus:ring-green-500">
-                                            <option value="">{{ __('គ្រប់កម្មវិធីសិក្សា') }}</option>
-                                            @foreach($programs as $prog)
-                                                <option value="{{ $prog->id }}" {{ request('program_id') == $prog->id ? 'selected' : '' }}>
-                                                    {{ $prog->name_km }}
+                                        <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">{{ __('ដេប៉ាតឺម៉ង់') }}</label>
+                                        <select name="department_id" onchange="this.form.requestSubmit()" class="w-full border-gray-200 rounded-xl text-sm focus:ring-green-500">
+                                            <option value="">{{ __('គ្រប់ដេប៉ាតឺម៉ង់') }}</option>
+                                            @foreach($departments as $dept)
+                                                <option value="{{ $dept->id }}" {{ request('department_id') == $dept->id ? 'selected' : '' }}>
+                                                    {{ $dept->name_km }}
                                                 </option>
                                             @endforeach
                                         </select>
@@ -418,7 +418,7 @@
                                 </div>
                             @else
                                 {{-- Loop តាមជំនាន់ (Generation) --}}
-                                @foreach ($studentsGrouped as $generation => $programs)
+                                @foreach ($studentsGrouped as $generation => $departments)
                                     <div x-data="{ openGen: {{ $loop->first ? 'true' : 'false' }} }" class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden transition-all duration-300">
                                         
                                         <button @click="openGen = !openGen" 
@@ -429,7 +429,7 @@
                                                 </div>
                                                 <div class="text-left">
                                                     <h3 class="text-lg font-bold text-gray-800 tracking-tight">{{ __('ជំនាន់ទី') }} {{ $generation ?? 'មិនកំណត់' }}</h3>
-                                                    <p class="text-xs font-medium text-gray-500">{{ $programs->flatten()->count() }} {{ __('និស្សិតសរុប') }}</p>
+                                                    <p class="text-xs font-medium text-gray-500">{{ $departments->flatten()->count() }} {{ __('និស្សិតសរុប') }}</p>
                                                 </div>
                                             </div>
                                             <div class="flex items-center space-x-3">
@@ -440,12 +440,12 @@
 
                                         <div x-show="openGen" x-collapse>
                                             <div class="p-6 space-y-10">
-                                                @foreach ($programs as $programName => $studentList)
+                                                @foreach ($departments as $departmentName => $studentList)
                                                     <div class="relative">
                                                         <div class="flex items-center justify-between mb-4 border-b border-gray-50 pb-2">
                                                             <div class="flex items-center">
                                                                 <div class="w-1.5 h-5 bg-green-500 rounded-full mr-3"></div>
-                                                                <h4 class="text-sm font-extrabold text-gray-700 uppercase tracking-wider">{{ $programName }}</h4>
+                                                                <h4 class="text-sm font-extrabold text-gray-700 uppercase tracking-wider">{{ $departmentName }}</h4>
                                                             </div>
                                                             <span class="bg-green-50 text-green-700 text-[10px] font-bold px-2 py-0.5 rounded-md border border-green-100">
                                                                 {{ $studentList->count() }} {{ __('នាក់') }}
@@ -490,7 +490,7 @@
                                                                             <td class="px-6 py-3 text-center">
                                                                                 @if($student->computed_year_level)
                                                                                     <span class="inline-flex items-center justify-center min-w-[2.5rem] px-2.5 py-1 rounded-lg text-xs font-bold
-                                                                                        @if($student->computed_year_level >= $student->program->duration_years)
+                                                                                        @if($student->computed_year_level >= $student->department->duration_years)
                                                                                             bg-purple-100 text-purple-700 border border-purple-200
                                                                                         @else
                                                                                             bg-emerald-50 text-emerald-700 border border-emerald-100
@@ -537,7 +537,7 @@
                                                                                     <span class="inline-block font-mono text-[10px] font-bold text-green-700 bg-green-50 px-1.5 py-0.5 rounded border border-green-100">{{ $student->student_id_code ?? 'N/A' }}</span>
                                                                                     @if($student->computed_year_level)
                                                                                         <span class="inline-flex items-center justify-center px-1.5 py-0.5 rounded text-[10px] font-bold
-                                                                                            @if($student->program && $student->computed_year_level >= $student->program->duration_years)
+                                                                                            @if($student->department && $student->computed_year_level >= $student->department->duration_years)
                                                                                                 bg-purple-100 text-purple-700
                                                                                             @else
                                                                                                 bg-emerald-50 text-emerald-700
@@ -662,11 +662,11 @@
                                 {{-- Student fields --}}
                                 <div x-show="editForm.role === 'student'" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
-                                        <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('កម្មវិធីសិក្សា') }}</label>
-                                        <select x-model="editForm.program_id" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
+                                        <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('ដេប៉ាតឺម៉ង់') }}</label>
+                                        <select x-model="editForm.department_id" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
                                             <option value="">{{ __('ជ្រើសរើស') }}</option>
-                                            <template x-for="p in (editForm.programs || [])" :key="p.id">
-                                                <option :value="p.id" x-text="p.name"></option>
+                                            <template x-for="d in (editForm.departments || [])" :key="d.id">
+                                                <option :value="d.id" x-text="d.name"></option>
                                             </template>
                                         </select>
                                     </div>
@@ -836,7 +836,6 @@
             f.phone_number = data.phone_number || '';
             f.address = data.address || '';
             f.date_of_birth = data.date_of_birth || '';
-            f.programs = data.programs || [];
             f.departments = data.departments || [];
             f.faculties = data.faculties || [];
             f.generations = data.generations || [];
@@ -866,16 +865,13 @@
                 }
             }
             // Re-set select values after x-for options render
-            var savedPid = data.program_id || '';
             var savedGen = data.generation || '';
             var savedDept = data.department_id || '';
             var savedFac = data.faculty_id || '';
-            f.program_id = '';
             f.generation = '';
             f.department_id = '';
             f.faculty_id = '';
             setTimeout(function() {
-                f.program_id = savedPid;
                 f.generation = savedGen;
                 f.department_id = savedDept;
                 f.faculty_id = savedFac;
@@ -941,7 +937,7 @@
             fd.append('password_confirmation', f.password_confirmation);
         }
         if (f.role === 'student') {
-            fd.append('program_id', f.program_id);
+            fd.append('department_id', f.department_id);
             fd.append('generation', f.generation);
         } else if (f.role === 'professor') {
             fd.append('department_id', f.department_id);
@@ -1086,11 +1082,11 @@
             url.searchParams.delete('adminsPage');
 
             if (activeTab === 'admins') {
-                ['generation', 'program_id', 'faculty_id', 'department_id'].forEach(function(key) {
+                ['generation', 'faculty_id', 'department_id'].forEach(function(key) {
                     url.searchParams.delete(key);
                 });
             } else if (activeTab === 'professors') {
-                ['generation', 'program_id'].forEach(function(key) {
+                ['generation'].forEach(function(key) {
                     url.searchParams.delete(key);
                 });
             } else if (activeTab === 'students') {
@@ -1252,14 +1248,14 @@
 
         if (activeTab === 'students') {
             var genEl = document.querySelector('select[name=generation]');
-            var progEl = document.querySelector('select[name=program_id]');
+            var progEl = document.querySelector('select[name=department_id]');
             var gen = genEl ? genEl.value : '';
             var prog = progEl ? progEl.value : '';
             if (!gen || !prog) {
                 window.showToast && window.showToast('{{ __("សូមជ្រើសរើសជំនាន់ និងកម្មវិធីសិក្សាមុនពេលបោះពុម្ព។") }}', 'warning');
                 return;
             }
-            window.open('{{ route('admin.users.print-students') }}?generation=' + gen + '&program_id=' + prog, '_blank');
+            window.open('{{ route('admin.users.print-students') }}?generation=' + gen + '&department_id=' + prog, '_blank');
         } else if (activeTab === 'professors') {
             var facEl = document.querySelector('#professor-filter-form select[name=faculty_id]');
             var deptEl = document.querySelector('#professor-filter-form select[name=department_id]');

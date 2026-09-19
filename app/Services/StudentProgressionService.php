@@ -3,9 +3,9 @@
 namespace App\Services;
 
 use App\Models\CourseOffering;
-use App\Models\Program;
+use App\Models\Department;
 use App\Models\StudentCourseEnrollment;
-use App\Models\StudentProgramEnrollment;
+use App\Models\StudentDepartmentEnrollment;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -36,22 +36,20 @@ class StudentProgressionService
     }
 
     /**
-     * Calculate the current year level for a student in a program.
+     * Calculate the current year level for a student in a department.
      * Uses starting_year_level from enrollment to support pathway transitions.
-     * Year level = starting_year_level + (current academic year start - generation join year)
      */
-    public function getYearLevel(User $student, Program $program): int
+    public function getYearLevel(User $student, Department $department): int
     {
-        // Use eager-loaded relationship if available to avoid N+1
         $enrollment = null;
-        if ($student->relationLoaded('studentProgramEnrollments')) {
-            $enrollment = $student->studentProgramEnrollments
-                ->where('program_id', $program->id)
+        if ($student->relationLoaded('studentDepartmentEnrollments')) {
+            $enrollment = $student->studentDepartmentEnrollments
+                ->where('department_id', $department->id)
                 ->where('status', 'active')
                 ->first();
         } else {
-            $enrollment = StudentProgramEnrollment::where('student_user_id', $student->id)
-                ->where('program_id', $program->id)
+            $enrollment = StudentDepartmentEnrollment::where('student_user_id', $student->id)
+                ->where('department_id', $department->id)
                 ->where('status', 'active')
                 ->first();
         }
@@ -66,24 +64,24 @@ class StudentProgressionService
 
         $yearLevel = $startingYear + ($currentAcademicYear - $joinYear);
 
-        return max(1, min($yearLevel, $program->duration_years));
+        return max(1, min($yearLevel, $department->duration_years));
     }
 
     /**
-     * Get the maximum year level for a program.
+     * Get the maximum year level for a department.
      */
-    public function getMaxYearLevel(Program $program): int
+    public function getMaxYearLevel(Department $department): int
     {
-        return $program->duration_years ?? 4;
+        return $department->duration_years ?? 4;
     }
 
     /**
-     * Check if a student has graduated from a program.
+     * Check if a student has graduated from a department.
      */
-    public function isGraduated(User $student, Program $program): bool
+    public function isGraduated(User $student, Department $department): bool
     {
-        $enrollment = StudentProgramEnrollment::where('student_user_id', $student->id)
-            ->where('program_id', $program->id)
+        $enrollment = StudentDepartmentEnrollment::where('student_user_id', $student->id)
+            ->where('department_id', $department->id)
             ->first();
 
         return $enrollment && $enrollment->status === 'graduated';
@@ -91,13 +89,11 @@ class StudentProgressionService
 
     /**
      * Check if a student has any F grade in the current year's courses.
-     * Uses critical component logic: fail ANY critical component = F.
-     * Failed attendance = needs retake semester (cannot advance).
      */
-    public function hasFailedCourses(User $student, Program $program): bool
+    public function hasFailedCourses(User $student, Department $department): bool
     {
-        $yearLevel = $this->getYearLevel($student, $program);
-        $courseOfferingIds = $this->getYearCourseOfferingIds($student, $program, $yearLevel);
+        $yearLevel = $this->getYearLevel($student, $department);
+        $courseOfferingIds = $this->getYearCourseOfferingIds($student, $department, $yearLevel);
 
         if ($courseOfferingIds->isEmpty()) {
             return true;
@@ -143,51 +139,49 @@ class StudentProgressionService
     /**
      * Get students eligible for advancement (no F grades).
      */
-    public function getEligibleStudents(Program $program): Collection
+    public function getEligibleStudents(Department $department): Collection
     {
-        $yearLevel = $this->getYearLevelFromProgram($program);
+        $yearLevel = $this->getYearLevelFromDepartment($department);
 
-        return $this->getStudentsByYearLevel($program, $yearLevel)
-            ->filter(fn ($student) => ! $this->hasFailedCourses($student, $program))
+        return $this->getStudentsByYearLevel($department, $yearLevel)
+            ->filter(fn ($student) => ! $this->hasFailedCourses($student, $department))
             ->values();
     }
 
     /**
-     * Get ALL eligible students across ALL year levels for the advance page.
-     * Returns students with computed_year_level attached.
+     * Get ALL eligible students across ALL year levels.
      */
-    public function getAllEligibleStudents(Program $program): Collection
+    public function getAllEligibleStudents(Department $department): Collection
     {
-        return $this->getAllActiveStudents($program)
-            ->filter(fn ($student) => ! $this->hasFailedCourses($student, $program))
+        return $this->getAllActiveStudents($department)
+            ->filter(fn ($student) => ! $this->hasFailedCourses($student, $department))
             ->values();
     }
 
     /**
-     * Get ALL held-back students across ALL year levels for the advance page.
-     * Returns students with computed_year_level attached.
+     * Get ALL held-back students across ALL year levels.
      */
-    public function getAllHeldBackStudents(Program $program): Collection
+    public function getAllHeldBackStudents(Department $department): Collection
     {
-        return $this->getAllActiveStudents($program)
-            ->filter(fn ($student) => $this->hasFailedCourses($student, $program))
+        return $this->getAllActiveStudents($department)
+            ->filter(fn ($student) => $this->hasFailedCourses($student, $department))
             ->values();
     }
 
     /**
-     * Get all active students for a program with year level computed.
+     * Get all active students for a department with year level computed.
      */
-    private function getAllActiveStudents(Program $program): Collection
+    private function getAllActiveStudents(Department $department): Collection
     {
         $students = User::where('role', 'student')
-            ->whereHas('studentProgramEnrollments', function ($q) use ($program) {
-                $q->where('program_id', $program->id)->where('status', 'active');
+            ->whereHas('studentDepartmentEnrollments', function ($q) use ($department) {
+                $q->where('department_id', $department->id)->where('status', 'active');
             })
-            ->with(['studentProfile', 'studentProgramEnrollments'])
+            ->with(['studentProfile', 'studentDepartmentEnrollments'])
             ->get();
 
-        $students->each(function ($student) use ($program) {
-            $student->computed_year_level = $this->getYearLevel($student, $program);
+        $students->each(function ($student) use ($department) {
+            $student->computed_year_level = $this->getYearLevel($student, $department);
         });
 
         return $students;
@@ -196,30 +190,29 @@ class StudentProgressionService
     /**
      * Get students held back (have F grades).
      */
-    public function getHeldBackStudents(Program $program): Collection
+    public function getHeldBackStudents(Department $department): Collection
     {
-        $yearLevel = $this->getYearLevelFromProgram($program);
+        $yearLevel = $this->getYearLevelFromDepartment($department);
 
-        return $this->getStudentsByYearLevel($program, $yearLevel)
-            ->filter(fn ($student) => $this->hasFailedCourses($student, $program))
+        return $this->getStudentsByYearLevel($department, $yearLevel)
+            ->filter(fn ($student) => $this->hasFailedCourses($student, $department))
             ->values();
     }
 
     /**
-     * Get all students grouped by year level for a program.
+     * Get all students grouped by year level for a department.
      */
-    public function getProgressionSummary(Program $program, array $filters = []): array
+    public function getProgressionSummary(Department $department, array $filters = []): array
     {
-        $maxYear = $this->getMaxYearLevel($program);
+        $maxYear = $this->getMaxYearLevel($department);
         $summary = [];
 
         $query = User::where('role', 'student')
-            ->whereHas('studentProgramEnrollments', function ($q) use ($program) {
-                $q->where('program_id', $program->id)->where('status', 'active');
+            ->whereHas('studentDepartmentEnrollments', function ($q) use ($department) {
+                $q->where('department_id', $department->id)->where('status', 'active');
             })
-            ->with(['studentProfile', 'studentProgramEnrollments']);
+            ->with(['studentProfile', 'studentDepartmentEnrollments']);
 
-        // Search filter
         if (! empty($filters['search'])) {
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {
@@ -229,44 +222,39 @@ class StudentProgressionService
             });
         }
 
-        // Generation filter
         if (! empty($filters['generation'])) {
             $query->where('generation', $filters['generation']);
         }
 
-        // Course offering filter: only students enrolled in this course offering
         if (! empty($filters['courseId'])) {
-            $enrolledStudentIds = \App\Models\StudentCourseEnrollment::where('course_offering_id', $filters['courseId'])
+            $enrolledStudentIds = StudentCourseEnrollment::where('course_offering_id', $filters['courseId'])
                 ->pluck('student_user_id');
             $query->whereIn('users.id', $enrolledStudentIds);
         }
 
-        // Semester filter: find course offerings for this program in the semester, then filter students
         if (! empty($filters['semester'])) {
-            $offeringIds = CourseOffering::whereHas('targetPrograms', fn ($q) => $q->where('program_id', $program->id))
+            $offeringIds = CourseOffering::where('department_id', $department->id)
                 ->where('semester', $filters['semester'])
                 ->pluck('id');
-            $enrolledStudentIds = \App\Models\StudentCourseEnrollment::whereIn('course_offering_id', $offeringIds)
+            $enrolledStudentIds = StudentCourseEnrollment::whereIn('course_offering_id', $offeringIds)
                 ->pluck('student_user_id');
             $query->whereIn('users.id', $enrolledStudentIds);
         }
 
-        // Schedule group filter: Mon-Fri or Sat-Sun
         if (! empty($filters['scheduleGroup'])) {
             $days = $filters['scheduleGroup'] === 'mon_fri'
                 ? ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
                 : ['Saturday', 'Sunday'];
             $offeringIdsWithDay = \App\Models\Schedule::whereIn('day_of_week', $days)
                 ->pluck('course_offering_id');
-            $enrolledStudentIds = \App\Models\StudentCourseEnrollment::whereIn('course_offering_id', $offeringIdsWithDay)
+            $enrolledStudentIds = StudentCourseEnrollment::whereIn('course_offering_id', $offeringIdsWithDay)
                 ->pluck('student_user_id');
             $query->whereIn('users.id', $enrolledStudentIds);
         }
 
         $allActiveStudents = $query->get();
 
-        // Group by year level
-        $groupedByYear = $allActiveStudents->groupBy(fn ($student) => $this->getYearLevel($student, $program));
+        $groupedByYear = $allActiveStudents->groupBy(fn ($student) => $this->getYearLevel($student, $department));
 
         for ($year = 1; $year <= $maxYear; $year++) {
             $students = $groupedByYear->get($year, collect())->values();
@@ -276,12 +264,11 @@ class StudentProgressionService
             ];
         }
 
-        // Graduated students (eager load to avoid N+1 in view)
         $graduatedQuery = User::where('role', 'student')
-            ->whereHas('studentProgramEnrollments', function ($q) use ($program) {
-                $q->where('program_id', $program->id)->where('status', 'graduated');
+            ->whereHas('studentDepartmentEnrollments', function ($q) use ($department) {
+                $q->where('department_id', $department->id)->where('status', 'graduated');
             })
-            ->with(['studentProfile', 'studentProgramEnrollments']);
+            ->with(['studentProfile', 'studentDepartmentEnrollments']);
 
         if (! empty($filters['search'])) {
             $search = $filters['search'];
@@ -304,38 +291,33 @@ class StudentProgressionService
 
     /**
      * Advance selected students to the next year level.
-     * Returns the number of students advanced.
      */
-    public function advanceStudents(Collection $studentIds, Program $program): int
+    public function advanceStudents(Collection $studentIds, Department $department): int
     {
         $advanced = 0;
 
-        DB::transaction(function () use ($studentIds, $program, &$advanced) {
+        DB::transaction(function () use ($studentIds, $department, &$advanced) {
             foreach ($studentIds as $studentId) {
                 $student = User::find($studentId);
                 if (! $student) {
                     continue;
                 }
 
-                $currentYear = $this->getYearLevel($student, $program);
+                $currentYear = $this->getYearLevel($student, $department);
                 $nextYear = $currentYear + 1;
 
-                // Mark current year's course enrollments as completed
                 $this->completeYearEnrollments($student, $currentYear);
 
-                // If next year is within program duration, enroll in next year's offerings
-                if ($nextYear <= $this->getMaxYearLevel($program)) {
-                    // Increment starting_year_level so getYearLevel() returns the new year
-                    StudentProgramEnrollment::where('student_user_id', $student->id)
-                        ->where('program_id', $program->id)
+                if ($nextYear <= $this->getMaxYearLevel($department)) {
+                    StudentDepartmentEnrollment::where('student_user_id', $student->id)
+                        ->where('department_id', $department->id)
                         ->where('status', 'active')
                         ->increment('starting_year_level', 1);
 
-                    $this->enrollInNextYear($student, $program, $nextYear);
+                    $this->enrollInNextYear($student, $department, $nextYear);
                     $advanced++;
                 } else {
-                    // Student has completed all years — graduate them
-                    $this->graduateStudent($student, $program);
+                    $this->graduateStudent($student, $department);
                     $advanced++;
                 }
             }
@@ -349,7 +331,7 @@ class StudentProgressionService
      */
     public function completeYearEnrollments(User $student, int $yearLevel): void
     {
-        $offeringIds = $this->getYearCourseOfferingIds($student, $this->getStudentProgram($student), $yearLevel);
+        $offeringIds = $this->getYearCourseOfferingIds($student, $this->getStudentDepartment($student), $yearLevel);
 
         StudentCourseEnrollment::where('student_user_id', $student->id)
             ->whereIn('course_offering_id', $offeringIds)
@@ -359,17 +341,13 @@ class StudentProgressionService
     /**
      * Enroll a student in next year's course offerings.
      */
-    public function enrollInNextYear(User $student, Program $program, int $nextYear): int
+    public function enrollInNextYear(User $student, Department $department, int $nextYear): int
     {
-        // Find course offerings for this program targeting this generation and next year
         $enrolledOfferingIds = StudentCourseEnrollment::where('student_user_id', $student->id)
             ->pluck('course_offering_id');
 
-        // Get offerings that match: program, generation, and not already enrolled
-        $offerings = CourseOffering::whereHas('targetPrograms', function ($q) use ($program, $student) {
-            $q->where('course_offering_program.program_id', $program->id)
-                ->where('course_offering_program.generation', $student->generation);
-        })
+        $offerings = CourseOffering::where('department_id', $department->id)
+            ->where('generation', $student->generation)
             ->whereNotIn('id', $enrolledOfferingIds)
             ->where('end_date', '>=', now())
             ->get();
@@ -394,12 +372,12 @@ class StudentProgressionService
     }
 
     /**
-     * Graduate a student from a program.
+     * Graduate a student from a department.
      */
-    public function graduateStudent(User $student, Program $program): void
+    public function graduateStudent(User $student, Department $department): void
     {
-        StudentProgramEnrollment::where('student_user_id', $student->id)
-            ->where('program_id', $program->id)
+        StudentDepartmentEnrollment::where('student_user_id', $student->id)
+            ->where('department_id', $department->id)
             ->update([
                 'status' => 'graduated',
                 'graduation_date' => Carbon::now()->toDateString(),
@@ -407,12 +385,11 @@ class StudentProgressionService
     }
 
     /**
-     * Check if a student is eligible for transition to a bachelor's program.
-     * Must have completed all years of their associate's program.
+     * Check if a student is eligible for transition to another department.
      */
     public function isEligibleForTransition(User $student): bool
     {
-        $currentEnrollment = StudentProgramEnrollment::where('student_user_id', $student->id)
+        $currentEnrollment = StudentDepartmentEnrollment::where('student_user_id', $student->id)
             ->where('status', 'active')
             ->first();
 
@@ -420,26 +397,24 @@ class StudentProgressionService
             return false;
         }
 
-        $program = $currentEnrollment->program;
+        $department = $currentEnrollment->department;
 
-        // Must have a pathway program configured
-        if (! $program->pathway_program_id) {
+        if (! $department->pathway_department_id) {
             return false;
         }
 
-        // Must be in the final year of the current program
-        $currentYear = $this->getYearLevel($student, $program);
-        $maxYear = $this->getMaxYearLevel($program);
+        $currentYear = $this->getYearLevel($student, $department);
+        $maxYear = $this->getMaxYearLevel($department);
 
         return $currentYear >= $maxYear;
     }
 
     /**
-     * Get the available bachelor's programs a student can transition to.
+     * Get the available departments a student can transition to.
      */
-    public function getTransitionPrograms(User $student): \Illuminate\Support\Collection
+    public function getTransitionDepartments(User $student): Collection
     {
-        $currentEnrollment = StudentProgramEnrollment::where('student_user_id', $student->id)
+        $currentEnrollment = StudentDepartmentEnrollment::where('student_user_id', $student->id)
             ->where('status', 'active')
             ->first();
 
@@ -447,58 +422,51 @@ class StudentProgressionService
             return collect();
         }
 
-        $currentProgram = $currentEnrollment->program;
+        $currentDepartment = $currentEnrollment->department;
 
-        return Program::where('pathway_program_id', $currentProgram->id)
+        return Department::where('pathway_department_id', $currentDepartment->id)
             ->get();
     }
 
     /**
-     * Transition a student from an associate's program to a bachelor's program.
-     * Starts the student at Year 3 in the bachelor's program.
+     * Transition a student from one department to another (pathway).
      */
-    public function transitionToBachelor(User $student, Program $bachelorProgram): StudentProgramEnrollment
+    public function transitionToBachelor(User $student, Department $bachelorDepartment): StudentDepartmentEnrollment
     {
-        return DB::transaction(function () use ($student, $bachelorProgram) {
-            // 1. Mark current associate's enrollment as graduated
-            $student->studentProgramEnrollments()
+        return DB::transaction(function () use ($student, $bachelorDepartment) {
+            $student->studentDepartmentEnrollments()
                 ->where('status', 'active')
                 ->update([
                     'status' => 'graduated',
                     'graduation_date' => Carbon::now()->toDateString(),
                 ]);
 
-            // 2. Create new bachelor's enrollment starting at Year 3
-            $enrollment = StudentProgramEnrollment::create([
+            $enrollment = StudentDepartmentEnrollment::create([
                 'student_user_id' => $student->id,
-                'program_id' => $bachelorProgram->id,
+                'department_id' => $bachelorDepartment->id,
                 'starting_year_level' => 3,
                 'enrollment_date' => now(),
                 'status' => 'active',
             ]);
 
-            // 3. Update student's program on the users table
-            $student->update(['program_id' => $bachelorProgram->id]);
+            $student->update(['department_id' => $bachelorDepartment->id]);
 
-            // 4. Auto-enroll in matching course offerings for Year 3
-            $this->enrollInMatchingOfferings($student, $bachelorProgram);
+            $this->enrollInMatchingOfferings($student, $bachelorDepartment);
 
             return $enrollment;
         });
     }
 
     /**
-     * Auto-enroll a student in course offerings matching their program and generation.
+     * Auto-enroll a student in course offerings matching their department and generation.
      */
-    private function enrollInMatchingOfferings(User $student, Program $program): void
+    private function enrollInMatchingOfferings(User $student, Department $department): void
     {
         $enrolledOfferingIds = StudentCourseEnrollment::where('student_user_id', $student->id)
             ->pluck('course_offering_id');
 
-        $offerings = CourseOffering::whereHas('targetPrograms', function ($q) use ($program, $student) {
-            $q->where('course_offering_program.program_id', $program->id)
-                ->where('course_offering_program.generation', $student->generation);
-        })
+        $offerings = CourseOffering::where('department_id', $department->id)
+            ->where('generation', $student->generation)
             ->whereNotIn('id', $enrolledOfferingIds)
             ->where('end_date', '>=', now())
             ->get();
@@ -519,21 +487,19 @@ class StudentProgressionService
     }
 
     /**
-     * Auto-graduate all eligible students for a program.
-     * Students who have completed all years and have no F grades.
+     * Auto-graduate all eligible students for a department.
      */
-    public function autoGraduateStudents(Program $program): int
+    public function autoGraduateStudents(Department $department): int
     {
-        $maxYear = $this->getMaxYearLevel($program);
+        $maxYear = $this->getMaxYearLevel($department);
         $graduated = 0;
 
-        // Find students in the final year
-        $finalYearStudents = $this->getStudentsByYearLevel($program, $maxYear);
+        $finalYearStudents = $this->getStudentsByYearLevel($department, $maxYear);
 
         foreach ($finalYearStudents as $student) {
-            if (! $this->hasFailedCourses($student, $program)) {
+            if (! $this->hasFailedCourses($student, $department)) {
                 $this->completeYearEnrollments($student, $maxYear);
-                $this->graduateStudent($student, $program);
+                $this->graduateStudent($student, $department);
                 $graduated++;
             }
         }
@@ -543,35 +509,31 @@ class StudentProgressionService
 
     /**
      * Get course offering IDs for a specific year level.
-     * Year is determined by matching the academic year to the generation.
      */
-    private function getYearCourseOfferingIds(User $student, Program $program, int $yearLevel): Collection
+    private function getYearCourseOfferingIds(User $student, Department $department, int $yearLevel): Collection
     {
         $joinYear = $this->generationToJoinYear($student->generation);
         $targetYear = $joinYear + $yearLevel - 1;
         $academicYear = $targetYear.'-'.($targetYear + 1);
 
-        return CourseOffering::whereHas('targetPrograms', function ($q) use ($program, $student) {
-            $q->where('course_offering_program.program_id', $program->id)
-                ->where('course_offering_program.generation', $student->generation);
-        })
+        return CourseOffering::where('department_id', $department->id)
+            ->where('generation', $student->generation)
             ->where('academic_year', $academicYear)
             ->pluck('course_offerings.id');
     }
 
     /**
-     * Get students by year level for a program.
-     * Computes each student's actual year level and filters.
+     * Get students by year level for a department.
      */
-    private function getStudentsByYearLevel(Program $program, int $yearLevel): Collection
+    private function getStudentsByYearLevel(Department $department, int $yearLevel): Collection
     {
         return User::where('role', 'student')
-            ->whereHas('studentProgramEnrollments', function ($q) use ($program) {
-                $q->where('program_id', $program->id)->where('status', 'active');
+            ->whereHas('studentDepartmentEnrollments', function ($q) use ($department) {
+                $q->where('department_id', $department->id)->where('status', 'active');
             })
-            ->with(['studentProfile', 'studentProgramEnrollments'])
+            ->with(['studentProfile', 'studentDepartmentEnrollments'])
             ->get()
-            ->filter(fn ($student) => $this->getYearLevel($student, $program) === $yearLevel)
+            ->filter(fn ($student) => $this->getYearLevel($student, $department) === $yearLevel)
             ->values();
     }
 
@@ -589,38 +551,35 @@ class StudentProgressionService
     }
 
     /**
-     * Get the year level from program context (uses current user).
+     * Get the year level from department context (uses current user).
      */
-    private function getYearLevelFromProgram(Program $program): int
+    private function getYearLevelFromDepartment(Department $department): int
     {
-        // Get all active students for this program (eager loaded to avoid N+1)
         $students = User::where('role', 'student')
-            ->whereHas('studentProgramEnrollments', function ($q) use ($program) {
-                $q->where('program_id', $program->id)->where('status', 'active');
+            ->whereHas('studentDepartmentEnrollments', function ($q) use ($department) {
+                $q->where('department_id', $department->id)->where('status', 'active');
             })
-            ->with('studentProgramEnrollments')
+            ->with('studentDepartmentEnrollments')
             ->get();
 
         if ($students->isEmpty()) {
             return 1;
         }
 
-        // Group by calculated year level
-        $grouped = $students->groupBy(fn ($s) => $this->getYearLevel($s, $program));
+        $grouped = $students->groupBy(fn ($s) => $this->getYearLevel($s, $department));
 
-        // Return the year level with the most students
         return $grouped->sortByDesc(fn ($group) => $group->count())->keys()->first();
     }
 
     /**
-     * Get the student's program enrollment.
+     * Get the student's department enrollment.
      */
-    private function getStudentProgram(User $student): Program
+    private function getStudentDepartment(User $student): Department
     {
-        $enrollment = StudentProgramEnrollment::where('student_user_id', $student->id)
+        $enrollment = StudentDepartmentEnrollment::where('student_user_id', $student->id)
             ->where('status', 'active')
             ->first();
 
-        return $enrollment ? $enrollment->program : Program::first();
+        return $enrollment ? $enrollment->department : Department::first();
     }
 }

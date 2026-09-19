@@ -144,10 +144,10 @@
                                 <label class="block text-sm font-bold text-gray-700 mb-2">
                                     កម្មវិធីសិក្សា <span class="text-red-500">*</span>
                                 </label>
-                                <select name="program_id" id="program_id" required class="w-full rounded-xl border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 text-sm">
+                                <select name="department_id" id="department_id" required class="w-full rounded-xl border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 text-sm">
                                     <option value="">ជ្រើសរើសកម្មវិធីសិក្សា</option>
-                                    @foreach($programs as $program)
-                                    <option value="{{ $program->id }}" data-name="{{ $program->name_km }}" @if(old('program_id') == $program->id) selected @endif>{{ $program->name_km }}</option>
+                                    @foreach($departments as $dept)
+                                    <option value="{{ $dept->id }}" data-name="{{ $dept->name_km }}" @if(old('department_id') == $dept->id) selected @endif>{{ $dept->name_km }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -227,19 +227,19 @@
         const roleSelect = document.querySelector('select[name="role"]');
         const studentFields = document.getElementById('student-fields');
         const professorFields = document.getElementById('professor-fields');
-        const programSelect = document.getElementById('program_id');
+        const departmentSelect = document.getElementById('department_id');
         const deptSelect = document.getElementById('department_id');
 
         function toggleFields() {
             if (roleSelect.value === 'student') {
                 studentFields.style.display = 'block';
                 professorFields.style.display = 'none';
-                programSelect.required = true;
+                departmentSelect.required = true;
                 deptSelect.required = false;
             } else {
                 studentFields.style.display = 'none';
                 professorFields.style.display = 'block';
-                programSelect.required = false;
+                departmentSelect.required = false;
                 deptSelect.required = true;
             }
         }

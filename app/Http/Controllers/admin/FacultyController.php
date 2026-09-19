@@ -81,10 +81,7 @@ class FacultyController extends Controller
             $oldAttributes = $faculty->attributesToArray();
 
             foreach ($faculty->departments as $department) {
-                foreach ($department->programs as $program) {
-                    $program->courses()->delete();
-                }
-                $department->programs()->delete();
+                $department->courses()->delete();
             }
 
             $faculty->departments()->delete();

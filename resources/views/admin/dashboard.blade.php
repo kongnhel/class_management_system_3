@@ -187,9 +187,9 @@
                                     <div class="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
                                         <i class="fas fa-cubes text-xs"></i>
                                     </div>
-                                    <span class="text-gray-600 font-medium">{{ __('admin_total_programs') }}</span>
+                                    <span class="text-gray-600 font-medium">{{ __('admin_total_departments') }}</span>
                                 </div>
-                                <span class="text-lg font-bold text-gray-900 group-hover:text-emerald-600 transition-colors">{{ $totalPrograms }}</span>
+                                <span class="text-lg font-bold text-gray-900 group-hover:text-emerald-600 transition-colors">{{ $totalDepartments }}</span>
                             </div>
                             <hr class="border-gray-50">
 

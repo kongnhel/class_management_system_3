@@ -183,7 +183,7 @@
                 <h1 class="font-moul">{{ __('តារាងវិភាគប្រចាំ') }}{{ $semester }} <span class="font-sans" style="font-family: var(--font-body)">/Timetable Semester {{ $semesterNum }}</span></h1>
                 <p>
                     {{ __('ជំនាន់ទី') }} {{ $generation ?: '...' }} 
-                    @if($studentProgram) | {{ $studentProgram->name_km ?? $studentProgram->name_en }} @endif
+                    @if($studentDepartment) | {{ $studentDepartment->name_km ?? $studentDepartment->name_en }} @endif
                     | {{ __('ឆ្នាំសិក្សា') }} {{ date('Y') }}-{{ date('Y')+1 }}
                 </p>
                 <p style="font-weight: normal; margin-top: 5px;">{{ __('ចាប់ផ្តើមពី') }} {{ \Carbon\Carbon::parse($startDate)->format('d/m/Y') }}</p>

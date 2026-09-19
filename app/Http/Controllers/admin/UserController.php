@@ -6,7 +6,6 @@ use App\Exports\UsersExport;
 use App\Http\Controllers\Controller;
 use App\Models\Department;
 use App\Models\Faculty;
-use App\Models\Program;
 use App\Models\StudentProfile;
 use App\Models\User;
 use App\Models\UserProfile;
@@ -37,9 +36,8 @@ class UserController extends Controller
     {
         $search = trim((string) $request->input('search', ''));
         $generation = $request->input('generation');
-        $program_id = $request->input('program_id');
-        $faculty_id = $request->input('faculty_id');
         $department_id = $request->input('department_id');
+        $faculty_id = $request->input('faculty_id');
 
         $admins = User::where('role', 'admin')
             ->with('profile')
@@ -91,7 +89,7 @@ class UserController extends Controller
         });
 
         $students = User::where('role', 'student')
-            ->with(['studentProfile', 'program', 'studentProgramEnrollments'])
+            ->with(['studentProfile', 'department', 'studentDepartmentEnrollments'])
             ->when($search, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'LIKE', "%{$search}%")
@@ -101,7 +99,7 @@ class UserController extends Controller
                             $q2->where('full_name_km', 'LIKE', "%{$search}%")
                                 ->orWhere('full_name_en', 'LIKE', "%{$search}%");
                         })
-                        ->orWhereHas('program', function ($q3) use ($search) {
+                        ->orWhereHas('department', function ($q3) use ($search) {
                             $q3->where('name_km', 'LIKE', "%{$search}%")
                                 ->orWhere('name_en', 'LIKE', "%{$search}%");
                         });
@@ -110,8 +108,8 @@ class UserController extends Controller
             ->when($generation, function ($query, $generation) {
                 return $query->where('generation', $generation);
             })
-            ->when($program_id, function ($query, $program_id) {
-                return $query->where('program_id', $program_id);
+            ->when($department_id, function ($query, $department_id) {
+                return $query->where('department_id', $department_id);
             })
             ->orderBy('generation', 'desc')
             ->orderBy('name', 'asc')
@@ -119,8 +117,8 @@ class UserController extends Controller
 
         $progressionService = app(\App\Services\StudentProgressionService::class);
         $students->each(function ($student) use ($progressionService) {
-            if ($student->program) {
-                $student->computed_year_level = $progressionService->getYearLevel($student, $student->program);
+            if ($student->department) {
+                $student->computed_year_level = $progressionService->getYearLevel($student, $student->department);
             } else {
                 $student->computed_year_level = null;
             }
@@ -129,7 +127,7 @@ class UserController extends Controller
         $studentsGrouped = $students->groupBy([
             'generation',
             function ($item) {
-                return $item->program->name_km ?? 'មិនទាន់មានកម្មវិធីសិក្សា';
+                return $item->department->name_km ?? 'មិនទាន់មានដេប៉ាតឺម៉ង់';
             },
         ]);
 
@@ -138,9 +136,8 @@ class UserController extends Controller
             ->pluck('name')
             ->toArray();
 
-        $programs = \App\Models\Program::all();
-        $faculties = \App\Models\Faculty::all();
-        $departments = \App\Models\Department::with('faculty')->get();
+        $faculties = Faculty::all();
+        $departments = Department::with('faculty')->get();
 
         return view('admin.users.index', compact(
             'admins',
@@ -149,7 +146,6 @@ class UserController extends Controller
             'studentsGrouped',
             'professorsGrouped',
             'generations',
-            'programs',
             'faculties',
             'departments'
         ));
@@ -183,46 +179,45 @@ class UserController extends Controller
         $user->load(['profile', 'studentProfile']);
 
         $isEligibleForTransition = false;
-        $transitionPrograms = collect();
+        $transitionDepartments = collect();
 
         if ($user->role === 'professor') {
             $user->load(['taughtCourseOfferings' => function ($query) {
-                $query->with(['course', 'program'])->orderBy('academic_year', 'desc');
+                $query->with(['course', 'department'])->orderBy('academic_year', 'desc');
             }]);
         } elseif ($user->role === 'student') {
             $user->load(['studentCourseEnrollments' => function ($query) {
-                $query->with(['courseOffering.course', 'courseOffering.program'])->orderBy('created_at', 'desc');
+                $query->with(['courseOffering.course', 'courseOffering.department'])->orderBy('created_at', 'desc');
             }]);
-            $user->load('studentProgramEnrollments.program');
+            $user->load('studentDepartmentEnrollments.department');
 
             $progressionService = app(\App\Services\StudentProgressionService::class);
             $isEligibleForTransition = $progressionService->isEligibleForTransition($user);
-            $transitionPrograms = $progressionService->getTransitionPrograms($user);
+            $transitionDepartments = $progressionService->getTransitionDepartments($user);
         }
 
-        return view('admin.users.show', compact('user', 'isEligibleForTransition', 'transitionPrograms'));
+        return view('admin.users.show', compact('user', 'isEligibleForTransition', 'transitionDepartments'));
     }
 
     public function createUser()
     {
         $faculties = Faculty::all();
         $departments = Department::all();
-        $programs = Program::all();
         $generations = \App\Models\Generation::where('is_active', true)->orderByDesc('name')->pluck('name')->toArray();
 
-        return view('admin.users.create', compact('departments', 'programs', 'faculties', 'generations'));
+        return view('admin.users.create', compact('departments', 'faculties', 'generations'));
     }
 
     public function previewStudentId(Request $request)
     {
         $request->validate([
-            'program_id' => 'required|exists:programs,id',
+            'department_id' => 'required|exists:departments,id',
             'generation' => 'required|string',
             'degree_level' => 'required|string',
         ]);
 
         $studentId = $this->studentIdGenerator->generate(
-            $request->program_id,
+            $request->department_id,
             $request->generation,
             $request->degree_level
         );
@@ -249,7 +244,7 @@ class UserController extends Controller
         ];
 
         if ($request->role === 'student') {
-            $rules['program_id'] = 'required|exists:programs,id';
+            $rules['department_id'] = 'required|exists:departments,id';
             $rules['generation'] = 'required|string|max:255';
             $rules['degree_level'] = 'required|string|max:50';
         } elseif ($request->role === 'professor') {
@@ -265,7 +260,7 @@ class UserController extends Controller
                     ->uncompromised(),
             ];
             $rules['department_id'] = 'required|exists:departments,id';
-        } else { // Admin
+        } else {
             $rules['email'] = 'required|string|email|max:255|unique:users';
             $rules['password'] = [
                 'required',
@@ -281,39 +276,32 @@ class UserController extends Controller
 
         $request->validate($rules);
 
-        // --- Create the core User model ---
         $user = User::create([
-
             'name' => $request->name,
             'role' => $request->role,
-            'department_id' => ($request->role === 'professor') ? $request->department_id : null,
-            'program_id' => ($request->role === 'student') ? $request->program_id : null,
+            'department_id' => in_array($request->role, ['student', 'professor']) ? $request->department_id : null,
             'email' => ($request->role !== 'student') ? $request->email : null,
             'password' => ($request->role !== 'student') ? Hash::make($request->password) : null,
             'generation' => ($request->role === 'student') ? $request->generation : null,
         ]);
 
-        // Auto-generate student_id_code and create program enrollment for students
         if ($request->role === 'student') {
-            $studentId = $this->studentIdGenerator->generate($request->program_id, $request->generation, $request->degree_level);
+            $studentId = $this->studentIdGenerator->generate($request->department_id, $request->generation, $request->degree_level);
             $user->student_id_code = $studentId;
             $user->save();
 
-            // Create student_program_enrollments record so progression page can find them
-            \App\Models\StudentProgramEnrollment::create([
+            \App\Models\StudentDepartmentEnrollment::create([
                 'student_user_id' => $user->id,
-                'program_id' => $request->program_id,
+                'department_id' => $request->department_id,
                 'degree_level' => $request->degree_level,
                 'starting_year_level' => 1,
                 'enrollment_date' => now(),
                 'status' => 'active',
             ]);
 
-            // Auto-enroll in all matching existing course offerings
-            $matchingOfferings = \App\Models\CourseOffering::whereHas('targetPrograms', function ($q) use ($request) {
-                $q->where('course_offering_program.program_id', $request->program_id)
-                    ->where('course_offering_program.generation', $request->generation);
-            })->get();
+            $matchingOfferings = \App\Models\CourseOffering::where('department_id', $request->department_id)
+                ->when($request->generation, fn ($q) => $q->where('generation', $request->generation))
+                ->get();
 
             foreach ($matchingOfferings as $offering) {
                 \App\Models\StudentCourseEnrollment::firstOrCreate([
@@ -364,23 +352,19 @@ class UserController extends Controller
         return redirect()->route('admin.manage-users')->with('success', __('អ្នកបានបង្កើតអ្នកប្រើប្រាស់ថ្មីដោយជោគជ័យ។'));
     }
 
-    /**
-     * Show the form for editing the specified user.
-     */
     public function editUser(User $user)
     {
-        $user->load('profile', 'studentProfile', 'department.faculty', 'program');
+        $user->load('profile', 'studentProfile', 'department.faculty');
         $faculties = Faculty::all();
         $departments = Department::all();
-        $programs = Program::all();
         $generations = \App\Models\Generation::where('is_active', true)->orderByDesc('name')->pluck('name')->toArray();
 
-        return view('admin.users.edit', compact('user', 'departments', 'programs', 'faculties', 'generations'));
+        return view('admin.users.edit', compact('user', 'departments', 'faculties', 'generations'));
     }
 
     public function ajaxEditUser(User $user)
     {
-        $user->load('profile', 'studentProfile', 'department.faculty', 'program');
+        $user->load('profile', 'studentProfile', 'department.faculty');
 
         $profile = $user->role === 'student' ? $user->studentProfile : $user->profile;
 
@@ -389,7 +373,6 @@ class UserController extends Controller
             'name' => $user->name,
             'email' => $user->email,
             'role' => $user->role,
-            'program_id' => $user->program_id,
             'department_id' => $user->department_id,
             'generation' => $user->generation,
             'student_id_code' => $user->student_id_code,
@@ -401,9 +384,8 @@ class UserController extends Controller
             'date_of_birth' => $profile->date_of_birth ?? '',
             'faculty_id' => $user->department?->faculty_id ?? '',
             'profile_picture_url' => $profile->profile_picture_url ?? '',
-            'programs' => Program::all()->map(fn ($p) => ['id' => $p->id, 'name' => $p->name_km ?? $p->name_en]),
             'departments' => Department::all()->map(fn ($d) => ['id' => $d->id, 'name' => $d->name_km ?? $d->name_en, 'faculty_id' => $d->faculty_id]),
-            'faculties' => \App\Models\Faculty::all()->map(fn ($f) => ['id' => $f->id, 'name' => $f->name_km ?? $f->name_en]),
+            'faculties' => Faculty::all()->map(fn ($f) => ['id' => $f->id, 'name' => $f->name_km ?? $f->name_en]),
             'generations' => \App\Models\Generation::where('is_active', true)->orderByDesc('name')->get()->map(fn ($g) => ['name' => $g->name, 'join_year' => $g->join_year ?? '']),
         ]);
     }
@@ -428,7 +410,7 @@ class UserController extends Controller
         ];
 
         if ($request->role === 'student') {
-            $rules['program_id'] = 'required|exists:programs,id';
+            $rules['department_id'] = 'required|exists:departments,id';
             $rules['degree_level'] = 'nullable|string|max:50';
         } else {
             $rules['email'] = ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)];
@@ -444,8 +426,7 @@ class UserController extends Controller
 
         $user->name = $request->name;
         $user->role = $request->role;
-        $user->department_id = ($request->role === 'professor') ? $request->department_id : null;
-        $user->program_id = ($request->role === 'student') ? $request->program_id : null;
+        $user->department_id = in_array($request->role, ['student', 'professor']) ? $request->department_id : null;
         $user->generation = ($request->role === 'student') ? $request->generation : null;
 
         if ($request->role !== 'student') {
@@ -484,14 +465,13 @@ class UserController extends Controller
 
         $this->logUpdated($user, $oldAttributes);
 
-        // Update degree_level on active enrollment if provided
         if ($request->role === 'student' && $request->filled('degree_level')) {
-            $user->studentProgramEnrollments()
+            $user->studentDepartmentEnrollments()
                 ->where('status', 'active')
                 ->update(['degree_level' => $request->degree_level]);
         }
 
-        $user->load('profile', 'studentProfile', 'department.faculty', 'program');
+        $user->load('profile', 'studentProfile', 'department.faculty');
         $profile = $user->role === 'student' ? $user->studentProfile : $user->profile;
 
         if (request()->ajax()) {
@@ -508,7 +488,6 @@ class UserController extends Controller
                     'gender' => $profile->gender ?? '',
                     'phone_number' => $profile->phone_number ?? '',
                     'student_id_code' => $user->student_id_code ?? '',
-                    'program_name' => $user->program?->name_km ?? '',
                     'department_name' => $user->department?->name_km ?? '',
                     'profile_picture_url' => $profile->profile_picture_url ?? '',
                 ],
@@ -569,7 +548,7 @@ class UserController extends Controller
             'tab' => $request->query('tab'),
             'search' => $request->query('search'),
             'generation' => $request->query('generation'),
-            'program_id' => $request->query('program_id'),
+            'department_id' => $request->query('department_id'),
         ];
 
         $fileName = 'users_'.($filters['tab'] ?? 'list').'_'.now()->format('Ymd_His').'.xlsx';
@@ -580,28 +559,28 @@ class UserController extends Controller
     public function printStudents(Request $request)
     {
         $generation = $request->input('generation');
-        $program_id = $request->input('program_id');
+        $department_id = $request->input('department_id');
 
         $progressionService = app(\App\Services\StudentProgressionService::class);
 
         $students = User::where('role', 'student')
-            ->with(['studentProfile', 'program.department.faculty', 'studentProgramEnrollments', 'profile'])
+            ->with(['studentProfile', 'department.faculty', 'studentDepartmentEnrollments', 'profile'])
             ->when($generation, fn ($q) => $q->where('generation', $generation))
-            ->when($program_id, fn ($q) => $q->where('program_id', $program_id))
+            ->when($department_id, fn ($q) => $q->where('department_id', $department_id))
             ->orderBy('generation', 'desc')
             ->orderBy('name', 'asc')
             ->get();
 
         $students->each(function ($student) use ($progressionService) {
-            $student->computed_year_level = $student->program
-                ? $progressionService->getYearLevel($student, $student->program)
+            $student->computed_year_level = $student->department
+                ? $progressionService->getYearLevel($student, $student->department)
                 : null;
         });
 
-        $program = $program_id ? \App\Models\Program::with('department.faculty')->find($program_id) : null;
+        $department = $department_id ? Department::with('faculty')->find($department_id) : null;
         $currentAcademicYear = \App\Models\AcademicYear::getCurrent();
 
-        return view('admin.users.print-students', compact('students', 'generation', 'program', 'currentAcademicYear'));
+        return view('admin.users.print-students', compact('students', 'generation', 'department', 'currentAcademicYear'));
     }
 
     public function printProfessors(Request $request)
@@ -621,8 +600,8 @@ class UserController extends Controller
 
         $professors = $query->orderBy('name', 'asc')->get();
 
-        $faculty = $faculty_id ? \App\Models\Faculty::find($faculty_id) : null;
-        $department = $department_id ? \App\Models\Department::find($department_id) : null;
+        $faculty = $faculty_id ? Faculty::find($faculty_id) : null;
+        $department = $department_id ? Department::find($department_id) : null;
 
         return view('admin.users.print-professors', compact('professors', 'faculty', 'department'));
     }

@@ -7,7 +7,7 @@ use App\Models\AttendanceProfessor;
 use App\Models\AttendanceRecord;
 use App\Models\CourseOffering;
 use App\Models\Generation;
-use App\Models\Program;
+use App\Models\Department;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -15,7 +15,7 @@ class AdminAttendanceController extends Controller
 {
     public function index(Request $request)
     {
-        $query = CourseOffering::with(['course', 'lecturer', 'targetPrograms'])
+        $query = CourseOffering::with(['course', 'lecturer', 'department'])
             ->selectRaw('course_offerings.*, (SELECT COUNT(DISTINCT student_user_id) FROM student_course_enrollments WHERE student_course_enrollments.course_offering_id = course_offerings.id) as student_course_enrollments_count')
             ->whereHas('course')
             ->whereHas('lecturer');
@@ -32,10 +32,8 @@ class AdminAttendanceController extends Controller
             });
         }
 
-        if ($request->filled('program_id')) {
-            $query->whereHas('targetPrograms', function ($q) use ($request) {
-                $q->where('program_id', $request->input('program_id'));
-            });
+        if ($request->filled('department_id')) {
+            $query->where('department_id', $request->input('department_id'));
         }
 
         if ($request->filled('semester')) {
@@ -47,9 +45,7 @@ class AdminAttendanceController extends Controller
         }
 
         if ($request->filled('generation')) {
-            $query->whereHas('targetPrograms', function ($q) use ($request) {
-                $q->where('generation', $request->input('generation'));
-            });
+            $query->where('generation', $request->input('generation'));
         }
 
         $courseOfferings = $query->orderBy('academic_year', 'desc')
@@ -57,10 +53,10 @@ class AdminAttendanceController extends Controller
             ->paginate(20)
             ->appends($request->query());
 
-        $programs = Program::orderBy('name_km')->get();
+        $departments = Department::orderBy('name_km')->get();
         $generations = Generation::where('is_active', true)->orderByDesc('name')->get();
 
-        return view('admin.attendance.index', compact('courseOfferings', 'programs', 'generations'));
+        return view('admin.attendance.index', compact('courseOfferings', 'departments', 'generations'));
     }
 
     public function show(CourseOffering $courseOffering)
@@ -68,7 +64,7 @@ class AdminAttendanceController extends Controller
         $courseOffering->load([
             'course',
             'lecturer',
-            'targetPrograms',
+            'department',
             'studentCourseEnrollments.student.studentProfile',
         ]);
 
@@ -125,7 +121,7 @@ class AdminAttendanceController extends Controller
         $courseOffering->load([
             'course',
             'lecturer',
-            'targetPrograms',
+            'department',
             'studentCourseEnrollments.student.studentProfile',
         ]);
 
@@ -178,7 +174,7 @@ class AdminAttendanceController extends Controller
 
     public function professorCheckins(Request $request)
     {
-        $query = AttendanceProfessor::with(['professor', 'courseOffering.course', 'courseOffering.targetPrograms']);
+        $query = AttendanceProfessor::with(['professor', 'courseOffering.course', 'courseOffering.department']);
 
         if ($request->filled('search')) {
             $search = $request->input('search');
@@ -247,7 +243,7 @@ class AdminAttendanceController extends Controller
             'day_type.required' => 'សូមជ្រើសរើសប្រភេទថ្ងៃ',
         ]);
 
-        $query = AttendanceProfessor::with(['professor', 'courseOffering.course', 'courseOffering.targetPrograms']);
+        $query = AttendanceProfessor::with(['professor', 'courseOffering.course', 'courseOffering.department']);
 
         if ($request->filled('search')) {
             $search = $request->input('search');
@@ -330,7 +326,7 @@ class AdminAttendanceController extends Controller
         $academicYear = $request->input('academic_year');
         $dayType = $request->input('day_type');
 
-        $query = AttendanceProfessor::with(['courseOffering.course', 'courseOffering.targetPrograms'])
+        $query = AttendanceProfessor::with(['courseOffering.course', 'courseOffering.department'])
             ->where('professor_id', $professorId);
 
         $query->whereHas('courseOffering', function ($q) use ($semester) {

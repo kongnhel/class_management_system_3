@@ -5,7 +5,6 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use App\Models\Department;
 use App\Models\Faculty;
-use App\Models\Program;
 use App\Models\User;
 use App\Services\StudentIdGeneratorService;
 use Illuminate\Http\Request;
@@ -26,22 +25,17 @@ class BulkImportController extends Controller
     {
         $faculties = Faculty::all();
         $departments = Department::all();
-        $programs = Program::all();
         $generations = \App\Models\Generation::where('is_active', true)->orderByDesc('name')->get();
 
-        return view('admin.import.index', compact('faculties', 'departments', 'programs', 'generations'));
+        return view('admin.import.index', compact('faculties', 'departments', 'generations'));
     }
 
-    /**
-     * Direct import — no preview step
-     */
     public function importUsers(Request $request)
     {
         $rules = [
             'import_file' => 'required|file|extensions:xlsx,xls,csv|max:10240',
             'role' => 'required|in:student,professor',
-            'program_id' => 'nullable|required_if:role,student|exists:programs,id',
-            'department_id' => 'nullable|required_if:role,professor|exists:departments,id',
+            'department_id' => 'nullable|required_if:role,student|exists:departments,id',
             'generation' => 'nullable|string',
         ];
 
@@ -63,7 +57,6 @@ class BulkImportController extends Controller
 
             $headers = $data->first()->map(fn ($h) => trim(str_replace(["\n", "\r"], '', strtolower($h))));
 
-            // Map Khmer template headers to English keys
             $headerMap = [
                 'ឈ្មោះ *' => 'name',
                 'ឈ្មោះ' => 'name',
@@ -74,7 +67,6 @@ class BulkImportController extends Controller
                 'លេខទូរស័ព្ទ' => 'phone',
                 'អាសយដ្ឋាន' => 'address',
                 'ថ្ងៃខែឆ្នាំកំណើត' => 'date_of_birth',
-                // Also support English headers
                 'name' => 'name',
                 'email' => 'email',
                 'full_name_km' => 'full_name_km',
@@ -98,12 +90,10 @@ class BulkImportController extends Controller
                 try {
                     $rowData = array_combine($mappedHeaders->toArray(), $row->toArray());
 
-                    // Skip empty rows
                     if (empty(array_filter($rowData))) {
                         continue;
                     }
 
-                    // Only name is required
                     if (empty($rowData['name'])) {
                         $errors[] = 'Row '.($index + 1).': ឈ្មោះមិនអាចទទេបាន';
                         $skipped++;
@@ -111,16 +101,13 @@ class BulkImportController extends Controller
                         continue;
                     }
 
-                    // Generate student_id_code first (for students with generation)
                     $studentIdCode = null;
                     if ($request->role === 'student' && $request->generation) {
-                        $studentIdCode = $this->studentIdGenerator->generate((int) $request->program_id, $request->generation);
+                        $studentIdCode = $this->studentIdGenerator->generate((int) $request->department_id, $request->generation);
                     }
 
-                    // Only use email from Excel — no auto-generation
                     $email = ! empty($rowData['email']) ? $rowData['email'] : null;
 
-                    // Check for duplicate email only if provided
                     if ($email && User::where('email', $email)->exists()) {
                         $errors[] = 'Row '.($index + 1).": អ៊ីម៉ែលមានរួចហើយ ({$email})";
                         $skipped++;
@@ -128,34 +115,28 @@ class BulkImportController extends Controller
                         continue;
                     }
 
-                    // Create user — only data from Excel, no password
                     $user = User::create([
                         'name' => $rowData['name'],
                         'email' => $email,
                         'role' => $request->role,
                         'password' => null,
                         'student_id_code' => $studentIdCode,
-                        'program_id' => $request->role === 'student' ? $request->program_id : null,
-                        'department_id' => $request->role === 'professor' ? $request->department_id : null,
+                        'department_id' => $request->department_id,
                         'generation' => $request->role === 'student' ? $request->generation : null,
                     ]);
 
-                    // Auto-enroll student in program and course offerings
                     if ($request->role === 'student' && $request->generation) {
-                        // Create student_program_enrollments record
-                        \App\Models\StudentProgramEnrollment::create([
+                        \App\Models\StudentDepartmentEnrollment::create([
                             'student_user_id' => $user->id,
-                            'program_id' => $request->program_id,
+                            'department_id' => $request->department_id,
                             'starting_year_level' => 1,
                             'enrollment_date' => now(),
                             'status' => 'active',
                         ]);
 
-                        // Auto-enroll in all matching course offerings for this program
-                        $matchingOfferings = \App\Models\CourseOffering::whereHas('targetPrograms', function ($q) use ($request) {
-                            $q->where('course_offering_program.program_id', $request->program_id)
-                                ->where('course_offering_program.generation', $request->generation);
-                        })->get();
+                        $matchingOfferings = \App\Models\CourseOffering::where('department_id', $request->department_id)
+                            ->where('generation', $request->generation)
+                            ->get();
 
                         foreach ($matchingOfferings as $offering) {
                             \App\Models\StudentCourseEnrollment::firstOrCreate([
@@ -169,7 +150,6 @@ class BulkImportController extends Controller
                         }
                     }
 
-                    // Normalize gender
                     $gender = strtolower($rowData['gender'] ?? '');
                     if (in_array($gender, ['ប្រុស', 'male'])) {
                         $gender = 'male';
@@ -179,7 +159,6 @@ class BulkImportController extends Controller
                         $gender = null;
                     }
 
-                    // Create profile
                     $profileData = [
                         'full_name_km' => ! empty($rowData['full_name_km']) ? $rowData['full_name_km'] : null,
                         'full_name_en' => ! empty($rowData['full_name_en']) ? $rowData['full_name_en'] : null,
@@ -250,9 +229,6 @@ class BulkImportController extends Controller
         }
     }
 
-    /**
-     * Download XLSX template
-     */
     public function downloadTemplate()
     {
         $fileName = 'import_template_'.date('Y-m-d').'.xlsx';

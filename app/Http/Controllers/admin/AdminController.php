@@ -9,7 +9,6 @@ use App\Models\Course;
 use App\Models\CourseOffering;
 use App\Models\Department;
 use App\Models\Faculty;
-use App\Models\Program;
 use App\Models\User;
 
 class AdminController extends Controller
@@ -24,7 +23,6 @@ class AdminController extends Controller
         $totalProfessors = User::where('role', 'professor')->count();
         $totalFaculties = Faculty::count();
         $totalDepartments = Department::count();
-        $totalPrograms = Program::count();
         $totalCourses = Course::count();
         $totalCourseOfferings = CourseOffering::whereHas('course')->count();
 
@@ -47,7 +45,6 @@ class AdminController extends Controller
             'totalProfessors',
             'totalFaculties',
             'totalDepartments',
-            'totalPrograms',
             'totalCourses',
             'totalCourseOfferings',
             'todayAttendanceCount',

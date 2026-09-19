@@ -43,7 +43,7 @@
                         </div>
                         <div>
                             <span class="text-gray-500">{{ __('កម្មវិធីសិក្សាបច្ចុប្បន្ន') }}:</span>
-                            <span class="font-medium text-gray-800">{{ $student->program->name_km ?? 'N/A' }}</span>
+                            <span class="font-medium text-gray-800">{{ $student->department->name_km ?? 'N/A' }}</span>
                         </div>
                         <div>
                             <span class="text-gray-500">{{ __('ជំនាន់') }}:</span>
@@ -53,7 +53,7 @@
                 </div>
 
                 {{-- Transition Form --}}
-                @if($transitionPrograms->isEmpty())
+                @if($transitionDepartments->isEmpty())
                     <div class="bg-yellow-50 border border-yellow-200 text-yellow-700 px-6 py-4 rounded-2xl mb-8">
                         <p>{{ __('មិនមានកម្មវិធីសិក្សាផ្លូវបន្តសម្រាប់សិស្សនេះទេ។ សូមពិនិត្យមើលថាកម្មវិធីសិក្សាបច្ចុប្បន្នមានកំណត់ផ្លូវបន្ត (pathway) ទៅកម្មវិធីសិក្សាបរិញ្ញាបត្រ។') }}</p>
                     </div>
@@ -62,16 +62,16 @@
                         @csrf
 
                         <div class="mb-6">
-                            <label for="bachelor_program_id" class="block text-sm font-semibold text-gray-700 mb-2">{{ __('ជ្រើសរើសកម្មវិធីសិក្សាបរិញ្ញាបត្រ') }}</label>
-                            <select id="bachelor_program_id" name="bachelor_program_id" class="form-select w-full rounded-xl border-gray-300 shadow-sm focus:ring-green-500 focus:border-green-500 transition duration-150 ease-in-out" required>
+                            <label for="bachelor_department_id" class="block text-sm font-semibold text-gray-700 mb-2">{{ __('ជ្រើសរើសកម្មវិធីសិក្សាបរិញ្ញាបត្រ') }}</label>
+                            <select id="bachelor_department_id" name="bachelor_department_id" class="form-select w-full rounded-xl border-gray-300 shadow-sm focus:ring-green-500 focus:border-green-500 transition duration-150 ease-in-out" required>
                                 <option value="">{{ __('ជ្រើសរើសកម្មវិធីសិក្សា') }}</option>
-                                @foreach ($transitionPrograms as $program)
-                                    <option value="{{ $program->id }}" {{ old('bachelor_program_id') == $program->id ? 'selected' : '' }}>
-                                        {{ $program->name_km }} - {{ $program->duration_years }} ឆ្នាំ
+                                @foreach ($transitionDepartments as $dept)
+                                    <option value="{{ $dept->id }}" {{ old('bachelor_department_id') == $dept->id ? 'selected' : '' }}>
+                                        {{ $dept->name_km }} - {{ $dept->duration_years }} ឆ្នាំ
                                     </option>
                                 @endforeach
                             </select>
-                            @error('bachelor_program_id')
+                            @error('bachelor_department_id')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>

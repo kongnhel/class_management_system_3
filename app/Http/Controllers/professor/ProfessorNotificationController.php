@@ -207,7 +207,7 @@ class ProfessorNotificationController extends Controller
             ->with([
                 'course',
                 'studentCourseEnrollments.student.studentProfile',
-                'studentCourseEnrollments.student.studentProgramEnrollments.program', //
+                'studentCourseEnrollments.student.studentDepartmentEnrollments.department',
             ])
             ->firstOrFail();
 

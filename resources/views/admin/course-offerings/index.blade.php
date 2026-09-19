@@ -73,7 +73,10 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-20 pb-12 relative z-10">
             {{-- Filter Card --}}
             <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-8">
-                <form action="{{ route('admin.manage-course-offerings') }}" method="GET" data-admin-realtime-filter class="space-y-4">
+                <form action="{{ route('admin.manage-course-offerings') }}" method="GET" data-admin-realtime-filter data-dept-filter-container class="space-y-4">
+                    <script type="application/json" data-dept-filter>
+                        {!! $departments->map(fn($d) => ['id' => $d->id, 'name' => $d->name_km, 'faculty_id' => $d->faculty_id])->toJson() !!}
+                    </script>
                     {{-- Row 1: Search --}}
                     <div>
                         <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('ស្វែងរកមុខវិជ្ជា / សាស្ត្រាចារ្យ') }}</label>
@@ -87,7 +90,7 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-4">
                         <div>
                             <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('មហាវិទ្យាល័យ') }}</label>
-                            <select name="faculty_id" id="faculty-filter" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm">
+                            <select name="faculty_id" id="faculty-filter" data-dept-faculty class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm">
                                 <option value="">{{ __('ទាំងអស់') }}</option>
                                 @foreach($faculties as $faculty)
                                     <option value="{{ $faculty->id }}" {{ request('faculty_id') == $faculty->id ? 'selected' : '' }}>{{ $faculty->name_km }}</option>
@@ -95,11 +98,11 @@
                             </select>
                         </div>
                         <div>
-                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('កម្មវិធីសិក្សា') }}</label>
-                            <select name="program_id" id="program-filter" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm">
+                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('នាយកដ្ឋាន') }}</label>
+                            <select name="department_id" id="department-filter" data-dept-department class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm">
                                 <option value="">{{ __('ទាំងអស់') }}</option>
-                                @foreach($programs as $program)
-                                    <option value="{{ $program->id }}" data-department-id="{{ $program->department_id }}" {{ request('program_id') == $program->id ? 'selected' : '' }}>{{ $program->name_km }}</option>
+                                @foreach($departments as $dept)
+                                    <option value="{{ $dept->id }}" {{ request('department_id') == $dept->id ? 'selected' : '' }}>{{ $dept->name_km }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -179,23 +182,27 @@
                             @foreach ($courseOfferings as $offering)
                                 @php
                                     $today = now()->startOfDay();
-                                    $isActive = $today->between($offering->start_date, $offering->end_date);
+                                    $status = match(true) {
+                                        $today->lt($offering->start_date) => 'upcoming',
+                                        $today->gt($offering->end_date) => 'expired',
+                                        default => 'active',
+                                    };
                                     $enrollmentCount = $offering->studentCourseEnrollments->count();
                                 @endphp
                                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-all duration-200 group">
                                     {{-- Header --}}
                                     <div class="flex items-start justify-between mb-4">
                                         <div class="space-y-2">
-                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold {{ $isActive ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-red-50 text-red-700 border border-red-200' }}">
-                                                <span class="w-1.5 h-1.5 rounded-full {{ $isActive ? 'bg-emerald-500' : 'bg-red-500' }}"></span>
-                                                {{ $isActive ? __('សកម្ម') : __('ផុតកំណត់') }}
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold {{ match($status) { 'active' => 'bg-emerald-50 text-emerald-700 border border-emerald-200', 'upcoming' => 'bg-amber-50 text-amber-700 border border-amber-200', default => 'bg-red-50 text-red-700 border border-red-200' } }}">
+                                                <span class="w-1.5 h-1.5 rounded-full {{ match($status) { 'active' => 'bg-emerald-500', 'upcoming' => 'bg-amber-500', default => 'bg-red-500' } }}"></span>
+                                                {{ match($status) { 'active' => __('សកម្ម'), 'upcoming' => __('មិនទាន់ចាប់ផ្តើម'), default => __('ផុតកំណត់') } }}
                                             </span>
                                             <div class="flex flex-wrap gap-1.5">
-                                                @foreach($offering->targetPrograms as $p)
+                                                @if($offering->department)
                                                     <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">
-                                                        {{ $p->name_km }} (G{{ $p->pivot->generation }})
+                                                        {{ $offering->department->name_km }} (G{{ $offering->generation }})
                                                     </span>
-                                                @endforeach
+                                                @endif
                                             </div>
                                         </div>
                                         <div class="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -287,7 +294,11 @@
                                         @foreach ($courseOfferings as $offering)
                                             @php
                                                 $today = now()->startOfDay();
-                                                $isActive = $today->between($offering->start_date, $offering->end_date);
+                                                $status = match(true) {
+                                                    $today->lt($offering->start_date) => 'upcoming',
+                                                    $today->gt($offering->end_date) => 'expired',
+                                                    default => 'active',
+                                                };
                                             @endphp
                                             <tr class="hover:bg-gray-50 transition-colors">
                                                 <td class="px-5 py-4">
@@ -301,11 +312,11 @@
                                                 </td>
                                                 <td class="px-5 py-4">
                                                     <div class="flex flex-wrap gap-1">
-                                                        @foreach($offering->targetPrograms as $p)
+                                                        @if($offering->department)
                                                             <span class="text-[10px] bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-md font-bold border border-emerald-100">
-                                                                {{ $p->name_km }} (G{{ $p->pivot->generation }})
+                                                                {{ $offering->department->name_km }} (G{{ $offering->generation }})
                                                             </span>
-                                                        @endforeach
+                                                        @endif
                                                     </div>
                                                 </td>
                                                 <td class="px-5 py-4 text-center">
@@ -323,9 +334,9 @@
                                                     @endforeach
                                                 </td>
                                                 <td class="px-5 py-4 text-center">
-                                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold {{ $isActive ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-red-50 text-red-700 border border-red-200' }}">
-                                                        <span class="w-1.5 h-1.5 rounded-full {{ $isActive ? 'bg-emerald-500' : 'bg-red-500' }}"></span>
-                                                        {{ $isActive ? __('សកម្ម') : __('ផុតកំណត់') }}
+                                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold {{ match($status) { 'active' => 'bg-emerald-50 text-emerald-700 border border-emerald-200', 'upcoming' => 'bg-amber-50 text-amber-700 border border-amber-200', default => 'bg-red-50 text-red-700 border border-red-200' } }}">
+                                                        <span class="w-1.5 h-1.5 rounded-full {{ match($status) { 'active' => 'bg-emerald-500', 'upcoming' => 'bg-amber-500', default => 'bg-red-500' } }}"></span>
+                                                        {{ match($status) { 'active' => __('សកម្ម'), 'upcoming' => __('មិនទាន់ចាប់ផ្តើម'), default => __('ផុតកំណត់') } }}
                                                     </span>
                                                 </td>
                                                 <td class="px-5 py-4 text-center">
@@ -372,14 +383,14 @@
             $weekdayRows = $weekdaySchedules->groupBy(fn($s) => \Carbon\Carbon::parse($s->start_time)->format('H:i') . '-' . \Carbon\Carbon::parse($s->end_time)->format('H:i'))->sortKeys();
             $weekendTimeSlots = $weekendSchedules->map(fn($s) => \Carbon\Carbon::parse($s->start_time)->format('H:i') . '-' . \Carbon\Carbon::parse($s->end_time)->format('H:i'))->unique()->sort();
 
-            $currentProgramName = __("ជំនាញ គ្រប់គ្រងបច្ចេកវិទ្យាព័ត៌មានវិទ្យា");
-            if(request('program_id')){
-                $prog = $programs->firstWhere('id', request('program_id'));
-                if($prog) $currentProgramName = $prog->name_km;
+            $currentDepartmentName = __("ជំនាញ គ្រប់គ្រងបច្ចេកវិទ្យាព័ត៌មានវិទ្យា");
+            if(request('department_id')){
+                $dept = $departments->firstWhere('id', request('department_id'));
+                if($dept) $currentDepartmentName = $dept->name_km;
             } elseif($courseOfferings->isNotEmpty()) {
                 $first = $courseOfferings->first();
-                if($first->targetPrograms->isNotEmpty()){
-                    $currentProgramName = $first->targetPrograms->first()->name_km;
+                if($first->department){
+                    $currentDepartmentName = $first->department->name_km;
                 }
             }
             $currentFacultyName = "";
@@ -388,9 +399,8 @@
                 if($fac) $currentFacultyName = $fac->name_km;
             } elseif($courseOfferings->isNotEmpty()) {
                 $first = $courseOfferings->first();
-                if($first->targetPrograms->isNotEmpty()){
-                    $prog = $first->targetPrograms->first();
-                    if($prog->department ?? null) $currentFacultyName = $prog->department->faculty->name_km ?? "";
+                if($first->department){
+                    if($first->department->faculty ?? null) $currentFacultyName = $first->department->faculty->name_km ?? "";
                 }
             }
             $generation = request('generation');
@@ -420,7 +430,7 @@
 
         <div class="table-wrapper">
             @if($weekdayRows->isNotEmpty())
-                <div style="text-align: left; font-weight: bold; font-family: 'Battambang'; text-decoration: underline; font-size: 10pt; margin-bottom: 5px;">{{ __('ជំនាញ') }} {{ $currentProgramName }} (ចន្ទ-សុក្រ)</div>
+                <div style="text-align: left; font-weight: bold; font-family: 'Battambang'; text-decoration: underline; font-size: 10pt; margin-bottom: 5px;">{{ __('ជំនាញ') }} {{ $currentDepartmentName }} (ចន្ទ-សុក្រ)</div>
                 <table class="matrix-table">
                     <thead>
                         <tr>
@@ -449,7 +459,7 @@
             @endif
 
             @if($weekendSchedules->isNotEmpty())
-                <div style="text-align: left; font-weight: bold; font-family: 'Battambang'; text-decoration: underline; font-size: 10pt; margin-bottom: 5px;">{{ __('ជំនាញ') }} {{ $currentProgramName }} (សៅរ៍-អាទិត្យ)</div>
+                <div style="text-align: left; font-weight: bold; font-family: 'Battambang'; text-decoration: underline; font-size: 10pt; margin-bottom: 5px;">{{ __('ជំនាញ') }} {{ $currentDepartmentName }} (សៅរ៍-អាទិត្យ)</div>
                 <table class="matrix-table">
                     <thead>
                         <tr>
@@ -542,48 +552,6 @@
     </div>
 
     <script>
-        // Faculty → Department mapping for cascading filter
-        const facultyDepartments = {
-            @foreach($faculties as $faculty)
-                {{ $faculty->id }}: [@foreach($faculty->departments as $dept) {{ $dept->id }}, @endforeach],
-            @endforeach
-        };
-
-        document.getElementById('faculty-filter').addEventListener('change', function() {
-            const facultyId = this.value;
-            const programSelect = document.getElementById('program-filter');
-            const currentProgram = programSelect.value;
-
-            if (!facultyId) {
-                // Show all programs
-                Array.from(programSelect.options).forEach(opt => {
-                    if (opt.value) opt.style.display = '';
-                });
-            } else {
-                const departmentIds = facultyDepartments[facultyId] || [];
-                Array.from(programSelect.options).forEach(opt => {
-                    if (!opt.value) return; // skip "All" option
-                    const deptId = parseInt(opt.dataset.departmentId);
-                    opt.style.display = departmentIds.includes(deptId) ? '' : 'none';
-                });
-                // Reset if selected program is not in this faculty
-                if (currentProgram) {
-                    const selectedOpt = programSelect.querySelector(`option[value="${currentProgram}"]`);
-                    if (selectedOpt && selectedOpt.style.display === 'none') {
-                        programSelect.value = '';
-                    }
-                }
-            }
-        });
-
-        // Trigger on page load if faculty is pre-selected
-        document.addEventListener('DOMContentLoaded', function() {
-            const facultyFilter = document.getElementById('faculty-filter');
-            if (facultyFilter.value) {
-                facultyFilter.dispatchEvent(new Event('change'));
-            }
-        });
-
         function openDeleteModal(id) {
             const form = document.getElementById('delete-form');
             form.action = '{{ route("admin.course-offerings.destroy", ":id") }}'.replace(':id', id);
@@ -639,20 +607,20 @@
         }
         function printOrExport(action) {
             var facEl = document.querySelector('select[name=faculty_id]');
-            var progEl = document.querySelector('select[name=program_id]');
+            var deptEl = document.querySelector('select[name=department_id]');
             var genEl = document.querySelector('select[name=generation]');
             var shiftEl = document.querySelector('select[name=shift]');
             var semEl = document.querySelector('select[name=semester]');
             var yearEl = document.querySelector('select[name=academic_year]');
             var lectEl = document.querySelector('select[name=lecturer_id]');
             var fac = facEl ? facEl.value : '';
-            var prog = progEl ? progEl.value : '';
+            var dept = deptEl ? deptEl.value : '';
             var gen = genEl ? genEl.value : '';
             var shift = shiftEl ? shiftEl.value : '';
             var sem = semEl ? semEl.value : '';
             var year = yearEl ? yearEl.value : '';
             var lect = lectEl ? lectEl.value : '';
-            if (!fac && !prog && !gen && !shift && !sem && !year && !lect) {
+            if (!fac && !dept && !gen && !shift && !sem && !year && !lect) {
                 showFilterAlert();
                 return;
             }

@@ -47,12 +47,12 @@ class UsersExport implements FromQuery, ShouldAutoSize, WithHeadings, WithMappin
                 $query->where('generation', $this->filters['generation']);
             }
 
-            if (! empty($this->filters['program_id'])) {
-                $query->where('program_id', $this->filters['program_id']);
+            if (! empty($this->filters['department_id'])) {
+                $query->where('department_id', $this->filters['department_id']);
             }
         }
 
-        return $query->with(['profile', 'studentProfile', 'program', 'department']);
+        return $query->with(['profile', 'studentProfile', 'department']);
     }
 
     public function headings(): array
@@ -76,8 +76,8 @@ class UsersExport implements FromQuery, ShouldAutoSize, WithHeadings, WithMappin
         $extraInfo = 'N/A';
         if ($user->role === 'student') {
             $gen = $user->generation ? "Gen {$user->generation}" : '';
-            $prog = $user->program->name_km ?? 'N/A';
-            $extraInfo = "$prog ($gen)";
+            $dept = $user->department->name_km ?? 'N/A';
+            $extraInfo = "$dept ($gen)";
         } elseif ($user->role === 'professor') {
             $extraInfo = $user->department->name_km ?? 'N/A';
         }

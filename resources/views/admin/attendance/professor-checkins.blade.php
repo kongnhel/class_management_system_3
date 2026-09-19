@@ -254,7 +254,7 @@
                                     @php
                                         $verifiedAt = \Carbon\Carbon::parse($checkin->verified_at);
                                         $courseName = $checkin->courseOffering?->course?->title_km ?? $checkin->courseOffering?->course?->title_en ?? 'N/A';
-                                        $generation = $checkin->courseOffering?->targetPrograms?->first()?->pivot?->generation ?? $checkin->courseOffering?->generation ?? '-';
+                                        $generation = $checkin->courseOffering?->generation ?? '-';
                                     @endphp
                                     <tr class="hover:bg-gray-50 transition">
                                         <td class="px-6 py-3.5 text-sm text-gray-400">{{ ($checkins->currentPage() - 1) * $checkins->perPage() + $index + 1 }}</td>

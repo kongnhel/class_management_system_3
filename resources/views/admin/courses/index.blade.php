@@ -47,7 +47,10 @@
                     </div>
 
                     {{-- Row 2: Filters --}}
-                    <form method="GET" action="{{ route('admin.manage-courses') }}" data-admin-realtime-filter class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                    <form method="GET" action="{{ route('admin.manage-courses') }}" data-admin-realtime-filter data-dept-filter-container class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                        <script type="application/json" data-dept-filter>
+                            {!! $allDepartments->map(fn($d) => ['id' => $d->id, 'name' => $d->name_km, 'faculty_id' => $d->faculty_id])->toJson() !!}
+                        </script>
                         <div class="relative flex-1 max-w-sm">
                             <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
@@ -55,7 +58,7 @@
                             <input type="text" name="search" value="{{ $search }}" placeholder="{{ __('ស្វែងរកមុខវិជ្ជា...') }}" autocomplete="off"
                                    class="pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full transition-all">
                         </div>
-                        <select name="faculty_id"
+                        <select name="faculty_id" data-dept-faculty
                             class="py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full sm:w-52 transition-all">
                             <option value="">{{ __('មហាវិទ្យាល័យទាំងអស់') }}</option>
                             @foreach($faculties as $f)
@@ -64,12 +67,12 @@
                                 </option>
                             @endforeach
                         </select>
-                        <select name="program_id" id="courseProgramFilter"
+                        <select name="department_id" id="courseDepartmentFilter" data-dept-department
                             class="py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full sm:w-56 transition-all">
-                            <option value="">{{ __('កម្មវិធីសិក្សាទាំងអស់') }}</option>
-                            @foreach($programs as $p)
-                                <option value="{{ $p->id }}" data-faculty-id="{{ $p->department->faculty_id ?? '' }}" {{ $programId == $p->id ? 'selected' : '' }}>
-                                    {{ $p->name_km }}
+                            <option value="">{{ __('នាយកដ្ឋានទាំងអស់') }}</option>
+                            @foreach($allDepartments as $d)
+                                <option value="{{ $d->id }}" {{ $departmentId == $d->id ? 'selected' : '' }}>
+                                    {{ $d->name_km }}
                                 </option>
                             @endforeach
                         </select>
@@ -84,18 +87,17 @@
                             $filteredGrouped = $coursesGrouped;
                         @endphp
 
-                        @forelse ($coursesGrouped as $programName => $generations)
-                            <div class="program-section">
+                        @forelse ($coursesGrouped as $departmentName => $courseList)
+                            <div class="department-section">
 
-                                {{-- Program Title --}}
+                                {{-- Department Title --}}
                                 <div class="flex items-center gap-4 mb-8">
                                     <div class="flex flex-col">
-                                        <h3 class="text-xl font-bold text-gray-800 tracking-tight">{{ $programName }}</h3>
+                                        <h3 class="text-xl font-bold text-gray-800 tracking-tight">{{ $departmentName }}</h3>
                                         <div class="h-1 w-12 bg-emerald-600 rounded-full mt-1"></div>
                                     </div>
                                 </div>
 
-                                @foreach ($generations as $generationName => $courseList)
                             @php
                                 $searchLower = strtolower(request('search', ''));
                                 $filteredCourses = $searchLower === '' ? $courseList : $courseList->filter(function ($course) use ($searchLower) {
@@ -111,9 +113,6 @@
 
                                     <div class="mb-12 last:mb-0">
                                         <div class="flex items-center gap-3 mb-6">
-                                            <span class="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-4 py-1.5 rounded-full uppercase tracking-widest border border-emerald-100">
-                                                {{ $generationName }}
-                                            </span>
                                             <span class="text-xs text-gray-400 font-bold">{{ $filteredCourses->count() }} {{ __('មុខវិជ្ជា') }}</span>
                                             <div class="flex-1 h-px bg-gradient-to-r from-gray-200 to-transparent"></div>
                                         </div>
@@ -141,9 +140,9 @@
                                                     <p class="text-xs text-gray-400 font-bold uppercase mb-3">{{ $course->title_en }}</p>
 
                                                     <div class="flex flex-wrap gap-1 mb-4">
-                                                        @foreach($course->programs as $p)
-                                                            <span class="text-[10px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded-lg font-bold">{{ $p->name_km }}</span>
-                                                        @endforeach
+                                                        @if($course->department)
+                                                            <span class="text-[10px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded-lg font-bold">{{ $course->department->name_km }}</span>
+                                                        @endif
                                                     </div>
 
                                                     <div class="flex items-center justify-between pt-4 border-t border-gray-100">
@@ -165,7 +164,7 @@
                                                 <thead class="bg-gray-50">
                                                     <tr>
                                                         <th class="px-6 py-4 text-left text-[11px] font-bold text-gray-500 uppercase">{{ __('ព័ត៌មានមុខវិជ្ជា') }}</th>
-                                                        <th class="px-6 py-4 text-left text-[11px] font-bold text-gray-500 uppercase">{{ __('កម្មវិធីសិក្សា') }}</th>
+                                                        <th class="px-6 py-4 text-left text-[11px] font-bold text-gray-500 uppercase">{{ __('ដេប៉ាតឺម៉ង់') }}</th>
                                                         <th class="px-6 py-4 text-center text-[11px] font-bold text-gray-500 uppercase">{{ __('ក្រេឌីត') }}</th>
                                                         <th class="px-6 py-4 text-right text-[11px] font-bold text-gray-500 uppercase">{{ __('សកម្មភាព') }}</th>
                                                     </tr>
@@ -179,9 +178,9 @@
                                                             </td>
                                                             <td class="px-6 py-4">
                                                                 <div class="flex flex-wrap gap-1">
-                                                                    @foreach($course->programs as $p)
-                                                                        <span class="text-[10px] bg-gray-100 px-2 py-0.5 rounded-lg text-gray-600 font-bold">{{ $p->name_km }}</span>
-                                                                    @endforeach
+                                                                    @if($course->department)
+                                                                        <span class="text-[10px] bg-gray-100 px-2 py-0.5 rounded-lg text-gray-600 font-bold">{{ $course->department->name_km }}</span>
+                                                                    @endif
                                                                 </div>
                                                             </td>
                                                             <td class="px-6 py-4 text-center">
@@ -207,7 +206,6 @@
                                             </table>
                                         </div>
                                     </div>
-                                @endforeach
                             </div>
                         @empty
                             {{-- Empty State --}}
@@ -283,30 +281,5 @@
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') closeDeleteModal();
         });
-
-        (function () {
-            var facultySelect = document.querySelector('select[name="faculty_id"]');
-            var programSelect = document.getElementById('courseProgramFilter');
-            if (!facultySelect || !programSelect) return;
-
-            function filterPrograms() {
-                var facultyId = facultySelect.value;
-                var options = programSelect.querySelectorAll('option[value]');
-                var selectedStillVisible = false;
-
-                options.forEach(function (opt) {
-                    if (opt.value === '') return;
-                    var match = !facultyId || opt.dataset.facultyId === facultyId;
-                    opt.hidden = !match;
-                    opt.disabled = !match;
-                    if (match && opt.value === programSelect.value) selectedStillVisible = true;
-                });
-
-                if (!selectedStillVisible) programSelect.value = '';
-            }
-
-            facultySelect.addEventListener('change', filterPrograms);
-            filterPrograms();
-        })();
     </script>
 </x-app-layout>

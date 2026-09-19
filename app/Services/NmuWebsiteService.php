@@ -3,25 +3,18 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
 class NmuWebsiteService
 {
-    private const BASE_URL = 'https://nmu.edu.kh';
-
     public function getUniversityInfo(): string
     {
-        return Cache::remember('nmu_website_info', 3600, function () {
-            return $this->fetchUniversityInfo();
-        });
+        return Cache::remember('nmu_website_info', 3600, fn () => $this->getStaticInfo());
     }
 
     public function getLatestNews(int $limit = 5): string
     {
-        return Cache::remember("nmu_news_{$limit}", 3600, function () use ($limit) {
-            return $this->fetchNews($limit);
-        });
+        return Cache::remember("nmu_news_{$limit}", 3600, fn () => $this->getStaticNews($limit));
     }
 
     public function searchNmuData(string $query): string
@@ -62,104 +55,58 @@ class NmuWebsiteService
         return $result;
     }
 
-    protected function fetchUniversityInfo(): string
+    protected function getStaticInfo(): string
     {
-        try {
-            $response = Http::timeout(15)->get(self::BASE_URL);
-            if ($response->failed()) {
-                return $this->getFallbackInfo();
-            }
-
-            $html = $response->body();
-            $info = "=== NMU WEBSITE INFO ===\n";
-            $info .= "Name: សាកលវិទ្យាល័យជាតិមានជ័យ (National Meanchey University)\n";
-            $info .= "Short: NMU\n";
-            $info .= "Motto: ពុទ្ធិ សីលធម៌ នវានុវត្តន៍\n";
-            $info .= "Address: ផ្លូវជាតិលេខ៥ សង្កាត់ទឹកថ្លា ខេត្តបន្ទាយមាជ័យ\n";
-            $info .= "Phone: 017868626, 081 712 752, 088 999 7870\n";
-            $info .= "Email: info@nmu.edu.kh, ir@nmu.edu.kh\n";
-            $info .= "Website: https://nmu.edu.kh\n";
-            $info .= "Facebook: https://web.facebook.com/nmu.edu.kh\n";
-            $info .= "YouTube: https://www.youtube.com/@nmu-nationalmeancheyuniver5395\n";
-            $info .= "\n";
-
-            $info .= "=== FACULTIES ===\n";
-            $info .= "1. មហាវិទ្យាល័យកសិកម្ម និងកែច្នៃអាហារ (Faculty of Agriculture and Food Processing)\n";
-            $info .= "2. មហាវិទ្យាល័យវិទ្យាសាស្ត្រនិងបច្ចេកវិទ្យា (Faculty of Science and Technology)\n";
-            $info .= "3. មហាវិទ្យាល័យសិល្បៈមនុស្សសាស្ត្រ និងភាសា (Faculty of Arts, Humanities and Languages)\n";
-            $info .= "4. មហាវិទ្យាល័យគ្រប់គ្រងពាណិជ្ជកម្ម និងទេសចរណ៍ (Faculty of Business Management and Tourism)\n";
-            $info .= "5. មហាវិទ្យាល័យសង្គមសាស្ត្រ និងអភិវឌ្ឍន៍សហគមន៍ (Faculty of Social Sciences and Community Development)\n";
-            $info .= "6. សាលាក្រោយបរិញ្ញាបត្រ (Postgraduate School)\n";
-            $info .= "\n";
-
-            $info .= "=== VISION ===\n";
-            $info .= "សាកលវិទ្យាល័យជាតិមានជ័យ ជាគ្រឹះស្ថានសាធារណៈរបស់រដ្ឋ នៅខេត្តបន្ទាយមានជ័យ ដែលមានបណ្តុះបណ្តាល អប់រំ ស្រាវជ្រាវ ប្រកបដោយឧត្តមភាពឆ្លើយតបតម្រូវការទីផ្សារការងារក្នុងប្រទេស និងតំបន់។\n";
-            $info .= "Vision: To be a public institution in Banteay Meanchey province that trains, educates, and researches with excellence, responding to national and regional labor market needs.\n";
-            $info .= "\n";
-
-            $info .= "=== TRAINING LEVELS ===\n";
-            $info .= "- Bachelor Degree (បរិញ្ញាបត្រ)\n";
-            $info .= "- Associate Degree (បរិញ្ញាបត្ររង)\n";
-            $info .= "- Professional Courses (វគ្គជំនាញ)\n";
-
-            return $info;
-        } catch (\Exception $e) {
-            return $this->getFallbackInfo();
-        }
-    }
-
-    protected function fetchNews(int $limit): string
-    {
-        try {
-            $response = Http::timeout(15)->get(self::BASE_URL);
-            if ($response->failed()) {
-                return 'Unable to fetch news from NMU website.';
-            }
-
-            $html = $response->body();
-            $news = "=== RECENT NMU NEWS ===\n";
-
-            $recentNews = [
-                '2026-06-08' => 'NMU សហការជាមួយ Davao Del Sur State College (DSSC) បិទវគ្គកម្មវិធី COIL Global Web Design - កម្មវិធីសហការអន្តរជាតិដើម្បីបង្កើនបទពិសោធន៍សិក្សារវាងនិស្សិតកម្ពុជានិងហ្វីលីពីនក្នុងវិស័យបច្ចេកវិទ្យា',
-                '2026-06-08' => 'NMU សហការរៀបចំវគ្គបណ្តុះបណ្តាលស្តីពី «មូលដ្ឋានគ្រឹះបច្ចេកវិទ្យាឌីជីថល សុវត្ថិភាពសាយប័រ និងការប្រើប្រាស់ AI»',
-                '2026-05-06' => 'វិទ្យាល័យជាតិមានជ័យ បានរៀបចំកិច្ចប្រជុំបូកសរុបការងារប្រចាំត្រីមាសទី១ ឆ្នាំ២០២៦',
-                '2026-04-24' => 'សាកលវិទ្យាធិការនៃសាកលវិទ្យាល័យជាតិមានជ័យ អញ្ជើញចូលរួមជាអធិបតីនៃកម្មវិធីប្រគល់ថវិកាអាហារូបករណ៍ដល់និស្សិតឆ្នើម និងនិស្សិតដែលបានយកចិត្តទុកដាក់ប្រឹងប្រែងរៀនសូត្រជំនាញភាសាកូរ៉េ',
-                '2026-04-10' => 'កម្មវិធីទទួលបដិសណ្ឋារកិច្ចសិស្សថ្នាក់ទី១២ នៃវិទ្យាល័យកូប មកទស្សនកិច្ចសិក្សានៅសាកលវិទ្យាល័យជាតិមានជ័យ',
-            ];
-
-            $count = 0;
-            foreach ($recentNews as $date => $title) {
-                if ($count >= $limit) {
-                    break;
-                }
-                $news .= "- [{$date}] {$title}\n";
-                $count++;
-            }
-
-            return $news;
-        } catch (\Exception $e) {
-            return 'Unable to fetch news from NMU website.';
-        }
-    }
-
-    protected function getFallbackInfo(): string
-    {
-        return '=== NMU WEBSITE INFO (CACHED) ===
+        return '=== NMU WEBSITE INFO ===
 Name: សាកលវិទ្យាល័យជាតិមានជ័យ (National Meanchey University)
+Short: NMU
+Motto: ពុទ្ធិ សីលធម៌ នវានុវត្តន៍
 Address: ផ្លូវជាតិលេខ៥ សង្កាត់ទឹកថ្លា ខេត្តបន្ទាយមាជ័យ
-Phone: 017868626
-Email: info@nmu.edu.kh
+Phone: 017868626, 081 712 752, 088 999 7870
+Email: info@nmu.edu.kh, ir@nmu.edu.kh
 Website: https://nmu.edu.kh
+Facebook: https://web.facebook.com/nmu.edu.kh
+YouTube: https://www.youtube.com/@nmu-nationalmeancheyuniver5395
 
-FACULTIES:
-1. មហាវិទ្យាល័យកសិកម្ម និងកែច្នៃអាហារ
-2. មហាវិទ្យាល័យវិទ្យាសាស្ត្រនិងបច្ចេកវិទ្យា
-3. មហាវិទ្យាល័យសិល្បៈមនុស្សសាស្ត្រ និងភាសា
-4. មហាវិទ្យាល័យគ្រប់គ្រងពាណិជ្ជកម្ម និងទេសចរណ៍
-5. មហាវិទ្យាល័យសង្គមសាស្ត្រ និងអភិវឌ្ឍន៍សហគមន៍
-6. សាលាក្រោយបរិញ្ញាបត្រ
+=== FACULTIES ===
+1. មហាវិទ្យាល័យកសិកម្ម និងកែច្នៃអាហារ (Faculty of Agriculture and Food Processing)
+2. មហាវិទ្យាល័យវិទ្យាសាស្ត្រនិងបច្ចេកវិទ្យា (Faculty of Science and Technology)
+3. មហាវិទ្យាល័យសិល្បៈមនុស្សសាស្ត្រ និងភាសា (Faculty of Arts, Humanities and Languages)
+4. មហាវិទ្យាល័យគ្រប់គ្រងពាណិជ្ជកម្ម និងទេសចរណ៍ (Faculty of Business Management and Tourism)
+5. មហាវិទ្យាល័យសង្គមសាស្ត្រ និងអភិវឌ្ឍន៍សហគមន៍ (Faculty of Social Sciences and Community Development)
+6. សាលាក្រោយបរិញ្ញាបត្រ (Postgraduate School)
 
-VISION: To be a public institution that trains, educates, and researches with excellence, responding to national and regional labor market needs.
-';
+=== VISION ===
+សាកលវិទ្យាល័យជាតិមានជ័យ ជាគ្រឹះស្ថានសាធារណៈរបស់រដ្ឋ នៅខេត្តបន្ទាយមានជ័យ ដែលមានបណ្តុះបណ្តាល អប់រំ ស្រាវជ្រាវ ប្រកបដោយឧត្តមភាពឆ្លើយតបតម្រូវការទីផ្សារការងារក្នុងប្រទេស និងតំបន់។
+Vision: To be a public institution in Banteay Meanchey province that trains, educates, and researches with excellence, responding to national and regional labor market needs.
+
+=== TRAINING LEVELS ===
+- Bachelor Degree (បរិញ្ញាបត្រ)
+- Associate Degree (បរិញ្ញាបត្ររង)
+- Professional Courses (វគ្គជំនាញ)';
+    }
+
+    protected function getStaticNews(int $limit): string
+    {
+        $news = "=== RECENT NMU NEWS ===\n";
+
+        $recentNews = [
+            '2026-06-08' => 'NMU សហការជាមួយ Davao Del Sur State College (DSSC) បិទវគ្គកម្មវិធី COIL Global Web Design - កម្មវិធីសហការអន្តរជាតិដើម្បីបង្កើនបទពិសោធន៍សិក្សារវាងនិស្សិតកម្ពុជានិងហ្វីលីពីនក្នុងវិស័យបច្ចេកវិទ្យា',
+            '2026-06-08' => 'NMU សហការរៀបចំវគ្គបណ្តុះបណ្តាលស្តីពី «មូលដ្ឋានគ្រឹះបច្ចេកវិទ្យាឌីជីថល សុវត្ថិភាពសាយប័រ និងការប្រើប្រាស់ AI»',
+            '2026-05-06' => 'វិទ្យាល័យជាតិមានជ័យ បានរៀបចំកិច្ចប្រជុំបូកសរុបការងារប្រចាំត្រីមាសទី១ ឆ្នាំ២០២៦',
+            '2026-04-24' => 'សាកលវិទ្យាធិការនៃសាកលវិទ្យាល័យជាតិមានជ័យ អញ្ជើញចូលរួមជាអធិបតីនៃកម្មវិធីប្រគល់ថវិកាអាហារូបករណ៍ដល់និស្សិតឆ្នើម និងនិស្សិតដែលបានយកចិត្តទុកដាក់ប្រឹងប្រែងរៀនសូត្រជំនាញភាសាកូរ៉េ',
+            '2026-04-10' => 'កម្មវិធីទទួលបដិសណ្ឋារកិច្ចសិស្សថ្នាក់ទី១២ នៃវិទ្យាល័យកូប មកទស្សនកិច្ចសិក្សានៅសាកលវិទ្យាល័យជាតិមានជ័យ',
+        ];
+
+        $count = 0;
+        foreach ($recentNews as $date => $title) {
+            if ($count >= $limit) {
+                break;
+            }
+            $news .= "- [{$date}] {$title}\n";
+            $count++;
+        }
+
+        return $news;
     }
 }

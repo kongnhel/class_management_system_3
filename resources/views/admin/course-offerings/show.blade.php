@@ -3,7 +3,11 @@
         {{-- Header --}}
         @php
             $today = now()->startOfDay();
-            $isActive = $today->between($courseOffering->start_date, $courseOffering->end_date);
+            $status = match(true) {
+                $today->lt($courseOffering->start_date) => 'upcoming',
+                $today->gt($courseOffering->end_date) => 'expired',
+                default => 'active',
+            };
             $enrollmentCount = $courseOffering->studentCourseEnrollments->count();
         @endphp
         <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white pb-24 pt-10">
@@ -20,9 +24,9 @@
                             <div>
                                 <div class="flex items-center gap-2 mb-1">
                                     <h2 class="text-3xl font-bold tracking-tight">{{ $courseOffering->course->title_km ?? $courseOffering->course->title_en }}</h2>
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold {{ $isActive ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-red-500/20 text-red-300 border border-red-500/30' }}">
-                                        <span class="w-1.5 h-1.5 rounded-full {{ $isActive ? 'bg-emerald-400' : 'bg-red-400' }}"></span>
-                                        {{ $isActive ? __('សកម្ម') : __('ផុតកំណត់') }}
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold {{ match($status) { 'active' => 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30', 'upcoming' => 'bg-amber-500/20 text-amber-300 border border-amber-500/30', default => 'bg-red-500/20 text-red-300 border border-red-500/30' } }}">
+                                        <span class="w-1.5 h-1.5 rounded-full {{ match($status) { 'active' => 'bg-emerald-400', 'upcoming' => 'bg-amber-400', default => 'bg-red-400' } }}"></span>
+                                        {{ match($status) { 'active' => __('សកម្ម'), 'upcoming' => __('មិនទាន់ចាប់ផ្តើម'), default => __('ផុតកំណត់') } }}
                                     </span>
                                 </div>
                                 <p class="text-slate-400 text-sm">{{ $courseOffering->semester }} / {{ $courseOffering->academic_year }}</p>
@@ -293,7 +297,7 @@
                     </div>
                 </div>
 
-                {{-- Right Column: Lecturer + Programs + Schedules --}}
+                {{-- Right Column: Lecturer + Department & Generation + Schedules --}}
                 <div class="space-y-6">
                     {{-- Lecturer --}}
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
@@ -321,23 +325,23 @@
                         </div>
                     </div>
 
-                    {{-- Target Programs --}}
+                    {{-- Department & Generation --}}
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                         <h3 class="text-lg font-bold text-gray-900 mb-5 flex items-center gap-2">
                             <div class="w-8 h-8 rounded-xl bg-amber-50 flex items-center justify-center">
                                 <i class="fas fa-graduation-cap text-amber-500 text-sm"></i>
                             </div>
-                            {{ __('ជំនាញដែលគោលដៅ') }}
+                            {{ __('នាយកដ្ឋាន និងជំនាន់') }}
                         </h3>
                         <div class="space-y-2">
-                            @forelse($courseOffering->targetPrograms as $program)
+                            @if($courseOffering->department)
                             <div class="flex items-center justify-between bg-emerald-50 p-3 rounded-xl border border-emerald-100">
-                                <span class="font-semibold text-emerald-800 text-sm">{{ $program->name_km }}</span>
-                                <span class="text-xs bg-emerald-200 text-emerald-800 px-2.5 py-0.5 rounded-lg font-bold">G{{ $program->pivot->generation }}</span>
+                                <span class="font-semibold text-emerald-800 text-sm">{{ $courseOffering->department->name_km }}</span>
+                                <span class="text-xs bg-emerald-200 text-emerald-800 px-2.5 py-0.5 rounded-lg font-bold">G{{ $courseOffering->generation }}</span>
                             </div>
-                            @empty
-                            <p class="text-gray-400 text-sm italic text-center py-4">{{ __('មិនទាន់មានជំនាញ') }}</p>
-                            @endforelse
+                            @else
+                            <p class="text-gray-400 text-sm italic text-center py-4">{{ __('មិនទាន់មាននាយកដ្ឋាន') }}</p>
+                            @endif
                         </div>
                     </div>
 

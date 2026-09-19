@@ -14,7 +14,7 @@ class AnnouncementController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Announcement::with('poster', 'courseOffering.course', 'courseOffering.program');
+        $query = Announcement::with('poster', 'courseOffering.course', 'courseOffering.department');
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -75,7 +75,7 @@ class AnnouncementController extends Controller
 
     public function edit(Announcement $announcement)
     {
-        $courseOfferings = CourseOffering::with('course', 'program')->whereHas('course')->get();
+        $courseOfferings = CourseOffering::with('course', 'department')->whereHas('course')->get();
         $role = ['all', 'student', 'professor', 'admin'];
 
         return view('admin.announcements.edit', compact('announcement', 'courseOfferings', 'role'));

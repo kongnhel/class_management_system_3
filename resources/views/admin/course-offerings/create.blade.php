@@ -41,8 +41,12 @@
             </div>
             @endif
 
-            <form method="POST" action="{{ route('admin.store-course-offering') }}" class="space-y-6">
+            <form method="POST" action="{{ route('admin.store-course-offering') }}" class="space-y-6" data-dept-filter-container>
                 @csrf
+
+                <script type="application/json" data-dept-filter>
+                    {!! $departments->map(fn($d) => ['id' => $d->id, 'name' => $d->name_km, 'faculty_id' => $d->faculty_id])->toJson() !!}
+                </script>
 
                 {{-- Section 1: Basic Info --}}
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
@@ -52,56 +56,71 @@
                         </div>
                         <div>
                             <h3 class="text-lg font-bold text-gray-900">{{ __('ព័ត៌មានមូលដ្ឋាន') }}</h3>
-                            <p class="text-xs text-gray-500">{{ __('ជ្រើសរើសកម្មវិធីសិក្សា និងមុខវិជ្ជា') }}</p>
+                            <p class="text-xs text-gray-500">{{ __('ជ្រើសរើសនាយកដ្ឋាន ជំនាន់ និងមុខវិជ្ជា') }}</p>
                         </div>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        {{-- Dropdown 1: Program + Generation --}}
+                        {{-- Faculty --}}
                         <div>
-                            <label for="program_gen_select" class="block text-sm font-bold text-gray-700 mb-1.5">
-                                {{ __('កម្មវិធីសិក្សា និងជំនាន់') }} <span class="text-red-500">*</span>
+                            <label for="faculty_id" class="block text-sm font-bold text-gray-700 mb-1.5">
+                                {{ __('មហាវិទ្យាល័យ') }} <span class="text-red-500">*</span>
                             </label>
-                            <select id="program_gen_select" class="w-full min-w-0 rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm px-4 py-2.5 bg-gray-50">
-                                <option value="">{{ __('ជ្រើសរើសកម្មវិធីសិក្សា និងជំនាន់') }}</option>
+                            <select id="faculty_id" data-dept-faculty class="w-full min-w-0 rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm px-4 py-2.5 bg-gray-50" required>
+                                <option value="">{{ __('ជ្រើសរើសមហាវិទ្យាល័យ') }}</option>
+                                @foreach($faculties as $faculty)
+                                    <option value="{{ $faculty->id }}" {{ old('faculty_id') == $faculty->id ? 'selected' : '' }}>{{ $faculty->name_km }}</option>
+                                @endforeach
                             </select>
                         </div>
 
-                        {{-- Dropdown 2: Course (disabled until program+gen is selected) --}}
+                        {{-- Generation --}}
+                        <div>
+                            <label for="generation" class="block text-sm font-bold text-gray-700 mb-1.5">
+                                {{ __('ជំនាន់') }} <span class="text-red-500">*</span>
+                            </label>
+                            <select id="generation" name="generation" required class="w-full min-w-0 rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm px-4 py-2.5 bg-gray-50">
+                                <option value="">-- {{ __('ជ្រើសរើសជំនាន់') }} --</option>
+                                @foreach($generations as $gen)
+                                    <option value="{{ $gen->name }}" {{ old('generation') == $gen->name ? 'selected' : '' }}>G{{ $gen->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        {{-- Department --}}
+                        <div>
+                            <label for="department_id" class="block text-sm font-bold text-gray-700 mb-1.5">
+                                {{ __('នាយកដ្ឋាន') }} <span class="text-red-500">*</span>
+                            </label>
+                            <select id="department_id" name="department_id" data-dept-department class="w-full min-w-0 rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm px-4 py-2.5 bg-gray-50" required>
+                                <option value="">{{ __('ជ្រើសរើសនាយកដ្ឋាន') }}</option>
+                                @foreach($departments as $dept)
+                                    <option value="{{ $dept->id }}" data-faculty-id="{{ $dept->faculty_id }}" {{ old('department_id') == $dept->id ? 'selected' : '' }}>{{ $dept->name_km }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        {{-- Course --}}
                         <div>
                             <label for="course_id" class="block text-sm font-bold text-gray-700 mb-1.5">
                                 {{ __('មុខវិជ្ជា') }} <span class="text-red-500">*</span>
                             </label>
-                            <select id="course_id" name="course_id" disabled class="w-full min-w-0 rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm px-4 py-2.5 bg-gray-100 text-gray-400 cursor-not-allowed" required>
-                                <option value="">{{ __('សូមជ្រើសរើសកម្មវិធីសិក្សាមុន') }}</option>
+                            <select id="course_id" name="course_id" class="w-full min-w-0 rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm px-4 py-2.5 bg-gray-50" required>
+                                <option value="">{{ __('ជ្រើសរើសមុខវិជ្ជា') }}</option>
+                                @foreach($courses as $course)
+                                    <option value="{{ $course->id }}" data-department-id="{{ $course->department_id }}" {{ old('course_id') == $course->id ? 'selected' : '' }}>
+                                        {{ $course->title_km }} ({{ $course->title_en }})
+                                    </option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
                 </div>
 
-                {{-- Section 2: Target Programs --}}
+                {{-- Section 2: Offering Details --}}
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                     <div class="flex items-center gap-3 mb-6">
                         <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
                             <span class="text-emerald-600 font-bold text-sm">2</span>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-bold text-gray-900">{{ __('កម្មវិធីសិក្សា និងជំនាន់') }}</h3>
-                            <p class="text-xs text-gray-500">{{ __('កំណត់ជំនាញ និងជំនាន់ដែលគោលដៅ') }}</p>
-                        </div>
-                    </div>
-                    <div id="programs-container" class="space-y-3">
-                        <div id="program-placeholder" class="text-center py-8 text-gray-400 rounded-xl border-2 border-dashed border-gray-200">
-                            <i class="fas fa-graduation-cap text-3xl mb-3 block text-gray-300"></i>
-                            <p class="text-sm italic">{{ __('សូមជ្រើសរើសមុខវិជ្ជាដើម្បីបង្ហាញកម្មវិធីសិក្សា និងជំនាន់ដោយស្វ័យប្រវត្តិ') }}</p>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- Section 3: Offering Details --}}
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
-                            <span class="text-emerald-600 font-bold text-sm">3</span>
                         </div>
                         <div>
                             <h3 class="text-lg font-bold text-gray-900">{{ __('ព័ត៌មានការផ្តល់ជូន') }}</h3>
@@ -156,7 +175,7 @@
                     </div>
                 </div>
 
-                {{-- Section 4: Schedule --}}
+                {{-- Section 3: Schedule --}}
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                     <div class="flex items-center justify-between mb-6">
                         <div class="flex items-center gap-3">
@@ -194,159 +213,50 @@
         document.addEventListener('DOMContentLoaded', function() {
 
             // ──────────────────────────────────────────────
-            //  1. Build data structures from Blade
+            //  1. Department → Course cascading filter
             // ──────────────────────────────────────────────
-            //
-            //  courseDetails:  { courseId: { programs: [...], generation: N } }
-            //  programGenGroups: { "programId-generation": { label, programId, generation, courses: [] } }
-            //
-            const courseDetails = {};
-            const programGenGroups = {};
-            const coursesRaw = {!! json_encode($courses->map(fn($c) => [
-                'id' => $c->id,
-                'title_km' => $c->title_km,
-                'title_en' => $c->title_en,
-                'generation' => $c->generation,
-                'programs' => $c->programs->map(fn($p) => ['id' => $p->id, 'name_km' => $p->name_km, 'name_en' => $p->name_en]),
-            ])) !!};
-
-            coursesRaw.forEach(function(course) {
-                // Store course details for later lookup
-                courseDetails[course.id] = {
-                    programs: course.programs,
-                    generation: course.generation
-                };
-
-                // Group by each program this course belongs to + its generation
-                course.programs.forEach(function(prog) {
-                    const key = prog.id + '-' + course.generation;
-                    if (!programGenGroups[key]) {
-                        programGenGroups[key] = {
-                            label: (prog.name_km || prog.name_en) + ' — {{ __("ជំនាន់ទី") }} ' + course.generation,
-                            programId: prog.id,
-                            programName: prog.name_km || prog.name_en,
-                            generation: course.generation,
-                            courses: []
-                        };
-                    }
-                    programGenGroups[key].courses.push({
-                        id: course.id,
-                        title_km: course.title_km,
-                        title_en: course.title_en
-                    });
-                });
-            });
-
-            // ──────────────────────────────────────────────
-            //  2. Populate Dropdown 1 (Program + Generation)
-            // ──────────────────────────────────────────────
-            const programGenSelect = document.getElementById('program_gen_select');
+            const departmentSelect = document.getElementById('department_id');
             const courseSelect = document.getElementById('course_id');
-            const programsContainer = document.getElementById('programs-container');
 
-            // Sort groups by program name then generation
-            const sortedKeys = Object.keys(programGenGroups).sort(function(a, b) {
-                const ga = programGenGroups[a], gb = programGenGroups[b];
-                if (ga.programName === gb.programName) return gb.generation - ga.generation;
-                return ga.programName.localeCompare(gb.programName);
-            });
-
-            sortedKeys.forEach(function(key) {
-                const group = programGenGroups[key];
-                const opt = document.createElement('option');
-                opt.value = key;
-                opt.textContent = group.label + ' (' + group.courses.length + ' ' + '{{ __("មុខវិជ្ជា") }}' + ')';
-                programGenSelect.appendChild(opt);
-            });
-
-            // ──────────────────────────────────────────────
-            //  3. Dropdown 1 → Dropdown 2 (chained)
-            // ──────────────────────────────────────────────
-            programGenSelect.addEventListener('change', function() {
-                const key = this.value;
-
-                // Reset course dropdown
-                courseSelect.innerHTML = '<option value="">{{ __("ជ្រើសរើសមុខវិជ្ជា") }}</option>';
-                courseSelect.value = '';
-
-                // Reset programs container
-                programsContainer.innerHTML =
-                    '<div id="program-placeholder" class="text-center py-8 text-gray-400 rounded-xl border-2 border-dashed border-gray-200">' +
-                    '<i class="fas fa-graduation-cap text-3xl mb-3 block text-gray-300"></i>' +
-                    '<p class="text-sm italic">{{ __("សូមជ្រើសរើសមុខវិជ្ជាដើម្បីបង្ហាញកម្មវិធីសិក្សា និងជំនាន់ដោយស្វ័យប្រវត្តិ") }}</p>' +
-                    '</div>';
-
-                if (!key) {
-                    // Disable course select
-                    courseSelect.disabled = true;
-                    courseSelect.classList.add('bg-gray-100', 'text-gray-400', 'cursor-not-allowed');
-                    courseSelect.classList.remove('bg-white');
-                    courseSelect.querySelector('option').textContent = '{{ __("សូមជ្រើសរើសកម្មវិធីសិក្សាមុន") }}';
-                    return;
-                }
-
-                // Enable course select
-                courseSelect.disabled = false;
-                courseSelect.classList.remove('bg-gray-100', 'text-gray-400', 'cursor-not-allowed');
-                courseSelect.classList.add('bg-white');
-
-                // Populate courses for this program+generation
-                const group = programGenGroups[key];
-                group.courses.forEach(function(c) {
-                    const opt = document.createElement('option');
-                    opt.value = c.id;
-                    opt.textContent = (c.title_km || c.title_en);
-                    courseSelect.appendChild(opt);
+            const allCourseOptions = [];
+            Array.from(courseSelect.options).forEach(opt => {
+                allCourseOptions.push({
+                    value: opt.value,
+                    text: opt.textContent.trim(),
+                    departmentId: opt.dataset.departmentId || ''
                 });
             });
 
-            // ──────────────────────────────────────────────
-            //  4. Dropdown 2 → Target Programs section
-            // ──────────────────────────────────────────────
-            courseSelect.addEventListener('change', function() {
-                if (!this.value) {
-                    programsContainer.innerHTML =
-                        '<div id="program-placeholder" class="text-center py-8 text-gray-400 rounded-xl border-2 border-dashed border-gray-200">' +
-                        '<i class="fas fa-graduation-cap text-3xl mb-3 block text-gray-300"></i>' +
-                        '<p class="text-sm italic">{{ __("សូមជ្រើសរើសមុខវិជ្ជាដើម្បីបង្ហាញកម្មវិធីសិក្សា និងជំនាន់ដោយស្វ័យប្រវត្តិ") }}</p>' +
-                        '</div>';
-                    return;
-                }
-
-                const course = courseDetails[this.value];
-                const programsData = course.programs || [];
-                const courseGen = course.generation || '';
-
-                if (programsData.length === 0) {
-                    programsContainer.innerHTML =
-                        '<div class="text-center py-6 text-gray-400 rounded-xl border-2 border-dashed border-gray-200">' +
-                        '<p class="text-sm">{{ __("មិនមានកម្មវិធីសិក្សាសម្រាប់មុខវិជ្ជានេះទេ") }}</p></div>';
-                    return;
-                }
-
-                programsContainer.innerHTML = '';
-                programsData.forEach(function(prog, index) {
-                    const row = document.createElement('div');
-                    row.className = 'flex items-center gap-3 bg-gray-50 p-4 rounded-xl border border-gray-200';
-                    row.innerHTML =
-                        '<div class="flex-grow grid grid-cols-2 gap-3">' +
-                            '<div>' +
-                                '<label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __("កម្មវិធីសិក្សា") }}</label>' +
-                                '<div class="w-full py-2 px-3 bg-white rounded-xl text-sm font-semibold text-gray-700 border border-gray-200">' + (prog.name_km || prog.name_en) + '</div>' +
-                                '<input type="hidden" name="target_programs[' + index + '][program_id]" value="' + prog.id + '">' +
-                            '</div>' +
-                            '<div>' +
-                                '<label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __("ជំនាន់") }}</label>' +
-                                '<div class="w-full py-2 px-3 bg-emerald-50 rounded-xl text-sm font-bold text-emerald-700 border border-emerald-100">' + (courseGen ? '{{ __("ជំនាន់ទី") }} ' + courseGen : '{{ __("មិនទាន់កំណត់") }}') + '</div>' +
-                                '<input type="hidden" name="target_programs[' + index + '][generation]" value="' + courseGen + '">' +
-                            '</div>' +
-                        '</div>';
-                    programsContainer.appendChild(row);
+            function rebuildCourseOptions(deptId) {
+                const currentCourse = courseSelect.value;
+                courseSelect.innerHTML = '';
+                allCourseOptions.forEach(opt => {
+                    if (!opt.value || !deptId || opt.departmentId === deptId) {
+                        const el = document.createElement('option');
+                        el.value = opt.value;
+                        el.textContent = opt.text;
+                        if (opt.value && opt.departmentId) el.dataset.departmentId = opt.departmentId;
+                        courseSelect.appendChild(el);
+                    }
                 });
+                if (currentCourse && courseSelect.querySelector('option[value="' + currentCourse + '"]')) {
+                    courseSelect.value = currentCourse;
+                } else {
+                    courseSelect.value = '';
+                }
+            }
+
+            departmentSelect.addEventListener('change', function() {
+                rebuildCourseOptions(this.value);
             });
 
+            // Trigger on page load if department is pre-selected
+            if (departmentSelect.value) {
+                departmentSelect.dispatchEvent(new Event('change'));
+            }
+
             // ──────────────────────────────────────────────
-            //  5. Academic year auto-fill dates
+            //  2. Academic year auto-fill dates
             // ──────────────────────────────────────────────
             const academicYearSelect = document.getElementById('academic_year');
             const startDateInput = document.getElementById('start_date');
@@ -363,7 +273,7 @@
             if (academicYearSelect.value) academicYearSelect.dispatchEvent(new Event('change'));
 
             // ──────────────────────────────────────────────
-            //  6. Schedule
+            //  3. Schedule
             // ──────────────────────────────────────────────
             const rooms = {!! json_encode($rooms->map(fn($r) => ['id' => $r->id, 'room_number' => $r->room_number])) !!};
 
@@ -437,7 +347,7 @@
             addScheduleBtn.addEventListener('click', function() { addScheduleRow(); });
 
             // ──────────────────────────────────────────────
-            //  7. Live room-availability checker
+            //  4. Live room-availability checker
             // ──────────────────────────────────────────────
             const checkRoomUrl = '{{ route('admin.course-offerings.check-room') }}';
             const rowTimers = new WeakMap();

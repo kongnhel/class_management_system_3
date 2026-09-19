@@ -157,7 +157,7 @@
 
                     @if ($announcement->course_offering_id)
                         <div class="text-xs text-gray-500 mb-3 pb-3 border-b border-gray-100">
-                            {{ $announcement->courseOffering->course->name_en }} ({{ $announcement->courseOffering->program->name_en }})
+                            {{ $announcement->courseOffering->course->name_en }} ({{ $announcement->courseOffering->department?->name_en ?? '' }})
                         </div>
                     @endif
 

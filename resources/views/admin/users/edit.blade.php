@@ -159,25 +159,25 @@
                             <p class="text-xs text-gray-400 mt-1.5">{{ __('លេខសម្គាល់នេះត្រូវបានបង្កើតដោយស្វ័យប្រវត្តិ ហើយមិនអាចកែប្រែបានទេ។') }}</p>
                         </div>
                         <div>
-                            <x-input-label for="program_id" class="font-semibold text-gray-700 mb-1.5">
-                                <i class="fas fa-graduation-cap mr-1.5 text-emerald-500"></i> {{ __('កម្មវិធីសិក្សា') }}
+                            <x-input-label for="department_id" class="font-semibold text-gray-700 mb-1.5">
+                                <i class="fas fa-graduation-cap mr-1.5 text-emerald-500"></i> {{ __('ដេប៉ាតឺម៉ង់') }}
                             </x-input-label>
-                            <select id="program_id" name="program_id" class="block w-full rounded-xl border-gray-200 bg-white focus:ring-2 focus:ring-emerald-500 py-2.5 px-4 h-[50px]">
-                                <option value="">{{ __('ជ្រើសរើសកម្មវិធីសិក្សា') }}</option>
-                                @foreach($programs as $program)
-                                    <option value="{{ $program->id }}" {{ old('program_id', $user->program_id) == $program->id ? 'selected' : '' }}>
-                                        {{ $program->name_km ?? $program->name_en }}
+                            <select id="department_id" name="department_id" class="block w-full rounded-xl border-gray-200 bg-white focus:ring-2 focus:ring-emerald-500 py-2.5 px-4 h-[50px]">
+                                <option value="">{{ __('ជ្រើសរើសដេប៉ាតឺម៉ង់') }}</option>
+                                @foreach($departments as $dept)
+                                    <option value="{{ $dept->id }}" {{ old('department_id', $user->department_id) == $dept->id ? 'selected' : '' }}>
+                                        {{ $dept->name_km ?? $dept->name_en }}
                                     </option>
                                 @endforeach
                             </select>
-                            <x-input-error :messages="$errors->get('program_id')" class="mt-2" />
+                            <x-input-error :messages="$errors->get('department_id')" class="mt-2" />
                         </div>
                         <div>
                             <x-input-label for="degree_level" class="font-semibold text-gray-700 mb-1.5">
                                 <i class="fas fa-award mr-1.5 text-emerald-500"></i> {{ __('កម្រិតសញ្ញាបត្រ') }}
                             </x-input-label>
                             @php
-                                $enrollmentDegreeLevel = $user->studentProgramEnrollments()->where('status', 'active')->first()?->degree_level ?? '';
+                                $enrollmentDegreeLevel = $user->studentDepartmentEnrollments()->where('status', 'active')->first()?->degree_level ?? '';
                             @endphp
                             <select id="degree_level" name="degree_level" class="block w-full rounded-xl border-gray-200 bg-white focus:ring-2 focus:ring-emerald-500 py-2.5 px-4 h-[50px]">
                                 <option value="">{{ __('ជ្រើសរើសកម្រិតសញ្ញាបត្រ') }}</option>

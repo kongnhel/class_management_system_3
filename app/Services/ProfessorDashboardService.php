@@ -23,7 +23,7 @@ class ProfessorDashboardService
         $todaySchedules = Schedule::query()
             ->whereHas('courseOffering', fn ($query) => $query->where('lecturer_user_id', $user->id))
             ->where('day_of_week', $todayName)
-            ->with(['courseOffering.course.programs', 'courseOffering.targetPrograms', 'room'])
+            ->with(['courseOffering.course', 'room'])
             ->orderBy('start_time')
             ->get();
 

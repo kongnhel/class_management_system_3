@@ -52,25 +52,24 @@
 
         chatOptionInput.value = option;
 
-        // Reset all buttons
-        const baseClass = "flex-1 py-2.5 rounded-xl text-xs font-bold transition-all";
-        const activeClass = `${baseClass} bg-white shadow-sm text-green-600 border border-green-200`;
-        const inactiveClass = `${baseClass} text-gray-500 hover:bg-white`;
+        const activeClass = 'bg-emerald-50 text-emerald-700 border border-emerald-200';
+        const inactiveClass = 'text-gray-400 hover:text-gray-600 hover:bg-gray-50';
 
-        btnInfo.className = inactiveClass;
-        btnSearch.className = inactiveClass;
-        btnProcess.className = inactiveClass;
+        [btnInfo, btnSearch, btnProcess].forEach(btn => {
+            btn.classList.remove(...activeClass.split(' '));
+            btn.classList.add(...inactiveClass.split(' '));
+        });
 
-        if (option === 'info') {
-            btnInfo.className = activeClass;
-            userInput.placeholder = "សួរអំពីព័ត៌មានវត្តមាន និងទិន្នន័យ...";
-        } else if (option === 'search') {
-            btnSearch.className = activeClass;
-            userInput.placeholder = "ស្វែងរកសិស្ស សាស្ត្រាចារ្យ មុខវិជ្ជា ព័ត៌មានសាលា...";
-        } else {
-            btnProcess.className = activeClass;
-            userInput.placeholder = "សួរអំពីរបៀបប្រើប្រាស់ប្រព័ន្ធ...";
-        }
+        const activeBtn = { info: btnInfo, search: btnSearch, process: btnProcess }[option];
+        activeBtn.classList.remove(...inactiveClass.split(' '));
+        activeBtn.classList.add(...activeClass.split(' '));
+
+        const placeholders = {
+            info: 'សួរអំពីព័ត៌មានវត្តមាន និងទិន្នន័យ...',
+            search: 'ស្វែងរកសិស្ស សាស្ត្រាចារ្យ មុខវិជ្ជា ព័ត៌មានសាលា...',
+            process: 'សួរអំពីរបៀបប្រើប្រាស់ប្រព័ន្ធ...',
+        };
+        userInput.placeholder = placeholders[option];
     };
 
     // --- Quick Query ---

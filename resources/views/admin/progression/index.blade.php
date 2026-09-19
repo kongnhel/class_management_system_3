@@ -71,7 +71,10 @@
                     </div>
                 </div>
                 <div class="p-6">
-                    <form method="GET" action="{{ route('admin.progression.index') }}" data-admin-realtime-filter class="space-y-4">
+                    <form method="GET" action="{{ route('admin.progression.index') }}" data-admin-realtime-filter data-dept-filter-container class="space-y-4">
+                        <script type="application/json" data-dept-filter>
+                            {!! $allDepartments->map(fn($d) => ['id' => $d->id, 'name' => $d->name_km, 'faculty_id' => $d->faculty_id])->toJson() !!}
+                        </script>
                         {{-- Row 1 --}}
                         <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
                             <div class="md:col-span-3">
@@ -86,7 +89,7 @@
                             </div>
                             <div class="md:col-span-2">
                                 <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">សាលា</label>
-                                <select name="faculty_id"
+                                <select name="faculty_id" data-dept-faculty
                                         class="py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full transition-all">
                                     <option value="">ទាំងអស់</option>
                                     @foreach($faculties as $f)
@@ -98,14 +101,13 @@
                             </div>
                             <div class="md:col-span-3">
                                 <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">កម្មវិធីសិក្សា</label>
-                                <select name="program_id" id="progressionProgramFilter"
+                                <select name="department_id" id="progressionDepartmentFilter" data-dept-department
                                         class="py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full transition-all">
                                     <option value="">ទាំងអស់</option>
-                                    @foreach($programs as $p)
-                                        <option value="{{ $p->id }}"
-                                                data-faculty-id="{{ $p->department->faculty_id ?? '' }}"
-                                                {{ $program->id == $p->id ? 'selected' : '' }}>
-                                            {{ $p->name_km }}
+                                    @foreach($allDepartments as $d)
+                                        <option value="{{ $d->id }}"
+                                                {{ $department->id == $d->id ? 'selected' : '' }}>
+                                            {{ $d->name_km }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -123,7 +125,7 @@
                                 </select>
                             </div>
                             <div class="md:col-span-2 flex items-end gap-2">
-                                <a href="{{ route('admin.progression.index', ['program_id' => $program->id]) }}"
+                                <a href="{{ route('admin.progression.index', ['department_id' => $department->id]) }}"
                                    class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl text-sm font-medium transition-all flex-1">
                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                                     កំណត់វិញ
@@ -199,12 +201,12 @@
                     </div>
                     <div>
                         <h3 class="text-sm font-semibold text-gray-900">សិស្សតាមឆ្នាំសិក្សា</h3>
-                        <p class="text-xs text-gray-400">{{ $program->name_km }} — រយៈពេល {{ $program->duration_years }} ឆ្នាំ</p>
+                        <p class="text-xs text-gray-400">{{ $department->name_km }} — រយៈពេល {{ $department->duration_years }} ឆ្នាំ</p>
                     </div>
                 </div>
                 <div class="p-6">
                     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                        @for($year = 1; $year <= $program->duration_years; $year++)
+                        @for($year = 1; $year <= $department->duration_years; $year++)
                             @php
                                 $gen = $currentYearStart - $genBase - $year + 1;
                                 $yc = $yearColors[$year] ?? $yearColors[4];
@@ -243,7 +245,7 @@
             {{-- Section 3: Student Lists with Checkboxes --}}
             <form method="POST" action="{{ route('admin.progression.executeAdvance') }}" id="advanceForm">
                 @csrf
-                <input type="hidden" name="program_id" value="{{ $program->id }}">
+                <input type="hidden" name="department_id" value="{{ $department->id }}">
 
                 <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
                     <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
@@ -262,7 +264,7 @@
                     </div>
                     <div class="p-6 space-y-6">
 
-                        @for($year = 1; $year <= $program->duration_years; $year++)
+                        @for($year = 1; $year <= $department->duration_years; $year++)
                             @php
                                 $gen = $currentYearStart - $genBase - $year + 1;
                                 $yc = $yearColors[$year] ?? $yearColors[4];
@@ -398,7 +400,7 @@
                                                         </div>
                                                     </td>
                                                     <td class="px-6 py-3.5 text-sm text-gray-700 font-medium">{{ $student->student_id_code ?? '-' }}</td>
-                                                    <td class="px-6 py-3.5 text-sm text-gray-500">{{ $student->studentProgramEnrollments->firstWhere('status', 'graduated')?->graduation_date ?? '-' }}</td>
+                                                    <td class="px-6 py-3.5 text-sm text-gray-500">{{ $student->studentDepartmentEnrollments->firstWhere('status', 'graduated')?->graduation_date ?? '-' }}</td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
@@ -425,7 +427,7 @@
                         {{-- Empty State --}}
                         @php
                             $totalStudents = 0;
-                            for($y = 1; $y <= $program->duration_years; $y++) { $totalStudents += $summary[$y]['count']; }
+                            for($y = 1; $y <= $department->duration_years; $y++) { $totalStudents += $summary[$y]['count']; }
                         @endphp
                         @if($totalStudents === 0 && $summary['graduated']['count'] === 0)
                             <div class="py-16 text-center">
@@ -457,7 +459,7 @@
                     <form action="{{ route('admin.progression.autoGraduate') }}" method="POST" class="inline"
                           onsubmit="return confirm('តើអ្នកប្រាកដទេ? និស្សិតឆ្នាំចុងក្រោយដែលមិនមាន F នឹងត្រូវបញ្ចប់ការសិក្សា។')">
                         @csrf
-                        <input type="hidden" name="program_id" value="{{ $program->id }}">
+                <input type="hidden" name="department_id" value="{{ $department->id }}">
                         <button type="submit" class="inline-flex items-center gap-2 bg-amber-50 text-amber-700 border border-amber-200 px-6 py-3 rounded-xl font-medium text-sm hover:bg-amber-100 transition-all">
                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                             បញ្ចប់ការសិក្សាដោយស្វ័យប្រវត្តិ
@@ -502,31 +504,6 @@
     </div>
 
     <script>
-        (function () {
-            var facultySelect = document.querySelector('select[name="faculty_id"]');
-            var programSelect = document.getElementById('progressionProgramFilter');
-            if (!facultySelect || !programSelect) return;
-
-            function filterPrograms() {
-                var facultyId = facultySelect.value;
-                var options = programSelect.querySelectorAll('option[value]');
-                var selectedStillVisible = false;
-
-                options.forEach(function (opt) {
-                    if (opt.value === '') return;
-                    var match = !facultyId || opt.dataset.facultyId === facultyId;
-                    opt.hidden = !match;
-                    opt.disabled = !match;
-                    if (match && opt.value === programSelect.value) selectedStillVisible = true;
-                });
-
-                if (!selectedStillVisible) programSelect.value = '';
-            }
-
-            facultySelect.addEventListener('change', filterPrograms);
-            filterPrograms();
-        })();
-
         function toggleYear(year, source) {
             document.querySelectorAll('.student-cb[data-year="' + year + '"]').forEach(function (cb) {
                 cb.checked = source.checked;

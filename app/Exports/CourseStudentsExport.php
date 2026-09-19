@@ -21,7 +21,7 @@ class CourseStudentsExport implements FromCollection, ShouldAutoSize, WithHeadin
 
     public function collection()
     {
-        return StudentCourseEnrollment::with(['student.studentProfile', 'student.studentProgramEnrollments.program'])
+        return StudentCourseEnrollment::with(['student.studentProfile', 'student.studentDepartmentEnrollments.department'])
             ->where('course_offering_id', $this->courseOfferingId)
             ->get();
     }
@@ -30,16 +30,16 @@ class CourseStudentsExport implements FromCollection, ShouldAutoSize, WithHeadin
     {
         $student = $enrollment->student;
         $profile = $student->studentProfile;
-        $program = $student->studentProgramEnrollments->first()?->program;
+        $department = $student->studentDepartmentEnrollments->first()?->department;
 
         return [
             $student->student_id_code ?? 'N/A',
             $profile->full_name_km ?? $student->name,
             ($profile->gender == 'M' || $profile->gender == 'Male') ? 'ប្រុស' : 'ស្រី',
             $profile->date_of_birth ? \Carbon\Carbon::parse($profile->date_of_birth)->format('d/m/Y') : '-',
-            $program->name_km ?? '-',
+            $department->name_km ?? '-',
             $profile->phone_number ?? '-',
-            $student->email, // អ៊ីមែល
+            $student->email,
         ];
     }
 

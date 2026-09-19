@@ -5,13 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class StudentProgramEnrollment extends Model
+class StudentDepartmentEnrollment extends Model
 {
     use HasFactory;
 
+    protected $table = 'student_department_enrollments';
+
     protected $fillable = [
         'student_user_id',
-        'program_id',
+        'department_id',
         'degree_level',
         'starting_year_level',
         'is_transition_eligible',
@@ -37,8 +39,8 @@ class StudentProgramEnrollment extends Model
         return $this->belongsTo(User::class, 'student_user_id');
     }
 
-    public function program()
+    public function department()
     {
-        return $this->belongsTo(Program::class);
+        return $this->belongsTo(Department::class);
     }
 }

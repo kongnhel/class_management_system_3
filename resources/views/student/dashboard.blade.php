@@ -36,10 +36,10 @@
 
                     {{-- quick actions --}}
                     <div class="flex flex-wrap items-center gap-2.5 w-full lg:w-auto">
-                        @if($studentProgram)
+                        @if($studentDepartment)
                             <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2.5 rounded-xl text-xs font-bold">
                                 <i class="fas fa-graduation-cap text-emerald-200"></i>
-                                <span class="max-w-[140px] truncate">{{ $studentProgram->name_km }}</span>
+                                <span class="max-w-[140px] truncate">{{ $studentDepartment->name_km }}</span>
                                 <span class="bg-white/15 px-2 py-0.5 rounded-md text-[10px]">G{{ $user->generation }}</span>
                                 @if($computedYearLevel)
                                     <span class="bg-white/15 px-2 py-0.5 rounded-md text-[10px]">{{ __('ឆ្នាំទី') }}{{ $computedYearLevel }}</span>
@@ -133,12 +133,12 @@
                 </div>
 
                 {{-- Completed courses --}}
-                @if($totalCoursesInProgram > 0)
+                @if($totalCoursesInDepartment > 0)
                 <div class="bg-white p-4 rounded-2xl border border-violet-100 shadow-sm flex items-center gap-3">
                     <div class="w-11 h-11 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center text-lg flex-shrink-0"><i class="fas fa-check-double"></i></div>
                     <div class="min-w-0">
                         <p class="text-[10px] text-gray-400 font-bold uppercase truncate">{{ __('មុខវិជ្ជាបានបញ្ចប់') }}</p>
-                        <h4 class="text-xl font-black text-gray-800">{{ $completedCoursesCount ?? 0 }}<span class="text-sm font-bold text-gray-400">/{{ $totalCoursesInProgram }}</span></h4>
+                        <h4 class="text-xl font-black text-gray-800">{{ $completedCoursesCount ?? 0 }}<span class="text-sm font-bold text-gray-400">/{{ $totalCoursesInDepartment }}</span></h4>
                     </div>
                 </div>
                 @endif
@@ -343,7 +343,7 @@
                     </section>
 
                     {{-- Available Courses for Self-Enrollment --}}
-                    @if($studentProgram && $availableCoursesInProgram->isNotEmpty())
+                    @if($studentDepartment && $availableCoursesInDepartment->isNotEmpty())
                     <section>
                         <div class="flex items-center justify-between mb-4">
                             <div class="flex items-center gap-2.5">
@@ -352,10 +352,10 @@
                                 </div>
                                 <h4 class="text-base font-bold text-gray-800">{{ __('មុខវិជ្ជាដែលអាចចុះឈ្មោះ') }}</h4>
                             </div>
-                            <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-600">{{ $availableCoursesInProgram->count() }}</span>
+                            <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-600">{{ $availableCoursesInDepartment->count() }}</span>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            @foreach($availableCoursesInProgram as $courseOffering)
+                            @foreach($availableCoursesInDepartment as $courseOffering)
                                 <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:border-emerald-200 hover:shadow-md transition-all flex flex-col">
                                     <div class="flex items-start gap-3 mb-3">
                                         <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
@@ -384,7 +384,7 @@
                             @endforeach
                         </div>
                     </section>
-                    @elseif(!$studentProgram)
+                    @elseif(!$studentDepartment)
                         <div class="bg-white p-8 rounded-2xl border border-dashed border-slate-200 text-center">
                             <div class="w-12 h-12 bg-gray-50 text-gray-300 rounded-xl flex items-center justify-center mx-auto mb-3">
                                 <i class="fas fa-graduation-cap text-xl"></i>

@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Program;
-use App\Models\StudentProgramEnrollment;
+use App\Models\Department;
+use App\Models\StudentDepartmentEnrollment;
 use App\Services\ImageKitService;
 use App\Services\StudentProgressionService;
 use Illuminate\Http\Request;
@@ -26,18 +26,17 @@ class StudentProfileController extends Controller
             'user_id' => $user->id,
         ]);
 
-        // Academic info
-        $studentProgramEnrollment = StudentProgramEnrollment::where('student_user_id', $user->id)
+        $studentDepartmentEnrollment = StudentDepartmentEnrollment::where('student_user_id', $user->id)
             ->where('status', 'active')
-            ->with('program.department.faculty')
+            ->with('department.faculty')
             ->first();
         $computedYearLevel = null;
-        if ($studentProgramEnrollment?->program) {
+        if ($studentDepartmentEnrollment?->department) {
             $computedYearLevel = app(StudentProgressionService::class)
-                ->getYearLevel($user, $studentProgramEnrollment->program);
+                ->getYearLevel($user, $studentDepartmentEnrollment->department);
         }
 
-        return view('student.profile.show', compact('user', 'studentProfile', 'studentProgramEnrollment', 'computedYearLevel'));
+        return view('student.profile.show', compact('user', 'studentProfile', 'studentDepartmentEnrollment', 'computedYearLevel'));
     }
 
     public function edit()
@@ -54,9 +53,9 @@ class StudentProfileController extends Controller
             'user_id' => $user->id,
         ]);
 
-        $programs = Program::all();
+        $departments = Department::all();
 
-        return view('student.profile.edit', compact('user', 'studentProfile', 'programs'));
+        return view('student.profile.edit', compact('user', 'studentProfile', 'departments'));
     }
 
     public function update(Request $request)
@@ -85,7 +84,6 @@ class StudentProfileController extends Controller
 
         $uploaded = false;
 
-        // Prefer base64 upload (bypasses PHP upload_max_filesize)
         if ($request->filled('profile_picture_base64')) {
             try {
                 $imageKitService = app(ImageKitService::class);
@@ -103,7 +101,6 @@ class StudentProfileController extends Controller
                 Session::flash('error', 'Upload error: '.$e->getMessage());
             }
         } elseif ($request->hasFile('profile_picture')) {
-            // Fallback: direct file upload
             try {
                 $imageKitService = app(ImageKitService::class);
                 $imageUrl = $imageKitService->uploadProfilePicture(
