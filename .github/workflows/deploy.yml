@@ -20,7 +20,7 @@ on:
       branch:
         description: 'Branch to deploy'
         required: true
-        default: 'cms-test'
+        default: 'big-change'
 
 jobs:
   deploy:
