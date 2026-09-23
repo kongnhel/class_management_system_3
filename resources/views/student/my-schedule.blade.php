@@ -3,14 +3,14 @@
         <div class="flex flex-col md:flex-row items-center justify-between gap-4 no-print px-2 font-['Battambang']">
             <div>
                 <h2 class="font-black text-2xl md:text-3xl text-slate-900 leading-tight text-center md:text-left">
-                    {{ __('កាលវិភាគសិក្សា') }}
+                    {{ __('class_schedule') }}
                 </h2>
-                <p class="text-sm text-slate-500 font-medium mt-1 text-center md:text-left">{{ __('ពិនិត្យ និងគ្រប់គ្រងម៉ោងសិក្សារបស់អ្នក') }}</p>
+                <p class="text-sm text-slate-500 font-medium mt-1 text-center md:text-left">{{ __('review_and_manage_your_class_schedule') }}</p>
             </div>
             
             <div class="flex gap-2 w-full md:w-auto">
                 <button onclick="window.print()" class="flex-1 md:flex-none inline-flex items-center justify-center px-4 py-2.5 bg-emerald-600 text-white font-bold rounded-xl shadow-lg shadow-emerald-100 hover:bg-emerald-700 transition-all text-xs">
-                    <i class="fas fa-print mr-2"></i> {{ __('បោះពុម្ព') }}
+                    <i class="fas fa-print mr-2"></i> {{ __('print_2') }}
                 </button>
             </div>
         </div>
@@ -168,32 +168,32 @@
             <div class="header-layout">
                 <div class="header-col header-logo">
                     <img id="logoImg" src="{{ asset('assets/image/nmu_Logo.png') }}" alt="Logo">
-                    <h3 class="font-moul text-emerald-custom header-title-km">{{ __('សាកលវិទ្យាល័យជាតិមានជ័យ') }}</h3>
-                    <h3 class="font-moul text-emerald-custom header-title-km">{{ __('ការិយាល័យសិក្សា') }}</h3>
+                    <h3 class="font-moul text-emerald-custom header-title-km">{{ __('national_meanchey_university') }}</h3>
+                    <h3 class="font-moul text-emerald-custom header-title-km">{{ __('academic_office') }}</h3>
                 </div>
                 <div class="header-col">
-                    <h2 class="font-moul header-kingdom">{{ __('ព្រះរាជាណាចក្រកម្ពុជា') }}</h2>
-                    <h2 class="font-moul header-kingdom">{{ __('ជាតិ សាសនា ព្រះមហាក្សត្រ') }}</h2>
+                    <h2 class="font-moul header-kingdom">{{ __('kingdom_of_cambodia') }}</h2>
+                    <h2 class="font-moul header-kingdom">{{ __('nation_religion_king') }}</h2>
                     <div class="header-line"><img id="lineImg" src="{{ asset('assets/image/2.png') }}" alt="Line"></div>
                 </div>
                 <div class="header-col hidden md:flex"></div>
             </div>
 
             <div class="schedule-info">
-                <h1 class="font-moul">{{ __('តារាងវិភាគប្រចាំ') }}{{ $semester }} <span class="font-sans" style="font-family: var(--font-body)">/Timetable Semester {{ $semesterNum }}</span></h1>
+                <h1 class="font-moul">{{ __('weekly_analysis_timetable') }}{{ $semester }} <span class="font-sans" style="font-family: var(--font-body)">/Timetable Semester {{ $semesterNum }}</span></h1>
                 <p>
-                    {{ __('ជំនាន់ទី') }} {{ $generation ?: '...' }} 
+                    {{ __('generation_2') }} {{ $generation ?: '...' }} 
                     @if($studentDepartment) | {{ $studentDepartment->name_km ?? $studentDepartment->name_en }} @endif
-                    | {{ __('ឆ្នាំសិក្សា') }} {{ date('Y') }}-{{ date('Y')+1 }}
+                    | {{ __('academic_year') }} {{ date('Y') }}-{{ date('Y')+1 }}
                 </p>
-                <p style="font-weight: normal; margin-top: 5px;">{{ __('ចាប់ផ្តើមពី') }} {{ \Carbon\Carbon::parse($startDate)->format('d/m/Y') }}</p>
+                <p style="font-weight: normal; margin-top: 5px;">{{ __('starting_from') }} {{ \Carbon\Carbon::parse($startDate)->format('d/m/Y') }}</p>
             </div>
 
             {{-- 2. TABLES --}}
             <div class="table-container">
                 @php
-                    $weekdayMap = ['Monday' => __('ចន្ទ/Mon'), 'Tuesday' => __('អង្គារ/Tue'), 'Wednesday' => __('ពុធ/Wed'), 'Thursday' => __('ព្រហស្បតិ៍/Thu'), 'Friday' => __('សុក្រ/Fri')];
-                    $weekendMap = ['Saturday' => __('សៅរ៍/Sat'), 'Sunday' => __('អាទិត្យ/Sun')];
+                    $weekdayMap = ['Monday' => __('mon'), 'Tuesday' => __('tue'), 'Wednesday' => __('wed'), 'Thursday' => __('thu'), 'Friday' => __('fri')];
+                    $weekendMap = ['Saturday' => __('sat'), 'Sunday' => __('sun')];
 
                     $weekdaySchedules = $schedules->filter(fn($s) => array_key_exists($s->day_of_week, $weekdayMap));
                     $weekendSchedules = $schedules->filter(fn($s) => array_key_exists($s->day_of_week, $weekendMap));
@@ -204,11 +204,11 @@
 
                 @if($weekdayRows->isNotEmpty())
                     <div class="table-responsive">
-                        <div style="text-align: left; font-weight: bold; text-decoration: underline; font-size: 10pt; margin-bottom: 5px;">{{ __('វេនសិក្សា៖ ចន្ទ-សុក្រ') }} (Mon-Fri)</div>
+                        <div style="text-align: left; font-weight: bold; text-decoration: underline; font-size: 10pt; margin-bottom: 5px;">{{ __('shift_mon_fri') }} (Mon-Fri)</div>
                         <table class="custom-table">
                             <thead>
                                 <tr>
-                                    <th class="font-moul" style="width: 12%;">{{ __('ម៉ោងសិក្សា') }}</th>
+                                    <th class="font-moul" style="width: 12%;">{{ __('class_hours') }}</th>
                                     @foreach($weekdayMap as $label) <th class="font-moul">{{ $label }}</th> @endforeach
                                 </tr>
                             </thead>
@@ -222,8 +222,8 @@
                                             @if($class)
                                                 <div class="cell-content">
                                                     <span class="cell-subject">{{ $class->courseOffering?->course?->title_km ?? $class->courseOffering?->course?->title_en ?? 'N/A' }}</span>
-                                                    <span class="cell-lecturer">{{ __('លោក') }} {{ $class->courseOffering?->lecturer?->name ?? 'N/A' }}</span>
-                                                    <span class="cell-room">{{ __('បន្ទប់') }} {{ $class->room?->room_number ?? '-' }}</span>
+                                                    <span class="cell-lecturer">{{ __('key_mr') }} {{ $class->courseOffering?->lecturer?->name ?? 'N/A' }}</span>
+                                                    <span class="cell-room">{{ __('room') }} {{ $class->room?->room_number ?? '-' }}</span>
                                                 </div>
                                             @endif
                                         </td>
@@ -237,11 +237,11 @@
 
                 @if($weekendSchedules->isNotEmpty())
                     <div class="table-responsive">
-                        <div style="text-align: left; font-weight: bold; text-decoration: underline; font-size: 10pt; margin-bottom: 5px;">{{ __('វេនសិក្សា៖ សៅរ៍-អាទិត្យ') }} (Sat-Sun)</div>
+                        <div style="text-align: left; font-weight: bold; text-decoration: underline; font-size: 10pt; margin-bottom: 5px;">{{ __('shift_sat_sun') }} (Sat-Sun)</div>
                         <table class="custom-table">
                             <thead>
                                 <tr>
-                                    <th class="font-moul" style="width: 12%;">{{ __('ថ្ងៃសិក្សា') }}</th>
+                                    <th class="font-moul" style="width: 12%;">{{ __('class_day') }}</th>
                                     @foreach($weekendTimeSlots as $time) <th class="font-moul">{{ $time }}</th> @endforeach
                                 </tr>
                             </thead>
@@ -260,8 +260,8 @@
                                             @if($class)
                                                 <div class="cell-content">
                                                     <span class="cell-subject">{{ $class->courseOffering?->course?->title_km ?? $class->courseOffering?->course?->title_en ?? 'N/A' }}</span>
-                                                    <span class="cell-lecturer">{{ __('លោក') }} {{ $class->courseOffering?->lecturer?->name ?? 'N/A' }}</span>
-                                                    <span class="cell-room">{{ __('បន្ទប់') }} {{ $class->room?->room_number ?? '-' }}</span>
+                                                    <span class="cell-lecturer">{{ __('key_mr') }} {{ $class->courseOffering?->lecturer?->name ?? 'N/A' }}</span>
+                                                    <span class="cell-room">{{ __('room') }} {{ $class->room?->room_number ?? '-' }}</span>
                                                 </div>
                                             @endif
                                         </td>
@@ -277,9 +277,9 @@
             {{-- 3. FOOTER --}}
             <div class="footer-sigs">
                 <div class="sig-block" style="text-align: left; padding-left: 10px;">
-                    <div class="sig-title" style="font-weight: bold;">{{ __('បានឃើញ និងឯកភាព') }}</div>
-                    <div class="sig-title font-moul">{{ __('ជ. សាកលវិទ្យាធិការ') }}</div>
-                    <div class="sig-title font-moul">{{ __('សាកលវិទ្យាធិការរង') }}</div>
+                    <div class="sig-title" style="font-weight: bold;">{{ __('seen_and_approved') }}</div>
+                    <div class="sig-title font-moul">{{ __('vice_rector') }}</div>
+                    <div class="sig-title font-moul">{{ __('deputy_vice_rector') }}</div>
                     <div class="sig-spacer"></div>
                 </div>
 
@@ -289,7 +289,7 @@
                         return str_replace(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'], $khmerNumbers, $number);
                     }
                     $now = now();
-                    $khmerMonths = [1 => __('មករា'), 2 => __('កុម្ភៈ'), 3 => __('មីនា'), 4 => __('មេសា'), 5 => __('ឧសភា'), 6 => __('មិថុនា'), 7 => __('កក្កដា'), 8 => __('សីហា'), 9 => __('កញ្ញា'), 10 => __('តុលា'), 11 => __('វិច្ឆិកា'), 12 => __('ធ្នូ')];
+                    $khmerMonths = [1 => __('january'), 2 => __('february'), 3 => __('march'), 4 => __('april'), 5 => __('may'), 6 => __('june'), 7 => __('july'), 8 => __('august'), 9 => __('september'), 10 => __('october'), 11 => __('november'), 12 => __('december')];
                     $beYear = $now->year + 543; 
                     $day = toKhmerNumber($now->format('d'));
                     $month = $khmerMonths[$now->month];
@@ -298,9 +298,9 @@
                 @endphp
 
                 <div class="sig-block" style="text-align: right; padding-right: 10px;">
-                    <div class="sig-date">{{ __('ថ្ងៃទី') }}{{ $day }} {{ __('ខែ') }}{{ $month }} {{ __('ឆ្នាំ') }}{{ $year }} ព.ស {{ $beYearKh }}</div>
-                    <div class="sig-date">{{ __('បន្ទាយមានជ័យ ថ្ងៃទី............. ខែ............. ឆ្នាំ២០......') }}</div>
-                    <div class="sig-title font-moul" style="margin-top: 5px;">{{ __('ប្រធានការិយាល័យសិក្សា') }}</div>
+                    <div class="sig-date">{{ __('day') }}{{ $day }} {{ __('month') }}{{ $month }} {{ __('years') }}{{ $year }} ព.ស {{ $beYearKh }}</div>
+                    <div class="sig-date">{{ __('banteay_meanchey_day_month_year_20') }}</div>
+                    <div class="sig-title font-moul" style="margin-top: 5px;">{{ __('head_of_academic_office') }}</div>
                     <div class="sig-spacer"></div>
                 </div>
             </div>

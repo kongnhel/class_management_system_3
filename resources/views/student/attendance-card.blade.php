@@ -32,7 +32,7 @@
                     </div>
                     <p class="mt-4 text-xs text-slate-500">{{ __('This QR card identifies you for an active professor attendance session. It does not replace the professor\'s session validation.') }}</p>
                     @if($photoUrl && ! $photoCenter)
-                        <a href="{{ route('student.profile.edit') }}" wire:navigate class="mt-3 inline-block text-[11px] font-bold text-emerald-600 hover:text-emerald-700">{{ __('ផ្លាស់ប្តូររូបភាពកាត') }}</a>
+                        <a href="{{ route('student.profile.edit') }}" wire:navigate class="mt-3 inline-block text-[11px] font-bold text-emerald-600 hover:text-emerald-700">{{ __('change_card_photo') }}</a>
                     @endif
                     <div class="mt-5 flex gap-3">
                         <button type="button" onclick="downloadAttendanceCard('png')" class="flex-1 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-bold text-white hover:bg-emerald-700">{{ __('Save PNG') }}</button>

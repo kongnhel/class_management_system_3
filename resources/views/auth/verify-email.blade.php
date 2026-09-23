@@ -1,5 +1,5 @@
 <link rel="icon" type="image/png" href="{{ asset('assets/image/nmu_Logo.png') }}">
-<title>{{ config('app.name', 'Class Management System') }} - ផ្ទៀងផ្ទាត់អ៊ីមែល</title>
+<title>{{ config('app.name', 'Class Management System') }} - {{ __('auth_verify_email') }}</title>
 
 <x-guest-layout>
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -16,8 +16,8 @@
                 <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-emerald-50 flex items-center justify-center">
                     <svg class="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                 </div>
-                <h2 class="text-2xl font-extrabold text-gray-900">ផ្ទៀងផ្ទាត់អ៊ីមែល</h2>
-                <p class="text-gray-500 mt-2 text-sm leading-relaxed">សូមផ្ទៀងផ្ទាត់អ៊ីមែលរបស់អ្នកដោยចុចលើបន្ទាត់សារដែលយើងបានផ្ញើទៅកាន់អ្នក។ ប្រសិនបើអ្នកមិនទទួលបាន សូមផ្ញើសារឡើងវិញ។</p>
+                <h2 class="text-2xl font-extrabold text-gray-900">{{ __('auth_verify_email') }}</h2>
+                <p class="text-gray-500 mt-2 text-sm leading-relaxed">{{ __('auth_verify_email_subtitle') }}</p>
             </div>
 
             {{-- Card --}}
@@ -27,21 +27,21 @@
                         <div class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center shrink-0">
                             <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                         </div>
-                        <p class="text-sm text-green-700 font-medium">បន្ទាត់សារផ្ទៀងផ្ទាត់ថ្មីត្រូវបានផ្ញើទៅកាន់អ៊ីមែលរបស់អ្នកហើយ។</p>
+                        <p class="text-sm text-green-700 font-medium">{{ __('auth_verify_email_resent') }}</p>
                     </div>
                 @endif
 
                 <form method="POST" action="{{ route('verification.send') }}" class="mb-4">
                     @csrf
                     <button type="submit" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-emerald-200 hover:shadow-emerald-300 transition-all duration-200 text-sm">
-                        ផ្ញើសារផ្ទៀងផ្ទាត់អ៊ីមែលឡើងវិញ
+                        {{ __('auth_verify_email_resend_btn') }}
                     </button>
                 </form>
 
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="w-full py-3 text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors">
-                        ចាកចេញពីប្រព័ន្ធ
+                        {{ __('auth_logout') }}
                     </button>
                 </form>
             </div>

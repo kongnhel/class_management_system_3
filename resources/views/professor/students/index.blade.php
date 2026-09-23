@@ -208,31 +208,64 @@
                 <div style="display:flex; align-items:center; gap:14px; margin-bottom:8px;">
                     <div style="width:5px; height:38px; background:linear-gradient(180deg,#16a34a,#4ade80); border-radius:4px; flex-shrink:0;"></div>
                     <h1 class="kh" style="font-size:1.9rem; font-weight:900; color:#111827; margin:0; line-height:1.2;">
-                        {{ __('បញ្ជីឈ្មោះនិស្សិត') }}
+                        {{ __('student_list_2') }}
                     </h1>
                 </div>
 
                 <span class="kh" style="display:inline-block; background:#f0fdf4; color:#15803d; border:1px solid #bbf7d0; font-size:0.78rem; font-weight:700; padding:4px 14px; border-radius:999px; margin-left:19px;">
-                    {{ $courseOffering->course->name_km }}
+                    {{ $courseOffering->course?->title_km ?? $courseOffering->course?->title_en ?? 'N/A' }}
                 </span>
+                <div class="flex flex-wrap items-center gap-2 mt-3 ml-5 text-xs text-slate-500">
+                    @if($courseOffering->course?->code)
+                        <span class="px-2.5 py-1 rounded-full bg-slate-100 border border-slate-200 font-bold">{{ $courseOffering->course->code }}</span>
+                    @endif
+                    @if($courseOffering->course?->title_en)
+                        <span>{{ $courseOffering->course->title_en }}</span>
+                    @endif
+                    <span class="px-2.5 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-700 font-bold">{{ __('semester') }} {{ $courseOffering->semester }}</span>
+                    <span class="px-2.5 py-1 rounded-full bg-violet-50 border border-violet-100 text-violet-700 font-bold">{{ $courseOffering->academic_year }}</span>
+                    <span class="px-2.5 py-1 rounded-full bg-amber-50 border border-amber-100 text-amber-700 font-bold">{{ $courseOffering->room_number ?? __('Online') }}</span>
+                    @if($courseOffering->generation)
+                        <span class="px-2.5 py-1 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 font-bold">G{{ $courseOffering->generation }}</span>
+                    @endif
+                </div>
             </div>
 
             {{-- Buttons --}}
             <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-                <a wire:navigate href="{{ route('professor.my-course-offerings', ['offering_id' => $courseOffering->id]) }}" class="btn-back kh">
+                <a wire:navigate href="{{ route('professor.my-course-offerings') }}" class="btn-back kh" aria-label="{{ __('go_back') }}" title="{{ __('go_back') }}">
                     <svg style="width:14px;height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                     </svg>
-                    {{ __('ត្រឡប់') }}
+                    {{ __('go_back') }}
+                </a>
+                <a wire:navigate href="{{ route('professor.manage-grades', ['offering_id' => $courseOffering->id]) }}" class="btn-back kh">
+                    <i class="fas fa-chart-line"></i> {{ __('manage_grades') }}
+                </a>
+                <a wire:navigate href="{{ route('professor.manage-attendance', ['offering_id' => $courseOffering->id]) }}" class="btn-back kh">
+                    <i class="fas fa-calendar-check"></i> {{ __('attendance') }}
                 </a>
                 <button onclick="window.open('{{ route('professor.students.print', $courseOffering->id) }}', '_blank')" class="btn-print kh">
                     <svg style="width:15px;height:15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2z"/>
                     </svg>
-                    {{ __('បោះពុម្ព') }}
+                    {{ __('print_2') }}
                 </button>
             </div>
         </div>
+
+        <form method="GET" action="{{ route('professor.students.in-course-offering', ['offering_id' => $courseOffering->id]) }}" class="mb-6 flex flex-col sm:flex-row gap-3">
+            <div class="relative flex-1">
+                <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="search" name="search" value="{{ $search ?? request('search') }}"
+                    placeholder="{{ __('search_students') }}"
+                    class="w-full rounded-xl border border-slate-200 bg-white py-3 pl-11 pr-4 text-sm text-slate-700 shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20">
+            </div>
+            <button type="submit" class="btn-primary py-3 px-5 text-sm">{{ __('search_2') }}</button>
+            @if(!empty($search ?? request('search')))
+                <a wire:navigate href="{{ route('professor.students.in-course-offering', ['offering_id' => $courseOffering->id]) }}" class="btn-back kh">{{ __('clear') }}</a>
+            @endif
+        </form>
 
         {{-- ===== Flash ===== --}}
         @if (session('success'))
@@ -247,10 +280,10 @@
         {{-- ===== Stats ===== --}}
         @php
             $statItems = [
-                ['label' => __('និស្សិតសរុប'),  'value' => $stats['total']   ?? 0, 'icon' => '👥', 'bg' => '#eff6ff', 'color' => '#2563eb'],
-                ['label' => __('និស្សិតប្រុស'), 'value' => $stats['male']    ?? 0, 'icon' => '♂',  'bg' => '#eef2ff', 'color' => '#4f46e5'],
-                ['label' => __('និស្សិតស្រី'),  'value' => $stats['female']  ?? 0, 'icon' => '♀',  'bg' => '#fff1f2', 'color' => '#e11d48'],
-                ['label' => __('ប្រធានថ្នាក់'),  'value' => $stats['leaders'] ?? 0, 'icon' => '★',  'bg' => '#fffbeb', 'color' => '#d97706'],
+                ['label' => __('total_students_2'),  'value' => $stats['total']   ?? 0, 'icon' => '👥', 'bg' => '#eff6ff', 'color' => '#2563eb'],
+                ['label' => __('male_students'), 'value' => $stats['male']    ?? 0, 'icon' => '♂',  'bg' => '#eef2ff', 'color' => '#4f46e5'],
+                ['label' => __('female_students'),  'value' => $stats['female']  ?? 0, 'icon' => '♀',  'bg' => '#fff1f2', 'color' => '#e11d48'],
+                ['label' => __('class_leader'),  'value' => $stats['leaders'] ?? 0, 'icon' => '★',  'bg' => '#fffbeb', 'color' => '#d97706'],
             ];
         @endphp
         <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:14px; margin-bottom:24px;">
@@ -285,10 +318,7 @@
                                 $rawPic = $student->userProfile?->profile_picture_url ?? $student->studentProfile?->profile_picture_url ?? null;
                                 $rawAv = $student->avatar ?? null;
                                 $profilePictureUrl = ((!empty($rawPic) && $rawPic !== 'null') ? $rawPic : ((!empty($rawAv) && $rawAv !== 'null') ? $rawAv : null));
-                                $isLeader = DB::table('student_course_enrollments')
-                                    ->where('course_offering_id', $courseOffering->id)
-                                    ->where('student_user_id', $student->id)
-                                    ->where('is_class_leader', 1)->exists();
+                                $isLeader = (bool) ($student->is_class_leader ?? false);
                             @endphp
                             <tr>
                                 {{-- Student Info --}}
@@ -331,7 +361,7 @@
                                                     <span style="font-size:0.68rem; font-weight:600; color:#6366f1; background:#eef2ff; padding:2px 6px; border-radius:9999px;">G{{ $student->generation }}</span>
                                                 @endif
                                                 @if($student->computed_year_level)
-                                                    <span style="font-size:0.68rem; font-weight:600; color:#0d9488; background:#f0fdfa; padding:2px 6px; border-radius:9999px;">{{ __('ឆ្នាំទី') }}{{ $student->computed_year_level }}</span>
+                                                    <span style="font-size:0.68rem; font-weight:600; color:#0d9488; background:#f0fdfa; padding:2px 6px; border-radius:9999px;">{{ __('year') }}{{ $student->computed_year_level }}</span>
                                                 @endif
                                             </div>
                                         </div>
@@ -358,7 +388,7 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                             </svg>
-                                            <span>{{ __('មើល') }}</span>
+                                            <span>{{ __('view') }}</span>
                                         </a>
 
                                         <form action="{{ route('professor.toggleClassLeader', [$courseOffering->id, $student->id]) }}" method="POST" style="display:inline;">
@@ -367,7 +397,7 @@
                                                 <svg style="width:13px;height:13px;" fill="{{ $isLeader ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
                                                 </svg>
-                                                {{ $isLeader ? __('ប្រធាន') : __('តែងតាំង') }}
+                                                {{ $isLeader ? __('head') : __('member') }}
                                             </button>
                                         </form>
                                     </div>
@@ -382,8 +412,8 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
                                             </svg>
                                         </div>
-                                        <p class="kh" style="font-size:1rem;font-weight:700;color:#374151;margin:0;">{{ __('មិនទាន់មាននិស្សិត') }}</p>
-                                        <p class="kh" style="font-size:0.8rem;color:#9ca3af;margin:0;">{{ __('មិនទាន់មាននិស្សិតចុះឈ្មោះក្នុងមុខវិជ្ជានេះ') }}</p>
+                                        <p class="kh" style="font-size:1rem;font-weight:700;color:#374151;margin:0;">{{ __('no_students_found') }}</p>
+                                        <p class="kh" style="font-size:0.8rem;color:#9ca3af;margin:0;">{{ __('contact_information') }}</p>
                                     </div>
                                 </td>
                             </tr>
@@ -398,7 +428,7 @@
                     <svg style="width:14px;height:14px;color:#16a34a;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5l2 2h5a2 2 0 012 2v14a2 2 0 01-2 2z"/>
                     </svg>
-                    {{ __('របាយការណ៍វត្តមាន') }}
+                    {{ __('export_to_excel') }}
                 </a>
                 <div>{{ $paginatedStudents->links('pagination::tailwind') }}</div>
             </div>

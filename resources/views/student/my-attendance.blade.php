@@ -7,18 +7,18 @@
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 no-print">
                 <div>
                     <h1 class="text-2xl md:text-3xl font-bold text-slate-800 tracking-tight">
-                        {{ __('កំណត់ត្រាវត្តមាន') }}
+                        {{ __('attendance_record') }}
                     </h1>
                     <p class="text-sm text-slate-500 mt-1 flex items-center gap-2">
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                        {{ __('និស្សិត៖') }} <span class="font-bold text-slate-700">{{ Auth::user()->name }}</span>
+                        {{ __('student') }} <span class="font-bold text-slate-700">{{ Auth::user()->name }}</span>
                     </p>
                 </div>
                 
                 <button onclick="window.print()" 
                     class="group flex items-center justify-center gap-2 bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-700 px-5 py-2.5 rounded-xl font-medium shadow-sm transition-all text-sm">
                     <svg class="w-4 h-4 text-slate-400 group-hover:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2z"></path></svg>
-                    <span>{{ __('បោះពុម្ព') }}</span>
+                    <span>{{ __('print_2') }}</span>
                 </button>
             </div>
 
@@ -30,18 +30,18 @@
                     <table class="min-w-full divide-y divide-slate-100">
                         <thead>
                             <tr class="bg-slate-50">
-                                <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ __('កាលបរិច្ឆេទ') }}</th>
-                                <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider w-1/2">{{ __('មុខវិជ្ជា') }}</th>
-                                <th scope="col" class="px-6 py-4 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ __('ស្ថានភាព') }}</th>
+                                <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ __('date') }}</th>
+                                <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider w-1/2">{{ __('course') }}</th>
+                                <th scope="col" class="px-6 py-4 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ __('status') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100 bg-white">
                             @forelse ($attendances as $attendance)
                                 @php
                                     $statusConfig = match(strtolower($attendance->status)) {
-                                        'present', 'មាន' => ['label' => __('មកសិក្សា'), 'color' => 'bg-emerald-500', 'text' => 'text-emerald-700', 'bg_soft' => 'bg-emerald-50'],
-                                        'absent', 'អវត្តមាន' => ['label' => __('អវត្តមាន'), 'color' => 'bg-rose-500', 'text' => 'text-rose-700', 'bg_soft' => 'bg-rose-50'],
-                                        'permission', 'ច្បាប់' => ['label' => __('ច្បាប់'), 'color' => 'bg-amber-500', 'text' => 'text-amber-700', 'bg_soft' => 'bg-amber-50'],
+                                        'present', 'មាន' => ['label' => __('present_3'), 'color' => 'bg-emerald-500', 'text' => 'text-emerald-700', 'bg_soft' => 'bg-emerald-50'],
+                                        'absent', 'អវត្តមាន' => ['label' => __('absent'), 'color' => 'bg-rose-500', 'text' => 'text-rose-700', 'bg_soft' => 'bg-rose-50'],
+                                        'permission', 'ច្បាប់' => ['label' => __('permission_2'), 'color' => 'bg-amber-500', 'text' => 'text-amber-700', 'bg_soft' => 'bg-amber-50'],
                                         default => ['label' => $attendance->status, 'color' => 'bg-slate-400', 'text' => 'text-slate-600', 'bg_soft' => 'bg-slate-50']
                                     };
                                 @endphp
@@ -66,7 +66,7 @@
                                     <td colspan="3" class="px-6 py-12 text-center text-slate-400">
                                         <div class="flex flex-col items-center">
                                             <svg class="w-10 h-10 mb-3 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                            <p class="text-sm">{{ __('មិនទាន់មានទិន្នន័យ') }}</p>
+                                            <p class="text-sm">{{ __('no_data_yet') }}</p>
                                         </div>
                                     </td>
                                 </tr>
@@ -80,9 +80,9 @@
                     @forelse ($attendances as $attendance)
                         @php
                             $statusConfig = match(strtolower($attendance->status)) {
-                                'present', 'មាន' => ['label' => __('មកសិក្សា'), 'dot' => 'bg-emerald-500'],
-                                'absent', 'អវត្តមាន' => ['label' => __('អវត្តមាន'), 'dot' => 'bg-rose-500'],
-                                'permission', 'ច្បាប់' => ['label' => __('ច្បាប់'), 'dot' => 'bg-amber-500'],
+                                'present', 'មាន' => ['label' => __('present_3'), 'dot' => 'bg-emerald-500'],
+                                'absent', 'អវត្តមាន' => ['label' => __('absent'), 'dot' => 'bg-rose-500'],
+                                'permission', 'ច្បាប់' => ['label' => __('permission_2'), 'dot' => 'bg-amber-500'],
                                 default => ['label' => $attendance->status, 'dot' => 'bg-slate-400']
                             };
                         @endphp
@@ -106,7 +106,7 @@
                         </div>
                     @empty
                         <div class="p-8 text-center text-slate-400">
-                            <p>{{ __('មិនទាន់មានទិន្នន័យ') }}</p>
+                            <p>{{ __('no_data_yet') }}</p>
                         </div>
                     @endforelse
                 </div>

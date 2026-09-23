@@ -12,7 +12,7 @@
                 <div class="px-8 py-6 border-b border-slate-100">
                     <h3 class="text-lg font-black text-slate-800 flex items-center gap-2">
                         <i class="fas fa-graduation-cap text-emerald-600"></i>
-                        {{ __('ព័ត៌មានសិក្សា') }}
+                        {{ __('academic_info') }}
                     </h3>
                 </div>
                 <div class="px-8 py-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -22,7 +22,7 @@
                             <i class="fas fa-book-open text-emerald-600 text-sm"></i>
                         </div>
                         <div>
-                            <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest">{{ __('មុខវិជ្ជា') }}</p>
+                            <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest">{{ __('course') }}</p>
                             <p class="text-sm font-bold text-slate-800 mt-0.5">{{ $studentDepartmentEnrollment->department->name_km ?? 'N/A' }}</p>
                         </div>
                     </div>
@@ -32,7 +32,7 @@
                             <i class="fas fa-university text-blue-600 text-sm"></i>
                         </div>
                         <div>
-                            <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest">{{ __('មហាវិទ្យាល័យ') }}</p>
+                            <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest">{{ __('faculty') }}</p>
                             <p class="text-sm font-bold text-slate-800 mt-0.5">{{ $studentDepartmentEnrollment->department?->faculty?->name_km ?? 'N/A' }}</p>
                         </div>
                     </div>
@@ -42,7 +42,7 @@
                             <i class="fas fa-medal text-amber-600 text-sm"></i>
                         </div>
                         <div>
-                            <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest">{{ __('កម្រិតសិក្សា') }}</p>
+                            <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest">{{ __('degree_level_2') }}</p>
                             <p class="text-sm font-bold text-slate-800 mt-0.5">{{ $studentDepartmentEnrollment->degree_level ?? 'N/A' }}</p>
                         </div>
                     </div>
@@ -52,7 +52,7 @@
                             <i class="fas fa-users text-rose-600 text-sm"></i>
                         </div>
                         <div>
-                            <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest">{{ __('ជំនាន់') }}</p>
+                            <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest">{{ __('generation') }}</p>
                             <p class="text-sm font-bold text-slate-800 mt-0.5">G{{ $user->generation ?? 'N/A' }}</p>
                         </div>
                     </div>
@@ -62,8 +62,8 @@
                             <i class="fas fa-layer-group text-teal-600 text-sm"></i>
                         </div>
                         <div>
-                            <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest">{{ __('ឆ្នាំសិក្សា') }}</p>
-                            <p class="text-sm font-bold text-slate-800 mt-0.5">{{ $computedYearLevel ? __('ឆ្នាំទី') . $computedYearLevel : 'N/A' }}</p>
+                            <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest">{{ __('academic_year') }}</p>
+                            <p class="text-sm font-bold text-slate-800 mt-0.5">{{ $computedYearLevel ? __('year') . $computedYearLevel : 'N/A' }}</p>
                         </div>
                     </div>
                 </div>
@@ -127,8 +127,8 @@
                         </div>
                     @endif
                     <div class="text-center mb-10">
-                        <h2 class="text-2xl font-black text-slate-800">{{ __('កែប្រែប្រវត្តិរូប') }}</h2>
-                        <p class="text-sm text-slate-400 font-medium mt-1">{{ __('រក្សាទុកព័ត៌មានផ្ទាល់ខ្លួនរបស់អ្នកឱ្យទាន់សម័យ') }}</p>
+                        <h2 class="text-2xl font-black text-slate-800">{{ __('edit_profile') }}</h2>
+                        <p class="text-sm text-slate-400 font-medium mt-1">{{ __('keep_your_personal_information_up_to_date') }}</p>
                     </div>
 
                     <form method="POST" action="{{ route('student.profile.update') }}" enctype="multipart/form-data" class="space-y-8">
@@ -142,21 +142,21 @@
                             
                             {{-- Full Name (Khmer) --}}
                             <div class="space-y-2">
-                                <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">{{ __('ឈ្មោះពេញ (ខ្មែរ)') }} <span class="text-red-400">*</span></label>
+                                <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">{{ __('full_name_khmer') }} <span class="text-red-400">*</span></label>
                                 <div class="relative">
                                     <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400">
                                         <i class="fas fa-user-tag"></i>
                                     </span>
                                     <input type="text" name="full_name_km" id="full_name_km" value="{{ old('full_name_km', $studentProfile->full_name_km ?? '') }}" required 
                                            class="block w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 focus:bg-white outline-none transition-all font-bold text-slate-700" 
-                                           placeholder="{{ __('បញ្ជាក់ឈ្មោះជាភាសាខ្មែរ') }}">
+                                           placeholder="{{ __('confirm_your_name_in_khmer') }}">
                                 </div>
                                 <x-input-error :messages="$errors->get('full_name_km')" class="mt-2" />
                             </div>
 
                             {{-- Full Name (English) --}}
                             <div class="space-y-2">
-                                <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">{{ __('ឈ្មោះពេញ (អង់គ្លេស)') }}</label>
+                                <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">{{ __('full_name_english') }}</label>
                                 <div class="relative">
                                     <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400">
                                         <i class="fas fa-id-card"></i>
@@ -169,23 +169,23 @@
 
                             {{-- Gender --}}
                             <div class="space-y-2">
-                                <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">{{ __('ភេទ') }} <span class="text-red-400">*</span></label>
+                                <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">{{ __('gender') }} <span class="text-red-400">*</span></label>
                                 <div class="relative">
                                     <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400 pointer-events-none">
                                         <i class="fas fa-venus-mars"></i>
                                     </span>
                                     <select id="gender" name="gender" required 
                                             class="block w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 focus:bg-white outline-none transition-all font-bold text-slate-700 appearance-none cursor-pointer">
-                                        <option value="" disabled selected>{{ __('ជ្រើសរើសភេទ') }}</option>
-                                        <option value="male" @if(old('gender', $studentProfile->gender ?? '') == 'male') selected @endif>{{ __('ប្រុស') }}</option>
-                                        <option value="female" @if(old('gender', $studentProfile->gender ?? '') == 'female') selected @endif>{{ __('ស្រី') }}</option>
+                                        <option value="" disabled selected>{{ __('select_gender') }}</option>
+                                        <option value="male" @if(old('gender', $studentProfile->gender ?? '') == 'male') selected @endif>{{ __('male') }}</option>
+                                        <option value="female" @if(old('gender', $studentProfile->gender ?? '') == 'female') selected @endif>{{ __('female') }}</option>
                                     </select>
                                 </div>
                             </div>
 
                             {{-- Date of Birth --}}
                             <div class="space-y-2">
-                                <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">{{ __('ថ្ងៃខែឆ្នាំកំណើត') }}</label>
+                                <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">{{ __('date_of_birth') }}</label>
                                 <div class="relative">
                                     <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400">
                                         <i class="fas fa-calendar-alt"></i>
@@ -197,7 +197,7 @@
 
                             {{-- Phone Number --}}
                             <div class="space-y-2">
-                                <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">{{ __('លេខទូរស័ព្ទ') }}</label>
+                                <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">{{ __('phone_number') }}</label>
                                 <div class="relative">
                                     <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400">
                                         <i class="fas fa-phone-alt"></i>
@@ -210,14 +210,14 @@
 
                             {{-- Address --}}
                             <div class="space-y-2 md:col-span-2">
-                                <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">{{ __('អាសយដ្ឋាន') }}</label>
+                                <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">{{ __('address') }}</label>
                                 <div class="relative">
                                     <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400">
                                         <i class="fas fa-map-marker-alt"></i>
                                     </span>
                                     <input type="text" name="address" id="address" value="{{ old('address', $studentProfile->address ?? '') }}" 
                                            class="block w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 focus:bg-white outline-none transition-all font-bold text-slate-700" 
-                                           placeholder="{{ __('រាជធានីភ្នំពេញ, កម្ពុជា') }}">
+                                           placeholder="{{ __('phnom_penh_cambodia') }}">
                                 </div>
                             </div>
                         </div>
@@ -227,12 +227,12 @@
                             <button type="submit" 
                                     class="w-full sm:flex-[2] py-4 bg-emerald-600 text-white rounded-2xl font-black shadow-xl shadow-emerald-100 hover:bg-emerald-700 hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-2">
                                 <i class="fas fa-save"></i>
-                                {{ __('រក្សាទុកការកែប្រែ') }}
+                                {{ __('save_changes') }}
                             </button>
                             
                             <a wire:navigate href="{{ route('student.profile.show') }}"
                                class="w-full sm:flex-1 py-4 bg-white border border-slate-200 text-slate-500 rounded-2xl font-black text-center hover:bg-slate-50 transition-all">
-                                {{ __('បោះបង់') }}
+                                {{ __('cancel_2') }}
                             </a>
                         </div>
                     </form>

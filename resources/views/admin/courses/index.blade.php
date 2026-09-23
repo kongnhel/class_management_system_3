@@ -17,8 +17,8 @@
                                 </svg>
                             </div>
                             <div>
-                                <h2 class="text-3xl font-bold text-gray-900">{{ __('គ្រប់គ្រងមុខវិជ្ជា') }}</h2>
-                                <p class="mt-1 text-sm text-gray-500">{{ __('គ្រប់គ្រង និងពិនិត្យមើលបញ្ជីឈ្មោះមុខវិជ្ជាទាំងអស់') }}</p>
+                                <h2 class="text-3xl font-bold text-gray-900">{{ __('manage_courses') }}</h2>
+                                <p class="mt-1 text-sm text-gray-500">{{ __('manage_and_review_all_courses') }}</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-3">
@@ -27,13 +27,13 @@
                                         :class="viewMode === 'table' ? 'bg-white shadow-sm text-emerald-600' : 'text-gray-500 hover:text-gray-700'"
                                         class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 flex items-center gap-2">
                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>
-                                    {{ __('បញ្ជី') }}
+                                    {{ __('list_2') }}
                                 </button>
                                 <button @click="viewMode = 'grid'"
                                         :class="viewMode === 'grid' ? 'bg-white shadow-sm text-emerald-600' : 'text-gray-500 hover:text-gray-700'"
                                         class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 flex items-center gap-2">
                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
-                                    {{ __('ប័ណ្ណ') }}
+                                    {{ __('cards') }}
                                 </button>
                             </div>
                             <a href="{{ route('admin.create-course') }}"
@@ -41,7 +41,7 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
                                 </svg>
-                                {{ __('បន្ថែមមុខវិជ្ជា') }}
+                                {{ __('add_course') }}
                             </a>
                         </div>
                     </div>
@@ -55,12 +55,12 @@
                             <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                             </span>
-                            <input type="text" name="search" value="{{ $search }}" placeholder="{{ __('ស្វែងរកមុខវិជ្ជា...') }}" autocomplete="off"
+                            <input type="text" name="search" value="{{ $search }}" placeholder="{{ __('search_courses') }}" autocomplete="off"
                                    class="pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full transition-all">
                         </div>
                         <select name="faculty_id" data-dept-faculty
                             class="py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full sm:w-52 transition-all">
-                            <option value="">{{ __('មហាវិទ្យាល័យទាំងអស់') }}</option>
+                            <option value="">{{ __('all_faculties') }}</option>
                             @foreach($faculties as $f)
                                 <option value="{{ $f->id }}" {{ $facultyId == $f->id ? 'selected' : '' }}>
                                     {{ $f->name_km }}
@@ -69,7 +69,7 @@
                         </select>
                         <select name="department_id" id="courseDepartmentFilter" data-dept-department
                             class="py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full sm:w-56 transition-all">
-                            <option value="">{{ __('នាយកដ្ឋានទាំងអស់') }}</option>
+                            <option value="">{{ __('all_departments') }}</option>
                             @foreach($allDepartments as $d)
                                 <option value="{{ $d->id }}" {{ $departmentId == $d->id ? 'selected' : '' }}>
                                     {{ $d->name_km }}
@@ -113,7 +113,7 @@
 
                                     <div class="mb-12 last:mb-0">
                                         <div class="flex items-center gap-3 mb-6">
-                                            <span class="text-xs text-gray-400 font-bold">{{ $filteredCourses->count() }} {{ __('មុខវិជ្ជា') }}</span>
+                                            <span class="text-xs text-gray-400 font-bold">{{ $filteredCourses->count() }} {{ __('course') }}</span>
                                             <div class="flex-1 h-px bg-gradient-to-r from-gray-200 to-transparent"></div>
                                         </div>
 
@@ -128,11 +128,11 @@
                                                         <div class="flex gap-1">
                                                             <a href="{{ route('admin.edit-course', $course->id) }}"
                                                                class="px-3 py-1.5 text-xs font-bold text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all border border-emerald-200">
-                                                                {{ __('កែប្រែ') }}
+                                                                {{ __('edit_2') }}
                                                             </a>
                                                             <button @click="openDeleteModal('{{ route('admin.delete-course', $course->id) }}')"
                                                                     class="px-3 py-1.5 text-xs font-bold text-red-500 hover:bg-red-50 rounded-xl transition-all border border-red-200">
-                                                                {{ __('លុប') }}
+                                                                {{ __('delete_2') }}
                                                             </button>
                                                         </div>
                                                     </div>
@@ -148,7 +148,7 @@
                                                     <div class="flex items-center justify-between pt-4 border-t border-gray-100">
                                                         <div class="flex items-center gap-2">
                                                             <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                                                            <span class="text-xs font-bold text-gray-600">{{ $course->credits }} {{ __('ក្រេឌីត') }}</span>
+                                                            <span class="text-xs font-bold text-gray-600">{{ $course->credits }} {{ __('credits') }}</span>
                                                         </div>
                                                         <span class="text-[10px] bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-lg font-bold border border-emerald-100">
                                                             {{ $course->department->name_km ?? 'N/A' }}
@@ -163,10 +163,10 @@
                                             <table class="min-w-full divide-y divide-gray-200">
                                                 <thead class="bg-gray-50">
                                                     <tr>
-                                                        <th class="px-6 py-4 text-left text-[11px] font-bold text-gray-500 uppercase">{{ __('ព័ត៌មានមុខវិជ្ជា') }}</th>
-                                                        <th class="px-6 py-4 text-left text-[11px] font-bold text-gray-500 uppercase">{{ __('ដេប៉ាតឺម៉ង់') }}</th>
-                                                        <th class="px-6 py-4 text-center text-[11px] font-bold text-gray-500 uppercase">{{ __('ក្រេឌីត') }}</th>
-                                                        <th class="px-6 py-4 text-right text-[11px] font-bold text-gray-500 uppercase">{{ __('សកម្មភាព') }}</th>
+                                                        <th class="px-6 py-4 text-left text-[11px] font-bold text-gray-500 uppercase">{{ __('course_information') }}</th>
+                                                        <th class="px-6 py-4 text-left text-[11px] font-bold text-gray-500 uppercase">{{ __('department_3') }}</th>
+                                                        <th class="px-6 py-4 text-center text-[11px] font-bold text-gray-500 uppercase">{{ __('credits') }}</th>
+                                                        <th class="px-6 py-4 text-right text-[11px] font-bold text-gray-500 uppercase">{{ __('actions_2') }}</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody class="bg-white divide-y divide-gray-100">
@@ -185,18 +185,18 @@
                                                             </td>
                                                             <td class="px-6 py-4 text-center">
                                                                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 border border-emerald-100 text-emerald-700">
-                                                                    {{ $course->credits }} {{ __('ក្រេឌីត') }}
+                                                                    {{ $course->credits }} {{ __('credits') }}
                                                                 </span>
                                                             </td>
                                                             <td class="px-6 py-4 text-right whitespace-nowrap">
                                                                 <div class="flex justify-end gap-2">
                                                                     <a href="{{ route('admin.edit-course', $course->id) }}"
                                                                        class="px-3 py-1.5 text-xs font-bold text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all border border-emerald-200">
-                                                                        {{ __('កែប្រែ') }}
+                                                                        {{ __('edit_2') }}
                                                                     </a>
                                                                     <button @click="openDeleteModal('{{ route('admin.delete-course', $course->id) }}')"
                                                                             class="px-3 py-1.5 text-xs font-bold text-red-500 hover:bg-red-50 rounded-xl transition-all border border-red-200">
-                                                                        {{ __('លុប') }}
+                                                                        {{ __('delete_2') }}
                                                                     </button>
                                                                 </div>
                                                             </td>
@@ -215,12 +215,12 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.462 9.492 5 8 5c-5.072 0-8 3.844-8 7s2.928 7 8 7c1.492 0 2.832-.462 4-1.253m0-13C13.168 5.462 14.508 5 16 5c5.072 0 8 3.844 8 7s-2.928 7-8 7c-1.492 0-2.832-.462-4-1.253"/>
                                     </svg>
                                 </div>
-                                <h3 class="text-lg font-bold text-gray-900 mb-2">{{ __('មិនទាន់មានមុខវិជ្ជា') }}</h3>
-                                <p class="text-sm text-gray-500 mb-6">{{ __('ចុចប៊ូតុងខាងក្រោមដើម្បីបន្ថែមមុខវិជ្ជាថ្មី') }}</p>
+                                <h3 class="text-lg font-bold text-gray-900 mb-2">{{ __('no_courses_yet') }}</h3>
+                                <p class="text-sm text-gray-500 mb-6">{{ __('click_the_button_below_to_add_a_new_course') }}</p>
                                 <a href="{{ route('admin.create-course') }}"
                                    class="inline-flex items-center px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-xl transition-all shadow-md shadow-emerald-200 gap-2">
                                     <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14m-7-7h14"/></svg>
-                                    {{ __('បន្ថែមមុខវិជ្ជា') }}
+                                    {{ __('add_course') }}
                                 </a>
                             </div>
                         @endforelse
@@ -243,19 +243,19 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                         </svg>
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-3">{{ __('តើអ្នកប្រាកដទេ?') }}</h3>
-                    <p class="text-sm text-gray-500 leading-relaxed">{{ __('ទិន្នន័យនេះនឹងត្រូវលុបចេញពីប្រព័ន្ធរៀងរហូត។ អ្នកមិនអាចស្ដារវាឡើងវិញបានឡើយ។') }}</p>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3">{{ __('are_you_sure') }}</h3>
+                    <p class="text-sm text-gray-500 leading-relaxed">{{ __('this_data_will_be_permanently_deleted_from_the_system_you_will_not_be_able_to_restore_it') }}</p>
                 </div>
                 <div class="bg-gray-50 px-8 py-6 flex gap-3">
                     <button type="button" onclick="closeDeleteModal()"
                             class="flex-1 px-4 py-3 bg-white border border-gray-200 text-sm font-bold text-gray-600 rounded-xl hover:bg-gray-100 transition-all">
-                        {{ __('បោះបង់') }}
+                        {{ __('cancel_2') }}
                     </button>
                     <form id="delete-form" method="POST" action="" class="flex-1">
                         @csrf @method('DELETE')
                         <button type="submit"
                                 class="w-full px-4 py-3 bg-red-600 text-sm font-bold text-white rounded-xl hover:bg-red-700 shadow-lg shadow-red-200 transition-all active:scale-95">
-                            {{ __('យល់ព្រមលុប') }}
+                            {{ __('confirm_delete_2') }}
                         </button>
                     </form>
                 </div>

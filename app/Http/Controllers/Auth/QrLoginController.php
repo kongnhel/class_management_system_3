@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use App\Services\ProfessorLoginSecurityService;
 
 class QrLoginController extends Controller
 {
@@ -65,6 +66,7 @@ class QrLoginController extends Controller
                     'is_verified' => true,
                     'email_verified_at' => $user->email_verified_at ?? now(),
                 ]);
+                app(ProfessorLoginSecurityService::class)->recordLogin(request(), $user);
             }
 
             return redirect()->intended(route('dashboard', absolute: false));

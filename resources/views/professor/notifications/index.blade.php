@@ -1,7 +1,7 @@
 ﻿<x-app-layout>
     <x-slot name="header">
         <h2 class="font-bold text-3xl text-gray-900 leading-tight flex items-center gap-2">
-            📢 {{ __('ការជូនដំណឹង') }}
+            📢 {{ __('notifications') }}
         </h2>
     </x-slot>
 
@@ -31,7 +31,7 @@
                 <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                     <div class="flex items-center space-x-2">
                         <button @click="activeTab = 'received'" :class="{ 'bg-green-600 text-white': activeTab === 'received', 'bg-gray-200 text-gray-700': activeTab !== 'received' }" class="px-4 py-2 rounded-full font-semibold transition">
-                            {{ __('ការជូនដំណឹងដែលបានទទួល') }}
+                            {{ __('received') }}
                             @php
                                 $unreadReceived = $receivedNotifications->where('is_read', false)->count();
                             @endphp
@@ -40,12 +40,12 @@
                             @endif
                         </button>
                         <button @click="activeTab = 'sent'" :class="{ 'bg-green-600 text-white': activeTab === 'sent', 'bg-gray-200 text-gray-700': activeTab !== 'sent' }" class="px-4 py-2 rounded-full font-semibold transition">
-                            {{ __('ការជូនដំណឹងដែលបានផ្ញើ') }}
+                            {{ __('sent') }}
                         </button>
                     </div>
                     <a wire:navigate href="{{ route('professor.notifications.create') }}"
                        class="inline-flex items-center w-full justify-center md:w-auto px-6 py-3 bg-green-600 text-white font-bold rounded-full shadow-lg hover:bg-green-700 transition duration-300 transform hover:scale-105">
-                        <i class="fas fa-plus mr-2"></i> {{ __('បង្កើតការជូនដំណឹងថ្មី') }}
+                        <i class="fas fa-plus mr-2"></i> {{ __('create_notification') }}
                     </a>
                 </div>
 
@@ -53,20 +53,20 @@
                 <div x-show="activeTab === 'received'">
                     <div class="flex items-center space-x-2 mb-4">
                         <button @click="filter = 'all'" :class="{ 'bg-green-100 text-green-700': filter === 'all', 'bg-gray-100 text-gray-600': filter !== 'all' }" class="px-3 py-1.5 rounded-full text-sm font-semibold transition">
-                            {{ __('ទាំងអស់') }}
+                            {{ __('all_2') }}
                         </button>
                         <button @click="filter = 'unread'" :class="{ 'bg-green-100 text-green-700': filter === 'unread', 'bg-gray-100 text-gray-600': filter !== 'unread' }" class="px-3 py-1.5 rounded-full text-sm font-semibold transition">
-                            {{ __('មិនទាន់អាន') }}
+                            {{ __('unread') }}
                         </button>
                         <button onclick="markAllReceivedAsRead()" class="px-3 py-1.5 rounded-full bg-green-100 text-green-700 text-sm font-semibold hover:bg-green-200 transition">
-                            {{ __('សម្គាល់ថាអានទាំងអស់') }}
+                            {{ __('mark_all_as_read') }}
                         </button>
                     </div>
 
                     @if ($receivedNotifications->isEmpty())
                         <div class="text-center py-16 text-gray-500 bg-gray-50 rounded-2xl shadow-inner">
                             <i class="fas fa-bell-slash text-5xl text-gray-300"></i>
-                            <p class="text-xl mt-4 font-semibold">{{ __('មិនមានការជូនដំណឹងថ្មីសម្រាប់អ្នកទេ។') }}</p>
+                            <p class="text-xl mt-4 font-semibold">{{ __('no_notifications_yet') }}</p>
                         </div>
                     @else
                         <div class="space-y-3">
@@ -86,20 +86,20 @@
                                         <p class="font-bold text-gray-800 text-base">{{ $item->title }}</p>
                                         <p class="text-gray-600 mt-1 text-sm">{{ \Illuminate\Support\Str::limit($item->content, 120) }}</p>
                                         <div class="text-xs text-gray-400 mt-2 flex items-center justify-between">
-                                            <span>{{ __('ដោយ៖') }} <strong>{{ $item->from_user_name }}</strong> - {{ $item->created_at->locale('km')->diffForHumans() }}</span>
+                                            <span>{{ __('key_by') }} <strong>{{ $item->from_user_name }}</strong> - {{ $item->created_at->locale('km')->diffForHumans() }}</span>
                                             <div class="flex items-center gap-2">
                                                 @if($item->type === 'announcement')
-                                                    <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-semibold">{{ __('ការជូនដំណឹង') }}</span>
+                                                    <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-semibold">{{ __('notifications') }}</span>
                                                 @endif
                                                 @if(!$item->is_read)
                                                     @if($item->type === 'notification')
                                                         <button onclick="markNotificationAsRead({{ $item->id }})" class="text-xs font-semibold text-green-600 hover:text-green-800 hover:underline">
-                                                            {{ __('សម្គាល់ថាបានអាន') }}
+                                                            {{ __('mark_as_read') }}
                                                         </button>
                                                     @endif
                                                 @else
                                                     <span class="text-xs text-green-600 font-semibold flex items-center gap-1">
-                                                        <i class="fas fa-check-circle"></i> {{ __('បានអាន') }}
+                                                        <i class="fas fa-check-circle"></i> {{ __('read') }}
                                                     </span>
                                                 @endif
                                             </div>
@@ -116,7 +116,7 @@
                     @if ($sentNotifications->isEmpty())
                         <div class="text-center py-16 text-gray-500 bg-gray-50 rounded-2xl shadow-inner">
                             <i class="fas fa-bell-slash text-5xl text-gray-300"></i>
-                            <p class="text-xl mt-4 font-semibold">{{ __('អ្នកមិនទាន់បានផ្ញើការជូនដំណឹងណាមួយនៅឡើយទេ។') }}</p>
+                            <p class="text-xl mt-4 font-semibold">{{ __('no_notifications_found') }}</p>
                         </div>
                     @else
                         <div class="hidden md:block">
@@ -124,11 +124,11 @@
                                 <table class="min-w-full divide-y divide-gray-200 border rounded-lg">
                                     <thead class="bg-gray-100">
                                         <tr>
-                                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-1/4">{{ __('ចំណងជើង') }}</th>
-                                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-1/3">{{ __('សារ') }}</th>
-                                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-1/6">{{ __('អ្នកទទួល') }}</th>
-                                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-1/6">{{ __('បានផ្ញើនៅ') }}</th>
-                                            <th class="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider w-1/12">{{ __('សកម្មភាព') }}</th>
+                                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-1/4">{{ __('title') }}</th>
+                                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-1/3">{{ __('message') }}</th>
+                                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-1/6">{{ __('recipients') }}</th>
+                                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-1/6">{{ __('status') }}</th>
+                                            <th class="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider w-1/12">{{ __('actions_2') }}</th>
                                         </tr>
                                     </thead>
                                     <tbody class="bg-white divide-y divide-gray-100">
@@ -150,7 +150,7 @@
                                                         $recipientNames = collect($recipientIds)->map(fn($id) => $allRecipients[$id] ?? 'Unknown User')->all();
                                                     @endphp
                                                     <button @click="recipients = {{ json_encode($recipientNames) }}; notificationTitle = '{{ addslashes($notification->data['title'] ?? '') }}'; showRecipientsModal = true;" class="text-green-600 hover:underline font-semibold">
-                                                        {{ count($recipientIds) }} {{ __('និស្សិត') }}
+                                                        {{ count($recipientIds) }} {{ __('students_3') }}
                                                     </button>
                                                 </td>
                                                 <td class="px-6 py-4 text-sm text-gray-500">
@@ -160,7 +160,7 @@
                                                     <button type="button" 
                                                         @click="showDeleteModal = true; deleteRoute = '{{ route('professor.notifications.destroy', $notification->id) }}'; itemTitle = '{{ addslashes($notification->data['title'] ?? '') }}'"
                                                         class="text-red-600 hover:text-red-900 font-semibold transition duration-200">
-                                                        {{ __('លុប') }}
+                                                        {{ __('delete_2') }}
                                                     </button>
                                                 </td>
                                             </tr>
@@ -175,14 +175,14 @@
                                 <div class="bg-white border border-gray-200 rounded-xl shadow-lg p-4 transition duration-300 hover:shadow-xl">
                                     <div class="border-b pb-3 mb-3">
                                         <h4 class="text-lg font-extrabold text-green-700 mb-1">{{ $notification->data['title'] ?? 'N/A' }}</h4>
-                                        <p class="text-xs text-gray-500">{{ __('បានផ្ញើ:') }} {{ $notification->created_at->locale('km')->diffForHumans() }}</p>
+                                        <p class="text-xs text-gray-500">{{ __('sent_label') }} {{ $notification->created_at->locale('km')->diffForHumans() }}</p>
                                     </div>
                                     <div class="space-y-3 text-sm">
                                         <p class="text-gray-600">{{ \Illuminate\Support\Str::limit($notification->data['message'] ?? '', 100) }}</p>
                                         <div class="flex items-center justify-between pt-2 border-t border-gray-100">
-                                            <p class="font-semibold text-gray-700">{{ __('អ្នកទទួល') }}:</p>
+                                            <p class="font-semibold text-gray-700">{{ __('recipients') }}:</p>
                                             <button @click="recipients = {{ json_encode($allRecipients->filter(fn($id) => in_array($id, $notification->data['recipient_ids'] ?? []))->all()) }}; notificationTitle = '{{ addslashes($notification->data['title'] ?? '') }}'; showRecipientsModal = true;" class="text-sm text-green-600 font-bold">
-                                                {{ count($notification->data['recipient_ids'] ?? []) }} {{ __('និស្សិត') }}
+                                                {{ count($notification->data['recipient_ids'] ?? []) }} {{ __('students_3') }}
                                             </button>
                                         </div>
                                     </div>
@@ -190,7 +190,7 @@
                                         <button type="button" 
                                             @click="showDeleteModal = true; deleteRoute = '{{ route('professor.notifications.destroy', $notification->id) }}'; itemTitle = '{{ addslashes($notification->data['title'] ?? '') }}'"
                                             class="px-3 py-1 text-xs bg-red-100 text-red-600 font-bold rounded-lg">
-                                            <i class="fas fa-trash-alt mr-1"></i> {{ __('លុបការជូនដំណឹង') }}
+                                            <i class="fas fa-trash-alt mr-1"></i> {{ __('delete') }}
                                         </button>
                                     </div>
                                 </div>
@@ -206,7 +206,7 @@
             <div class="flex items-center justify-center min-h-screen p-4">
                 <div @click="showRecipientsModal = false" class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
                 <div class="relative bg-white rounded-lg shadow-xl w-full max-w-lg p-6">
-                    <h3 class="text-xl font-bold text-gray-900 border-b pb-3 mb-4" x-text="'{{ __('អ្នកទទួលសម្រាប់:') }} ' + notificationTitle"></h3>
+                    <h3 class="text-xl font-bold text-gray-900 border-b pb-3 mb-4" x-text="'{{ __('recipients_of') }} ' + notificationTitle"></h3>
                     <ul class="space-y-2 max-h-80 overflow-y-auto p-2">
                         <template x-for="recipient in recipients" :key="recipient">
                             <li class="bg-green-50 p-3 rounded-md text-gray-800 flex items-center">
@@ -216,7 +216,7 @@
                         </template>
                     </ul>
                     <div class="mt-6 text-right">
-                        <button @click="showRecipientsModal = false" class="px-5 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">{{ __('បិទ') }}</button>
+                        <button @click="showRecipientsModal = false" class="px-5 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">{{ __('close_3') }}</button>
                     </div>
                 </div>
             </div>
@@ -239,22 +239,22 @@
                         <i class="fas fa-exclamation-triangle text-3xl text-red-600"></i>
                     </div>
 
-                    <h3 class="text-2xl font-bold text-gray-900 mb-2">{{ __('បញ្ជាក់ការលុប') }}</h3>
-                    <p class="text-gray-600 mb-1" x-text="'{{ __('តើអ្នកពិតជាចង់លុបការជូនដំណឹង') }} &quot;' + itemTitle + '&quot; ' + '{{ __('មែនទេ?') }}'"></p>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">{{ __('confirm_deletion') }}</h3>
+                    <p class="text-gray-600 mb-1" x-text="'{{ __('confirm_delete_notification') }} &quot;' + itemTitle + '&quot; ' + '{{ __('key_') }}'"></p>
                     <p class="text-sm text-red-500 font-medium bg-red-50 p-3 rounded-lg mt-4">
-                        <i class="fas fa-info-circle mr-1"></i> {{ __('សកម្មភាពនេះនឹងលុបការជូនដំណឹងចេញពីសិស្សទាំងអស់ដែលបានទទួល ហើយមិនអាចត្រឡប់ក្រោយវិញបានទេ។') }}
+                        <i class="fas fa-info-circle mr-1"></i> {{ __('action_cannot_be_undone') }}
                     </p>
 
                     <div class="mt-8 flex flex-col sm:flex-row gap-3">
                         <button @click="showDeleteModal = false" type="button" class="flex-1 px-6 py-3 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition">
-                            {{ __('បោះបង់') }}
+                            {{ __('cancel_2') }}
                         </button>
                         
                         <form :action="deleteRoute" method="POST" class="flex-1">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="w-full px-6 py-3 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 shadow-lg shadow-red-200 transition">
-                                {{ __('លុបចោល') }}
+                                {{ __('delete_4') }}
                             </button>
                         </form>
                     </div>
@@ -307,7 +307,7 @@
                         if (button) {
                             const readStatus = document.createElement('span');
                             readStatus.className = 'text-xs text-green-600 font-semibold flex items-center gap-1';
-                            readStatus.innerHTML = '<i class="fas fa-check-circle"></i> {{ __("បានអាន") }}';
+                            readStatus.innerHTML = '<i class="fas fa-check-circle"></i> {{ __("read") }}';
                             button.parentNode.replaceChild(readStatus, button);
                         }
                     }
@@ -339,7 +339,7 @@
                         if (button) {
                             const readStatus = document.createElement('span');
                             readStatus.className = 'text-xs text-green-600 font-semibold flex items-center gap-1';
-                            readStatus.innerHTML = '<i class="fas fa-check-circle"></i> {{ __("បានអាន") }}';
+                            readStatus.innerHTML = '<i class="fas fa-check-circle"></i> {{ __("read") }}';
                             button.parentNode.replaceChild(readStatus, button);
                         }
                     });

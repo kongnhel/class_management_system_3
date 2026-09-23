@@ -21,7 +21,7 @@ class StudentController extends Controller
         $todayDate = now()->toDateString();
 
         // Attendance counts
-        $totalPresent = \App\Models\AttendanceRecord::where('student_user_id', $studentId)->where('status', 'present')->count();
+        $totalPresent = \App\Models\AttendanceRecord::where('student_user_id', $studentId)->whereIn('status', ['present', 'late'])->count();
         $totalAbsent = \App\Models\AttendanceRecord::where('student_user_id', $studentId)->where('status', 'absent')->count();
         $totalPermission = \App\Models\AttendanceRecord::where('student_user_id', $studentId)->where('status', 'permission')->count();
 
@@ -84,7 +84,7 @@ class StudentController extends Controller
                 $a->title = $a->title_km ?? $a->title_en;
                 $a->content = $a->content_km ?? $a->content_en;
                 $a->is_read = $a->reads->isNotEmpty();
-                $a->sender_name = $a->poster->name ?? __('រដ្ឋបាលសាលា');
+                $a->sender_name = $a->poster->name ?? __('school_administration');
             }));
         $allNotifications = $user->notifications->map(function ($n) {
             $n->type = 'notification';

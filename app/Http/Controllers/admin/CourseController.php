@@ -45,7 +45,7 @@ class CourseController extends Controller
         $coursesData = $query->orderBy('department_id')->get();
 
         $coursesGrouped = $coursesData->groupBy([
-            fn ($course) => $course->department->name_km ?? __('មិនទាន់មានដេប៉ាតឺម៉ង់'),
+            fn ($course) => $course->department->name_km ?? __('no_departments_yet'),
         ]);
 
         return view('admin.courses.index', compact('coursesGrouped', 'room', 'search', 'faculties', 'facultyId', 'departmentId', 'allDepartments'));
@@ -74,7 +74,7 @@ class CourseController extends Controller
         ]));
 
         return redirect()->route('admin.manage-courses')
-            ->with('success', __('មុខវិជ្ជាត្រូវបានបង្កើតដោយជោគជ័យ។'));
+            ->with('success', __('course_created_successfully'));
     }
 
     public function show(Course $course)
@@ -105,13 +105,13 @@ class CourseController extends Controller
         ]));
 
         return redirect()->route('admin.manage-courses')
-            ->with('success', __('មុខវិជ្ជាត្រូវបានកែប្រែដោយជោគជ័យ។'));
+            ->with('success', __('course_updated_successfully'));
     }
 
     public function destroy(Course $course)
     {
         $course->delete();
 
-        return redirect()->route('admin.manage-courses')->with('success', __('មុខវិជ្ជាត្រូវបានលុបដោយជោគជ័យ។'));
+        return redirect()->route('admin.manage-courses')->with('success', __('course_deleted_successfully'));
     }
 }

@@ -2,9 +2,9 @@
     <x-slot name="header">
         <div class="px-4 md:px-6 lg:px-8">
             <h2 class="text-4xl font-extrabold text-gray-900 leading-tight flex items-center">
-                {{ __('គ្រប់គ្រងអ្នកប្រើប្រាស់') }} <i class="fas fa-users-cog text-green-600 ml-4"></i>
+                {{ __('manage_users') }} <i class="fas fa-users-cog text-green-600 ml-4"></i>
             </h2>
-            <p class="mt-2 text-lg text-gray-500">{{ __('បញ្ជីឈ្មោះអ្នកប្រើប្រាស់ទាំងអស់នៅក្នុងប្រព័ន្ធ') }}</p>
+            <p class="mt-2 text-lg text-gray-500">{{ __('list_of_all_users_in_the_system') }}</p>
         </div>
     </x-slot>
 
@@ -15,9 +15,9 @@
                 <div class="flex flex-col lg:flex-row justify-between items-center mb-10 gap-6">
                     <div class="text-center lg:text-left">
                         <h3 class="text-3xl font-bold text-gray-800 tracking-tight">
-                            {{ __('បញ្ជីអ្នកប្រើប្រាស់') }}
+                            {{ __('user_list') }}
                         </h3>
-                        <p class="text-gray-500 text-sm mt-1">{{ __('គ្រប់គ្រង និងតាមដានព័ត៌មានសមាជិកទាំងអស់') }}</p>
+                        <p class="text-gray-500 text-sm mt-1">{{ __('manage_and_track_all_member_information') }}</p>
                     </div>
 
                     <div class="flex flex-col md:flex-row items-center gap-4 w-full lg:w-auto">
@@ -33,7 +33,7 @@
                                     type="text"
                                     name="search"
                                     value="{{ request('search') }}"
-                                    placeholder="{{ __('ស្វែងរកឈ្មោះ ឬអ៊ីម៉ែល...') }}"
+                                    placeholder="{{ __('search_by_name_or_email') }}"
                                     autocomplete="off"
                                     aria-controls="user-results"
                                     class="block w-full pl-11 pr-20 py-3 bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-2xl focus:ring-2 focus:ring-green-500/20 focus:border-green-500 focus:bg-white transition-all duration-200 outline-none"
@@ -41,7 +41,7 @@
                                 <div id="live-search-loading" class="hidden absolute inset-y-0 right-11 items-center text-green-600" aria-hidden="true">
                                     <i class="fas fa-spinner fa-spin"></i>
                                 </div>
-                                <button id="clear-live-search" type="button" class="hidden absolute inset-y-0 right-3 items-center text-gray-400 hover:text-gray-700 transition-colors" aria-label="{{ __('សម្អាតការស្វែងរក') }}">
+                                <button id="clear-live-search" type="button" class="hidden absolute inset-y-0 right-3 items-center text-gray-400 hover:text-gray-700 transition-colors" aria-label="{{ __('clear_search') }}">
                                     <i class="fas fa-times"></i>
                                 </button>
                             </div>
@@ -53,7 +53,7 @@
                         <a wire:navigate href="{{ route('admin.create-user') }}"
                            class="w-full md:w-auto inline-flex items-center justify-center px-6 py-3 bg-green-600 border border-transparent rounded-2xl font-bold text-sm text-white hover:bg-green-700 active:scale-95 focus:outline-none focus:ring-4 focus:ring-green-500/30 transition-all duration-200 shadow-lg shadow-green-200">
                             <i class="fas fa-plus-circle mr-2 text-lg"></i> 
-                            {{ __('បន្ថែមសមាជិកថ្មី') }}
+                            {{ __('add_new_member') }}
                         </a>
                     </div>
                 </div>
@@ -98,7 +98,7 @@
                         <a href="javascript:void(0)" onclick="printStudentsPdf()"
                            class="w-full md:w-auto inline-flex items-center justify-center px-6 py-3 bg-blue-600 border border-transparent rounded-2xl font-bold text-sm text-white hover:bg-blue-700 active:scale-95 transition-all duration-200 shadow-lg shadow-blue-200">
                             <i class="fas fa-print mr-2 text-lg"></i> 
-                            {{ __('បោះពុម្ព PDF') }}
+                            {{ __('print_pdf') }}
                         </a>
                         <button @click="window.location.href = '{{ route('admin.users.export') }}?tab=' + activeTab + 
                             '&search={{ request('search') }}' + 
@@ -106,7 +106,7 @@
                             '&department_id={{ request('department_id') }}'"
                            class="w-full md:w-auto inline-flex items-center justify-center px-6 py-3 bg-emerald-600 border border-transparent rounded-2xl font-bold text-sm text-white hover:bg-emerald-700 active:scale-95 transition-all duration-200 shadow-lg shadow-emerald-200">
                             <i class="fas fa-file-excel mr-2 text-lg"></i> 
-                            {{ __('ទាញយក Excel') }}
+                            {{ __('download_excel') }}
                         </button>
                     </div>
 
@@ -115,17 +115,17 @@
                             <a wire:navigate href="{{ route('admin.manage-users', ['tab' => 'admins', 'search' => request('search')]) }}" @click="activeTab = 'admins'"
                                class="whitespace-nowrap py-4 px-1 border-b-2 text-lg transition-colors duration-200"
                                :class="{ 'border-green-500 text-green-600 font-semibold': activeTab === 'admins', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'admins' }">
-                                <i class="fas fa-user-shield mr-2"></i>{{ __('អ្នកគ្រប់គ្រង') }}
+                                <i class="fas fa-user-shield mr-2"></i>{{ __('administrator') }}
                             </a>
                             <a wire:navigate href="{{ route('admin.manage-users', ['tab' => 'professors', 'search' => request('search')]) }}" @click="activeTab = 'professors'"
                                class="whitespace-nowrap py-4 px-1 border-b-2 text-lg transition-colors duration-200"
                                :class="{ 'border-green-500 text-green-600 font-semibold': activeTab === 'professors', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'professors' }">
-                                <i class="fas fa-chalkboard-teacher mr-2"></i>{{ __('លោកគ្រូអ្នកគ្រូ') }}
+                                <i class="fas fa-chalkboard-teacher mr-2"></i>{{ __('lecturers') }}
                             </a>
                             <a wire:navigate href="{{ route('admin.manage-users', ['tab' => 'students', 'search' => request('search')]) }}" @click="activeTab = 'students'"
                                class="whitespace-nowrap py-4 px-1 border-b-2 text-lg transition-colors duration-200"
                                :class="{ 'border-green-500 text-green-600 font-semibold': activeTab === 'students', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'students' }">
-                                <i class="fas fa-user-graduate mr-2"></i>{{ __('និស្សិត') }}
+                                <i class="fas fa-user-graduate mr-2"></i>{{ __('students_3') }}
                             </a>
                         </nav>
                     </div>
@@ -134,7 +134,7 @@
                         <div x-show="activeTab === 'admins'" class="space-y-3">
                             @if ($admins->isEmpty())
                                 <div class="bg-gray-100 p-6 rounded-xl text-center text-gray-500 shadow-inner">
-                                    <p class="text-base font-medium">{{ __('មិនទាន់មានអ្នកគ្រប់គ្រងណាមួយនៅឡើយទេ។') }}</p>
+                                    <p class="text-base font-medium">{{ __('no_administrators_yet') }}</p>
                                 </div>
                             @else
                                 {{-- 1. DESKTOP VERSION --}}
@@ -142,11 +142,11 @@
                                     <table class="min-w-full divide-y divide-gray-200">
                                         <thead class="bg-gray-50">
                                             <tr>
-                                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('រូបភាព') }}</th>
-                                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('ឈ្មោះអ្នកប្រើ') }}</th>
-                                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('អ៊ីម៉ែល') }}</th>
-                                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('ឈ្មោះពេញ') }}</th>
-                                                <th class="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('សកម្មភាព') }}</th>
+                                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('image') }}</th>
+                                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('username') }}</th>
+                                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('email_2') }}</th>
+                                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('full_name_2') }}</th>
+                                                <th class="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('actions_2') }}</th>
                                             </tr>
                                         </thead>
                                         <tbody class="bg-white divide-y divide-gray-100 text-sm">
@@ -167,9 +167,9 @@
                                                     <td class="px-6 py-3 text-gray-600 edit-user-email">{{ $admin->email }}</td>
                                                     <td class="px-6 py-3 text-gray-600 edit-user-fullname">{{ $admin->profile->full_name_km ?? 'N/A' }}</td>
                                                     <td class="px-6 py-3 text-right font-bold space-x-4">
-                                                        <a wire:navigate href="{{ route('admin.show-user', $admin->id) }}" class="text-green-600 hover:text-green-700 text-sm px-3 py-1.5 rounded-lg hover:bg-green-50 transition-all">{{ __('មើល') }}</a>
-                                                        <button type="button" @click.stop="openEditModal({{ $admin->id }})" class="text-emerald-600 hover:text-emerald-700 text-sm px-3 py-1.5 rounded-lg hover:bg-emerald-50 transition-all">{{ __('កែប្រែ') }}</button>
-                                                        <button type="button" @click.stop="confirmDelete('delete-admin-{{ $admin->id }}', '{{ __('អ្នកគ្រប់គ្រង') }}')" class="text-red-500 hover:text-red-600 text-sm px-3 py-1.5 rounded-lg hover:bg-red-50 transition-all">{{ __('លុប') }}</button>
+                                                        <a wire:navigate href="{{ route('admin.show-user', $admin->id) }}" class="text-green-600 hover:text-green-700 text-sm px-3 py-1.5 rounded-lg hover:bg-green-50 transition-all">{{ __('view') }}</a>
+                                                        <button type="button" @click.stop="openEditModal({{ $admin->id }})" class="text-emerald-600 hover:text-emerald-700 text-sm px-3 py-1.5 rounded-lg hover:bg-emerald-50 transition-all">{{ __('edit_2') }}</button>
+                                                        <button type="button" @click.stop="confirmDelete('delete-admin-{{ $admin->id }}', '{{ __('administrator') }}')" class="text-red-500 hover:text-red-600 text-sm px-3 py-1.5 rounded-lg hover:bg-red-50 transition-all">{{ __('delete_2') }}</button>
                                                         <form id="delete-admin-{{ $admin->id }}" action="{{ route('admin.delete-user', $admin->id) }}" method="POST" class="hidden">@csrf @method('DELETE')</form>
                                                     </td>
                                                 </tr>
@@ -209,13 +209,13 @@
                                                 </div>
                                                 <div class="flex space-x-4 text-sm font-bold">
                                                     <a wire:navigate href="{{ route('admin.show-user', $admin->id) }}" class="text-green-600 flex items-center px-3 py-1.5 rounded-lg hover:bg-green-50 transition-all">
-                                                         <i class="fas fa-eye mr-1.5"></i> {{ __('មើល') }}
+                                                         <i class="fas fa-eye mr-1.5"></i> {{ __('view') }}
                                                      </a>
                                                      <button type="button" @click.stop="openEditModal({{ $admin->id }})" class="text-emerald-600 flex items-center px-3 py-1.5 rounded-lg hover:bg-emerald-50 transition-all">
-                                                         <i class="fas fa-edit mr-1.5"></i> {{ __('កែ') }}
+                                                         <i class="fas fa-edit mr-1.5"></i> {{ __('edit_3') }}
                                                      </button>
                                                     <button @click.stop="confirmDelete('del-adm-mob-{{ $admin->id }}', 'Admin')" class="text-red-500 flex items-center px-3 py-1.5 rounded-lg hover:bg-red-50 transition-all">
-                                                        <i class="fas fa-trash mr-1.5"></i> {{ __('លុប') }}
+                                                        <i class="fas fa-trash mr-1.5"></i> {{ __('delete_2') }}
                                                     </button>
                                                 </div>
                                                 <form id="del-adm-mob-{{ $admin->id }}" action="{{ route('admin.delete-user', $admin->id) }}" method="POST" class="hidden">@csrf @method('DELETE')</form>
@@ -237,9 +237,9 @@
                                     <input type="hidden" name="search" value="{{ request('search') }}">
 
                                     <div class="flex-1 min-w-[200px]">
-                                        <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">{{ __('មហវិទ្យាល័យ') }}</label>
+                                        <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">{{ __('faculty_2') }}</label>
                                         <select name="faculty_id" onchange="this.form.requestSubmit()" class="w-full border-gray-200 rounded-xl text-sm focus:ring-green-500">
-                                            <option value="">{{ __('គ្រប់មហវិទ្យាល័យ') }}</option>
+                                            <option value="">{{ __('all_faculties') }}</option>
                                             @foreach($faculties as $fac)
                                                 <option value="{{ $fac->id }}" {{ request('faculty_id') == $fac->id ? 'selected' : '' }}>{{ $fac->name_km }}</option>
                                             @endforeach
@@ -247,9 +247,9 @@
                                     </div>
 
                                     <div class="flex-1 min-w-[200px]">
-                                        <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">{{ __('ដេប៉ាតឺម៉ង់') }}</label>
+                                        <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">{{ __('department_3') }}</label>
                                         <select name="department_id" onchange="this.form.requestSubmit()" class="w-full border-gray-200 rounded-xl text-sm focus:ring-green-500">
-                                            <option value="">{{ __('គ្រប់ដេប៉ាតឺម៉ង់') }}</option>
+                                            <option value="">{{ __('all_departments') }}</option>
                                             @foreach($departments as $dept)
                                                 <option value="{{ $dept->id }}" {{ request('department_id') == $dept->id ? 'selected' : '' }}>{{ $dept->name_km }}</option>
                                             @endforeach
@@ -265,7 +265,7 @@
                             @if ($professorsGrouped->isEmpty())
                                 <div class="bg-gray-100 p-8 rounded-2xl text-center text-gray-500 shadow-inner border-2 border-dashed border-gray-200">
                                     <i class="fas fa-user-tie text-4xl mb-3 text-gray-300"></i>
-                                    <p class="text-lg font-medium">{{ __('មិនទាន់មានលោកគ្រូអ្នកគ្រូណាមួយនៅឡើយទេ។') }}</p>
+                                    <p class="text-lg font-medium">{{ __('no_lecturers_yet') }}</p>
                                 </div>
                             @else
                                 @foreach ($professorsGrouped as $deptName => $professorList)
@@ -279,11 +279,11 @@
                                                 </div>
                                                 <div class="text-left">
                                                     <h3 class="text-lg font-bold text-gray-800 tracking-tight">{{ $deptName }}</h3>
-                                                    <p class="text-xs font-medium text-gray-500">{{ $professorList->count() }} {{ __('រូប') }}</p>
+                                                    <p class="text-xs font-medium text-gray-500">{{ $professorList->count() }} {{ __('photo') }}</p>
                                                 </div>
                                             </div>
                                             <div class="flex items-center space-x-3">
-                                                <span class="hidden sm:inline-block text-[10px] font-bold text-gray-400 uppercase tracking-widest" x-text="openDept ? '{{ __('បិទវិញ') }}' : '{{ __('មើលបញ្ជី') }}'"></span>
+                                                <span class="hidden sm:inline-block text-[10px] font-bold text-gray-400 uppercase tracking-widest" x-text="openDept ? '{{ __('close_2') }}' : '{{ __('view_list') }}'"></span>
                                                 <i class="fas fa-chevron-down text-gray-400 transition-transform duration-500" :class="openDept ? 'rotate-180' : ''"></i>
                                             </div>
                                         </button>
@@ -295,10 +295,10 @@
                                                     <table class="min-w-full divide-y divide-gray-200">
                                                         <thead class="bg-gray-50/50">
                                                             <tr>
-                                                                <th class="px-6 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ __('រូបភាព') }}</th>
-                                                                <th class="px-6 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ __('ឈ្មោះអ្នកប្រើ / ពេញ') }}</th>
-                                                                <th class="px-6 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ __('អ៊ីម៉ែល') }}</th>
-                                                                <th class="px-6 py-3 text-right text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ __('សកម្មភាព') }}</th>
+                                                                <th class="px-6 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ __('image') }}</th>
+                                                                <th class="px-6 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ __('username_full_name') }}</th>
+                                                                <th class="px-6 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ __('email_2') }}</th>
+                                                                <th class="px-6 py-3 text-right text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ __('actions_2') }}</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody class="bg-white divide-y divide-gray-100">
@@ -322,9 +322,9 @@
                                                                     <td class="px-6 py-3 text-sm text-gray-600 font-medium edit-user-email">{{ $professor->email }}</td>
                                                                     <td class="px-6 py-3 text-right">
                                                                         <div class="flex items-center justify-end gap-4 text-sm font-bold">
-                                                                            <a wire:navigate href="{{ route('admin.show-user', $professor->id) }}" class="text-green-600 hover:text-green-700 px-3 py-1.5 rounded-lg hover:bg-green-50 transition-all">{{ __('មើល') }}</a>
-                                                                            <button type="button" @click.stop="openEditModal({{ $professor->id }})" class="text-emerald-600 hover:text-emerald-700 px-3 py-1.5 rounded-lg hover:bg-emerald-50 transition-all">{{ __('កែ') }}</button>
-                                                                            <button type="button" @click.stop="confirmDelete('del-prof-{{ $professor->id }}', '{{ __('លោកគ្រូអ្នកគ្រូ') }}')" class="text-red-500 hover:text-red-600 px-3 py-1.5 rounded-lg hover:bg-red-50 transition-all">{{ __('លុប') }}</button>
+                                                                            <a wire:navigate href="{{ route('admin.show-user', $professor->id) }}" class="text-green-600 hover:text-green-700 px-3 py-1.5 rounded-lg hover:bg-green-50 transition-all">{{ __('view') }}</a>
+                                                                            <button type="button" @click.stop="openEditModal({{ $professor->id }})" class="text-emerald-600 hover:text-emerald-700 px-3 py-1.5 rounded-lg hover:bg-emerald-50 transition-all">{{ __('edit_3') }}</button>
+                                                                            <button type="button" @click.stop="confirmDelete('del-prof-{{ $professor->id }}', '{{ __('lecturers') }}')" class="text-red-500 hover:text-red-600 px-3 py-1.5 rounded-lg hover:bg-red-50 transition-all">{{ __('delete_2') }}</button>
                                                                         </div>
                                                                         <form id="del-prof-{{ $professor->id }}" action="{{ route('admin.delete-user', $professor->id) }}" method="POST" class="hidden">@csrf @method('DELETE')</form>
                                                                     </td>
@@ -358,9 +358,9 @@
                                                                 <div class="flex items-center justify-between mt-4 pt-3 border-t border-gray-100">
                                                                     <span class="text-[10px] font-bold text-gray-400 italic">{{ $professor->profile->full_name_km ?? 'N/A' }}</span>
                                                                     <div class="flex space-x-4">
-                                                                        <a wire:navigate href="{{ route('admin.show-user', $professor->id) }}" class="text-green-600 text-sm font-bold px-3 py-1.5 rounded-lg hover:bg-green-50 transition-all">{{ __('មើល') }}</a>
-                                                                        <button type="button" @click.stop="openEditModal({{ $professor->id }})" class="text-emerald-600 text-sm font-bold px-3 py-1.5 rounded-lg hover:bg-emerald-50 transition-all">{{ __('កែ') }}</button>
-                                                                        <button @click.stop="confirmDelete('del-mob-prof-{{ $professor->id }}', 'Professor')" class="text-red-500 text-sm font-bold px-3 py-1.5 rounded-lg hover:bg-red-50 transition-all">{{ __('លុប') }}</button>
+                                                                        <a wire:navigate href="{{ route('admin.show-user', $professor->id) }}" class="text-green-600 text-sm font-bold px-3 py-1.5 rounded-lg hover:bg-green-50 transition-all">{{ __('view') }}</a>
+                                                                        <button type="button" @click.stop="openEditModal({{ $professor->id }})" class="text-emerald-600 text-sm font-bold px-3 py-1.5 rounded-lg hover:bg-emerald-50 transition-all">{{ __('edit_3') }}</button>
+                                                                        <button @click.stop="confirmDelete('del-mob-prof-{{ $professor->id }}', 'Professor')" class="text-red-500 text-sm font-bold px-3 py-1.5 rounded-lg hover:bg-red-50 transition-all">{{ __('delete_2') }}</button>
                                                                     </div>
                                                                 </div>
                                                             <form id="del-mob-prof-{{ $professor->id }}" action="{{ route('admin.delete-user', $professor->id) }}" method="POST" class="hidden">@csrf @method('DELETE')</form>
@@ -382,21 +382,21 @@
                                     <input type="hidden" name="search" value="{{ request('search') }}">
                                     
                                     <div class="flex-1 min-w-[200px]">
-                                        <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">{{ __('ជំនាន់') }}</label>
+                                        <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">{{ __('generation') }}</label>
                                         <select name="generation" onchange="this.form.requestSubmit()" class="w-full border-gray-200 rounded-xl text-sm focus:ring-green-500">
-                                            <option value="">{{ __('គ្រប់ជំនាន់') }}</option>
+                                            <option value="">{{ __('all_generations_2') }}</option>
                                             @foreach($generations as $gen)
                                                 <option value="{{ $gen }}" {{ request('generation') == $gen ? 'selected' : '' }}>
-                                                    {{ __('ជំនាន់ទី') }} {{ $gen }}
+                                                    {{ __('generation_2') }} {{ $gen }}
                                                 </option>
                                             @endforeach
                                         </select>
                                     </div>
 
                                     <div class="flex-1 min-w-[200px]">
-                                        <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">{{ __('ដេប៉ាតឺម៉ង់') }}</label>
+                                        <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">{{ __('department_3') }}</label>
                                         <select name="department_id" onchange="this.form.requestSubmit()" class="w-full border-gray-200 rounded-xl text-sm focus:ring-green-500">
-                                            <option value="">{{ __('គ្រប់ដេប៉ាតឺម៉ង់') }}</option>
+                                            <option value="">{{ __('all_departments') }}</option>
                                             @foreach($departments as $dept)
                                                 <option value="{{ $dept->id }}" {{ request('department_id') == $dept->id ? 'selected' : '' }}>
                                                     {{ $dept->name_km }}
@@ -414,7 +414,7 @@
                             @if ($studentsGrouped->isEmpty())
                                 <div class="bg-gray-100 p-8 rounded-2xl text-center text-gray-500 shadow-inner border-2 border-dashed border-gray-200">
                                     <i class="fas fa-user-slash text-4xl mb-3 text-gray-300"></i>
-                                    <p class="text-lg font-medium">{{ __('មិនទាន់មាននិស្សិតណាមួយនៅឡើយទេ។') }}</p>
+                                    <p class="text-lg font-medium">{{ __('no_students_yet') }}</p>
                                 </div>
                             @else
                                 {{-- Loop តាមជំនាន់ (Generation) --}}
@@ -428,12 +428,12 @@
                                                     G{{ $generation ?? '?' }}
                                                 </div>
                                                 <div class="text-left">
-                                                    <h3 class="text-lg font-bold text-gray-800 tracking-tight">{{ __('ជំនាន់ទី') }} {{ $generation ?? 'មិនកំណត់' }}</h3>
-                                                    <p class="text-xs font-medium text-gray-500">{{ $departments->flatten()->count() }} {{ __('និស្សិតសរុប') }}</p>
+                                                    <h3 class="text-lg font-bold text-gray-800 tracking-tight">{{ __('generation_2') }} {{ $generation ?? 'មិនកំណត់' }}</h3>
+                                                    <p class="text-xs font-medium text-gray-500">{{ $departments->flatten()->count() }} {{ __('total_students_2') }}</p>
                                                 </div>
                                             </div>
                                             <div class="flex items-center space-x-3">
-                                                <span class="hidden sm:inline-block text-[10px] font-bold text-gray-400 uppercase tracking-widest" x-text="openGen ? '{{ __('បិទវិញ') }}' : '{{ __('មើលបញ្ជី') }}'"></span>
+                                                <span class="hidden sm:inline-block text-[10px] font-bold text-gray-400 uppercase tracking-widest" x-text="openGen ? '{{ __('close_2') }}' : '{{ __('view_list') }}'"></span>
                                                 <i class="fas fa-chevron-down text-gray-400 transition-transform duration-500" :class="openGen ? 'rotate-180' : ''"></i>
                                             </div>
                                         </button>
@@ -448,7 +448,7 @@
                                                                 <h4 class="text-sm font-extrabold text-gray-700 uppercase tracking-wider">{{ $departmentName }}</h4>
                                                             </div>
                                                             <span class="bg-green-50 text-green-700 text-[10px] font-bold px-2 py-0.5 rounded-md border border-green-100">
-                                                                {{ $studentList->count() }} {{ __('នាក់') }}
+                                                                {{ $studentList->count() }} {{ __('students_2') }}
                                                             </span>
                                                         </div>
 
@@ -457,12 +457,12 @@
                                                             <table class="min-w-full divide-y divide-gray-200">
                                                                 <thead class="bg-gray-50/50">
                                                                     <tr>
-                                                                        <th class="px-6 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ __('រូបភាព') }}</th>
-                                                                        <th class="px-6 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ __('អត្តសញ្ញាណ') }}</th>
-                                                                        <th class="px-6 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ __('ឈ្មោះអ្នកប្រើ / ពេញ') }}</th>
-                                                                        <th class="px-6 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ __('អ៊ីម៉ែល') }}</th>
-                                                                        <th class="px-6 py-3 text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ __('ឆ្នាំសិក្សា') }}</th>
-                                                                        <th class="px-6 py-3 text-right text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ __('សកម្មភាព') }}</th>
+                                                                        <th class="px-6 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ __('image') }}</th>
+                                                                        <th class="px-6 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ __('key_id') }}</th>
+                                                                        <th class="px-6 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ __('username_full_name') }}</th>
+                                                                        <th class="px-6 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ __('email_2') }}</th>
+                                                                        <th class="px-6 py-3 text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ __('academic_year') }}</th>
+                                                                        <th class="px-6 py-3 text-right text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ __('actions_2') }}</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody class="bg-white divide-y divide-gray-100">
@@ -486,7 +486,7 @@
                                                                                 <div class="text-sm font-bold text-gray-900 uppercase tracking-tighter edit-user-name">{{ $student->name }}</div>
                                                                                 <div class="text-[11px] text-gray-500 font-medium edit-user-fullname">{{ $student->studentProfile->full_name_km ?? 'N/A' }}</div>
                                                                             </td>
-                                                                            <td class="px-6 py-3 text-sm text-gray-600 font-medium edit-user-email">{{ $student->email ?? __('មិនទាន់បង្កើតគណនី') }}</td>
+                                                                            <td class="px-6 py-3 text-sm text-gray-600 font-medium edit-user-email">{{ $student->email ?? __('no_account_created_yet') }}</td>
                                                                             <td class="px-6 py-3 text-center">
                                                                                 @if($student->computed_year_level)
                                                                                     <span class="inline-flex items-center justify-center min-w-[2.5rem] px-2.5 py-1 rounded-lg text-xs font-bold
@@ -495,7 +495,7 @@
                                                                                         @else
                                                                                             bg-emerald-50 text-emerald-700 border border-emerald-100
                                                                                         @endif">
-                                                                                        {{ __('ឆ្នាំទី') }} {{ $student->computed_year_level }}
+                                                                                        {{ __('year') }} {{ $student->computed_year_level }}
                                                                                     </span>
                                                                                 @else
                                                                                     <span class="text-xs text-gray-400">—</span>
@@ -503,9 +503,9 @@
                                                                             </td>
                                                                             <td class="px-6 py-3 text-right">
                                                                                 <div class="flex items-center justify-end gap-4 text-sm font-bold">
-                                                                                    <a wire:navigate href="{{ route('admin.show-user', $student->id) }}" class="text-green-600 hover:text-green-700 px-3 py-1.5 rounded-lg hover:bg-green-50 transition-all">{{ __('មើល') }}</a>
-                                                                                    <button type="button" @click.stop="openEditModal({{ $student->id }})" class="text-emerald-600 hover:text-emerald-700 px-3 py-1.5 rounded-lg hover:bg-emerald-50 transition-all">{{ __('កែ') }}</button>
-                                                                                    <button type="button" @click.stop="confirmDelete('del-std-{{ $student->id }}', '{{ __('និស្សិត') }}')" class="text-red-500 hover:text-red-600 px-3 py-1.5 rounded-lg hover:bg-red-50 transition-all">{{ __('លុប') }}</button>
+                                                                                    <a wire:navigate href="{{ route('admin.show-user', $student->id) }}" class="text-green-600 hover:text-green-700 px-3 py-1.5 rounded-lg hover:bg-green-50 transition-all">{{ __('view') }}</a>
+                                                                                    <button type="button" @click.stop="openEditModal({{ $student->id }})" class="text-emerald-600 hover:text-emerald-700 px-3 py-1.5 rounded-lg hover:bg-emerald-50 transition-all">{{ __('edit_3') }}</button>
+                                                                                    <button type="button" @click.stop="confirmDelete('del-std-{{ $student->id }}', '{{ __('students_3') }}')" class="text-red-500 hover:text-red-600 px-3 py-1.5 rounded-lg hover:bg-red-50 transition-all">{{ __('delete_2') }}</button>
                                                                                 </div>
                                                                                 <form id="del-std-{{ $student->id }}" action="{{ route('admin.delete-user', $student->id) }}" method="POST" class="hidden">@csrf @method('DELETE')</form>
                                                                             </td>
@@ -542,7 +542,7 @@
                                                                                             @else
                                                                                                 bg-emerald-50 text-emerald-700
                                                                                             @endif">
-                                                                                            {{ __('ឆ្នាំទី') }} {{ $student->computed_year_level }}
+                                                                                            {{ __('year') }} {{ $student->computed_year_level }}
                                                                                         </span>
                                                                                     @endif
                                                                                 </div>
@@ -552,9 +552,9 @@
                                                                     <div class="flex items-center justify-between mt-4 pt-3 border-t border-gray-100">
                                                                         <span class="text-[10px] font-bold text-gray-400 italic">{{ $student->studentProfile->full_name_km ?? 'N/A' }}</span>
                                                                         <div class="flex space-x-4">
-                                                                            <a wire:navigate href="{{ route('admin.show-user', $student->id) }}" class="text-green-600 text-sm font-bold px-3 py-1.5 rounded-lg hover:bg-green-50 transition-all">{{ __('មើល') }}</a>
-                                                                            <button type="button" @click.stop="openEditModal({{ $student->id }})" class="text-emerald-600 text-sm font-bold px-3 py-1.5 rounded-lg hover:bg-emerald-50 transition-all">{{ __('កែ') }}</button>
-                                                                            <button @click="confirmDelete('del-mob-{{ $student->id }}', 'Student')" class="text-red-500 text-sm font-bold px-3 py-1.5 rounded-lg hover:bg-red-50 transition-all">{{ __('លុប') }}</button>
+                                                                            <a wire:navigate href="{{ route('admin.show-user', $student->id) }}" class="text-green-600 text-sm font-bold px-3 py-1.5 rounded-lg hover:bg-green-50 transition-all">{{ __('view') }}</a>
+                                                                            <button type="button" @click.stop="openEditModal({{ $student->id }})" class="text-emerald-600 text-sm font-bold px-3 py-1.5 rounded-lg hover:bg-emerald-50 transition-all">{{ __('edit_3') }}</button>
+                                                                            <button @click="confirmDelete('del-mob-{{ $student->id }}', 'Student')" class="text-red-500 text-sm font-bold px-3 py-1.5 rounded-lg hover:bg-red-50 transition-all">{{ __('delete_2') }}</button>
                                                                         </div>
                                                                     </div>
                                                                     <form id="del-mob-{{ $student->id }}" action="{{ route('admin.delete-user', $student->id) }}" method="POST" class="hidden">@csrf @method('DELETE')</form>
@@ -582,15 +582,15 @@
                                     <div class="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-red-100 rounded-full">
                                         <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
                                     </div>
-                                    <h3 class="text-lg font-bold text-center text-gray-900">{{ __('បញ្ជាក់ការលុប') }}</h3>
+                                    <h3 class="text-lg font-bold text-center text-gray-900">{{ __('confirm_deletion') }}</h3>
                                     <p class="mt-2 text-sm text-center text-gray-500">
-                                        {{ __('តើអ្នកពិតជាចង់លុប') }} <span class="font-black text-red-600" x-text="deletingUserType"></span> {{ __('នេះមែនទេ? ទិន្នន័យនឹងបាត់បង់ជារៀងរហូត។') }}
+                                        {{ __('are_you_sure_you_want_to_delete') }} <span class="font-black text-red-600" x-text="deletingUserType"></span> {{ __('data_will_be_permanently_lost') }}
                                     </p>
                                     <div class="mt-6 flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
-                                        <button type="button" @click="showDeleteModal = false" class="px-5 py-2 text-sm font-bold text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition-all">{{ __('បោះបង់') }}</button>
+                                        <button type="button" @click="showDeleteModal = false" class="px-5 py-2 text-sm font-bold text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition-all">{{ __('cancel_2') }}</button>
                                         <button type="button" @click="executeDeleteUser()" :disabled="isDeleting" class="px-5 py-2 text-sm font-bold text-white bg-red-600 rounded-xl hover:bg-red-700 shadow-lg shadow-red-200 transition-all disabled:opacity-50">
-                                            <span x-show="!isDeleting">{{ __('លុបចេញ') }}</span>
-                                            <span x-show="isDeleting"><i class="fas fa-spinner fa-spin mr-1"></i> {{ __('កំពុងលុប...') }}</span>
+                                            <span x-show="!isDeleting">{{ __('delete_3') }}</span>
+                                            <span x-show="isDeleting"><i class="fas fa-spinner fa-spin mr-1"></i> {{ __('deleting') }}</span>
                                         </button>
                                     </div>
                                 </div>
@@ -610,7 +610,7 @@
                                     <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center">
                                         <i class="fas fa-user-edit"></i>
                                     </div>
-                                    <h3 class="text-lg font-bold text-gray-900">{{ __('កែប្រែអ្នកប្រើប្រាស់') }}</h3>
+                                    <h3 class="text-lg font-bold text-gray-900">{{ __('edit_user') }}</h3>
                                 </div>
                                 <button @click="showEditModal = false" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
                                     <i class="fas fa-times text-gray-400"></i>
@@ -620,7 +620,7 @@
                             {{-- Loading --}}
                             <div x-show="editLoading" class="p-12 text-center">
                                 <i class="fas fa-spinner fa-spin text-2xl text-emerald-500"></i>
-                                <p class="text-gray-400 mt-2 text-sm">{{ __('កំពុងទាញយកទិន្នន័យ...') }}</p>
+                                <p class="text-gray-400 mt-2 text-sm">{{ __('loading_data') }}</p>
                             </div>
 
                             {{-- Form --}}
@@ -628,11 +628,11 @@
                                 {{-- Name + Role --}}
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
-                                        <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('ឈ្មោះអ្នកប្រើប្រាស់') }} <span class="text-red-500">*</span></label>
-                                        <input type="text" x-model="editForm.name" required placeholder="{{ __('បញ្ចូលឈ្មោះអ្នកប្រើប្រាស់') }}" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
+                                        <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('user_name') }} <span class="text-red-500">*</span></label>
+                                        <input type="text" x-model="editForm.name" required placeholder="{{ __('enter_username') }}" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('តួនាទី') }} <span class="text-red-500">*</span></label>
+                                        <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('role') }} <span class="text-red-500">*</span></label>
                                         <select x-model="editForm.role" required class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
                                             <option value="admin">Admin</option>
                                             <option value="professor">Professor</option>
@@ -643,39 +643,39 @@
 
                                 {{-- Email (non-student) --}}
                                 <div x-show="editForm.role !== 'student'">
-                                    <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('អ៊ីម៉ែល') }}</label>
+                                    <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('email_2') }}</label>
                                     <input type="email" x-model="editForm.email" placeholder="name@example.com" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
                                 </div>
 
                                 {{-- Password --}}
                                 <div x-show="editForm.role !== 'student'" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
-                                        <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('ពាក្យសម្ងាត់ថ្មី') }}</label>
-                                        <input type="password" x-model="editForm.password" placeholder="{{ __('ទុកឱ្យនៅទទេប្រសិនបើមិនប្តូរ') }}" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
+                                        <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('new_password_2') }}</label>
+                                        <input type="password" x-model="editForm.password" placeholder="{{ __('leave_empty_if_not_changing') }}" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('បញ្ជាក់ពាក្យសម្ងាត់') }}</label>
-                                        <input type="password" x-model="editForm.password_confirmation" placeholder="{{ __('បញ្ជាក់ពាក្យសម្ងាត់ម្ដងទៀត') }}" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
+                                        <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('confirm_password') }}</label>
+                                        <input type="password" x-model="editForm.password_confirmation" placeholder="{{ __('confirm_password_again') }}" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
                                     </div>
                                 </div>
 
                                 {{-- Student fields --}}
                                 <div x-show="editForm.role === 'student'" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
-                                        <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('ដេប៉ាតឺម៉ង់') }}</label>
+                                        <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('department_3') }}</label>
                                         <select x-model="editForm.department_id" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
-                                            <option value="">{{ __('ជ្រើសរើស') }}</option>
+                                            <option value="">{{ __('select_2') }}</option>
                                             <template x-for="d in (editForm.departments || [])" :key="d.id">
                                                 <option :value="d.id" x-text="d.name"></option>
                                             </template>
                                         </select>
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('ជំនាន់') }}</label>
+                                        <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('generation') }}</label>
                                         <select x-model="editForm.generation" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
-                                            <option value="">{{ __('ជ្រើសរើស') }}</option>
+                                            <option value="">{{ __('select_2') }}</option>
                                             <template x-for="g in (editForm.generations || [])" :key="g.name">
-                                                <option :value="g.name" x-text="'{{ __("ជំនាន់ទី") }}' + g.name"></option>
+                                                <option :value="g.name" x-text="'{{ __("generation_2") }}' + g.name"></option>
                                             </template>
                                         </select>
                                     </div>
@@ -684,18 +684,18 @@
                                 {{-- Professor fields --}}
                                 <div x-show="editForm.role === 'professor'" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
-                                        <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('មហាវិទ្យាល័យ') }}</label>
+                                        <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('faculty') }}</label>
                                         <select x-model="editForm.faculty_id" @change="filterEditDepartments($event.target.value)" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
-                                            <option value="">{{ __('ជ្រើសរើស') }}</option>
+                                            <option value="">{{ __('select_2') }}</option>
                                             <template x-for="f in (editForm.faculties || [])" :key="f.id">
                                                 <option :value="f.id" x-text="f.name"></option>
                                             </template>
                                         </select>
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('ដេប៉ាតឺម៉ង់') }}</label>
+                                        <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('department_3') }}</label>
                                         <select x-model="editForm.department_id" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
-                                            <option value="">{{ __('ជ្រើសរើស') }}</option>
+                                            <option value="">{{ __('select_2') }}</option>
                                             <template x-for="d in editDepartments" :key="d.id">
                                                 <option :value="d.id" x-text="d.name"></option>
                                             </template>
@@ -705,41 +705,41 @@
 
                                 {{-- Profile Info --}}
                                 <div class="border-t border-gray-100 pt-5">
-                                    <h4 class="text-sm font-bold text-gray-700 mb-3"><i class="fas fa-id-card mr-1.5 text-orange-500"></i> {{ __('ព័ត៌មានផ្ទាល់ខ្លួន') }}</h4>
+                                    <h4 class="text-sm font-bold text-gray-700 mb-3"><i class="fas fa-id-card mr-1.5 text-orange-500"></i> {{ __('personal_information') }}</h4>
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div>
-                                            <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('ឈ្មោះពេញ (ខ្មែរ)') }}</label>
-                                            <input type="text" x-model="editForm.full_name_km" placeholder="{{ __('បញ្ចូលឈ្មោះពេញជាភាសាខ្មែរ') }}" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
+                                            <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('full_name_khmer') }}</label>
+                                            <input type="text" x-model="editForm.full_name_km" placeholder="{{ __('enter_full_name_in_khmer') }}" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
                                         </div>
                                         <div>
-                                            <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('ឈ្មោះពេញ (អង់គ្លេស)') }}</label>
+                                            <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('full_name_english') }}</label>
                                             <input type="text" x-model="editForm.full_name_en" placeholder="Enter full name in English" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
                                         </div>
                                         <div>
-                                            <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('ភេទ') }}</label>
+                                            <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('gender') }}</label>
                                             <select x-model="editForm.gender" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
-                                                <option value="">{{ __('ជ្រើសរើស') }}</option>
-                                                <option value="male">{{ __('ប្រុស') }}</option>
-                                                <option value="female">{{ __('ស្រី') }}</option>
-                                                <option value="other">{{ __('ផ្សេងទៀត') }}</option>
+                                                <option value="">{{ __('select_2') }}</option>
+                                                <option value="male">{{ __('male') }}</option>
+                                                <option value="female">{{ __('female') }}</option>
+                                                <option value="other">{{ __('other') }}</option>
                                             </select>
                                         </div>
                                         <div>
-                                            <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('លេខទូរស័ព្ទ') }}</label>
+                                            <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('phone_number') }}</label>
                                             <input type="text" x-model="editForm.phone_number" placeholder="012 345 678" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
                                         </div>
                                         <div>
-                                            <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('អាសយដ្ឋាន') }}</label>
-                                            <input type="text" x-model="editForm.address" placeholder="{{ __('បញ្ចូលអាសយដ្ឋាន') }}" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
+                                            <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('address') }}</label>
+                                            <input type="text" x-model="editForm.address" placeholder="{{ __('enter_address') }}" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
                                         </div>
                                         <div>
-                                            <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('ថ្ងៃខែឆ្នាំកំណើត') }}</label>
+                                            <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('date_of_birth') }}</label>
                                             <input type="date" x-model="editForm.date_of_birth" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
                                         </div>
                                     </div>
 
                                     <div class="mt-4">
-                                        <label class="block text-xs font-bold text-gray-500 mb-2">{{ __('រូបភាពប្រវត្តិរូប') }}</label>
+                                        <label class="block text-xs font-bold text-gray-500 mb-2">{{ __('profile_picture') }}</label>
                                         <div class="flex items-center gap-5">
                                             <div class="relative group">
                                                 <div id="editAvatarPreview" class="w-20 h-20 rounded-2xl bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden">
@@ -753,11 +753,11 @@
                                                 <input type="file" id="editProfilePicture" accept="image/jpeg,image/png,image/jpg" class="hidden" onchange="previewEditAvatar(this)">
                                                 <input type="hidden" id="editProfilePictureBase64" value="">
                                                 <button type="button" onclick="document.getElementById('editProfilePicture').click()" class="px-4 py-2 text-xs font-bold text-emerald-700 bg-emerald-50 rounded-xl hover:bg-emerald-100 transition-all">
-                                                    <i class="fas fa-upload mr-1.5"></i>{{ __('ជ្រើសរើសរូបភាព') }}
+                                                    <i class="fas fa-upload mr-1.5"></i>{{ __('choose_image') }}
                                                 </button>
-                                                <p class="text-[11px] text-gray-400 mt-1.5">{{ __('JPEG, PNG ទំហំអតិបរមា 5MB (រូបភាពនឹងត្រូវបាន compress ដោយស្វ័យប្រវត្តិ)') }}</p>
+                                                <p class="text-[11px] text-gray-400 mt-1.5">{{ __('supported_image_formats') }}</p>
                                                 <button type="button" id="editRemovePicBtn" onclick="removeEditAvatar()" class="hidden mt-1.5 px-3 py-1 text-[11px] font-bold text-red-500 hover:text-red-700 transition-colors">
-                                                    <i class="fas fa-times mr-1"></i>{{ __('លុបរូបភាព') }}
+                                                    <i class="fas fa-times mr-1"></i>{{ __('remove_image') }}
                                                 </button>
                                             </div>
                                         </div>
@@ -766,10 +766,10 @@
 
                                 {{-- Actions --}}
                                 <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
-                                    <button type="button" @click="showEditModal = false" class="px-5 py-2.5 text-sm font-bold text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition-all">{{ __('បោះបង់') }}</button>
+                                    <button type="button" @click="showEditModal = false" class="px-5 py-2.5 text-sm font-bold text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition-all">{{ __('cancel_2') }}</button>
                                     <button type="submit" :disabled="editSaving" class="px-6 py-2.5 text-sm font-bold text-white bg-emerald-600 rounded-xl hover:bg-emerald-700 shadow-lg shadow-emerald-200 transition-all disabled:opacity-50">
-                                        <span x-show="!editSaving"><i class="fas fa-save mr-1.5"></i> {{ __('រក្សាទុក') }}</span>
-                                        <span x-show="editSaving"><i class="fas fa-spinner fa-spin mr-1.5"></i> {{ __('កំពុងរក្សាទុក...') }}</span>
+                                        <span x-show="!editSaving"><i class="fas fa-save mr-1.5"></i> {{ __('save_2') }}</span>
+                                        <span x-show="editSaving"><i class="fas fa-spinner fa-spin mr-1.5"></i> {{ __('saving') }}</span>
                                     </button>
                                 </div>
                             </form>
@@ -880,7 +880,7 @@
         .catch(function() {
             c.editLoading = false;
             c.showEditModal = false;
-            window.showToast && window.showToast('{{ __("មានបញ្ហាក្នុងការទាញយកទិន្នន័យ។") }}', 'error');
+            window.showToast && window.showToast('{{ __("problem_fetching_data") }}', 'error');
         });
     }
 
@@ -897,7 +897,7 @@
         if (input.files && input.files[0]) {
             var file = input.files[0];
             if (file.size > 5 * 1024 * 1024) {
-                showToast('{{ __("រូបភាពធំពេក! សូមជ្រើសរើសរូបភាពដែលមានទំហំតូចជាង 5MB") }}', 'error');
+                showToast('{{ __("validation_file_max_size") }}', 'error');
                 input.value = '';
                 return;
             }
@@ -980,22 +980,22 @@
                     var emailEl = row.querySelector('.edit-user-email');
                     var fullnameEl = row.querySelector('.edit-user-fullname');
                     if (nameEl) nameEl.textContent = data.user.name;
-                    if (emailEl) emailEl.textContent = data.user.email || '{{ __("មិនទាន់បង្កើតគណនី") }}';
+                    if (emailEl) emailEl.textContent = data.user.email || '{{ __("no_account_created_yet") }}';
                     if (fullnameEl) fullnameEl.textContent = data.user.full_name_km || data.user.full_name_en || 'N/A';
                     row.style.transition = 'all 0.3s ease';
                     row.style.backgroundColor = '#d1fae5';
                     setTimeout(function() { row.style.backgroundColor = ''; }, 1500);
                 }
-                window.showToast && window.showToast(data.message || '{{ __("បានកែប្រែដោយជោគជ័យ។") }}', 'success');
+                window.showToast && window.showToast(data.message || '{{ __("updated_successfully") }}', 'success');
             } else {
-                var msg = data.message || '{{ __("មានបញ្ហា។") }}';
+                var msg = data.message || '{{ __("there_is_a_problem_2") }}';
                 if (data.errors) { msg += '\n' + Object.values(data.errors).flat().join('\n'); }
                 window.showToast && window.showToast(msg, 'error');
             }
         })
         .catch(function() {
             c.editSaving = false;
-            window.showToast && window.showToast('{{ __("មានបញ្ហាក្នុងការរក្សាទុក។") }}', 'error');
+            window.showToast && window.showToast('{{ __("problem_saving") }}', 'error');
         });
     }
     </script>
@@ -1033,9 +1033,9 @@
                     el.style.transform = 'translateX(40px)';
                     setTimeout(function() { el.remove(); }, 400);
                 });
-                window.showToast && window.showToast(data.message || '{{ __("អ្នកប្រើប្រាស់ត្រូវបានលុបដោយជោគជ័យ។") }}', 'success');
+                window.showToast && window.showToast(data.message || '{{ __("user_deleted_successfully") }}', 'success');
             } else {
-                window.showToast && window.showToast(data.message || '{{ __("មានបញ្ហា។") }}', 'error');
+                window.showToast && window.showToast(data.message || '{{ __("there_is_a_problem_2") }}', 'error');
             }
         })
         .catch(function() {
@@ -1115,7 +1115,7 @@
             if (loadingIcon) loadingIcon.classList.toggle('flex', isLoading);
             if (clearButton) clearButton.classList.toggle('hidden', isLoading || !(searchInput && searchInput.value));
             if (clearButton) clearButton.classList.toggle('flex', !isLoading && !!(searchInput && searchInput.value));
-            if (status) status.textContent = isLoading ? '{{ __('កំពុងស្វែងរក...') }}' : '';
+            if (status) status.textContent = isLoading ? '{{ __('searching') }}' : '';
         }
 
         function fetchUserResults(url) {
@@ -1252,7 +1252,7 @@
             var gen = genEl ? genEl.value : '';
             var prog = progEl ? progEl.value : '';
             if (!gen || !prog) {
-                window.showToast && window.showToast('{{ __("សូមជ្រើសរើសជំនាន់ និងកម្មវិធីសិក្សាមុនពេលបោះពុម្ព។") }}', 'warning');
+                window.showToast && window.showToast('{{ __("please_select_a_generation_and_program_before_printing") }}', 'warning');
                 return;
             }
             window.open('{{ route('admin.users.print-students') }}?generation=' + gen + '&department_id=' + prog, '_blank');
@@ -1262,12 +1262,12 @@
             var fac = facEl ? facEl.value : '';
             var dept = deptEl ? deptEl.value : '';
             if (!fac && !dept) {
-                window.showToast && window.showToast('{{ __("សូមជ្រើសរើសមហាវិទ្យាល័យ ឬដេប៉ាតឺម៉ង់មុនពេលបោះពុម្ព។") }}', 'warning');
+                window.showToast && window.showToast('{{ __("please_select_a_faculty_or_department_before_printing") }}', 'warning');
                 return;
             }
             window.open('{{ route('admin.users.print-professors') }}?faculty_id=' + fac + '&department_id=' + dept, '_blank');
         } else {
-            window.showToast && window.showToast('{{ __("មុខងារនេះគាំទ្រតែសម្រាប់និស្សិត និងសាស្ត្រាចារ្យប៉ុណ្ណោះ។") }}', 'warning');
+            window.showToast && window.showToast('{{ __("this_feature_only_supports_students_and_lecturers") }}', 'warning');
         }
     }
 

@@ -262,10 +262,11 @@ class StudentGradeController extends Controller
                 $items->push([
                     'title' => $a->title_km ?? $a->title_en,
                     'type' => 'assignment',
-                    'type_label' => __('កិច្ចការ'),
+                    'type_label' => __('assignments'),
                     'max_score' => $a->max_score,
                     'score' => $score,
                     'original_score' => $originalScore,
+                    're_exam_score' => $reExam ? (float) $reExam->new_score : null,
                     'has_re_exam' => (bool) $reExam,
                     'date' => $a->due_date,
                     'notes' => $result?->notes,
@@ -277,9 +278,9 @@ class StudentGradeController extends Controller
                 $result = $allResultIds->get($key);
                 $type = GradingService::classifyExamType($e);
                 $typeLabel = match ($type) {
-                    'midterm' => __('ប្រឡងពាក់កណ្ដាល់'),
-                    'final' => __('ប្រឡងប្រចាំឆមាស'),
-                    default => __('ប្រឡង'),
+                    'midterm' => __('midterm_exams'),
+                    'final' => __('final_exams'),
+                    default => __('re_exam_grades_saved_successfully'),
                 };
                 $reExam = $offeringReExams->get($type);
                 $score = $reExam ? (float) $reExam->new_score : ($result?->score_obtained ?? 0);
@@ -291,6 +292,7 @@ class StudentGradeController extends Controller
                     'max_score' => $e->max_score,
                     'score' => $score,
                     'original_score' => $originalScore,
+                    're_exam_score' => $reExam ? (float) $reExam->new_score : null,
                     'has_re_exam' => (bool) $reExam,
                     'date' => $e->exam_date,
                     'notes' => $result?->notes,
@@ -307,6 +309,7 @@ class StudentGradeController extends Controller
                     'max_score' => $q->max_score,
                     'score' => $result?->score_obtained ?? 0,
                     'original_score' => $result?->score_obtained ?? 0,
+                    're_exam_score' => null,
                     'has_re_exam' => false,
                     'date' => $q->quiz_date,
                     'notes' => $result?->notes,
@@ -390,11 +393,11 @@ class StudentGradeController extends Controller
 
         $exists = StudentCourseEnrollment::where('student_user_id', $user->id)->where('course_offering_id', $request->course_offering_id)->exists();
         if ($exists) {
-            return back()->with('error', __('អ្នកបានចុះឈ្មោះរួចហើយ។'));
+            return back()->with('error', __('already_enrolled'));
         }
         StudentCourseEnrollment::create(['student_user_id' => $user->id, 'course_offering_id' => $request->course_offering_id, 'enrollment_date' => now(), 'status' => 'enrolled']);
 
-        return back()->with('success', __('ចុះឈ្មោះជោគជ័យ។'));
+        return back()->with('success', __('enrollment_successful'));
     }
 
     public function enrollDepartment(Request $request)

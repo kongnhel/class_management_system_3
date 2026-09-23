@@ -7,22 +7,22 @@
                 <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div>
                         <h2 class="text-4xl font-black text-slate-900 leading-tight flex items-center gap-4">
-                            {{ __('ព័ត៌មានបន្ទប់សិក្សា') }} 
+                            {{ __('study_room_information') }} 
                             <span class="p-2.5 bg-emerald-100 text-emerald-600 rounded-2xl">
                                 <i class="fas fa-door-open text-xl"></i>
                             </span>
                         </h2>
-                        <p class="mt-2 text-slate-500 font-medium">{{ __('ស្វែងរកបន្ទប់សិក្សា និងការតភ្ជាប់ WiFi របស់សាលា') }}</p>
+                        <p class="mt-2 text-slate-500 font-medium">{{ __('search_study_rooms_and_campus_wifi_connections') }}</p>
                     </div>
 
                     <div class="relative w-full md:w-96 group">
                         <input type="text" id="searchInput" 
-                               placeholder="{{ __('ស្វែងរកលេខបន្ទប់...') }}" 
+                               placeholder="{{ __('search_room_number') }}" 
                                class="w-full pl-12 pr-12 py-4 bg-white border border-slate-100 rounded-[1.5rem] focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 shadow-xl shadow-slate-200/50 transition-all placeholder-slate-300 font-bold text-slate-700">
                         <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors">
                             <i class="fas fa-search text-lg"></i>
                         </div>
-                        <button type="button" id="clearRoomSearch" aria-label="{{ __('សម្អាតការស្វែងរក') }}"
+                        <button type="button" id="clearRoomSearch" aria-label="{{ __('clear_search') }}"
                                 class="hidden absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-600 transition-colors">
                             <i class="fas fa-times"></i>
                         </button>
@@ -35,7 +35,7 @@
                     <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-6">
                         <i class="fas fa-box-open text-3xl text-slate-200"></i>
                     </div>
-                    <p class="text-xl font-black text-slate-800">{{ __('មិនទាន់មានទិន្នន័យបន្ទប់') }}</p>
+                    <p class="text-xl font-black text-slate-800">{{ __('no_room_data_available_2') }}</p>
                 </div>
             @else
                 <div id="roomList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -83,16 +83,16 @@
                                     <div class="flex items-center justify-between p-3 bg-slate-50/50 rounded-xl">
                                         <div class="flex items-center gap-2">
                                             <i class="fas fa-users text-slate-400 text-xs"></i>
-                                            <span class="text-xs font-bold text-slate-500 uppercase">{{ __('សមត្ថភាព') }}</span>
+                                            <span class="text-xs font-bold text-slate-500 uppercase">{{ __('capacity') }}</span>
                                         </div>
-                                        <span class="text-sm font-black text-slate-800">{{ $room->capacity }} {{ __('នាក់') }}</span>
+                                        <span class="text-sm font-black text-slate-800">{{ $room->capacity }} {{ __('students_2') }}</span>
                                     </div>
 
                                     <div class="p-3">
-                                        <span class="text-[10px] font-black text-slate-300 uppercase block mb-1">{{ __('ទីតាំង') }}</span>
+                                        <span class="text-[10px] font-black text-slate-300 uppercase block mb-1">{{ __('location') }}</span>
                                         <div class="flex items-start gap-2 text-xs text-slate-600 font-bold leading-relaxed">
                                             <i class="fas fa-map-pin text-rose-400 mt-0.5"></i>
-                                            <span>{{ $room->location_of_room ?? __('មិនមានព័ត៌មានទីតាំង') }}</span>
+                                            <span>{{ $room->location_of_room ?? __('no_location_information') }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -144,8 +144,8 @@
                     <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4 text-slate-200">
                         <i class="fas fa-search text-2xl"></i>
                     </div>
-                    <p class="text-lg font-black text-slate-800">{{ __('រកមិនឃើញលេខបន្ទប់ដែលអ្នកចង់រកទេ') }}</p>
-                    <p class="text-xs text-slate-400 mt-1">{{ __('សូមពិនិត្យមើលលេខបន្ទប់ឡើងវិញ') }}</p>
+                    <p class="text-lg font-black text-slate-800">{{ __('no_room_matching_your_search_was_found') }}</p>
+                    <p class="text-xs text-slate-400 mt-1">{{ __('please_check_the_room_number_again') }}</p>
                 `;
                 roomList.appendChild(messageDiv);
             }

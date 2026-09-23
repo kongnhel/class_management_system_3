@@ -1,7 +1,7 @@
 <x-app-layout>
 <x-slot name="header">
 <h2 class="font-bold text-3xl text-gray-900 leading-tight flex items-center gap-2">
-📢 {{ __('ផ្ញើការជូនដំណឹងថ្មី') }}
+📢 {{ __('create_new_notification') }}
 </h2>
 </x-slot>
 
@@ -10,7 +10,7 @@
         <div class="bg-white shadow-lg rounded-2xl p-8 border border-gray-100">
             
             <h2 class="text-2xl font-extrabold text-gray-800 mb-6 flex items-center gap-2">
-             {{ __('បង្កើតសារជូនដំណឹង') }}
+             {{ __('new_notification') }}
             </h2>
 
             @if (session('success'))
@@ -33,7 +33,7 @@
 
                 <div>
                     <label for="title" class="block text-gray-700 text-sm font-semibold mb-2">
-                        {{ __('ចំណងជើង') }} <span class="text-red-500">*</span>
+                        {{ __('title') }} <span class="text-red-500">*</span>
                     </label>
                     <input type="text" name="title" id="title" value="{{ old('title') }}" required
                            class="block w-full rounded-xl border-gray-300 shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500">
@@ -41,11 +41,11 @@
 
                 <div>
                     <label for="course_offering_id" class="block text-gray-700 text-sm font-semibold mb-2">
-                        {{ __('ជ្រើសរើសមុខវិជ្ជា (ដើម្បីបង្ហាញបញ្ជីឈ្មោះសិស្ស)') }} <span class="text-red-500">*</span>
+                        {{ __('course_offering') }} <span class="text-red-500">*</span>
                     </label>
                     <select name="course_offering_id" id="course_offering_id" required
                             class="block w-full rounded-xl border-gray-300 shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500">
-                        <option value="">-- {{ __('ជ្រើសរើសមុខវិជ្ជា') }} --</option>
+                        <option value="">-- {{ __('select_course') }} --</option>
                         @foreach($courseOfferings as $offering)
                             <option value="{{ $offering->id }}">
                                 {{ $offering->course?->title_km ?? 'N/A' }}
@@ -57,21 +57,21 @@
                 <div>
                     <div class="flex justify-between items-center mb-2">
                         <label class="block text-gray-700 text-sm font-semibold">
-                            {{ __('ជ្រើសរើសសិស្សដែលត្រូវទទួល') }} <span class="text-red-500">*</span>
+                            {{ __('recipients') }} <span class="text-red-500">*</span>
                         </label>
                         <button type="button" id="toggle-select-all"
                                 class="text-sm font-semibold text-green-600 hover:text-green-800 hidden">
-                            {{ __('ជ្រើសរើសទាំងអស់') }}
+                            {{ __('select_all') }}
                         </button>
                     </div>
                     <div id="students-list" class="space-y-2 border rounded-lg p-3 h-64 overflow-y-auto bg-gray-50">
-                        <p class="text-gray-500 text-sm">{{ __('សូមជ្រើសរើសមុខវិជ្ជាជាមុន') }}</p>
+                        <p class="text-gray-500 text-sm">{{ __('select_offering_to_see_students') }}</p>
                     </div>
                 </div>
 
                 <div>
                     <label for="message" class="block text-gray-700 text-sm font-semibold mb-2">
-                        {{ __('ខ្លឹមសារសារ') }} <span class="text-red-500">*</span>
+                        {{ __('message_content') }} <span class="text-red-500">*</span>
                     </label>
                     <textarea name="message" id="message" rows="6" required
                               class="block w-full rounded-xl border-gray-300 shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500">{{ old('message') }}</textarea>
@@ -85,10 +85,10 @@
                 </div> --}}
                       <div class="flex items-center justify-between mt-6">
                         <a wire:navigate href="{{ route('professor.notifications.index') }}" class="inline-flex items-center px-6 py-3 border border-transparent rounded-full font-semibold text-xs text-gray-700 uppercase tracking-widest hover:text-gray-900 transition ease-in-out duration-150">
-                            <i class="fas fa-arrow-left mr-2"></i> {{ __('ត្រលប់ក្រោយ') }}
+                            <i class="fas fa-arrow-left mr-2"></i> {{ __('back_2') }}
                         </a>
                         <button type="submit" class="inline-flex items-center px-8 py-3 bg-gradient-to-r from-green-600 to-green-600 border border-transparent rounded-full font-semibold text-sm text-white uppercase tracking-widest hover:from-green-700 hover:to-green-700 active:from-green-800 active:to-green-800 focus:outline-none focus:border-green-900 focus:ring ring-green-300 disabled:opacity-25 transition ease-in-out duration-150 shadow-lg hover:shadow-xl">
-                               <i class="fas fa-paper-plane mr-2"></i> {{ __('ផ្ញើការជូនដំណឹង') }}
+                               <i class="fas fa-paper-plane mr-2"></i> {{ __('send_notification_2') }}
                         </button>
                     </div>
             </form>
@@ -104,25 +104,25 @@ document.getElementById('course_offering_id').addEventListener('change', functio
     toggleBtn.classList.add('hidden');
 
     if (!courseId) {
-        container.innerHTML = '<p class="text-gray-500 text-sm">{{ __("សូមជ្រើសរើសមុខវិជ្ជា") }}</p>';
+        container.innerHTML = '<p class="text-gray-500 text-sm">{{ __("khmer_fba6be422e") }}</p>';
         return;
     }
 
-    container.innerHTML = '<p class="text-gray-500 text-sm">{{ __("កំពុងផ្ទុក...") }}</p>';
+    container.innerHTML = '<p class="text-gray-500 text-sm">{{ __("loading_3") }}</p>';
 
-    fetch(`/professor/course-offerings/${courseId}/students`)
+    fetch(`/professor/course-offerings/${courseId}/students-data`)
         .then(response => response.json())
         .then(data => {
             container.innerHTML = '';
 
             // ✅ ប្រាកដថា response ជា array
             if (!Array.isArray(data)) {
-                container.innerHTML = `<p class="text-red-500 text-sm">${data.error || '{{ __("មានបញ្ហាក្នុងការទាញយកទិន្នន័យ") }}'}</p>`;
+                container.innerHTML = `<p class="text-red-500 text-sm">${data.error || '{{ __("problem_fetching_data_2") }}'}</p>`;
                 return;
             }
 
             if (data.length === 0) {
-                container.innerHTML = '<p class="text-gray-500 text-sm">{{ __("មិនមាននិស្សិតទេ") }}</p>';
+                container.innerHTML = '<p class="text-gray-500 text-sm">{{ __("no_students") }}</p>';
                 return;
             }
 
@@ -140,7 +140,7 @@ document.getElementById('course_offering_id').addEventListener('change', functio
         })
         .catch(err => {
             console.error(err);
-            container.innerHTML = '<p class="text-red-500 text-sm">{{ __("មានបញ្ហាក្នុងការទាញយកទិន្នន័យ") }}</p>';
+            container.innerHTML = '<p class="text-red-500 text-sm">{{ __("problem_fetching_data_2") }}</p>';
         });
 });
 
@@ -149,7 +149,7 @@ document.getElementById('toggle-select-all').addEventListener('click', function(
     let checkboxes = document.querySelectorAll('#students-list input[type="checkbox"]');
     let allChecked = Array.from(checkboxes).every(cb => cb.checked);
     checkboxes.forEach(cb => cb.checked = !allChecked);
-    this.textContent = allChecked ? '{{ __("ជ្រើសរើសទាំងអស់") }}' : '{{ __("ដកការជ្រើសរើសទាំងអស់") }}';
+    this.textContent = allChecked ? '{{ __("khmer_68073503b6") }}' : '{{ __("khmer_a9860ef48c") }}';
 });
 </script>
 

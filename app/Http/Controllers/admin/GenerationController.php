@@ -26,7 +26,7 @@ class GenerationController extends Controller
         ]);
 
         return redirect()->route('admin.generations.index')
-            ->with('success', __('ជំនាន់ថ្មីត្រូវបានបង្កើតដោយជោគជ័យ។'));
+            ->with('success', __('generation_created_successfully'));
     }
 
     public function update(Request $request, Generation $generation)
@@ -46,7 +46,7 @@ class GenerationController extends Controller
         ]);
 
         return redirect()->route('admin.generations.index')
-            ->with('success', __('ជំនាន់ត្រូវបានកែប្រែដោយជោគជ័យ។'));
+            ->with('success', __('generation_updated_successfully'));
     }
 
     public function destroy(Generation $generation)
@@ -60,7 +60,7 @@ class GenerationController extends Controller
         $generation->delete();
 
         return redirect()->route('admin.generations.index')
-            ->with('success', __('ជំនាន់ត្រូវបានលុបដោយជោគជ័យ។'));
+            ->with('success', __('generation_deleted_successfully'));
     }
 
     public function toggle(Generation $generation)

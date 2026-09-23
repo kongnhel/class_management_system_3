@@ -3,7 +3,7 @@
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
                 <h2 class="font-bold text-3xl text-gray-800 leading-tight">
-                    {{ __('គ្រប់គ្រងកម្រងសំណួរសម្រាប់មុខវិជ្ជា') }}
+                    {{ __('quiz_management') }}
                 </h2>
                 <p class="mt-1 text-lg text-gray-500">{{ $courseOffering->course->title_km ?? $courseOffering->course->title_en ?? 'N/A' }} ({{ $courseOffering->academic_year }} - {{ $courseOffering->semester }})</p>
             </div>
@@ -15,7 +15,7 @@
                 hover:shadow-lg transform hover:scale-105 
                 transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-emerald-400">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"></path></svg>
-                {{ __('ត្រឡប់ទៅបញ្ជីមុខវិជ្ជា') }}
+                {{ __('back') }}
             </a>
         </div>
     </x-slot>
@@ -29,7 +29,7 @@
                     <button id="open-create-quiz-modal-btn"
                         class="inline-flex items-center px-6 py-3 bg-green-500 hover:bg-green-600 text-white text-sm font-semibold rounded-lg shadow-md transition-all duration-200">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                        {{ __('បង្កើតកម្រងសំណួរថ្មី') }}
+                        {{ __('create_new_quiz') }}
                     </button>
                 </div>
 
@@ -46,21 +46,21 @@
                 @endif
                 
                 <!-- តារាងបង្ហាញបញ្ជីកម្រងសំណួរ -->
-                <h3 class="text-2xl font-semibold text-gray-700 mb-4">{{ __('បញ្ជីកម្រងសំណួរ') }}</h3>
+                <h3 class="text-2xl font-semibold text-gray-700 mb-4">{{ __('quiz_list') }}</h3>
                 
                 @if ($quizzes->isEmpty())
-                    <p class="text-gray-500">{{ __('មិនទាន់មានកម្រងសំណួរត្រូវបានបង្កើតនៅឡើយទេ។') }}</p>
+                    <p class="text-gray-500">{{ __('no_quizzes_yet') }}</p>
                 @else
                     <div class="overflow-x-auto shadow-md sm:rounded-lg">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('ចំណងជើង') }} (ខ្មែរ)</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('ពិន្ទុអតិបរមា') }}</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('ចាប់ផ្ដើម') }}</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('បញ្ចប់') }}</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('បោះពុម្ព') }}</th>
-                                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('សកម្មភាព') }}</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('title') }} (ខ្មែរ)</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('maximum_score') }}</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('start_time') }}</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('complete') }}</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('print_2') }}</th>
+                                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('actions_2') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
@@ -72,7 +72,7 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ \Carbon\Carbon::parse($quiz->end_time)->format('Y-m-d H:i') }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $quiz->is_published ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                                {{ $quiz->is_published ? __('បោះពុម្ពហើយ') : __('មិនទាន់បោះពុម្ព') }}
+                                                {{ $quiz->is_published ? __('published') : __('unpublished') }}
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -88,7 +88,7 @@
                                                 data-end-time="{{ \Carbon\Carbon::parse($quiz->end_time)->format('Y-m-d\TH:i') }}"
                                                 data-is-published="{{ $quiz->is_published }}"
                                             >
-                                                {{ __('កែប្រែ') }}
+                                                {{ __('edit_2') }}
                                             </button>
                                             <!-- ប៊ូតុងផ្សេងទៀតដូចជាគ្រប់គ្រងសំណួរ -->
                                         </td>
@@ -110,7 +110,7 @@
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl transform transition-all duration-300 scale-95 opacity-0" id="create-quiz-content">
             <div class="p-6">
                 <div class="flex justify-between items-center border-b pb-3 mb-4">
-                    <h3 class="text-xl font-bold text-gray-800">{{ __('បង្កើតកម្រងសំណួរថ្មី') }}</h3>
+                    <h3 class="text-xl font-bold text-gray-800">{{ __('create_new_quiz') }}</h3>
                     <button id="close-create-quiz-modal-btn" class="text-gray-400 hover:text-gray-600">&times;</button>
                 </div>
                 
@@ -123,7 +123,7 @@
                     <div class="space-y-4">
                         <!-- ចំណងជើង (ខ្មែរ) -->
                         <div>
-                            <label for="create_title_km" class="block text-sm font-medium text-gray-700">{{ __('ចំណងជើង') }} (ខ្មែរ) <span class="text-red-500">*</span></label>
+                            <label for="create_title_km" class="block text-sm font-medium text-gray-700">{{ __('title') }} (ខ្មែរ) <span class="text-red-500">*</span></label>
                             <input type="text" id="create_title_km" name="title_km" value="{{ old('title_km') }}" required
                                 class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 @error('title_km') border-red-500 @enderror">
                             @error('title_km')
@@ -133,7 +133,7 @@
 
                         <!-- ចំណងជើង (អង់គ្លេស) -->
                         <div>
-                            <label for="create_title_en" class="block text-sm font-medium text-gray-700">{{ __('ចំណងជើង') }} (អង់គ្លេស)</label>
+                            <label for="create_title_en" class="block text-sm font-medium text-gray-700">{{ __('title') }} (អង់គ្លេស)</label>
                             <input type="text" id="create_title_en" name="title_en" value="{{ old('title_en') }}"
                                 class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 @error('title_en') border-red-500 @enderror">
                             @error('title_en')
@@ -144,7 +144,7 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <!-- ពេលវេលាចាប់ផ្តើម (Start Time) -->
                             <div>
-                                <label for="create_start_time" class="block text-sm font-medium text-gray-700">{{ __('ពេលវេលាចាប់ផ្តើម') }} <span class="text-red-500">*</span></label>
+                                <label for="create_start_time" class="block text-sm font-medium text-gray-700">{{ __('start_time_2') }} <span class="text-red-500">*</span></label>
                                 <input type="datetime-local" id="create_start_time" name="start_time" value="{{ old('start_time') }}" required
                                     class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 @error('start_time') border-red-500 @enderror">
                                 @error('start_time')
@@ -154,7 +154,7 @@
 
                             <!-- ពេលវេលាបញ្ចប់ (End Time) -->
                             <div>
-                                <label for="create_end_time" class="block text-sm font-medium text-gray-700">{{ __('ពេលវេលាបញ្ចប់') }} <span class="text-red-500">*</span></label>
+                                <label for="create_end_time" class="block text-sm font-medium text-gray-700">{{ __('end_time_2') }} <span class="text-red-500">*</span></label>
                                 <input type="datetime-local" id="create_end_time" name="end_time" value="{{ old('end_time') }}" required
                                     class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 @error('end_time') border-red-500 @enderror">
                                 @error('end_time')
@@ -165,7 +165,7 @@
 
                         <!-- ពិន្ទុអតិបរមា (Max Score) -->
                         <div>
-                            <label for="create_max_score" class="block text-sm font-medium text-gray-700">{{ __('ពិន្ទុអតិបរមា') }} <span class="text-red-500">*</span></label>
+                            <label for="create_max_score" class="block text-sm font-medium text-gray-700">{{ __('maximum_score') }} <span class="text-red-500">*</span></label>
                             <input type="number" id="create_max_score" name="max_score" value="{{ old('max_score') }}" required min="1"
                                 class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 @error('max_score') border-red-500 @enderror">
                             @error('max_score')
@@ -175,7 +175,7 @@
 
                         <!-- ការពិពណ៌នា (ខ្មែរ) -->
                         <div>
-                            <label for="create_description_km" class="block text-sm font-medium text-gray-700">{{ __('ការពិពណ៌នា') }} (ខ្មែរ)</label>
+                            <label for="create_description_km" class="block text-sm font-medium text-gray-700">{{ __('description') }} (ខ្មែរ)</label>
                             <textarea id="create_description_km" name="description" rows="3"
                                 class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 @error('description_km') border-red-500 @enderror">{{ old('description_km') }}</textarea>
                             @error('description_km')
@@ -187,7 +187,7 @@
                         <div class="flex items-center">
                             <input type="checkbox" id="create_is_published" name="is_published" value="1" {{ old('is_published') ? 'checked' : '' }}
                                 class="rounded border-gray-300 text-emerald-600 shadow-sm focus:ring-emerald-500">
-                            <label for="create_is_published" class="ml-2 text-sm font-medium text-gray-700">{{ __('បោះពុម្ពភ្លាមៗ') }} (Publish)</label>
+                            <label for="create_is_published" class="ml-2 text-sm font-medium text-gray-700">{{ __('publish') }} (Publish)</label>
                             @error('is_published')
                                 <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                             @enderror
@@ -197,10 +197,10 @@
                     <div class="mt-6 flex justify-end gap-3">
                         <button type="button" id="cancel-create-quiz-modal-btn"
                             class="px-6 py-3 text-gray-600 font-semibold rounded-xl shadow-sm transition-all duration-200 hover:bg-gray-200">
-                            {{ __('បោះបង់') }}
+                            {{ __('cancel_2') }}
                         </button>
                         <button type="submit" class="px-6 py-3 text-white font-extrabold rounded-xl shadow-md transition-all duration-200 bg-purple-600 hover:bg-purple-700">
-                            {{ __('រក្សាទុកកម្រងសំណួរ') }}
+                            {{ __('create_quiz') }}
                         </button>
                     </div>
                 </form>
@@ -215,7 +215,7 @@
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl transform transition-all duration-300 scale-95 opacity-0" id="edit-quiz-content">
             <div class="p-6">
                 <div class="flex justify-between items-center border-b pb-3 mb-4">
-                    <h3 class="text-xl font-bold text-gray-800">{{ __('កែប្រែកម្រងសំណួរ') }}</h3>
+                    <h3 class="text-xl font-bold text-gray-800">{{ __('edit_question_bank') }}</h3>
                     <button id="close-edit-quiz-modal-btn" class="text-gray-400 hover:text-gray-600">&times;</button>
                 </div>
                 
@@ -226,14 +226,14 @@
                     <div class="space-y-4">
                         <!-- ចំណងជើង (ខ្មែរ) -->
                         <div>
-                            <label for="edit_title_km" class="block text-sm font-medium text-gray-700">{{ __('ចំណងជើង') }} (ខ្មែរ) <span class="text-red-500">*</span></label>
+                            <label for="edit_title_km" class="block text-sm font-medium text-gray-700">{{ __('title') }} (ខ្មែរ) <span class="text-red-500">*</span></label>
                             <input type="text" id="edit_title_km" name="title_km" required
                                 class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500">
                         </div>
 
                         <!-- ចំណងជើង (អង់គ្លេស) -->
                         <div>
-                            <label for="edit_title_en" class="block text-sm font-medium text-gray-700">{{ __('ចំណងជើង') }} (អង់គ្លេស)</label>
+                            <label for="edit_title_en" class="block text-sm font-medium text-gray-700">{{ __('title') }} (អង់គ្លេស)</label>
                             <input type="text" id="edit_title_en" name="title_en"
                                 class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500">
                         </div>
@@ -241,14 +241,14 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <!-- ពេលវេលាចាប់ផ្តើម (Start Time) -->
                             <div>
-                                <label for="edit_start_time" class="block text-sm font-medium text-gray-700">{{ __('ពេលវេលាចាប់ផ្តើម') }} <span class="text-red-500">*</span></label>
+                                <label for="edit_start_time" class="block text-sm font-medium text-gray-700">{{ __('start_time_2') }} <span class="text-red-500">*</span></label>
                                 <input type="datetime-local" id="edit_start_time" name="start_time" required
                                     class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500">
                             </div>
 
                             <!-- ពេលវេលាបញ្ចប់ (End Time) -->
                             <div>
-                                <label for="edit_end_time" class="block text-sm font-medium text-gray-700">{{ __('ពេលវេលាបញ្ចប់') }} <span class="text-red-500">*</span></label>
+                                <label for="edit_end_time" class="block text-sm font-medium text-gray-700">{{ __('end_time_2') }} <span class="text-red-500">*</span></label>
                                 <input type="datetime-local" id="edit_end_time" name="end_time" required
                                     class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500">
                             </div>
@@ -256,14 +256,14 @@
 
                         <!-- ពិន្ទុអតិបរមា (Max Score) -->
                         <div>
-                            <label for="edit_max_score" class="block text-sm font-medium text-gray-700">{{ __('ពិន្ទុអតិបរមា') }} <span class="text-red-500">*</span></label>
+                            <label for="edit_max_score" class="block text-sm font-medium text-gray-700">{{ __('maximum_score') }} <span class="text-red-500">*</span></label>
                             <input type="number" id="edit_max_score" name="max_score" required min="1"
                                 class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500">
                         </div>
 
                         <!-- ការពិពណ៌នា (ខ្មែរ) -->
                         <div>
-                            <label for="edit_description_km" class="block text-sm font-medium text-gray-700">{{ __('ការពិពណ៌នា') }} (ខ្មែរ)</label>
+                            <label for="edit_description_km" class="block text-sm font-medium text-gray-700">{{ __('description') }} (ខ្មែរ)</label>
                             <textarea id="edit_description_km" name="description_km" rows="3"
                                 class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"></textarea>
                         </div>
@@ -272,17 +272,17 @@
                         <div class="flex items-center">
                             <input type="checkbox" id="edit_is_published" name="is_published" value="1"
                                 class="rounded border-gray-300 text-emerald-600 shadow-sm focus:ring-emerald-500">
-                            <label for="edit_is_published" class="ml-2 text-sm font-medium text-gray-700">{{ __('បោះពុម្ពភ្លាមៗ') }} (Publish)</label>
+                            <label for="edit_is_published" class="ml-2 text-sm font-medium text-gray-700">{{ __('publish') }} (Publish)</label>
                         </div>
                     </div>
 
                     <div class="mt-6 flex justify-end gap-3">
                         <button type="button" id="cancel-edit-quiz-modal-btn"
                             class="px-6 py-3 text-gray-600 font-semibold rounded-xl shadow-sm transition-all duration-200 hover:bg-gray-200">
-                            {{ __('បោះបង់') }}
+                            {{ __('cancel_2') }}
                         </button>
                         <button type="submit" class="px-6 py-3 text-white font-extrabold rounded-xl shadow-md transition-all duration-200 bg-purple-600 hover:bg-purple-700">
-                            {{ __('រក្សាទុកការកែប្រែ') }}
+                            {{ __('save_changes') }}
                         </button>
                     </div>
                 </form>

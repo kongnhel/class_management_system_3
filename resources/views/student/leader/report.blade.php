@@ -52,7 +52,7 @@
                 <div class="pr-header-left">
                     <img src="{{ asset('assets/image/nmu_Logo.png') }}" alt="Logo">
                     <h3 class="font-moul">សាកលវិទ្យាល័យជាតិមានជ័យ</h3>
-                    <h3 class="font-moul">{{ __('ការិយាល័យសិក្សា') }}</h3>
+                    <h3 class="font-moul">{{ __('academic_office') }}</h3>
                 </div>
                 <div class="pr-header-center">
                     <h2 class="font-moul">ព្រះរាជាណាចក្រកម្ពុជា</h2>
@@ -70,23 +70,23 @@
 
         <div class="pr-summary">
             <div class="pr-summary-item">
-                <div class="label">{{ __('សិស្សសរុប') }}</div>
+                <div class="label">{{ __('total_students') }}</div>
                 <div class="value">{{ $students->count() }}</div>
             </div>
             <div class="pr-summary-item">
-                <div class="label">{{ __('មក') }}</div>
+                <div class="label">{{ __('present_2') }}</div>
                 <div class="value">{{ $totalPresent }}</div>
             </div>
             <div class="pr-summary-item">
-                <div class="label">{{ __('អវត្តមាន') }}</div>
+                <div class="label">{{ __('absent') }}</div>
                 <div class="value">{{ $totalAbsent }}</div>
             </div>
             <div class="pr-summary-item">
-                <div class="label">{{ __('ច្បាប់') }}</div>
+                <div class="label">{{ __('permission_2') }}</div>
                 <div class="value">{{ $totalPerm }}</div>
             </div>
             <div class="pr-summary-item">
-                <div class="label">{{ __('អត្រាវត្តមាន') }}</div>
+                <div class="label">{{ __('attendance_rate') }}</div>
                 <div class="value">{{ $overallRate }}%</div>
             </div>
         </div>
@@ -95,11 +95,11 @@
             <thead>
                 <tr>
                     <th style="width:5%">#</th>
-                    <th style="width:30%">{{ __('និស្សិត') }}</th>
-                    <th style="width:10%">{{ __('មក') }}</th>
-                    <th style="width:10%">{{ __('ច្បាប់') }}</th>
-                    <th style="width:10%">{{ __('អវត្តមាន') }}</th>
-                    <th style="width:10%">{{ __('ភាគរយ') }}</th>
+                    <th style="width:30%">{{ __('students_3') }}</th>
+                    <th style="width:10%">{{ __('present_2') }}</th>
+                    <th style="width:10%">{{ __('permission_2') }}</th>
+                    <th style="width:10%">{{ __('absent') }}</th>
+                    <th style="width:10%">{{ __('percentage') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -145,9 +145,9 @@
 
             {{-- Breadcrumb --}}
             <div class="flex items-center gap-2 text-xs font-semibold text-slate-400">
-                <a wire:navigate href="{{ route('student.my-enrolled-courses') }}" class="hover:text-emerald-600 transition-colors">{{ __('មុខវិជ្ជារបស់ខ្ញុំ') }}</a>
+                <a wire:navigate href="{{ route('student.my-enrolled-courses') }}" class="hover:text-emerald-600 transition-colors">{{ __('my_courses') }}</a>
                 <i class="fas fa-chevron-right text-[8px]"></i>
-                <span class="text-slate-600">{{ __('របាយការណ៍វត្តមាន') }}</span>
+                <span class="text-slate-600">{{ __('export_to_excel') }}</span>
             </div>
 
             {{-- HERO Header --}}
@@ -162,10 +162,10 @@
                                 <i class="fas fa-file-chart-column text-2xl"></i>
                             </div>
                             <div>
-                                <h1 class="text-xl sm:text-2xl font-black leading-tight">{{ __('របាយការណ៍វត្តមានរួម') }}</h1>
+                                <h1 class="text-xl sm:text-2xl font-black leading-tight">{{ __('combined_attendance_report') }}</h1>
                                 <p class="text-emerald-200 text-sm mt-1">{{ $courseOffering->course->title_km ?? $courseOffering->course->title_en }}</p>
                                 @if($courseOffering->lecturer)
-                                    <p class="text-emerald-300 text-xs mt-0.5">{{ __('សាស្ត្រាចារ្យ') }}: {{ $courseOffering->lecturer->name }}</p>
+                                    <p class="text-emerald-300 text-xs mt-0.5">{{ __('professor') }}: {{ $courseOffering->lecturer->name }}</p>
                                 @endif
                             </div>
                         </div>
@@ -173,7 +173,7 @@
                         <button onclick="window.print()"
                                 class="inline-flex items-center justify-center gap-2 px-5 py-3 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 rounded-xl font-bold text-sm transition-all active:scale-95">
                             <i class="fas fa-print"></i>
-                            <span>{{ __('បោះពុម្ព') }}</span>
+                            <span>{{ __('print_2') }}</span>
                         </button>
                     </div>
 
@@ -182,22 +182,22 @@
                         <div class="flex items-center gap-2">
                             <div class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-xs"><i class="fas fa-calendar-alt"></i></div>
                             <div>
-                                <p class="text-emerald-300 text-[10px] font-bold uppercase tracking-wider">{{ __('ឆ្នាំសិក្សា') }}</p>
+                                <p class="text-emerald-300 text-[10px] font-bold uppercase tracking-wider">{{ __('academic_year') }}</p>
                                 <p class="text-sm font-bold">{{ $courseOffering->academic_year }}</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-2">
                             <div class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-xs"><i class="fas fa-graduation-cap"></i></div>
                             <div>
-                                <p class="text-emerald-300 text-[10px] font-bold uppercase tracking-wider">{{ __('ឆមាស') }}</p>
+                                <p class="text-emerald-300 text-[10px] font-bold uppercase tracking-wider">{{ __('semester') }}</p>
                                 <p class="text-sm font-bold">{{ $courseOffering->semester }}</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-2">
                             <div class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-xs"><i class="fas fa-users"></i></div>
                             <div>
-                                <p class="text-emerald-300 text-[10px] font-bold uppercase tracking-wider">{{ __('និស្សិត') }}</p>
-                                <p class="text-sm font-bold">{{ $students->count() }} {{ __('នាក់') }}</p>
+                                <p class="text-emerald-300 text-[10px] font-bold uppercase tracking-wider">{{ __('students_3') }}</p>
+                                <p class="text-sm font-bold">{{ $students->count() }} {{ __('students_2') }}</p>
                             </div>
                         </div>
                     </div>
@@ -208,19 +208,19 @@
             <div class="grid grid-cols-3 lg:grid-cols-6 gap-3">
                 <div class="bg-white p-4 rounded-2xl border border-emerald-100 shadow-sm flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center"><i class="fas fa-user-check"></i></div>
-                    <div><p class="text-[10px] font-bold text-gray-400 uppercase">{{ __('មក') }}</p><h3 class="text-lg font-black text-gray-800">{{ $totalPresent }}</h3></div>
+                    <div><p class="text-[10px] font-bold text-gray-400 uppercase">{{ __('present_2') }}</p><h3 class="text-lg font-black text-gray-800">{{ $totalPresent }}</h3></div>
                 </div>
                 <div class="bg-white p-4 rounded-2xl border border-rose-100 shadow-sm flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center"><i class="fas fa-user-times"></i></div>
-                    <div><p class="text-[10px] font-bold text-gray-400 uppercase">{{ __('អវត្តមាន') }}</p><h3 class="text-lg font-black text-gray-800">{{ $totalAbsent }}</h3></div>
+                    <div><p class="text-[10px] font-bold text-gray-400 uppercase">{{ __('absent') }}</p><h3 class="text-lg font-black text-gray-800">{{ $totalAbsent }}</h3></div>
                 </div>
                 <div class="bg-white p-4 rounded-2xl border border-emerald-100 shadow-sm flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center"><i class="fas fa-file-contract"></i></div>
-                    <div><p class="text-[10px] font-bold text-gray-400 uppercase">{{ __('ច្បាប់') }}</p><h3 class="text-lg font-black text-gray-800">{{ $totalPerm }}</h3></div>
+                    <div><p class="text-[10px] font-bold text-gray-400 uppercase">{{ __('permission_2') }}</p><h3 class="text-lg font-black text-gray-800">{{ $totalPerm }}</h3></div>
                 </div>
                 <div class="col-span-3 lg:col-span-2 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
                     <div class="flex items-center justify-between mb-2">
-                        <p class="text-[10px] font-bold text-gray-400 uppercase">{{ __('អត្រាវត្តមានសរុប') }}</p>
+                        <p class="text-[10px] font-bold text-gray-400 uppercase">{{ __('overall_attendance_rate') }}</p>
                         @php $rateColor = $overallRate >= 75 ? 'emerald' : 'rose'; @endphp
                         <span class="text-sm font-black text-{{ $rateColor }}-600">{{ $overallRate }}%</span>
                     </div>
@@ -235,9 +235,9 @@
                 <div class="px-5 py-4 border-b border-slate-50 flex items-center justify-between">
                     <div class="flex items-center gap-2.5">
                         <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm"><i class="fas fa-table"></i></div>
-                        <h3 class="text-sm font-bold text-gray-800">{{ __('បញ្ជីវត្តមាននិស្សិត') }}</h3>
+                        <h3 class="text-sm font-bold text-gray-800">{{ __('student_attendance_list') }}</h3>
                     </div>
-                    <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-slate-50 text-slate-500">{{ $students->count() }} {{ __('នាក់') }}</span>
+                    <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-slate-50 text-slate-500">{{ $students->count() }} {{ __('students_2') }}</span>
                 </div>
 
                 {{-- Desktop --}}
@@ -246,11 +246,11 @@
                         <thead>
                             <tr class="bg-slate-50/50">
                                 <th class="px-5 py-3.5 text-center text-[11px] font-bold text-slate-400 uppercase tracking-wider w-12">#</th>
-                                <th class="px-5 py-3.5 text-left text-[11px] font-bold text-slate-400 uppercase tracking-wider">{{ __('និស្សិត') }}</th>
-                                <th class="px-3 py-3.5 text-center text-[11px] font-bold text-emerald-600 uppercase tracking-wider">{{ __('មក') }}</th>
-                                <th class="px-3 py-3.5 text-center text-[11px] font-bold text-emerald-600 uppercase tracking-wider">{{ __('ច្បាប់') }}</th>
-                                <th class="px-3 py-3.5 text-center text-[11px] font-bold text-rose-600 uppercase tracking-wider">{{ __('អវត្តមាន') }}</th>
-                                <th class="px-5 py-3.5 text-right text-[11px] font-bold text-slate-400 uppercase tracking-wider">{{ __('ភាគរយ') }}</th>
+                                <th class="px-5 py-3.5 text-left text-[11px] font-bold text-slate-400 uppercase tracking-wider">{{ __('students_3') }}</th>
+                                <th class="px-3 py-3.5 text-center text-[11px] font-bold text-emerald-600 uppercase tracking-wider">{{ __('present_2') }}</th>
+                                <th class="px-3 py-3.5 text-center text-[11px] font-bold text-emerald-600 uppercase tracking-wider">{{ __('permission_2') }}</th>
+                                <th class="px-3 py-3.5 text-center text-[11px] font-bold text-rose-600 uppercase tracking-wider">{{ __('absent') }}</th>
+                                <th class="px-5 py-3.5 text-right text-[11px] font-bold text-slate-400 uppercase tracking-wider">{{ __('percentage') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-50">
@@ -321,15 +321,15 @@
                             </div>
                             <div class="grid grid-cols-4 gap-2">
                                 <div class="text-center bg-emerald-50 rounded-lg py-1.5">
-                                    <p class="text-[9px] font-bold text-emerald-500 uppercase">{{ __('មក') }}</p>
+                                    <p class="text-[9px] font-bold text-emerald-500 uppercase">{{ __('present_2') }}</p>
                                     <p class="text-sm font-black text-emerald-700">{{ $data->present_count }}</p>
                                 </div>
                                 <div class="text-center bg-emerald-50 rounded-lg py-1.5">
-                                    <p class="text-[9px] font-bold text-emerald-500 uppercase">{{ __('ច្បាប់') }}</p>
+                                    <p class="text-[9px] font-bold text-emerald-500 uppercase">{{ __('permission_2') }}</p>
                                     <p class="text-sm font-black text-emerald-700">{{ $data->permission_count }}</p>
                                 </div>
                                 <div class="text-center bg-rose-50 rounded-lg py-1.5">
-                                    <p class="text-[9px] font-bold text-rose-500 uppercase">{{ __('អវ') }}</p>
+                                    <p class="text-[9px] font-bold text-rose-500 uppercase">{{ __('absent') }}</p>
                                     <p class="text-sm font-black text-rose-700">{{ $data->absent_count }}</p>
                                 </div>
                             </div>
@@ -346,7 +346,7 @@
                         <div class="w-14 h-14 bg-gray-50 text-gray-300 rounded-2xl flex items-center justify-center mx-auto mb-3">
                             <i class="fas fa-users-slash text-xl"></i>
                         </div>
-                        <p class="text-sm font-bold text-gray-400">{{ __('មិនមាននិស្សិតចុះឈ្មោះ') }}</p>
+                        <p class="text-sm font-bold text-gray-400">{{ __('no_enrolled_students_2') }}</p>
                     </div>
                 @endif
             </div>
@@ -355,10 +355,10 @@
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
                     <i class="fas fa-info-circle"></i>
-                    {{ __('វត្តមានតិចជាង ៧៥% បង្ហាញជាពណ៌ក្រហម') }}
+                    {{ __('attendance_below_75_is_shown_in_red') }}
                 </p>
                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                    {{ __('កាលបរិច្ឆេទ៖') }} {{ now()->format('d M Y') }}
+                    {{ __('date_3') }} {{ now()->format('d M Y') }}
                 </p>
             </div>
         </div>

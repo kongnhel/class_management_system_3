@@ -2,11 +2,17 @@
 
 namespace App\Services;
 
+use App\Models\Assignment;
+use App\Models\Exam;
 use App\Models\ReExamResult;
+use App\Models\Quiz;
 use App\Models\User;
 
 class GradingService
 {
+    /** @var array<int, array<string, true>> */
+    protected static array $offeringAssessmentKeys = [];
+
     /**
      * Grading scale thresholds (total score out of 100).
      * Attendance (15) + Assessments (85) = 100 max.
@@ -194,6 +200,15 @@ class GradingService
         ?User $student = null,
         ?int $courseOfferingId = null
     ): array {
+        // Controllers may load all results for a student. Restrict the input
+        // to assessments belonging to this offering before calculating totals.
+        if ($courseOfferingId) {
+            $allowedKeys = self::getOfferingAssessmentKeys($courseOfferingId);
+            $assessmentScores = collect($assessmentScores)->filter(function ($result) use ($allowedKeys) {
+                return isset($allowedKeys[$result->assessment_type.':'.$result->assessment_id]);
+            })->values();
+        }
+
         // Load re-exam results if student and offering provided
         $reExamMap = [];
         if ($student && $courseOfferingId) {
@@ -270,6 +285,29 @@ class GradingService
             'needs_re_exam' => $needsReExam,
             'needs_retake_semester' => in_array('attendance', $failedComponents),
         ];
+    }
+
+    /**
+     * Build the assessment allow-list once per offering per request.
+     */
+    private static function getOfferingAssessmentKeys(int $courseOfferingId): array
+    {
+        if (isset(self::$offeringAssessmentKeys[$courseOfferingId])) {
+            return self::$offeringAssessmentKeys[$courseOfferingId];
+        }
+
+        $keys = [];
+        foreach (Assignment::where('course_offering_id', $courseOfferingId)->pluck('id') as $id) {
+            $keys['assignment:'.$id] = true;
+        }
+        foreach (Exam::where('course_offering_id', $courseOfferingId)->pluck('id') as $id) {
+            $keys['exam:'.$id] = true;
+        }
+        foreach (Quiz::where('course_offering_id', $courseOfferingId)->pluck('id') as $id) {
+            $keys['quiz:'.$id] = true;
+        }
+
+        return self::$offeringAssessmentKeys[$courseOfferingId] = $keys;
     }
 
     /**

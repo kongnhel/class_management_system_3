@@ -9,12 +9,12 @@
                         <i class="fas fa-star text-white text-lg"></i>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-bold text-gray-900">គ្រប់គ្រងពិន្ទុ</h1>
+                        <h1 class="text-2xl font-bold text-gray-900">{{ __('manage_grades') }}</h1>
                         <p class="text-sm text-gray-500 mt-0.5">{{ $courseOffering->course->title_km ?? $courseOffering->course->title_en ?? 'N/A' }} · {{ $courseOffering->academic_year }} · {{ $courseOffering->semester }}</p>
                     </div>
                 </div>
                 <a wire:navigate href="{{ route('professor.my-course-offerings') }}" class="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 text-gray-700 rounded-xl font-bold text-sm hover:bg-gray-50 shadow-sm transition-all">
-                    <i class="fas fa-arrow-left"></i> ត្រឡប់ក្រោយ
+                    <i class="fas fa-arrow-left"></i> {{ __('back') }}
                 </a>
             </div>
 
@@ -40,20 +40,20 @@
             <div class="bg-white rounded-2xl border border-gray-200 p-5 mb-6">
                 <div class="flex items-center gap-3 mb-3">
                     <i class="fas fa-info-circle text-emerald-500"></i>
-                    <h3 class="font-bold text-gray-800 text-sm">ព័ត៌មានវគ្គសិក្សា</h3>
+                    <h3 class="font-bold text-gray-800 text-sm">{{ __('course_info') }}</h3>
                 </div>
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
                     <div>
-                        <span class="text-gray-400 text-xs font-bold uppercase">គ្រូបង្រៀន</span>
+                        <span class="text-gray-400 text-xs font-bold uppercase">{{ __('professor') }}</span>
                         <p class="font-semibold text-gray-800">{{ $courseOffering->lecturer?->name ?? 'N/A' }}</p>
                     </div>
                     <div>
-                        <span class="text-gray-400 text-xs font-bold uppercase">ចំនួនសិស្ស</span>
-                        <p class="font-semibold text-gray-800">{{ $students->count() }} នាក់</p>
+                        <span class="text-gray-400 text-xs font-bold uppercase">{{ __('student_count') }}</span>
+                        <p class="font-semibold text-gray-800">{{ $students->count() }} {{ __('people') }}</p>
                     </div>
                     <div>
-                        <span class="text-gray-400 text-xs font-bold uppercase">កិច្ចការ</span>
-                        <p class="font-semibold text-gray-800">{{ $assignments->count() }} ប្រភេទ</p>
+                        <span class="text-gray-400 text-xs font-bold uppercase">{{ __('assignments') }}</span>
+                        <p class="font-semibold text-gray-800">{{ $assignments->count() }} {{ __('assignment_types') }}</p>
                     </div>
                 </div>
             </div>
@@ -65,10 +65,10 @@
                 <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
                     <div class="px-5 py-4 border-b border-gray-200 flex items-center justify-between">
                         <h3 class="font-bold text-gray-800 text-sm flex items-center gap-2">
-                            <i class="fas fa-edit text-emerald-500"></i> បញ្ចូលពិន្ទុ
+                            <i class="fas fa-edit text-emerald-500"></i> {{ __('enter_grades') }}
                         </h3>
                         <button type="submit" class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white rounded-xl font-bold text-xs shadow-md transition-all active:scale-95">
-                            <i class="fas fa-save"></i> រក្សាទុកពិន្ទុទាំងអស់
+                            <i class="fas fa-save"></i> {{ __('save_all_grades') }}
                         </button>
                     </div>
 
@@ -77,14 +77,14 @@
                             <thead>
                                 <tr class="bg-gray-50">
                                     <th class="px-4 py-3 text-left text-[10px] font-bold text-gray-500 uppercase w-10">#</th>
-                                    <th class="px-4 py-3 text-left text-[10px] font-bold text-gray-500 uppercase">ឈ្មោះ</th>
+                                    <th class="px-4 py-3 text-left text-[10px] font-bold text-gray-500 uppercase">{{ __('name') }}</th>
                                     @foreach($assignments as $assignment)
                                         <th class="px-3 py-3 text-center text-[10px] font-bold text-gray-500 uppercase min-w-[100px]">
                                             <div>{{ $assignment->title_km ?? $assignment->title_en ?? 'N/A' }}</div>
                                             <div class="text-gray-400 font-normal normal-case">/ {{ $assignment->max_score ?? $assignment->max_points ?? 100 }}</div>
                                         </th>
                                     @endforeach
-                                    <th class="px-4 py-3 text-center text-[10px] font-bold text-emerald-600 uppercase bg-emerald-50">សរុប</th>
+                                    <th class="px-4 py-3 text-center text-[10px] font-bold text-emerald-600 uppercase bg-emerald-50">{{ __('total') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100">
@@ -142,7 +142,7 @@
                                     <tr>
                                         <td colspan="{{ 3 + $assignments->count() }}" class="px-6 py-16 text-center">
                                             <i class="fas fa-inbox text-gray-300 text-3xl mb-3"></i>
-                                            <p class="text-sm font-bold text-gray-400">មិនមានទិន្នន័យពិន្ទុ</p>
+                                            <p class="text-sm font-bold text-gray-400">{{ __('no_grade_data') }}</p>
                                         </td>
                                     </tr>
                                 @endforelse
@@ -152,7 +152,7 @@
 
                     <div class="px-5 py-3 border-t border-gray-100 flex justify-end">
                         <button type="submit" class="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white rounded-xl font-bold text-sm shadow-md transition-all active:scale-95">
-                            <i class="fas fa-save"></i> រក្សាទុកពិន្ទុទាំងអស់
+                            <i class="fas fa-save"></i> {{ __('save_all_grades') }}
                         </button>
                     </div>
                 </div>

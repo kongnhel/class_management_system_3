@@ -12,8 +12,8 @@
                             </svg>
                         </span>
                         <div>
-                            <h2 class="text-3xl font-bold text-gray-900">{{ __('គ្រប់គ្រងដេប៉ាតឺម៉ង់') }}</h2>
-                            <p class="mt-1 text-sm text-gray-500">{{ __('បញ្ជីឈ្មោះដេប៉ាតឺម៉ង់ទាំងអស់នៅក្នុងប្រព័ន្ធ') }}</p>
+                            <h2 class="text-3xl font-bold text-gray-900">{{ __('manage_departments') }}</h2>
+                            <p class="mt-1 text-sm text-gray-500">{{ __('list_of_all_departments_in_the_system') }}</p>
                         </div>
                     </div>
 
@@ -22,14 +22,14 @@
                         <div class="inline-flex rounded-xl bg-gray-100 p-1">
                             <button @click="viewMode = 'grid'"
                                 :class="viewMode === 'grid' ? 'bg-white shadow text-emerald-600' : 'text-gray-400 hover:text-gray-600'"
-                                class="p-2 rounded-lg transition" title="{{ __('ទម្រង់ប័ណ្ណ') }}">
+                                class="p-2 rounded-lg transition" title="{{ __('card_view') }}">
                                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                                 </svg>
                             </button>
                             <button @click="viewMode = 'table'"
                                 :class="viewMode === 'table' ? 'bg-white shadow text-emerald-600' : 'text-gray-400 hover:text-gray-600'"
-                                class="p-2 rounded-lg transition" title="{{ __('ទម្រង់តារាង') }}">
+                                class="p-2 rounded-lg transition" title="{{ __('table_view') }}">
                                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
                                 </svg>
@@ -41,8 +41,8 @@
                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                             </svg>
-                            <span class="hidden sm:inline">{{ __('បន្ថែមដេប៉ាតឺម៉ង់ថ្មី') }}</span>
-                            <span class="sm:hidden">{{ __('បន្ថែម') }}</span>
+                            <span class="hidden sm:inline">{{ __('add_new_department') }}</span>
+                            <span class="sm:hidden">{{ __('add') }}</span>
                         </a>
                     </div>
                 </div>
@@ -60,7 +60,7 @@
                                 type="text"
                                 name="search"
                                 value="{{ request('search') }}"
-                                placeholder="{{ __('ស្វែងរកដេប៉ាតឺម៉ង់...') }}"
+                                placeholder="{{ __('search_departments') }}"
                                 autocomplete="off"
                                 class="block w-full pl-11 pr-10 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-gray-50 transition"
                             />
@@ -74,7 +74,7 @@
                         </div>
                         <div>
                             <select name="faculty_id" class="w-full sm:w-56 px-3 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-gray-50 transition">
-                                <option value=""> {{ __('មហាវិទ្យាល័យទាំងអស់') }}</option>
+                                <option value=""> {{ __('select_all_faculties') }}</option>
                                 @foreach($faculties as $faculty)
                                     <option value="{{ $faculty->id }}" {{ request('faculty_id') == $faculty->id ? 'selected' : '' }}>{{ $faculty->name_km }}</option>
                                 @endforeach
@@ -123,13 +123,13 @@
                                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                             </svg>
-                                            {{ __('កែប្រែ') }}
+                                            {{ __('edit_2') }}
                                         </a>
                                         <button type="button" onclick="openDeleteModal('{{ route('admin.delete-department', $department->id) }}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition">
                                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                             </svg>
-                                            {{ __('លុប') }}
+                                            {{ __('delete_2') }}
                                         </button>
                                     </div>
                                 </div>
@@ -146,11 +146,11 @@
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
                                     <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('លេខរៀង') }}</th>
-                                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('ឈ្មោះដេប៉ាតឺម៉ង់') }}</th>
-                                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('មហាវិទ្យាល័យ') }}</th>
-                                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('ប្រធាន') }}</th>
-                                        <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('សកម្មភាព') }}</th>
+                                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('key_no') }}</th>
+                                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('department_name') }}</th>
+                                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('faculty') }}</th>
+                                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('head') }}</th>
+                                        <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('actions_2') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
@@ -171,13 +171,13 @@
                                                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                                             <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                                         </svg>
-                                                        {{ __('កែប្រែ') }}
+                                                        {{ __('edit_2') }}
                                                     </a>
                                                     <button type="button" onclick="openDeleteModal('{{ route('admin.delete-department', $department->id) }}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition">
                                                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                         </svg>
-                                                        {{ __('លុប') }}
+                                                        {{ __('delete_2') }}
                                                     </button>
                                                 </div>
                                             </td>
@@ -199,19 +199,19 @@
                             </svg>
                         </div>
                         @if(request('search') || request('faculty_id'))
-                            <p class="text-gray-500 font-medium">{{ __('មិនพบដេប៉ាតឺម៉ង់ដែលត្រូវនឹងការស្វែងរក') }}</p>
-                            <p class="text-gray-400 text-sm mt-1">{{ __('សូមព្យាយាមស្វែងរកជាមួយពាក្យគន្លឹះផ្សេង') }}</p>
+                            <p class="text-gray-500 font-medium">{{ __('no_departments_found_matching_your_search') }}</p>
+                            <p class="text-gray-400 text-sm mt-1">{{ __('try_searching_with_different_keywords') }}</p>
                             <a href="{{ route('admin.manage-departments') }}" class="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-600 text-sm font-bold rounded-xl hover:bg-gray-200 transition">
-                                <i class="fas fa-times"></i> {{ __('សម្អាត') }}
+                                <i class="fas fa-times"></i> {{ __('clear') }}
                             </a>
                         @else
-                            <p class="text-gray-500 font-medium">{{ __('មិនទាន់មានដេប៉ាតឺម៉ង់ណាមួយនៅឡើយទេ។') }}</p>
-                            <p class="text-gray-400 text-sm mt-1">{{ __('ចុចប៊ូតុងខាងក្រោមដើម្បីបន្ថែមដេប៉ាតឺម៉ង់ថ្មី។') }}</p>
+                            <p class="text-gray-500 font-medium">{{ __('no_departments_yet') }}</p>
+                            <p class="text-gray-400 text-sm mt-1">{{ __('click_the_button_below_to_add_a_new_department') }}</p>
                             <a href="{{ route('admin.create-department') }}" class="mt-4 inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white text-sm font-bold rounded-xl hover:bg-emerald-700 transition">
                                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                                 </svg>
-                                {{ __('បន្ថែមដេប៉ាតឺម៉ង់ថ្មី') }}
+                                {{ __('add_new_department') }}
                             </a>
                         @endif
                     </div>
@@ -233,17 +233,17 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-2">{{ __('តើអ្នកប្រាកដទេ?') }}</h3>
-                    <p class="text-sm text-gray-500">{{ __('ទិន្នន័យនេះនឹងត្រូវលុបចេញពីប្រព័ន្ធរៀងរហូត។ អ្នកមិនអាចស្ដារវាឡើងវិញបានឡើយ។') }}</p>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">{{ __('are_you_sure') }}</h3>
+                    <p class="text-sm text-gray-500">{{ __('this_data_will_be_permanently_deleted_from_the_system_you_will_not_be_able_to_restore_it') }}</p>
                 </div>
                 <div class="bg-gray-50 px-8 py-5 flex gap-3">
                     <button type="button" onclick="closeDeleteModal()" class="flex-1 px-4 py-2.5 bg-white border border-gray-200 text-sm font-bold text-gray-600 rounded-xl hover:bg-gray-100 transition">
-                        {{ __('បោះបង់') }}
+                        {{ __('cancel_2') }}
                     </button>
                     <form id="delete-form" method="POST" action="" class="flex-1">
                         @csrf @method('DELETE')
                         <button type="submit" class="w-full px-4 py-2.5 bg-red-600 text-sm font-bold text-white rounded-xl hover:bg-red-700 shadow-sm transition active:scale-95">
-                            {{ __('យល់ព្រមលុប') }}
+                            {{ __('confirm_delete_2') }}
                         </button>
                     </form>
                 </div>

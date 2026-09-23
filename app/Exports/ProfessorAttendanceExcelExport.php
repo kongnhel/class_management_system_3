@@ -67,7 +67,7 @@ class ProfessorAttendanceExcelExport implements FromCollection, WithDrawings, Wi
 
     public function styles(Worksheet $sheet): array
     {
-        $lastCol = 'G';
+        $lastCol = 'K';
         $khmerFont = 'Khmer OS Battambang';
 
         $sheet->getColumnDimension('A')->setWidth(5.55);
@@ -77,6 +77,10 @@ class ProfessorAttendanceExcelExport implements FromCollection, WithDrawings, Wi
         $sheet->getColumnDimension('E')->setWidth(14);
         $sheet->getColumnDimension('F')->setWidth(14);
         $sheet->getColumnDimension('G')->setWidth(12);
+        $sheet->getColumnDimension('H')->setWidth(10);
+        $sheet->getColumnDimension('I')->setWidth(14);
+        $sheet->getColumnDimension('J')->setWidth(24);
+        $sheet->getColumnDimension('K')->setWidth(18);
 
         $sheet->getRowDimension(1)->setRowHeight(20);
         $sheet->getRowDimension(2)->setRowHeight(20);
@@ -137,6 +141,11 @@ class ProfessorAttendanceExcelExport implements FromCollection, WithDrawings, Wi
             $sheet->setCellValue("{$colLetter}11", $header);
         }
 
+        foreach (['H' => 'Time', 'I' => 'Mode', 'J' => 'GPS', 'K' => 'IP'] as $colLetter => $header) {
+            $sheet->mergeCells("{$colLetter}11:{$colLetter}12");
+            $sheet->setCellValue("{$colLetter}11", $header);
+        }
+
         $sheet->getStyle("A11:{$lastCol}12")->applyFromArray([
             'font' => ['name' => $khmerFont, 'size' => 10, 'bold' => true],
             'alignment' => ['horizontal' => 'center', 'vertical' => 'center', 'wrapText' => true],
@@ -154,21 +163,20 @@ class ProfessorAttendanceExcelExport implements FromCollection, WithDrawings, Wi
             ],
         ];
 
-        // Apply day_type filter
         $records = $this->attendances;
-        if ($this->dayType === 'weekend') {
-            $records = $records->filter(fn ($r) => $r->verified_at && Carbon::parse($r->verified_at)->isWeekend());
-        } elseif ($this->dayType === 'weekday') {
-            $records = $records->filter(fn ($r) => $r->verified_at && ! Carbon::parse($r->verified_at)->isWeekend());
-        }
 
-        foreach ($records as $index => $record) {
+        foreach ($records->values() as $index => $record) {
             $rowNum = $dataStartRow + $index;
 
             $courseTitle = $record->courseOffering->course->title_km ?? $record->courseOffering->course->title_en ?? 'N/A';
             $semester = $record->courseOffering->semester ?? '-';
             $academicYear = $record->courseOffering->academic_year ?? '-';
             $verifiedDate = $record->verified_at ? $record->verified_at->format('d M Y') : '-';
+            $verifiedTime = $record->verified_at ? $record->verified_at->format('H:i:s') : '-';
+            $mode = $record->attendance_mode ?? 'on_campus';
+            $gps = ($record->lat !== null && $record->lng !== null)
+                ? number_format((float) $record->lat, 5).', '.number_format((float) $record->lng, 5)
+                : '-';
             $status = $record->verified_at ? 'វត្តមាន' : '-';
 
             $sheet->setCellValue("A{$rowNum}", $index + 1);
@@ -178,6 +186,10 @@ class ProfessorAttendanceExcelExport implements FromCollection, WithDrawings, Wi
             $sheet->setCellValue("E{$rowNum}", $academicYear);
             $sheet->setCellValue("F{$rowNum}", $verifiedDate);
             $sheet->setCellValue("G{$rowNum}", $status);
+            $sheet->setCellValue("H{$rowNum}", $verifiedTime);
+            $sheet->setCellValue("I{$rowNum}", $mode === 'online' ? 'Online' : 'On-campus');
+            $sheet->setCellValue("J{$rowNum}", $gps);
+            $sheet->setCellValue("K{$rowNum}", $record->audit_ip ?? '-');
 
             $sheet->getStyle("A{$rowNum}:{$lastCol}{$rowNum}")->applyFromArray([
                 'font' => ['name' => $khmerFont, 'size' => 10],

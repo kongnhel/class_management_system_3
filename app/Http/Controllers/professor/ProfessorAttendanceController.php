@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\professor;
 
 use App\Http\Controllers\Controller;
+use App\Models\AuditLog;
 use App\Models\AttendanceProfessor;
 use App\Models\AttendanceRecord;
 use App\Services\AttendanceSessionService;
@@ -10,6 +11,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Excel;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
 
 class ProfessorAttendanceController extends Controller
@@ -26,7 +28,7 @@ class ProfessorAttendanceController extends Controller
             'student_user_ids' => 'required_without:student_user_id|string',
             'student_user_id' => 'required_without:student_user_ids|nullable',
             'date' => 'required|date',
-            'status' => 'required|in:present,absent,permission',
+            'status' => 'required|in:present,absent,permission,late',
             'remarks' => 'nullable|string|max:255',
         ], [
             'student_user_ids.required_without' => 'សូមជ្រើសរើសនិស្សិតយ៉ាងហោចណាស់មួយ។',
@@ -45,7 +47,7 @@ class ProfessorAttendanceController extends Controller
         }
 
         if (empty($studentIds)) {
-            return redirect()->back()->with('error', __('សូមជ្រើសរើសនិស្សិតយ៉ាងហោចណាស់មួយ។'));
+            return redirect()->back()->with('error', __('select_at_least_one_student'));
         }
 
         foreach ($studentIds as $studentId) {
@@ -71,7 +73,7 @@ class ProfessorAttendanceController extends Controller
         }
 
         return redirect()->route('professor.manage-attendance', ['offering_id' => $request->input('course_offering_id')])
-            ->with('success', __('កំណត់ត្រាវត្តមានត្រូវបានបន្ថែមដោយជោគជ័យ។'));
+            ->with('success', __('attendance_record_added_successfully'));
     }
 
     /**
@@ -87,7 +89,7 @@ class ProfessorAttendanceController extends Controller
                     ->where('course_offering_id', $request->course_offering_id),
             ],
             'date' => 'required|date',
-            'status' => 'required|in:present,absent,permission',
+            'status' => 'required|in:present,absent,permission,late',
             'remarks' => 'nullable|string|max:255',
         ], [
             'student_user_id.required' => 'អត្តសញ្ញាណសិស្សតម្រូវឱ្យបញ្ចូល។',
@@ -103,7 +105,7 @@ class ProfessorAttendanceController extends Controller
         $attendance->update($request->only(['course_offering_id', 'student_user_id', 'date', 'status', 'remarks']));
 
         return redirect()->route('professor.manage-attendance', ['offering_id' => $attendance->course_offering_id])
-            ->with('success', __('កំណត់ត្រាវត្តមានត្រូវបានកែប្រែដោយជោគជ័យ។'));
+            ->with('success', __('attendance_record_updated_successfully'));
     }
 
     /**
@@ -116,7 +118,7 @@ class ProfessorAttendanceController extends Controller
         $attendance->delete();
 
         return redirect()->route('professor.manage-attendance', ['offering_id' => $courseOfferingId])
-            ->with('success', __('កំណត់ត្រាវត្តមានត្រូវបានលុបដោយជោគជ័យ។'));
+            ->with('success', __('attendance_record_deleted_successfully'));
     }
 
     // /**
@@ -231,15 +233,30 @@ class ProfessorAttendanceController extends Controller
         }
 
         // បង្កើត Check-in តែលើកដំបូងប៉ុណ្ណោះ
-        AttendanceProfessor::create([
+        $attendance = AttendanceProfessor::create([
             'professor_id' => $professorId,
             'course_offering_id' => $request->course_offering_id,
             'session_id' => $request->session_id,
+            'attendance_mode' => 'on_campus',
             'verified_date' => $today,
             'lat' => $request->lat,
             'lng' => $request->lng,
             'verified_at' => $now,
         ]);
+
+        if (Schema::hasTable('audit_logs')) {
+            AuditLog::log([
+                'action' => 'professor_attendance_recorded',
+                'auditable_type' => get_class($attendance),
+                'auditable_id' => $attendance->id,
+                'new_values' => [
+                    'course_offering_id' => $attendance->course_offering_id,
+                    'attendance_mode' => $attendance->attendance_mode,
+                    'session_id' => $attendance->session_id,
+                ],
+                'description' => 'Professor recorded on-campus attendance.',
+            ]);
+        }
 
         return response()->json([
             'success' => true,
@@ -323,9 +340,28 @@ class ProfessorAttendanceController extends Controller
             });
         }
 
+        if ($dayType === 'weekend') {
+            $query->whereHas('courseOffering.schedules', function ($q) {
+                $q->whereIn('day_of_week', ['Saturday', 'Sunday', 'សៅរ៍', 'អាទិត្យ']);
+            });
+        } elseif ($dayType === 'weekday') {
+            $query->whereHas('courseOffering.schedules', function ($q) {
+                $q->whereNotIn('day_of_week', ['Saturday', 'Sunday', 'សៅរ៍', 'អាទិត្យ']);
+            });
+        }
+
         $attendances = $query->orderBy('verified_at', 'desc')->paginate(15);
 
-        return view('professor.attendance.history', compact('attendances', 'semester', 'academicYear', 'dayType'));
+        $attendanceAuditLogs = Schema::hasTable('audit_logs')
+            ? AuditLog::where('auditable_type', AttendanceProfessor::class)
+                ->whereIn('auditable_id', $attendances->getCollection()->pluck('id'))
+                ->latest()
+                ->get()
+                ->unique('auditable_id')
+                ->keyBy('auditable_id')
+            : collect();
+
+        return view('professor.attendance.history', compact('attendances', 'attendanceAuditLogs', 'semester', 'academicYear', 'dayType'));
     }
 
     /**
@@ -358,7 +394,30 @@ class ProfessorAttendanceController extends Controller
             $q->where('academic_year', $academicYear);
         });
 
+        if ($dayType === 'weekend') {
+            $query->whereHas('courseOffering.schedules', function ($q) {
+                $q->whereIn('day_of_week', ['Saturday', 'Sunday', 'សៅរ៍', 'អាទិត្យ']);
+            });
+        } elseif ($dayType === 'weekday') {
+            $query->whereHas('courseOffering.schedules', function ($q) {
+                $q->whereNotIn('day_of_week', ['Saturday', 'Sunday', 'សៅរ៍', 'អាទិត្យ']);
+            });
+        }
+
         $attendances = $query->orderBy('verified_at', 'desc')->get();
+
+        if (Schema::hasTable('audit_logs') && $attendances->isNotEmpty()) {
+            $auditIps = AuditLog::where('auditable_type', AttendanceProfessor::class)
+                ->whereIn('auditable_id', $attendances->pluck('id'))
+                ->latest()
+                ->get()
+                ->unique('auditable_id')
+                ->keyBy('auditable_id');
+
+            $attendances->each(function ($attendance) use ($auditIps) {
+                $attendance->audit_ip = $auditIps[$attendance->id]?->ip_address;
+            });
+        }
 
         $professorName = auth()->user()->name;
 

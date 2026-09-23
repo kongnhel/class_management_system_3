@@ -80,7 +80,7 @@ class StudentAttendanceController extends Controller
                 if (! in_array($studentUserId, $enrolledStudentIds)) {
                     continue;
                 }
-                if (! in_array($status, ['present', 'absent', 'permission'])) {
+                if (! in_array($status, ['present', 'absent', 'permission', 'late'])) {
                     continue;
                 }
 
@@ -101,7 +101,7 @@ class StudentAttendanceController extends Controller
             }
         });
 
-        return redirect()->back()->with('success', __('រក្សាទុកវត្តមានបានជោគជ័យ។'));
+        return redirect()->back()->with('success', __('attendance_saved_successfully'));
     }
 
     public function leaderAttendanceReport($courseOfferingId)
@@ -127,7 +127,7 @@ class StudentAttendanceController extends Controller
             ->with(['studentProfile', 'profile'])
             ->withCount([
                 'attendanceRecords as present_count' => function ($query) use ($courseOfferingId) {
-                    $query->where('course_offering_id', $courseOfferingId)->where('status', 'present');
+                    $query->where('course_offering_id', $courseOfferingId)->whereIn('status', ['present', 'late']);
                 },
                 'attendanceRecords as absent_count' => function ($query) use ($courseOfferingId) {
                     $query->where('course_offering_id', $courseOfferingId)->where('status', 'absent');

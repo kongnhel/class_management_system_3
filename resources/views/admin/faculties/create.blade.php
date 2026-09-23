@@ -16,8 +16,8 @@
                         </svg>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-bold text-gray-900">{{ __('បង្កើតមហាវិទ្យាល័យថ្មី') }}</h1>
-                        <p class="text-sm text-gray-500 mt-0.5">{{ __('បំពេញព័ត៌មានខាងក្រោមដើម្បីបន្ថែមមហាវិទ្យាល័យថ្មី') }}</p>
+                        <h1 class="text-2xl font-bold text-gray-900">{{ __('create_new_faculty') }}</h1>
+                        <p class="text-sm text-gray-500 mt-0.5">{{ __('fill_in_the_information_below_to_add_a_new_faculty') }}</p>
                     </div>
                 </div>
             </div>
@@ -29,7 +29,7 @@
 
                     {{-- Name Khmer --}}
                     <div class="mb-5">
-                        <label for="name_km" class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('ឈ្មោះមហាវិទ្យាល័យជាខ្មែរ') }} <span class="text-red-500">*</span></label>
+                        <label for="name_km" class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('faculty_name_khmer') }} <span class="text-red-500">*</span></label>
                         <input
                             id="name_km"
                             type="text"
@@ -37,7 +37,7 @@
                             value="{{ old('name_km') }}"
                             required
                             autofocus
-                            placeholder="{{ __('ឧ. មហាវិទ្យាល័យវិទ្យាសាស្ត្រ និងបច្ចេកវិទ្យា') }}"
+                            placeholder="{{ __('e_g_faculty_of_science_and_technology') }}"
                             class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200 @error('name_km') border-red-500 focus:border-red-500 focus:ring-red-500/20 @enderror"
                         />
                         @error('name_km')
@@ -52,7 +52,7 @@
 
                     {{-- Name English --}}
                     <div class="mb-5">
-                        <label for="name_en" class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('ឈ្មោះមហាវិទ្យាល័យជាអង់គ្លេស') }} <span class="text-red-500">*</span></label>
+                        <label for="name_en" class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('faculty_name_english') }} <span class="text-red-500">*</span></label>
                         <input
                             id="name_en"
                             type="text"
@@ -74,13 +74,13 @@
 
                     {{-- Dean --}}
                     <div class="mb-8">
-                        <label for="dean_user_id" class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('ប្រធានមហាវិទ្យាល័យ (Dean)') }}</label>
+                        <label for="dean_user_id" class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('faculty_dean') }}</label>
                         <select
                             id="dean_user_id"
                             name="dean_user_id"
                             class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200 @error('dean_user_id') border-red-500 focus:border-red-500 focus:ring-red-500/20 @enderror"
                         >
-                            <option value="">{{ __('ជ្រើសរើសប្រធានមហាវិទ្យាល័យ (ស្រេចចិត្ត)') }}</option>
+                            <option value="">{{ __('select_a_dean_optional') }}</option>
                             @foreach ($professors as $professor)
                                 <option value="{{ $professor->id }}" {{ old('dean_user_id') == $professor->id ? 'selected' : '' }}>
                                     {{ $professor->name }} ({{ $professor->email }})
@@ -100,13 +100,13 @@
                     {{-- Actions --}}
                     <div class="flex items-center justify-end gap-3 pt-5 border-t border-gray-100">
                         <a href="{{ route('admin.manage-faculties') }}" class="px-5 py-2.5 text-sm font-semibold text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
-                            {{ __('បោះបង់') }}
+                            {{ __('cancel_2') }}
                         </a>
                         <button type="submit" class="inline-flex items-center gap-2 px-6 py-2.5 bg-emerald-600 text-white text-sm font-semibold rounded-xl shadow-sm hover:bg-emerald-700 transition-colors">
                             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                             </svg>
-                            {{ __('បង្កើតមហាវិទ្យាល័យ') }}
+                            {{ __('create_faculty') }}
                         </button>
                     </div>
                 </form>

@@ -18,16 +18,28 @@
             <div class="relative z-10 text-center px-12">
                 <img src="{{ asset('assets/image/nmu_Logo.png') }}" alt="Logo" class="w-28 h-28 mx-auto mb-8 drop-shadow-2xl">
                 <h1 class="text-4xl font-extrabold text-white leading-tight mb-4">Class Management<br>System</h1>
-                <p class="text-emerald-100 text-lg max-w-sm mx-auto leading-relaxed">ប្រព័ន្ធគ្រប់គ្រងថ្នាក់រៀន សម្រាប់សកលវិទ្យាល័យ</p>
+                <p class="text-emerald-100 text-lg max-w-sm mx-auto leading-relaxed">{{ __('login_branding_subtitle') }}</p>
                 <div class="mt-10 flex items-center justify-center gap-3">
                     <div class="w-3 h-3 rounded-full bg-emerald-300 animate-pulse"></div>
-                    <span class="text-emerald-200 text-sm font-medium">សូមចូលប្រព័ន្ធដើម្បីបន្ត</span>
+                    <span class="text-emerald-200 text-sm font-medium">{{ __('login_please_sign_in') }}</span>
                 </div>
             </div>
         </div>
 
         {{-- Right: Login Form --}}
-        <div class="w-full lg:w-1/2 flex items-center justify-center px-6 py-12 bg-gray-50">
+        <div class="relative w-full lg:w-1/2 flex items-center justify-center px-6 py-12 bg-gray-50">
+            {{-- Language Switch --}}
+            <div class="absolute top-4 right-4 flex gap-1 rounded-lg bg-white/80 p-1 shadow-sm">
+                <a href="{{ route('locale.switch', ['locale' => 'km']) }}"
+                   class="px-2.5 py-1 rounded-md text-xs font-semibold transition-colors {{ app()->getLocale() === 'km' ? 'bg-emerald-600 text-white' : 'text-gray-500 hover:bg-gray-200' }}">
+                    ខ្មែរ
+                </a>
+                <a href="{{ route('locale.switch', ['locale' => 'en']) }}"
+                   class="px-2.5 py-1 rounded-md text-xs font-semibold transition-colors {{ app()->getLocale() === 'en' ? 'bg-emerald-600 text-white' : 'text-gray-500 hover:bg-gray-200' }}">
+                    EN
+                </a>
+            </div>
+
             <div class="w-full max-w-md">
                 {{-- Mobile Logo --}}
                 <div class="lg:hidden text-center mb-8">
@@ -38,7 +50,7 @@
                 {{-- Header --}}
                 <div class="mb-8">
                     <h2 class="text-3xl font-extrabold text-gray-900">{{ __('auth_login') }}</h2>
-                    <p class="text-gray-500 mt-2 text-sm">សូមបញ្ចូលព័ត៌មានគណនីរបស់អ្នកដើម្បីចូល</p>
+                    <p class="text-gray-500 mt-2 text-sm">{{ __('login_subtitle') }}</p>
                 </div>
 
                 {{-- Login Form --}}
@@ -46,10 +58,10 @@
                     <form method="POST" action="{{ route('login') }}" class="space-y-5">
                         @csrf
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">អ៊ីមែល / លេខទូរស័ព្ទ / លេខសម្គាល់</label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('login_identifier_label') }}</label>
                             <input id="login_identifier" type="text" name="login_identifier" required 
                                    class="block w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none" 
-                                   placeholder="អ៊ីមែល / លេខទូរស័ព្ទ / លេខសម្គាល់" value="{{ old('login_identifier') }}" />
+                                   placeholder="{{ __('login_identifier_placeholder') }}" value="{{ old('login_identifier') }}" />
                             <x-input-error :messages="$errors->get('login_identifier')" class="mt-1.5 text-xs text-red-500" />
                         </div>
 

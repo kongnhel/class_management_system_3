@@ -25,6 +25,7 @@ class User extends Authenticatable
         'student_id_code',
         'department_id',
         'generation',
+        'profile_status',
         'google_id',
         'avatar',
         'telegram_chat_id',
@@ -34,6 +35,11 @@ class User extends Authenticatable
     public function attendanceCard()
     {
         return $this->hasOne(AttendanceCard::class);
+    }
+
+    public function trustedDevices()
+    {
+        return $this->hasMany(ProfessorTrustedDevice::class);
     }
 
     /**
@@ -255,6 +261,14 @@ class User extends Authenticatable
     public function getAttendanceScoreByCourse($course_id)
     {
         $maxScore = 15;
+
+        $manualScore = \App\Models\StudentCourseEnrollment::where('student_user_id', $this->id)
+            ->where('course_offering_id', $course_id)
+            ->value('attendance_score_manual');
+
+        if ($manualScore !== null) {
+            return max(0, min($maxScore, (float) $manualScore));
+        }
 
         $counts = $this->attendanceRecords()
             ->where('course_offering_id', $course_id)

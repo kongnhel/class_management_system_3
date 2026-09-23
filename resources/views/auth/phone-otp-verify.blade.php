@@ -1,5 +1,5 @@
 <link rel="icon" type="image/png" href="{{ asset('assets/image/nmu_Logo.png') }}">
-<title>{{ config('app.name', 'Class Management System') }} - ផ្ទៀងផ្ទាត់ OTP</title>
+<title>{{ config('app.name', 'Class Management System') }} - {{ __('auth_verify_otp') }}</title>
 
 <x-guest-layout>
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -22,16 +22,16 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                     </svg>
                 </div>
-                <h2 class="text-2xl font-extrabold text-gray-900">ផ្ទៀងផ្ទាត់ OTP</h2>
+                <h2 class="text-2xl font-extrabold text-gray-900">{{ __('auth_verify_otp') }}</h2>
                 <p class="text-gray-500 mt-2 text-sm leading-relaxed">
-                    សូមពិនិត្យមើលកូដផ្ទៀងផ្ទាត់ ៥ ខ្ទង់នៅក្នុង Telegram របស់អ្នក។<br>
-                    កូដនេះត្រូវបានផ្ញើដោយ Telegram (មិនមែនពី Bot ឡើយ)។
+                    {{ __('auth_phone_otp_check_telegram') }}<br>
+                    {{ __('auth_phone_otp_sent_by') }}
                 </p>
                 <div class="mt-3 inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 rounded-xl border border-emerald-200">
                     <svg class="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
                     <span class="text-sm font-bold text-emerald-700">{{ $maskedPhone }}</span>
                 </div>
-                <p class="text-xs text-gray-400 mt-2">កូដមានរយៈពេល ៥ នាទីប៉ុណ្ណោះ</p>
+                <p class="text-xs text-gray-400 mt-2">{{ __('auth_phone_otp_expires') }}</p>
             </div>
 
             <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
@@ -55,20 +55,19 @@
                     @endif
 
                     <button type="submit" id="verifyBtn" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-emerald-200 hover:shadow-emerald-300 transition-all duration-200 text-sm disabled:opacity-50 disabled:cursor-not-allowed">
-                        ផ្ទៀងផ្ទាត់ និងចូលប្រព័ន្ធ
+                        {{ __('auth_verify_and_login') }}
                     </button>
                 </form>
 
                 <div class="mt-6 text-center">
-                    <p class="text-sm text-gray-500">មិនទទួលបានកូដ?</p>
-                    <button type="button" id="resendBtn" onclick="resendOtp()" class="mt-2 text-sm font-bold text-emerald-600 hover:text-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                        ផ្ញើឡើងវិញ <span id="cooldown"></span>
+                    <p class="text-sm text-gray-500">{{ __('auth_no_code_received') }}</p>
+                    <button type="button" id="resendBtn" onclick="resendOtp()" class="mt-2 text-sm font-bold text-emerald-600 hover:text-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>{{ __('auth_resend') }} <span id="cooldown"></span>
                     </button>
                 </div>
 
                 <div class="mt-4 text-center">
                     <a href="{{ route('login') }}" class="text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors">
-                        ← ត្រឡប់ទៅការចូលប្រព័ន្ធ
+                        ← {{ __('auth_back_to_login') }}
                     </a>
                 </div>
             </div>
@@ -172,7 +171,7 @@
                 if (data.status === 'success') {
                     showToast(data.message, 'success');
                 } else {
-                    showToast(data.message || 'មានបញ្ហា។', 'error');
+                    showToast(data.message || {{ __('auth_error_generic') }}, 'error');
                 }
             }).catch(() => {
                 window.location.reload();

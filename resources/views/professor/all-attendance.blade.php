@@ -95,6 +95,7 @@
                                 <option value="present">មានវត្តមាន</option>
                                 <option value="absent">អវត្តមាន</option>
                                 <option value="permission">មានច្បាប់</option>
+                                <option value="late">មកយឺត</option>
                             </select>
                         </div>
                         <button type="submit" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white rounded-xl font-bold text-sm shadow-md transition-all active:scale-95">
@@ -145,6 +146,7 @@
                             <option value="present">មានវត្តមាន</option>
                             <option value="absent">អវត្តមាន</option>
                             <option value="permission">មានច្បាប់</option>
+                            <option value="late">មកយឺត</option>
                         </select>
                         <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-[10px] pointer-events-none"></i>
                     </div>
@@ -200,7 +202,7 @@
                         <tbody class="divide-y divide-gray-100">
                             @forelse($attendances as $record)
                                 @php
-                                    $colors = ['present' => 'green', 'absent' => 'red', 'permission' => 'blue'];
+                                    $colors = ['present' => 'green', 'absent' => 'red', 'permission' => 'blue', 'late' => 'amber'];
                                     $color = $colors[$record->status] ?? 'gray';
                                 @endphp
                                 <tr class="hover:bg-gray-50 transition-colors attendance-row"

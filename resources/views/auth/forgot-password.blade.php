@@ -1,5 +1,5 @@
 <link rel="icon" type="image/png" href="{{ asset('assets/image/nmu_Logo.png') }}">
-<title>{{ config('app.name', 'Class Management System') }} - ភ្លេចពាក្យសម្ងាត់</title>
+<title>{{ config('app.name', 'Class Management System') }} - {{ __('auth_forgot_password') }}</title>
 
 <x-guest-layout>
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -14,8 +14,8 @@
             {{-- Logo --}}
             <div class="text-center mb-8">
                 <img src="{{ asset('assets/image/nmu_Logo.png') }}" alt="Logo" class="w-16 h-16 mx-auto mb-3">
-                <h2 class="text-2xl font-extrabold text-gray-900">ភ្លេចពាក្យសម្ងាត់</h2>
-                <p class="text-gray-500 mt-2 text-sm">សូមបញ្ចូលអ៊ីមែលរបស់អ្នក ដើម្បីទទួលបន្ទាត់សារផ្ទុះទៅកាន់ពាក្យសម្ងាត់ថ្មី</p>
+                <h2 class="text-2xl font-extrabold text-gray-900">{{ __('auth_forgot_password') }}</h2>
+                <p class="text-gray-500 mt-2 text-sm">{{ __('auth_forgot_password_subtitle') }}</p>
             </div>
 
             {{-- Card --}}
@@ -32,13 +32,13 @@
                     </div>
 
                     <button type="submit" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-emerald-200 hover:shadow-emerald-300 transition-all duration-200 text-sm">
-                        ផ្ញើបន្ទាត់សារកំណត់ពាក្យសម្ងាត់ឡើងវិញ
+                        {{ __('auth_forgot_password_btn') }}
                     </button>
                 </form>
 
                 <div class="mt-6 text-center">
                     <a href="{{ route('login') }}" class="text-sm font-bold text-emerald-600 hover:text-emerald-700 transition-colors">
-                        ← ត្រឡប់ទៅការចូលប្រព័ន្ធ
+                        ← {{ __('auth_back_to_login') }}
                     </a>
                 </div>
             </div>

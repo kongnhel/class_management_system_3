@@ -44,7 +44,7 @@ class LoginRequest extends FormRequest
             RateLimiter::hit($this->throttleKey(), 900);
 
             throw ValidationException::withMessages([
-                'login_identifier' => trans('auth.failed'),
+                'login_identifier' => __('auth.failed'),
             ]);
         }
 
@@ -62,7 +62,7 @@ class LoginRequest extends FormRequest
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
         throw ValidationException::withMessages([
-            'login_identifier' => trans('auth.throttle', [
+            'login_identifier' => __('auth.throttle', [
                 'seconds' => $seconds,
                 'minutes' => ceil($seconds / 60),
             ]),

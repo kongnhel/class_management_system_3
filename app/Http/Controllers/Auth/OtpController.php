@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\OtpService;
+use App\Services\ProfessorLoginSecurityService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -49,6 +50,7 @@ class OtpController extends Controller
         $result = $this->otpService->verifyOtp($user, $request->otp);
 
         if ($result['success']) {
+            app(ProfessorLoginSecurityService::class)->recordLogin($request, $user);
             return redirect()->route('dashboard')
                 ->with('success', $result['message']);
         }

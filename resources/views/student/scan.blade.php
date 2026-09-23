@@ -16,7 +16,7 @@
         {{-- HTTPS Warning --}}
         <div id="https-warning" class="hidden w-full max-w-md mb-4 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded shadow-md">
             <p class="font-bold">⚠️ Security Error</p>
-            <p class="text-sm">{!! __('សូមប្រើប្រាស់ HTTPS ទើបកាមេរ៉ាដំណើរការ។') !!}</p>
+            <p class="text-sm">{!! __('please_use_https_for_camera_to_work') !!}</p>
         </div>
 
         {{-- Header --}}

@@ -33,8 +33,13 @@ class StudentProgressionController extends Controller
         $generations = Generation::where('is_active', true)->orderByDesc('name')->get();
 
         $allDepartments = Department::with('faculty')->orderBy('name_km')->get();
+        $availableDepartments = $facultyId
+            ? $allDepartments->where('faculty_id', $facultyId)
+            : $allDepartments;
 
-        $department = $departmentId ? Department::findOrFail($departmentId) : $departments->first();
+        $department = $departmentId
+            ? Department::findOrFail($departmentId)
+            : $availableDepartments->first();
 
         if (! $department) {
             return redirect()->route('admin.manage-users')

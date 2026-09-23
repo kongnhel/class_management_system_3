@@ -35,18 +35,18 @@
             <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm mb-6">
                 <form action="{{ route('student.my-grades') }}" method="GET" data-admin-realtime-filter class="flex flex-wrap items-end gap-4">
                     <div class="flex-1 min-w-[180px]">
-                        <label class="block text-xs font-bold text-slate-500 mb-1.5 uppercase">{{ __('ឆ្នាំសិក្សា') }}</label>
+                        <label class="block text-xs font-bold text-slate-500 mb-1.5 uppercase">{{ __('academic_year') }}</label>
                         <select name="academic_year" class="w-full border-slate-200 rounded-xl text-sm focus:ring-emerald-500 focus:border-emerald-500">
-                            <option value="">{{ __('គ្រប់ឆ្នាំសិក្សា') }}</option>
+                            <option value="">{{ __('all_academic_years') }}</option>
                             @foreach($academicYears as $year)
                                 <option value="{{ $year }}" {{ $currentYear == $year ? 'selected' : '' }}>{{ $year }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="flex-1 min-w-[180px]">
-                        <label class="block text-xs font-bold text-slate-500 mb-1.5 uppercase">{{ __('ឆមាស') }}</label>
+                        <label class="block text-xs font-bold text-slate-500 mb-1.5 uppercase">{{ __('semester') }}</label>
                         <select name="semester" class="w-full border-slate-200 rounded-xl text-sm focus:ring-emerald-500 focus:border-emerald-500">
-                            <option value="">{{ __('គ្រប់ឆមាស') }}</option>
+                            <option value="">{{ __('all_semesters') }}</option>
                             @foreach($semesters as $sem)
                                 <option value="{{ $sem }}" {{ $currentSemester == $sem ? 'selected' : '' }}>{{ $sem }}</option>
                             @endforeach
@@ -54,7 +54,7 @@
                     </div>
                     <div class="flex gap-2">
                         <button type="submit" class="px-5 py-2 bg-emerald-600 text-white rounded-xl font-bold text-sm hover:bg-emerald-700 transition-all shadow-md shadow-emerald-200">
-                            <i class="fas fa-filter mr-1.5"></i> {{ __('ចម្រាញ់') }}
+                            <i class="fas fa-filter mr-1.5"></i> {{ __('filter_2') }}
                         </button>
                         <a wire:navigate href="{{ route('student.my-grades') }}" class="px-5 py-2 bg-slate-100 text-slate-600 rounded-xl font-bold text-sm hover:bg-slate-200 transition-all">
                             Reset
@@ -72,7 +72,7 @@
                     <div class="relative z-10">
                         <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('stu_rank') }}</p>
                         <h3 class="text-3xl font-black text-slate-800">#{{ $overallRank }}</h3>
-                        <p class="text-[10px] text-slate-400 mt-0.5">/ {{ $totalClassmates }} {{ __('នាក់') }}</p>
+                        <p class="text-[10px] text-slate-400 mt-0.5">/ {{ $totalClassmates }} {{ __('students_2') }}</p>
                     </div>
                     <div class="w-12 h-12 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
                         <i class="fas fa-trophy"></i>
@@ -85,7 +85,7 @@
                     <div class="relative z-10">
                         <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('stu_gpa') }}</p>
                         <h3 class="text-3xl font-black text-slate-800">{{ number_format($gpa, 2) }}</h3>
-                        <p class="text-[10px] text-slate-400 mt-0.5">{{ $overallGrade }} · {{ $totalCredits }} {{ __('ក្រេឌីត') }}</p>
+                        <p class="text-[10px] text-slate-400 mt-0.5">{{ $overallGrade }} · {{ $totalCredits }} {{ __('credits') }}</p>
                     </div>
                     <div class="w-12 h-12 bg-rose-50 text-rose-500 rounded-full flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
                         <i class="fas fa-star"></i>
@@ -98,7 +98,7 @@
                     <div class="relative z-10">
                         <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('stu_average') }}</p>
                         <h3 class="text-3xl font-black text-slate-800">{{ number_format($averageScore, 1) }}<span class="text-lg text-slate-400">%</span></h3>
-                        <p class="text-[10px] text-slate-400 mt-0.5">{{ __('ពិន្ទុមធ្យម') }}</p>
+                        <p class="text-[10px] text-slate-400 mt-0.5">{{ __('average_score') }}</p>
                     </div>
                     <div class="w-12 h-12 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
                         <i class="fas fa-chart-pie"></i>
@@ -111,7 +111,7 @@
                     <div class="relative z-10">
                         <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('stu_total_grade') }}</p>
                         <h3 class="text-3xl font-black text-slate-800">{{ number_format($totalFinalScore, 1) }}</h3>
-                        <p class="text-[10px] text-slate-400 mt-0.5">{{ $grades->count() }} {{ __('មុខវិជ្ជា') }}</p>
+                        <p class="text-[10px] text-slate-400 mt-0.5">{{ $grades->count() }} {{ __('course') }}</p>
                     </div>
                     <div class="w-12 h-12 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
                         <i class="fas fa-calculator"></i>
@@ -125,10 +125,10 @@
                 <div class="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-white">
                     <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
                         <span class="w-2 h-6 bg-emerald-500 rounded-full"></span>
-                        {{ __('ប្រតិបត្តិពិន្ទុតាមមុខវិជ្ជា') }}
+                        {{ __('grade_report_by_course') }}
                     </h3>
                     <button onclick="window.print()" class="md:hidden inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold">
-                        <i class="fas fa-print"></i> {{ __('ព្រីន') }}
+                        <i class="fas fa-print"></i> {{ __('print_3') }}
                     </button>
                 </div>
 
@@ -137,11 +137,11 @@
                     <table class="min-w-full divide-y divide-slate-100">
                         <thead class="bg-slate-50">
                             <tr>
-                                <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">{{ __('មុខវិជ្ជា') }}</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">{{ __('course') }}</th>
                                 <th class="px-4 py-4 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">{{ __('Credits') }}</th>
-                                <th class="px-4 py-4 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">{{ __('ពិន្ទុបំបែក') }}</th>
-                                <th class="px-4 py-4 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">{{ __('វត្តមាន') }}</th>
-                                <th class="px-4 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-44">{{ __('សរុប & និទ្ទេស') }}</th>
+                                <th class="px-4 py-4 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">{{ __('score_breakdown') }}</th>
+                                <th class="px-4 py-4 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">{{ __('attendance') }}</th>
+                                <th class="px-4 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-44">{{ __('total_rank') }}</th>
                                 <th class="px-4 py-4 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">{{ __('stu_rank') }}</th>
                             </tr>
                         </thead>
@@ -163,15 +163,15 @@
                                                 @if($grade->is_failed)
                                                     @if($grade->needs_retake_semester ?? false)
                                                         <span class="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded text-[10px] font-bold bg-rose-50 text-rose-600 border border-rose-100">
-                                                            <i class="fas fa-exclamation-circle"></i> {{ __('ត្រូវសិក្សាឡើងវិញ') }}
+                                                            <i class="fas fa-exclamation-circle"></i> {{ __('retake_semester') }}
                                                         </span>
                                                     @elseif(!empty($grade->needs_re_exam))
                                                         <span class="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-600 border border-amber-100">
-                                                            <i class="fas fa-redo"></i> {{ __('ត្រូវប្រឡងសង') }}
+                                                            <i class="fas fa-redo"></i> {{ __('retake_needed') }}
                                                         </span>
                                                     @else
                                                         <span class="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded text-[10px] font-bold bg-rose-50 text-rose-600 border border-rose-100">
-                                                            <i class="fas fa-exclamation-circle"></i> {{ __('ប្រឡងសង') }}
+                                                            <i class="fas fa-exclamation-circle"></i> {{ __('retake') }}
                                                         </span>
                                                     @endif
                                                 @endif
@@ -242,7 +242,7 @@
                                 <tr>
                                     <td colspan="6" class="px-6 py-16 text-center text-slate-400">
                                         <i class="fas fa-folder-open text-4xl mb-3 text-slate-200"></i>
-                                        <p class="text-sm">{{ __('មិនទាន់មានទិន្នន័យសម្រាប់បង្ហាញ') }}</p>
+                                        <p class="text-sm">{{ __('no_data_to_display') }}</p>
                                     </td>
                                 </tr>
                             @endforelse
@@ -260,15 +260,15 @@
                                     <h4 class="text-sm font-bold text-slate-900 truncate">{{ $grade->course_name_en }}</h4>
                                     <p class="text-xs text-slate-500 mt-0.5 truncate">{{ $grade->course_name_km }}</p>
                                     <div class="flex items-center gap-2 mt-1">
-                                        <span class="text-[10px] text-slate-400 font-bold">{{ $grade->credits }} {{ __('ក្រេឌីត') }}</span>
+                                        <span class="text-[10px] text-slate-400 font-bold">{{ $grade->credits }} {{ __('credits') }}</span>
                                         @if($grade->is_failed)
                                             @if($grade->needs_retake_semester ?? false)
                                                 <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-rose-50 text-rose-600 border border-rose-100">
-                                                    <i class="fas fa-exclamation-circle"></i> {{ __('ត្រូវសិក្សាឡើងវិញ') }}
+                                                    <i class="fas fa-exclamation-circle"></i> {{ __('retake_semester') }}
                                                 </span>
                                             @elseif(!empty($grade->needs_re_exam))
                                                 <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-50 text-amber-600 border border-amber-100">
-                                                    <i class="fas fa-redo"></i> {{ __('ត្រូវប្រឡងសង') }}
+                                                    <i class="fas fa-redo"></i> {{ __('retake_needed') }}
                                                 </span>
                                             @endif
                                         @endif

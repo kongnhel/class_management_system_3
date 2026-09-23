@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-bold text-3xl text-gray-900 leading-tight flex items-center gap-2">
-            📢 {{ __('ការជូនដំណឹងរបស់ខ្ញុំ') }}
+            📢 {{ __('my_notifications') }}
         </h2>
     </x-slot>
 
@@ -20,23 +20,23 @@
                 {{-- ✅ Header + Actions --}}
                 <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                     <h3 class="text-2xl font-extrabold text-gray-800">
-                        {{ __('បញ្ជីការជូនដំណឹង') }}
+                        {{ __('notifications') }}
                     </h3>
                     <div class="flex items-center space-x-3">
                         <button @click="filter = 'all'"
                                 :class="{ 'bg-green-600 text-white': filter === 'all', 'bg-gray-200 text-gray-700': filter !== 'all' }"
                                 class="px-4 py-2 rounded-full font-semibold transition">
-                            {{ __('ទាំងអស់') }}
+                            {{ __('all_2') }}
                         </button>
                         <button @click="filter = 'unread'"
                                 :class="{ 'bg-green-600 text-white': filter === 'unread', 'bg-gray-200 text-gray-700': filter !== 'unread' }"
                                 class="px-4 py-2 rounded-full font-semibold transition">
-                            {{ __('មិនទាន់អាន') }}
+                            {{ __('unread') }}
                         </button>
                         {{-- ✅ Bulk mark all as read --}}
                         <button @click="markAllAsRead"
                                 class="px-4 py-2 rounded-full bg-green-100 text-green-700 font-semibold hover:bg-green-200 transition">
-                            {{ __('សម្គាល់ថាអានទាំងអស់') }}
+                            {{ __('mark_all_as_read') }}
                         </button>
                     </div>
                 </div>
@@ -55,24 +55,24 @@
 
                             <div class="flex-grow">
                                 <p class="font-bold text-gray-800 text-lg">
-                                    {{ $notification->data['title'] ?? __('ការជូនដំណឹង') }}
+                                    {{ $notification->data['title'] ?? __('notifications') }}
                                 </p>
                                 <p class="text-gray-600 mt-1">
                                     {{ $notification->data['message'] ?? '' }}
                                 </p>
                                 <div class="text-xs text-gray-400 mt-2 flex items-center justify-between">
                                     <span>
-                                        {{ __('ដោយ៖') }} <strong>{{ $notification->data['from_user_name'] ?? 'System' }}</strong>
+                                        {{ __('key_by') }} <strong>{{ $notification->data['from_user_name'] ?? 'System' }}</strong>
                                         - {{ $notification->created_at->locale('km')->diffForHumans() }}
                                     </span>
                                     @if (!$notification->read_at)
                                         <button @click="markAsRead('{{ $notification->id }}', $el)"
                                                 class="text-sm font-semibold text-green-600 hover:text-green-800 hover:underline">
-                                            {{ __('សម្គាល់ថាបានអាន') }}
+                                            {{ __('mark_as_read') }}
                                         </button>
                                     @else
                                          <span class="text-sm text-green-600 font-semibold flex items-center gap-1">
-                                             <i class="fas fa-check-circle"></i> {{ __('បានអាន') }}
+                                             <i class="fas fa-check-circle"></i> {{ __('read') }}
                                          </span>
                                     @endif
                                 </div>
@@ -81,7 +81,7 @@
                     @empty
                         <div class="text-center py-16 text-gray-500 bg-gray-50 rounded-2xl shadow-inner">
                             <i class="fas fa-bell-slash text-5xl text-gray-300"></i>
-                            <p class="text-xl mt-4 font-semibold">{{ __('មិនមានការជូនដំណឹងថ្មីសម្រាប់អ្នកទេ។') }}</p>
+                            <p class="text-xl mt-4 font-semibold">{{ __('no_notifications_yet') }}</p>
                         </div>
                     @endforelse
                 </div>

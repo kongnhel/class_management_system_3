@@ -5,9 +5,11 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use App\Models\AttendanceProfessor;
 use App\Models\AttendanceRecord;
+use App\Models\AcademicYear;
 use App\Models\CourseOffering;
 use App\Models\Generation;
 use App\Models\Department;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -25,7 +27,8 @@ class AdminAttendanceController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->whereHas('course', function ($q2) use ($search) {
                     $q2->where('title_km', 'LIKE', "%{$search}%")
-                        ->orWhere('title_en', 'LIKE', "%{$search}%");
+                        ->orWhere('title_en', 'LIKE', "%{$search}%")
+                        ->orWhere('code', 'LIKE', "%{$search}%");
                 })->orWhereHas('lecturer', function ($q3) use ($search) {
                     $q3->where('name', 'LIKE', "%{$search}%");
                 });
@@ -34,6 +37,10 @@ class AdminAttendanceController extends Controller
 
         if ($request->filled('department_id')) {
             $query->where('department_id', $request->input('department_id'));
+        }
+
+        if ($request->filled('professor_id')) {
+            $query->where('lecturer_user_id', $request->input('professor_id'));
         }
 
         if ($request->filled('semester')) {
@@ -55,12 +62,21 @@ class AdminAttendanceController extends Controller
 
         $departments = Department::orderBy('name_km')->get();
         $generations = Generation::where('is_active', true)->orderByDesc('name')->get();
+        $academicYears = AcademicYear::orderByDesc('name')->pluck('name');
+        $professors = User::where('role', 'professor')->orderBy('name')->get(['id', 'name']);
 
-        return view('admin.attendance.index', compact('courseOfferings', 'departments', 'generations'));
+        return view('admin.attendance.index', compact('courseOfferings', 'departments', 'generations', 'academicYears', 'professors'));
     }
 
-    public function show(CourseOffering $courseOffering)
+    public function show(Request $request, CourseOffering $courseOffering)
     {
+        $request->validate([
+            'date_from' => 'nullable|date',
+            'date_to' => 'nullable|date|after_or_equal:date_from',
+        ]);
+
+        $search = trim((string) $request->input('search', ''));
+
         $courseOffering->load([
             'course',
             'lecturer',
@@ -70,6 +86,8 @@ class AdminAttendanceController extends Controller
 
         // Get attendance records for this course offering
         $attendanceRecords = AttendanceRecord::where('course_offering_id', $courseOffering->id)
+            ->when($request->filled('date_from'), fn ($query) => $query->whereDate('date', '>=', $request->input('date_from')))
+            ->when($request->filled('date_to'), fn ($query) => $query->whereDate('date', '<=', $request->input('date_to')))
             ->with('student')
             ->get();
 
@@ -82,7 +100,7 @@ class AdminAttendanceController extends Controller
         $studentAttendance = $enrollments->map(function ($enrollment) use ($attendanceRecords, $courseOffering) {
             $studentRecords = $attendanceRecords->where('student_user_id', $enrollment->student_user_id);
             $totalDays = $studentRecords->count();
-            $presentDays = $studentRecords->where('status', 'present')->count();
+            $presentDays = $studentRecords->whereIn('status', ['present', 'late'])->count();
             $absentDays = $studentRecords->where('status', 'absent')->count();
             $permissionDays = $studentRecords->where('status', 'permission')->count();
 
@@ -102,22 +120,55 @@ class AdminAttendanceController extends Controller
             ];
         });
 
+        if ($search !== '') {
+            $studentAttendance = $studentAttendance->filter(function (array $data) use ($search) {
+                $student = $data['student'];
+                $haystack = implode(' ', array_filter([
+                    $student->name,
+                    $student->email,
+                    $student->student_id_code,
+                    $student->studentProfile?->full_name_km,
+                    $student->studentProfile?->full_name_en,
+                ]));
+
+                return str_contains(mb_strtolower($haystack), mb_strtolower($search));
+            })->values();
+        }
+
+        $attendanceStatus = $request->input('attendance_status');
+        if ($attendanceStatus) {
+            $studentAttendance = $studentAttendance->filter(function (array $data) use ($attendanceStatus) {
+                return match ($attendanceStatus) {
+                    'no_records' => $data['total_days'] === 0,
+                    'low_attendance' => $data['attendance_rate'] < 60,
+                    'below_passing' => $data['attendance_score'] < 10,
+                    'good_attendance' => $data['attendance_rate'] >= 80,
+                    default => true,
+                };
+            })->values();
+        }
+
         // Calculate overall stats
         $stats = [
             'total_students' => $enrollments->count(),
             'total_records' => $attendanceRecords->count(),
-            'present_total' => $attendanceRecords->where('status', 'present')->count(),
+            'present_total' => $attendanceRecords->whereIn('status', ['present', 'late'])->count(),
             'absent_total' => $attendanceRecords->where('status', 'absent')->count(),
             'overall_rate' => $attendanceRecords->count() > 0
-                ? round(($attendanceRecords->where('status', 'present')->count() / $attendanceRecords->count()) * 100, 1)
+                ? round(($attendanceRecords->whereIn('status', ['present', 'late'])->count() / $attendanceRecords->count()) * 100, 1)
                 : 0,
         ];
 
         return view('admin.attendance.show', compact('courseOffering', 'studentAttendance', 'stats'));
     }
 
-    public function exportAttendance(CourseOffering $courseOffering)
+    public function exportAttendance(Request $request, CourseOffering $courseOffering)
     {
+        $validated = $request->validate([
+            'date_from' => 'nullable|date',
+            'date_to' => 'nullable|date|after_or_equal:date_from',
+        ]);
+
         $courseOffering->load([
             'course',
             'lecturer',
@@ -129,6 +180,14 @@ class AdminAttendanceController extends Controller
             ->with('student')
             ->get();
 
+        if (! empty($validated['date_from'])) {
+            $attendanceRecords = $attendanceRecords->filter(fn ($record) => $record->date?->toDateString() >= $validated['date_from']);
+        }
+
+        if (! empty($validated['date_to'])) {
+            $attendanceRecords = $attendanceRecords->filter(fn ($record) => $record->date?->toDateString() <= $validated['date_to']);
+        }
+
         $enrollments = $courseOffering->studentCourseEnrollments
             ->unique('student_user_id')
             ->values();
@@ -136,7 +195,7 @@ class AdminAttendanceController extends Controller
         $studentAttendance = $enrollments->map(function ($enrollment) use ($attendanceRecords, $courseOffering) {
             $studentRecords = $attendanceRecords->where('student_user_id', $enrollment->student_user_id);
             $totalDays = $studentRecords->count();
-            $presentDays = $studentRecords->where('status', 'present')->count();
+            $presentDays = $studentRecords->whereIn('status', ['present', 'late'])->count();
             $absentDays = $studentRecords->where('status', 'absent')->count();
             $permissionDays = $studentRecords->where('status', 'permission')->count();
 
@@ -157,10 +216,10 @@ class AdminAttendanceController extends Controller
         $stats = [
             'total_students' => $enrollments->count(),
             'total_records' => $attendanceRecords->count(),
-            'present_total' => $attendanceRecords->where('status', 'present')->count(),
+            'present_total' => $attendanceRecords->whereIn('status', ['present', 'late'])->count(),
             'absent_total' => $attendanceRecords->where('status', 'absent')->count(),
             'overall_rate' => $attendanceRecords->count() > 0
-                ? round(($attendanceRecords->where('status', 'present')->count() / $attendanceRecords->count()) * 100, 1)
+                ? round(($attendanceRecords->whereIn('status', ['present', 'late'])->count() / $attendanceRecords->count()) * 100, 1)
                 : 0,
         ];
 

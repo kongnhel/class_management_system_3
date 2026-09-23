@@ -349,7 +349,7 @@ class UserController extends Controller
 
         $this->logCreated($user);
 
-        return redirect()->route('admin.manage-users')->with('success', __('អ្នកបានបង្កើតអ្នកប្រើប្រាស់ថ្មីដោយជោគជ័យ។'));
+        return redirect()->route('admin.manage-users')->with('success', __('user_created_successfully'));
     }
 
     public function editUser(User $user)
@@ -494,7 +494,7 @@ class UserController extends Controller
             ]);
         }
 
-        return redirect()->route('admin.manage-users')->with('success', __('ព័ត៌មានត្រូវបានកែប្រែដោយជោគជ័យ។'));
+        return redirect()->route('admin.manage-users')->with('success', __('information_updated_successfully'));
     }
 
     public function deleteUser(User $user)
@@ -505,7 +505,7 @@ class UserController extends Controller
             }
 
             return redirect()->route('admin.manage-users')
-                ->with('error', __('អ្នកមិនអាចលុបគណនីផ្ទាល់ខ្លួនបានទេ។'));
+                ->with('error', __('cannot_delete_own_account'));
         }
 
         try {
@@ -530,7 +530,7 @@ class UserController extends Controller
             }
 
             return redirect()->route('admin.manage-users')
-                ->with('success', __('អ្នកប្រើប្រាស់ និងទិន្នន័យពាក់ព័ន្ធត្រូវបានលុបដោយជោគជ័យ។'));
+                ->with('success', __('user_and_related_data_deleted'));
 
         } catch (\Exception $e) {
             if (request()->ajax()) {
@@ -538,7 +538,7 @@ class UserController extends Controller
             }
 
             return redirect()->route('admin.manage-users')
-                ->with('error', __('មានបញ្ហាបច្ចេកទេស៖ ').$e->getMessage());
+                ->with('error', __('technical_error').$e->getMessage());
         }
     }
 

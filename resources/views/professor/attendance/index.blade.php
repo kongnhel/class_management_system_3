@@ -7,7 +7,7 @@
             <div class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
                     <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">
-                        {{ __('ស្រង់វត្តមាននិស្សិត') }}
+                        {{ __('student_attendance_2') }}
                     </h1>
                     <p class="text-slate-500 mt-1 flex items-center">
                         <svg class="w-4 h-4 mr-2 text-green-600" fill="currentColor" viewBox="0 0 20 20">
@@ -24,11 +24,11 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                         </svg>
-                        {{ __('ផ្ទៀងផ្ទាត់ទីតាំងគ្រូ') }}
+                        {{ __('verify_teacher_location') }}
                     </button>
 
                     <div class="bg-white p-2 rounded-xl shadow-sm border border-slate-200 inline-flex items-center">
-                        <span class="px-3 text-sm font-semibold text-slate-600">{{ __('ថ្ងៃទី:') }}</span>
+                        <span class="px-3 text-sm font-semibold text-slate-600">{{ __('date_2') }}</span>
                         <input type="date" 
                                form="attendanceForm"
                                name="attendance_date" 
@@ -44,26 +44,26 @@
                     <label class="flex items-center gap-2 cursor-pointer">
                         <input type="checkbox" @change="toggleAll($event)" :checked="allSelected"
                             class="w-4 h-4 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500 cursor-pointer">
-                        <span class="text-sm font-bold text-slate-700">{{ __('ជ្រើសរើសទាំងអស់') }}</span>
+                        <span class="text-sm font-bold text-slate-700">{{ __('select_all') }}</span>
                     </label>
-                    <span class="text-xs font-bold text-slate-400" x-show="selectedIds.length > 0" x-text="selectedIds.length + ' {{ __('រកឃើញ') }}'"></span>
+                    <span class="text-xs font-bold text-slate-400" x-show="selectedIds.length > 0" x-text="selectedIds.length + ' {{ __('found') }}'"></span>
                 </div>
                 <div class="flex items-center gap-2" x-show="selectedIds.length > 0" x-transition>
                     <button type="button" @click="bulkSet('present')"
                         class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-50 border border-green-200 text-green-700 rounded-lg text-xs font-bold hover:bg-green-100 transition-all">
-                        <i class="fas fa-check-circle"></i> {{ __('មក') }} (<span x-text="selectedIds.length"></span>)
+                        <i class="fas fa-check-circle"></i> {{ __('present_2') }} (<span x-text="selectedIds.length"></span>)
                     </button>
                     <button type="button" @click="bulkSet('permission')"
                         class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 border border-blue-200 text-blue-700 rounded-lg text-xs font-bold hover:bg-blue-100 transition-all">
-                        <i class="fas fa-file-alt"></i> {{ __('ច្បាប់') }} (<span x-text="selectedIds.length"></span>)
+                        <i class="fas fa-file-alt"></i> {{ __('permission_2') }} (<span x-text="selectedIds.length"></span>)
                     </button>
                     <button type="button" @click="bulkSet('absent')"
                         class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-50 border border-red-200 text-red-700 rounded-lg text-xs font-bold hover:bg-red-100 transition-all">
-                        <i class="fas fa-times-circle"></i> {{ __('អវត្តមាន') }} (<span x-text="selectedIds.length"></span>)
+                        <i class="fas fa-times-circle"></i> {{ __('absent') }} (<span x-text="selectedIds.length"></span>)
                     </button>
                     <button type="button" @click="clearSelection()"
                         class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 border border-slate-200 text-slate-600 rounded-lg text-xs font-bold hover:bg-slate-200 transition-all ml-1">
-                        <i class="fas fa-times"></i> {{ __('បោះបង់') }}
+                        <i class="fas fa-times"></i> {{ __('cancel_2') }}
                     </button>
                 </div>
             </div>
@@ -77,8 +77,8 @@
                             <thead>
                                 <tr class="bg-slate-50 border-b border-slate-200">
                                     <th class="px-4 py-4 w-12"></th>
-                                    <th class="px-8 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">{{ __('ឈ្មោះនិស្សិត') }}</th>
-                                    <th class="px-8 py-4 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">{{ __('ស្ថានភាពវត្តមាន') }}</th>
+                                    <th class="px-8 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">{{ __('student_name') }}</th>
+                                    <th class="px-8 py-4 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">{{ __('status') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100">
@@ -106,9 +106,9 @@
                                         <td class="px-8 py-5">
                                             <div class="flex justify-center items-center gap-2">
                                                 @php $statuses = [
-                                                    'present' => ['label' => __('មក'), 'color' => 'green'],
-                                                    'permission' => ['label' => __('ច្បាប់'), 'color' => 'blue'],
-                                                    'absent' => ['label' => __('អវត្តមាន'), 'color' => 'red']
+                                                    'present' => ['label' => __('present_2'), 'color' => 'green'],
+                                                    'permission' => ['label' => __('permission_2'), 'color' => 'blue'],
+                                                    'absent' => ['label' => __('absent'), 'color' => 'red']
                                                 ]; @endphp
 
                                                 @foreach($statuses as $value => $info)
@@ -132,7 +132,7 @@
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                             </svg>
-                            {{ __('រក្សាទុកវត្តមាន') }}
+                            {{ __('save_attendance') }}
                         </button>
                     </div>
                 </form>

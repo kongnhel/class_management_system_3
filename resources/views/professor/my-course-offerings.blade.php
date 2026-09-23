@@ -119,11 +119,11 @@
             <div class="flex items-center gap-4 mb-3">
                 <div class="header-accent w-8"></div>
                 <h1 class="khmer text-3xl font-bold text-slate-900 tracking-tight">
-                    {{ __('មុខវិជ្ជាខ្ញុំបង្រៀន') }}
+                    {{ __('my_teaching_courses') }}
                 </h1>
             </div>
             <p class="khmer text-slate-600 pl-12 text-[15px]">
-                {{ __('បញ្ជីវគ្គសិក្សាទាំងអស់ដែលអ្នកកំពុងបង្រៀន') }}
+                {{ __('all_course_offerings_you_are_teaching') }}
             </p>
         </div>
 
@@ -154,8 +154,8 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M12 6.253v13m0-13C10.832 5.462 9.492 5 8 5a4 4 0 00-4 4v8a4 4 0 004 4c1.492 0 2.832-.462 4-1.253m0-13C13.168 5.462 14.508 5 16 5a4 4 0 014 4v8a4 4 0 01-4 4c-1.492 0-2.832-.462-4-1.253" />
                     </svg>
                 </div>
-                <p class="khmer text-xl font-semibold text-slate-700 mb-2">{{ __('មិនទាន់មានមុខវិជ្ជាត្រូវបានចាត់តាំង') }}</p>
-                <p class="khmer text-slate-500">{{ __('សូមទាក់ទងរដ្ឋបាល ប្រសិនបើមានចម្ងល់។') }}</p>
+                <p class="khmer text-xl font-semibold text-slate-700 mb-2">{{ __('no_courses_assigned_yet') }}</p>
+                <p class="khmer text-slate-500">{{ __('please_contact_the_administration_if_you_have_any_questions') }}</p>
             </div>
         @else
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -173,7 +173,7 @@
                                     <span>{{ $offering->academic_year }}</span>
                                 </span>
                                 <span class="badge khmer">
-                                    {{ __('ឆមាស') }} {{ $offering->semester }}
+                                    {{ __('semester') }} {{ $offering->semester }}
                                 </span>
                             </div>
                         </div>
@@ -195,7 +195,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.608 3.292 0z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
-                            {{ __('គ្រប់គ្រងវគ្គសិក្សា') }}
+                            {{ __('manage_course_offerings') }}
                         </button>
                     </div>
                 @endforeach
@@ -232,7 +232,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.462 9.492 5 8 5a4 4 0 00-4 4v8a4 4 0 004 4c1.492 0 2.832-.462 4-1.253m0-13C13.168 5.462 14.508 5 16 5a4 4 0 014 4v8a4 4 0 01-4 4c-1.492 0-2.832-.462-4-1.253" />
                         </svg>
                     </div>
-                    <h3 class="khmer text-2xl font-bold text-slate-900">{{ __('គ្រប់គ្រងវគ្គសិក្សា') }}</h3>
+                    <h3 class="khmer text-2xl font-bold text-slate-900">{{ __('manage_course_offerings') }}</h3>
                 </div>
                 
                 <button @click="open = false" 
@@ -248,13 +248,13 @@
                 $menuItems = [
                     [
                         'route' => 'professor.students.in-course-offering',
-                        'label' => __('មើលនិស្សិត'),
+                        'label' => __('view_students'),
                         'desc'  => 'View enrolled students',
                         'icon'  => 'M17 20h5v-2a3 3 0 01-5.356-1.857M17 20H7m5-2v-2c0-.656-.126-1.284-.356-1.852M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.284.356-1.852m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z',
                     ],
                     [
                         'route' => 'professor.manage-grades',
-                        'label' => __('គ្រប់គ្រងពិន្ទុ'),
+                        'label' => __('manage_grades'),
                         'desc'  => 'Manage student grades',
                         'icon'  => 'M19 21V5a2 2 0 01-2 2H7a2 2 0 01-2 2v16m14 0h2m-2 0h-5m-4 0H3',
                     ],
@@ -285,7 +285,7 @@
         <div class="p-6 border-t border-slate-100">
             <button @click="open = false"
                     class="khmer w-full py-3.5 text-slate-600 font-medium bg-slate-100 hover:bg-slate-200 rounded-2xl transition-colors">
-                {{ __('បិទ') }}
+                {{ __('close_3') }}
             </button>
         </div>
     </div>

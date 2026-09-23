@@ -1,108 +1,125 @@
 <x-app-layout>
-    <div class="py-6 md:py-12 bg-gradient-to-br from-gray-50 to-green-50 min-h-screen">
-        <div class="max-w-7xl mx-auto px-2 md:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-3xl p-4 md:p-8 lg:p-12 border border-gray-100">
+<div class="bg-slate-50 min-h-screen font-['Battambang'] antialiased">
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8 space-y-5">
 
-                {{-- Header Section --}}
-                <div class="flex flex-col md:flex-row items-center justify-between mb-6 md:mb-10 pb-6 border-b border-gray-100 gap-4">
-                    <div class="text-center md:text-left">
-                        <h2 class="font-extrabold text-2xl md:text-4xl text-gray-900 leading-tight">
-                            <i class="fas fa-id-card text-green-600 mr-2 md:hidden"></i>{{ __('ប្រវត្តិរូប') }}
-                        </h2>
-                        <p class="mt-1 text-sm md:text-lg text-gray-500 italic">
-                            {{ __('គ្រប់គ្រងព័ត៌មានផ្ទាល់ខ្លួនរបស់អ្នក') }}
-                        </p>
-                    </div>
-                    <div class="w-full md:w-auto">
-                        <a wire:navigate href="{{ route('professor.profile.edit') }}"
-                           class="flex items-center justify-center px-6 py-3 md:px-8 md:py-4 bg-green-600 text-sm md:text-base font-bold rounded-xl md:rounded-2xl text-white hover:bg-green-700 transition-all shadow-md hover:shadow-lg transform hover:scale-105">
-                            <i class="fas fa-user-edit mr-2"></i>
-                            {{ __('កែប្រែប្រវត្តិរូប') }}
-                        </a>
-                    </div>
-                </div>
+    {{-- ============================================================ --}}
+    {{-- SUCCESS FLASH                                                --}}
+    {{-- ============================================================ --}}
+    @if(session('success'))
+        <div class="bg-emerald-50 border border-emerald-200 text-emerald-700 px-5 py-3.5 rounded-2xl flex items-center gap-3 text-sm font-bold">
+            <i class="fas fa-check-circle text-emerald-500"></i>
+            {{ session('success') }}
+        </div>
+    @endif
 
-                {{-- Success Message --}}
-                @if (session('success'))
-                    <div class="bg-green-50 border-l-4 border-green-500 text-green-700 p-3 md:p-5 rounded-xl mb-6 shadow-sm flex items-center animate-bounce" role="alert">
-                        <i class="fas fa-check-circle mr-3 text-green-500 text-xl"></i>
-                        <span class="font-bold text-sm md:text-lg">{{ session('success') }}</span>
+    {{-- ============================================================ --}}
+    {{-- PROFILE HERO                                                 --}}
+    {{-- ============================================================ --}}
+    <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-600 via-emerald-700 to-purple-700 shadow-xl shadow-emerald-200/50">
+        {{-- decorative blobs --}}
+        <div class="absolute -top-20 -right-20 w-72 h-72 bg-white/5 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-16 -left-10 w-64 h-64 bg-purple-400/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        {{-- edit button — top right --}}
+        <div class="absolute top-5 right-5 z-10">
+            <a wire:navigate href="{{ route('professor.profile.edit') }}"
+                class="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur border border-white/20 text-white px-4 py-2 rounded-xl font-bold text-xs transition-all">
+                <i class="fas fa-user-edit"></i>
+                {{ __('edit_profile') }}
+            </a>
+        </div>
+
+        {{-- content --}}
+        <div class="relative px-8 pt-10 pb-8 flex flex-col sm:flex-row items-center sm:items-end gap-6">
+
+            {{-- avatar --}}
+            <div class="flex-shrink-0 w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border-4 border-white/20 shadow-2xl bg-white/10">
+                @if($userProfile->profile_picture_url)
+                    <img
+                        src="{{ $userProfile->profile_picture_url }}?tr=w-600,h-600,fo-face,q-auto,f-auto"
+                        alt="{{ $user->name }}"
+                        class="w-full h-full object-cover">
+                @else
+                    <div class="w-full h-full flex items-center justify-center text-white text-3xl font-black">
+                        {{ Str::upper(Str::substr($user->name, 0, 1)) }}
                     </div>
                 @endif
+            </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-12">
-                    
-                    {{-- Left Column: Avatar & Basic Info --}}
-                    <div class="lg:col-span-4 flex flex-col items-center">
-                        <div class="relative group">
-                            <div class="w-32 h-32 md:w-56 md:h-56 rounded-[2rem] md:rounded-[2.5rem] overflow-hidden border-4 md:border-8 border-white shadow-2xl transition-transform duration-500 group-hover:rotate-3">
-@if ($userProfile->profile_picture_url)
-    <img 
-        src="{{ $userProfile->profile_picture_url }}?tr=w-600,h-600,fo-face tr=q-auto,f-auto" 
-        class="object-cover w-full h-full"
-        alt="{{ $user->name }}"
-    >
-@else
-    <div class="w-full h-full bg-green-100 flex items-center justify-center text-green-600 text-4xl md:text-6xl font-black">
-        {{ Str::upper(Str::substr($user->name, 0, 1)) }}
-    </div>
-@endif
-                            </div>
-                            <div class="absolute -bottom-3 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-4 py-1 rounded-full shadow-lg font-bold text-[10px] md:text-sm uppercase whitespace-nowrap">
-                                <i class="fas fa-chalkboard-teacher mr-1"></i> {{ __('សាស្រ្តាចារ្យ') }}
-                            </div>
-                        </div>
-                        
-                        <div class="mt-6 md:mt-10 text-center">
-                            <h3 class="text-xl md:text-3xl font-black text-gray-900">{{ $userProfile->full_name_km ?? $user->name }}</h3>
-                            <p class="text-xs md:text-lg text-gray-500 font-medium">{{ $user->email }}</p>
-                        </div>
-                    </div>
-
-                    {{-- Right Column: Information Details --}}
-                    <div class="lg:col-span-8">
-                        <div class="bg-gray-50 rounded-[1.5rem] md:rounded-[2rem] p-4 md:p-10 border border-gray-100 shadow-inner">
-                            <h4 class="text-base md:text-xl font-bold text-gray-800 mb-5 md:mb-8 flex items-center">
-                                <span class="w-1.5 h-6 bg-green-500 rounded-full mr-3"></span>
-                                {{ __('ព័ត៌មានលម្អិត') }}
-                            </h4>
-
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-8">
-                                
-                                @php
-                                    $details = [
-                                        ['label' => __('ឈ្មោះខ្មែរ'), 'value' => $userProfile->full_name_km, 'icon' => 'fas fa-user-circle'],
-                                        ['label' => __('ឈ្មោះអង់គ្លេស'), 'value' => $userProfile->full_name_en, 'icon' => 'fas fa-font'],
-                                        ['label' => __('ភេទ'), 'value' => $userProfile->gender == 'male' ? __('ប្រុស') : ($userProfile->gender == 'female' ? __('ស្រី') : '---'), 'icon' => 'fas fa-venus-mars'],
-                                        ['label' => __('ថ្ងៃកំណើត'), 'value' => $userProfile->date_of_birth ? \Carbon\Carbon::parse($userProfile->date_of_birth)->format('d-M-Y') : null, 'icon' => 'fas fa-calendar-alt'],
-                                        ['label' => 'Telegram', 'value' => $userProfile->telegram_user ? '@' . $userProfile->telegram_user : null, 'icon' => 'fab fa-telegram-plane'],
-                                        ['label' => __('ទូរស័ព្ទ'), 'value' => $userProfile->phone_number, 'icon' => 'fas fa-phone-alt'],
-                                        ['label' => __('អាសយដ្ឋាន'), 'value' => $userProfile->address, 'icon' => 'fas fa-map-marker-alt', 'fullWidth' => true],
-                                    ];
-                                @endphp
-
-                                @foreach ($details as $detail)
-                                    <div class="{{ isset($detail['fullWidth']) ? 'md:col-span-2' : '' }}">
-                                        <div class="flex items-center p-3 md:p-4 rounded-xl bg-white border border-gray-50 shadow-sm h-full hover:shadow-md transition-shadow">
-                                            <div class="w-10 h-10 md:w-12 md:h-12 bg-green-50 rounded-lg flex items-center justify-center text-green-600 mr-3 md:mr-5 shrink-0">
-                                                <i class="{{ $detail['icon'] }} text-sm md:text-lg"></i>
-                                            </div>
-                                            <div class="min-w-0">
-                                                <p class="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-widest">{{ __($detail['label']) }}</p>
-                                                <p class="text-sm md:text-lg font-bold text-gray-800 truncate md:whitespace-normal">
-                                                    {{ $detail['value'] ?? '---' }}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-
-                            </div>
-                        </div>
-                    </div>
+            {{-- name + role --}}
+            <div class="text-center sm:text-left pb-1">
+                <div class="inline-flex items-center gap-1.5 bg-white/10 border border-white/15 text-emerald-100 text-[11px] font-bold px-3 py-1 rounded-full mb-2">
+                    <i class="fas fa-chalkboard-teacher text-[10px]"></i>
+                    {{ __('professor_2') }}
                 </div>
-
+                <h2 class="text-2xl sm:text-3xl font-black text-white leading-tight">
+                    {{ $userProfile->full_name_km ?? $user->name }}
+                </h2>
+                <p class="text-emerald-200 text-sm mt-1">{{ $user->email }}</p>
             </div>
         </div>
     </div>
+
+    {{-- ============================================================ --}}
+    {{-- DETAILS CARD                                                 --}}
+    {{-- ============================================================ --}}
+    <div class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+
+        {{-- card header --}}
+        <div class="flex items-center gap-2.5 px-6 py-4 border-b border-slate-50">
+            <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm">
+                <i class="fas fa-id-card"></i>
+            </div>
+            <h4 class="text-sm font-bold text-gray-800">{{ __('details_2') }}</h4>
+        </div>
+
+        {{-- details grid --}}
+        <div class="p-6">
+            @php
+                $details = [
+                    ['label' => __('khmer_name'),      'value' => $userProfile->full_name_km,    'icon' => 'fas fa-user',          'color' => 'emerald'],
+                    ['label' => __('english_name'),    'value' => $userProfile->full_name_en,    'icon' => 'fas fa-font',          'color' => 'emerald'],
+                    ['label' => __('gender'),          'value' => $userProfile->gender == 'male' ? __('male') : ($userProfile->gender == 'female' ? __('female') : null), 'icon' => 'fas fa-venus-mars', 'color' => 'violet'],
+                    ['label' => __('date_of_birth_2'), 'value' => $userProfile->date_of_birth ? \Carbon\Carbon::parse($userProfile->date_of_birth)->format('d M Y') : null, 'icon' => 'fas fa-calendar', 'color' => 'violet'],
+                    ['label' => 'Telegram',            'value' => $userProfile->telegram_user ? '@' . $userProfile->telegram_user : null, 'icon' => 'fab fa-telegram-plane', 'color' => 'sky'],
+                    ['label' => __('phone'),           'value' => $userProfile->phone_number,    'icon' => 'fas fa-phone',         'color' => 'sky'],
+                    ['label' => __('address'),         'value' => $userProfile->address,         'icon' => 'fas fa-map-marker-alt','color' => 'amber', 'fullWidth' => true],
+                ];
+            @endphp
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                @foreach($details as $detail)
+                    @php
+                        $colorMap = [
+                            'emerald' => ['bg' => 'bg-emerald-50', 'text' => 'text-emerald-600'],
+                            'violet'  => ['bg' => 'bg-violet-50',  'text' => 'text-violet-600'],
+                            'sky'     => ['bg' => 'bg-sky-50',     'text' => 'text-sky-600'],
+                            'amber'   => ['bg' => 'bg-amber-50',   'text' => 'text-amber-600'],
+                        ];
+                        $c = $colorMap[$detail['color']] ?? $colorMap['emerald'];
+                    @endphp
+                    <div class="{{ isset($detail['fullWidth']) ? 'sm:col-span-2' : '' }}">
+                        <div class="flex items-center gap-4 p-4 rounded-2xl border border-slate-100 bg-slate-50/50 hover:bg-white hover:border-slate-200 hover:shadow-sm transition-all">
+
+                            {{-- icon --}}
+                            <div class="w-9 h-9 rounded-xl {{ $c['bg'] }} {{ $c['text'] }} flex items-center justify-center flex-shrink-0 text-sm">
+                                <i class="{{ $detail['icon'] }}"></i>
+                            </div>
+
+                            {{-- label + value --}}
+                            <div class="min-w-0 flex-1">
+                                <p class="text-[11px] text-gray-400 font-semibold mb-0.5">{{ $detail['label'] }}</p>
+                                <p class="text-sm font-bold text-gray-800 {{ isset($detail['fullWidth']) ? '' : 'truncate' }}">
+                                    {{ $detail['value'] ?? '—' }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </div>
+
+</div>
+</div>
 </x-app-layout>

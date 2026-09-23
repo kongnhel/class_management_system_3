@@ -220,6 +220,7 @@ Route::middleware(['auth', 'role:admin', 'throttle:120,1'])->prefix('admin')->na
 
     // Grade Management
     Route::get('/grades', [AdminGradeController::class, 'index'])->name('grades.index');
+    Route::get('/grades/export', [AdminGradeController::class, 'exportFiltered'])->name('grades.filtered-export');
     Route::get('/grades/{courseOffering}', [AdminGradeController::class, 'show'])->name('grades.show');
     Route::get('/grades/{courseOffering}/export', [AdminGradeController::class, 'exportGrades'])->name('grades.export');
     Route::get('/grades/{courseOffering}/re-exam', [AdminReExamController::class, 'showForm'])->name('grades.re-exam-form');
@@ -235,6 +236,7 @@ Route::middleware(['auth', 'role:admin', 'throttle:120,1'])->prefix('admin')->na
 
     // Bulk Import
     Route::get('/import', [BulkImportController::class, 'index'])->name('import.index');
+    Route::post('/import/preview', [BulkImportController::class, 'previewUsers'])->name('import.preview');
     Route::post('/import/execute', [BulkImportController::class, 'importUsers'])->name('import.users');
     Route::get('/import/template', [BulkImportController::class, 'downloadTemplate'])->name('import.template');
 
@@ -259,6 +261,12 @@ Route::middleware(['auth', 'role:admin', 'throttle:120,1'])->prefix('admin')->na
 Route::middleware(['auth', 'role:professor', 'throttle:120,1'])->prefix('professor')->name('professor.')->group(function () {
 
     Route::get('/dashboard', ProfessorDashboardController::class)->name('dashboard');
+    Route::post('/security/trusted-device', [App\Http\Controllers\professor\TrustedDeviceController::class, 'store'])
+        ->name('security.trusted-device.store');
+    Route::get('/security/trusted-devices', [App\Http\Controllers\professor\TrustedDeviceController::class, 'index'])
+        ->name('security.trusted-devices');
+    Route::delete('/security/trusted-device/{trustedDevice}', [App\Http\Controllers\professor\TrustedDeviceController::class, 'revoke'])
+        ->name('security.trusted-device.revoke');
     Route::get('/view-departments', [ProfessorController::class, 'viewDepartments'])->name('view-departments');
     Route::get('/view-courses', [ProfessorController::class, 'viewCourses'])->name('view-courses');
     Route::get('/view-all-course-offerings', [ProfessorController::class, 'viewAllCourseOfferings'])->name('view-all-course-offerings');
@@ -293,14 +301,14 @@ Route::middleware(['auth', 'role:professor', 'throttle:120,1'])->prefix('profess
     Route::get('/api/course-offerings-with-students', [ProfessorController::class, 'getCourseOfferingsWithStudents']);
     Route::get('/all-data', [ProfessorController::class, 'allDataView'])->name('all-data-view');
     Route::get('/course-offering/{offering_id}/students', [ProfessorController::class, 'getStudentsInCourseOffering'])->name('students.in-course-offering');
-    Route::get('/course-offerings/{courseOffering}/students', [ProfessorController::class, 'showStudentsInCourse'])->name('professor.course-offerings.students.index');
+    Route::get('/course-offerings/{courseOffering}/students', [ProfessorController::class, 'redirectToCourseStudents'])->name('professor.course-offerings.students.index');
     Route::get('/course-offerings/{courseOffering}/students/print', [ProfessorController::class, 'printStudents'])->name('students.print');
     Route::get('/course-offerings/{courseOffering}/students/{student}', [ProfessorController::class, 'showStudentProfile'])->name('students.show');
     Route::get('/students/{student}', [ProfessorController::class, 'showStudentProfile'])->name('professor.students.show');
     Route::get('/profile/create', [ProfessorProfileController::class, 'create'])->name('profile.create');
 
     Route::get('/notifications', [ProfessorNotificationController::class, 'notificationsIndex'])->name('notifications.index');
-    Route::get('/course-offerings/{courseOffering}/students', [ProfessorNotificationController::class, 'getStudentsForCourseOffering'])->name('course_offerings.students');
+    Route::get('/course-offerings/{courseOffering}/students-data', [ProfessorNotificationController::class, 'getStudentsForCourseOffering'])->name('course_offerings.students');
     Route::get('/notifications/create', [ProfessorNotificationController::class, 'createNotificationForm'])->name('notifications.create');
     Route::post('/notifications/store', [ProfessorNotificationController::class, 'notificationsStore'])->name('notifications.store');
     Route::get('/notifications/{id}/edit', [ProfessorNotificationController::class, 'notificationsEdit'])->name('notifications.edit');
@@ -367,6 +375,8 @@ Route::middleware(['auth', 'role:professor', 'throttle:120,1'])->prefix('profess
 
     Route::post('/attendance/start', [App\Http\Controllers\professor\AttendanceApiController::class, 'startSession'])
         ->name('attendance.api.start');
+    Route::post('/attendance/online-checkin', [App\Http\Controllers\professor\AttendanceApiController::class, 'onlineCheckin'])
+        ->name('attendance.api.online-checkin');
     Route::post('/attendance/refresh-qr', [App\Http\Controllers\professor\AttendanceApiController::class, 'refreshQr'])
         ->name('attendance.api.refresh-qr');
     Route::get('/attendance/students/{courseOfferingId}', [App\Http\Controllers\professor\AttendanceApiController::class, 'getStudents'])

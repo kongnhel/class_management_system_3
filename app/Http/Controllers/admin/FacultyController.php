@@ -51,7 +51,7 @@ class FacultyController extends Controller
         } catch (\Exception $e) {
         }
 
-        return redirect()->route('admin.manage-faculties')->with('success', __('មហាវិទ្យាល័យត្រូវបានបង្កើតដោយជោគជ័យ។'));
+        return redirect()->route('admin.manage-faculties')->with('success', __('faculty_created_successfully'));
     }
 
     public function update(Request $request, Faculty $faculty)
@@ -70,7 +70,7 @@ class FacultyController extends Controller
         } catch (\Exception $e) {
         }
 
-        return redirect()->route('admin.manage-faculties')->with('success', __('មហាវិទ្យាល័យត្រូវបានកែប្រែដោយជោគជ័យ។'));
+        return redirect()->route('admin.manage-faculties')->with('success', __('faculty_updated_successfully'));
     }
 
     public function destroy(Faculty $faculty)
@@ -95,13 +95,13 @@ class FacultyController extends Controller
             }
 
             return redirect()->route('admin.manage-faculties')
-                ->with('success', __('មហាវិទ្យាល័យនិងទិន្នន័យដែលពាក់ព័ន្ធទាំងអស់ត្រូវបានលុបដោយជោគជ័យ។'));
+                ->with('success', __('faculty_and_related_data_deleted'));
 
         } catch (\Exception $e) {
             DB::rollBack();
 
             return redirect()->route('admin.manage-faculties')
-                ->with('error', __('មិនអាចលុបមហាវិទ្យាល័យបានទេ៖ មានបញ្ហាមួយបានកើតឡើង។'));
+                ->with('error', __('an_error_occurred'));
         }
     }
 }

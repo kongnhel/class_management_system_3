@@ -9,7 +9,7 @@
                     <span class="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-emerald-100 text-emerald-600">
                         <i class="fas fa-check-circle"></i>
                     </span>
-                    {{ __('លទ្ធផលនាំចូល') }}
+                    {{ __('import_complete') }}
                 </h2>
             </div>
         </div>
@@ -24,20 +24,20 @@
                     <div class="w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-6">
                         <i class="fas fa-check-circle text-emerald-500 text-4xl"></i>
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-2">នាំចូលជោគជ័យ!</h3>
-                    <p class="text-gray-500">បាននាំចូល <span class="font-bold text-emerald-600">{{ $imported }}</span> នាក់ដោយជោគជ័យ។</p>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">{{ __('import_success') }}</h3>
+                    <p class="text-gray-500">{{ __('imported_successfully') }} <span class="font-bold text-emerald-600">{{ $imported }}</span> {{ __('successfully') }}</p>
                 @elseif($imported > 0 && $skipped > 0)
                     <div class="w-20 h-20 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-6">
                         <i class="fas fa-exclamation-triangle text-amber-500 text-4xl"></i>
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-2">នាំចូលជាមួយកំហុស</h3>
-                    <p class="text-gray-500">បាននាំចូល <span class="font-bold text-emerald-600">{{ $imported }}</span> នាក់ និងរំលង <span class="font-bold text-red-600">{{ $skipped }}</span> នាក់។</p>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">{{ __('import_with_errors') }}</h3>
+                    <p class="text-gray-500">{{ __('imported_successfully') }} <span class="font-bold text-emerald-600">{{ $imported }}</span> នាក់ {{ __('and_skipped') }} <span class="font-bold text-red-600">{{ $skipped }}</span> {{ __('people_skipped') }}</p>
                 @else
                     <div class="w-20 h-20 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-6">
                         <i class="fas fa-times-circle text-red-500 text-4xl"></i>
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-2">នាំចូលមិនជោគជ័យ</h3>
-                    <p class="text-gray-500">មិនមានទិន្នន័យត្រូវបាននាំចូលទេ។</p>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">{{ __('import_failed') }}</h3>
+                    <p class="text-gray-500">{{ __('no_data_imported') }}</p>
                 @endif
             </div>
 
@@ -45,11 +45,11 @@
             <div class="grid grid-cols-2 gap-4">
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 text-center">
                     <div class="text-3xl font-bold text-emerald-600">{{ $imported }}</div>
-                    <p class="text-sm text-gray-500 mt-1">នាំចូលបាន</p>
+                    <p class="text-sm text-gray-500 mt-1">{{ __('imported_count') }}</p>
                 </div>
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 text-center">
                     <div class="text-3xl font-bold text-red-600">{{ $skipped }}</div>
-                    <p class="text-sm text-gray-500 mt-1">រំលង</p>
+                    <p class="text-sm text-gray-500 mt-1">{{ __('skipped') }}</p>
                 </div>
             </div>
 
@@ -59,7 +59,7 @@
                 <div class="px-6 py-4 border-b border-gray-100">
                     <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
                         <i class="fas fa-exclamation-triangle text-red-500"></i>
-                        កំហុស ({{ count($errors) }})
+                        {{ __('errors') }} ({{ count($errors) }})
                     </h3>
                 </div>
                 <div class="divide-y divide-gray-100 max-h-64 overflow-y-auto">
@@ -80,9 +80,9 @@
                         <i class="fas fa-key text-blue-600"></i>
                     </div>
                     <div>
-                        <h4 class="text-sm font-bold text-blue-800">ពាក្យសម្ងាត់លំនាំដើម</h4>
-                        <p class="text-sm text-blue-600 mt-1">សិស្សទាំងអស់មានពាក្យសម្ងាត់លំនាំដើម៖ <code class="bg-blue-100 px-2 py-0.5 rounded font-mono">password123</code></p>
-                        <p class="text-xs text-blue-500 mt-1">សូមផ្តល់ព័ត៌មាននេះដល់សិស្សដើម្បីចូលប្រើប្រាស់ប្រព័ន្ធលើកដំបូង។</p>
+                        <h4 class="text-sm font-bold text-blue-800">{{ __('default_password') }}</h4>
+                        <p class="text-sm text-blue-600 mt-1">{{ __('students_default_password') }} <code class="bg-blue-100 px-2 py-0.5 rounded font-mono">password123</code></p>
+                        <p class="text-xs text-blue-500 mt-1">{{ __('provide_credentials_info') }}</p>
                     </div>
                 </div>
             </div>
@@ -91,12 +91,12 @@
             {{-- Actions --}}
             <div class="flex items-center justify-center gap-4">
                 <a href="{{ route('admin.import.index') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-white border border-gray-300 rounded-xl font-bold text-gray-700 hover:bg-gray-50 transition shadow-sm">
-                    <i class="fas fa-plus"></i> នាំចូលម្តងទៀត
+                    <i class="fas fa-plus"></i> {{ __('import_again') }}
                 </a>
                 @if($imported > 0)
                 <a href="{{ route('admin.manage-users', ['tab' => $settings['role'] === 'student' ? 'students' : 'professors']) }}" 
                    class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-600 to-emerald-600 rounded-xl font-bold text-white hover:from-emerald-700 hover:to-emerald-700 transition shadow-md">
-                    <i class="fas fa-eye"></i> មើលអ្នកប្រើប្រាស់
+                    <i class="fas fa-eye"></i> {{ __('view_users') }}
                 </a>
                 @endif
             </div>

@@ -89,6 +89,6 @@ class ProfessorProfileController extends Controller
 
         return redirect()
             ->route('professor.profile.show')
-            ->with('success', __('ប្រវត្តិរូបរបស់អ្នកត្រូវបានកែប្រែដោយជោគជ័យ។'));
+            ->with('success', __('profile_updated_successfully'));
     }
 }

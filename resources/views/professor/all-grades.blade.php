@@ -8,8 +8,8 @@
                     <i class="fas fa-star text-white text-lg"></i>
                 </div>
                 <div>
-                    <h1 class="text-2xl font-bold text-gray-900">ពិន្ទុទាំងអស់</h1>
-                    <p class="text-sm text-gray-500 mt-0.5">បញ្ជីពិន្ទុដែលអ្នកគ្រប់គ្រង</p>
+                    <h1 class="text-2xl font-bold text-gray-900">{{ __('all_grades') }}</h1>
+                    <p class="text-sm text-gray-500 mt-0.5">{{ __('grade_list_managed_by_you') }}</p>
                 </div>
             </div>
 
@@ -23,7 +23,7 @@
                             type="text"
                             x-model="search"
                             @compositionstart="isComposing = true" @compositionend="isComposing = false; filterRows()" @input="if (!isComposing && !$event.isComposing) filterRows()"
-                            placeholder="ស្វែងរកឈ្មោះសិស្ស..."
+                            placeholder="{{ __('search_student_name') }}"
                             class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-gray-50"
                         >
                     </div>
@@ -35,7 +35,7 @@
                             @change="filterRows()"
                             class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-gray-50 appearance-none"
                         >
-                            <option value="">មុខវិជ្ជា​ទាំងអស់</option>
+                            <option value="">{{ __('all_courses') }}</option>
                             <template x-for="c in courses" :key="c">
                                 <option :value="c" x-text="c"></option>
                             </template>
@@ -50,9 +50,9 @@
                             @change="filterRows()"
                             class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-gray-50 appearance-none"
                         >
-                            <option value="">ប្រភេទ​ទាំងអស់</option>
-                            <option value="exam">ប្រឡង</option>
-                            <option value="assignment">កិច្ចការ</option>
+                            <option value="">{{ __('all_types') }}</option>
+                            <option value="exam">{{ __('exam') }}</option>
+                            <option value="assignment">{{ __('assignments') }}</option>
                             <option value="quiz">Quiz</option>
                         </select>
                         <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-[10px] pointer-events-none"></i>
@@ -65,7 +65,7 @@
                             @change="filterRows()"
                             class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-gray-50 appearance-none"
                         >
-                            <option value="">កាលបរិច្ឆេទ​ទាំងអស់</option>
+                            <option value="">{{ __('all_dates') }}</option>
                             <template x-for="d in dates" :key="d">
                                 <option :value="d" x-text="d"></option>
                             </template>
@@ -78,19 +78,19 @@
                         @click="clearFilters()"
                         class="px-4 py-2.5 rounded-xl bg-red-50 text-red-600 text-xs font-bold hover:bg-red-100 transition-colors whitespace-nowrap"
                     >
-                        <i class="fas fa-times mr-1"></i> សម្អាត
+                        <i class="fas fa-times mr-1"></i> {{ __('clear') }}
                     </button>
                 </div>
                 {{-- Result count --}}
                 <div class="mt-3 text-xs text-gray-400 font-bold" x-show="search || courseFilter || typeFilter || dateFilter">
-                    រកឃើញ <span x-text="visibleCount" class="text-emerald-600"></span> ក្នុងចំណោម <span x-text="totalCount" class="text-gray-600"></span> កំណត់ត្រា
+                    {{ __('found_in_total') }} <span x-text="visibleCount" class="text-emerald-600"></span> {{ __('in_total') }} <span x-text="totalCount" class="text-gray-600"></span> {{ __('records') }}
                 </div>
             </div>
 
             {{-- Stats --}}
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                 <div class="bg-white rounded-2xl border border-gray-200 p-4">
-                    <div class="text-xs font-bold text-gray-400 uppercase mb-1">សរុបកត់ត្រា</div>
+                    <div class="text-xs font-bold text-gray-400 uppercase mb-1">{{ __('total_records') }}</div>
                     <div class="text-2xl font-black text-gray-800">{{ $grades->total() }}</div>
                 </div>
             </div>
@@ -98,8 +98,8 @@
             {{-- Table --}}
             <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
                 <div class="px-5 py-4 border-b border-gray-200 flex items-center justify-between">
-                    <h3 class="font-bold text-gray-800 text-sm">បញ្ជីពិន្ទុ</h3>
-                    <span class="px-3 py-1 rounded-full bg-gray-100 text-xs font-bold text-gray-500">{{ $grades->total() }} កំណត់ត្រា</span>
+                    <h3 class="font-bold text-gray-800 text-sm">{{ __('grade_list') }}</h3>
+                    <span class="px-3 py-1 rounded-full bg-gray-100 text-xs font-bold text-gray-500">{{ $grades->total() }} {{ __('records') }}</span>
                 </div>
 
                 @if($grades->count() > 0)
@@ -107,19 +107,19 @@
                     <table class="min-w-full divide-y divide-gray-100">
                         <thead>
                             <tr class="bg-gray-50">
-                                <th class="px-5 py-3 text-left text-[10px] font-bold text-gray-500 uppercase">សិស្ស</th>
-                                <th class="px-5 py-3 text-left text-[10px] font-bold text-gray-500 uppercase">មុខវិជ្ជា</th>
-                                <th class="px-5 py-3 text-left text-[10px] font-bold text-gray-500 uppercase">ប្រភេទ</th>
-                                <th class="px-5 py-3 text-center text-[10px] font-bold text-gray-500 uppercase">ពិន្ទុ</th>
-                                <th class="px-5 py-3 text-center text-[10px] font-bold text-gray-500 uppercase">អតិបរមា</th>
-                                <th class="px-5 py-3 text-left text-[10px] font-bold text-gray-500 uppercase">កាលបរិច្ឆេទ</th>
+                                <th class="px-5 py-3 text-left text-[10px] font-bold text-gray-500 uppercase">{{ __('student') }}</th>
+                                <th class="px-5 py-3 text-left text-[10px] font-bold text-gray-500 uppercase">{{ __('course') }}</th>
+                                <th class="px-5 py-3 text-left text-[10px] font-bold text-gray-500 uppercase">{{ __('assignment_types') }}</th>
+                                <th class="px-5 py-3 text-center text-[10px] font-bold text-gray-500 uppercase">{{ __('grade') }}</th>
+                                <th class="px-5 py-3 text-center text-[10px] font-bold text-gray-500 uppercase">{{ __('max_score') }}</th>
+                                <th class="px-5 py-3 text-left text-[10px] font-bold text-gray-500 uppercase">{{ __('date') }}</th>
                             </tr>
                         </thead>
                         <tbody id="grades-tbody" class="divide-y divide-gray-100">
                             @forelse($grades as $grade)
                                 @php
                                     $percent = $grade->max_score > 0 ? round(($grade->score / $grade->max_score) * 100) : 0;
-                                    $typeLabels = ['exam' => 'ប្រឡង', 'assignment' => 'កិច្ចការ', 'quiz' => 'Quiz'];
+                                    $typeLabels = ['exam' => __('exam'), 'assignment' => __('assignments'), 'quiz' => 'Quiz'];
                                     $typeColors = ['exam' => 'purple', 'assignment' => 'emerald', 'quiz' => 'amber'];
                                     $tColor = $typeColors[$grade->assessment_type] ?? 'gray';
                                 @endphp
@@ -158,7 +158,7 @@
                                 <tr>
                                     <td colspan="6" class="px-6 py-16 text-center">
                                         <i class="fas fa-inbox text-gray-300 text-3xl mb-3"></i>
-                                        <p class="text-sm font-bold text-gray-400">មិនមានពិន្ទុ</p>
+                                        <p class="text-sm font-bold text-gray-400">{{ __('no_grades') }}</p>
                                     </td>
                                 </tr>
                             @endforelse
@@ -168,8 +168,8 @@
                 {{-- No results message --}}
                 <div id="no-results" class="px-6 py-16 text-center hidden">
                     <i class="fas fa-search text-gray-300 text-3xl mb-3"></i>
-                    <p class="text-sm font-bold text-gray-400">មិនឃើញលទ្ធផល</p>
-                    <p class="text-xs text-gray-300 mt-1">សូមព្យាយាមស្វែងរកផ្សេង</p>
+                    <p class="text-sm font-bold text-gray-400">{{ __('no_results_found') }}</p>
+                    <p class="text-xs text-gray-300 mt-1">{{ __('try_different_search') }}</p>
                 </div>
                 <div class="px-5 py-3 border-t border-gray-100">
                     {{ $grades->links('pagination::tailwind', ['pageName' => 'gradesPage']) }}
@@ -177,8 +177,8 @@
                 @else
                 <div class="px-6 py-16 text-center">
                     <i class="fas fa-inbox text-gray-300 text-3xl mb-3"></i>
-                    <p class="text-sm font-bold text-gray-400">មិនមានពិន្ទុ</p>
-                    <p class="text-xs text-gray-300 mt-1">ពិន្ទុនឹងបង្ហាញនៅទីនេះនៅពេលអ្នកបញ្ចូល</p>
+                    <p class="text-sm font-bold text-gray-400">{{ __('no_grades') }}</p>
+                    <p class="text-xs text-gray-300 mt-1">{{ __('grades_will_appear_here') }}</p>
                 </div>
                 @endif
             </div>

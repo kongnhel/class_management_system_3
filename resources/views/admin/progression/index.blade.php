@@ -314,6 +314,9 @@
                                                                 </div>
                                                                 <div>
                                                                     <p class="text-sm font-medium text-gray-900">{{ $student->name }}</p>
+                                                                    @if($student->profile_status === 'pending' || blank($student->generation))
+                                                                        <span class="mt-1 inline-flex rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-700">Incomplete profile</span>
+                                                                    @endif
                                                                     <p class="text-xs text-gray-400">{{ $student->email ?? '-' }}</p>
                                                                 </div>
                                                             </div>
@@ -352,6 +355,9 @@
                                                     </div>
                                                     <div class="flex-1 min-w-0">
                                                         <p class="text-sm font-medium text-gray-900">{{ $student->name }}</p>
+                                                        @if($student->profile_status === 'pending' || blank($student->generation))
+                                                            <span class="mt-1 inline-flex rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-700">Incomplete profile</span>
+                                                        @endif
                                                         <p class="text-xs text-gray-400">{{ $student->student_id_code ?? '-' }} · ឆ្នាំទី{{ $year }} · ជំនាន់{{ $student->generation }}</p>
                                                     </div>
                                                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-teal-50 text-teal-600 flex-shrink-0">
@@ -397,6 +403,9 @@
                                                                 {{ mb_substr($student->name, 0, 1, 'UTF-8') }}
                                                             </div>
                                                             <p class="text-sm font-medium text-gray-900">{{ $student->name }}</p>
+                                                            @if($student->profile_status === 'pending' || blank($student->generation))
+                                                                <span class="mt-1 inline-flex rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-700">Incomplete profile</span>
+                                                            @endif
                                                         </div>
                                                     </td>
                                                     <td class="px-6 py-3.5 text-sm text-gray-700 font-medium">{{ $student->student_id_code ?? '-' }}</td>
@@ -415,6 +424,9 @@
                                                 </div>
                                                 <div>
                                                     <p class="text-sm font-medium text-gray-900">{{ $student->name }}</p>
+                                                    @if($student->profile_status === 'pending' || blank($student->generation))
+                                                        <span class="mt-1 inline-flex rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-700">Incomplete profile</span>
+                                                    @endif
                                                     <p class="text-xs text-gray-400">{{ $student->student_id_code ?? '-' }}</p>
                                                 </div>
                                             </div>

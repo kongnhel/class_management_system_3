@@ -18,12 +18,15 @@ class AttendanceSession extends Model
         'attendance_date',
         'started_at',
         'closed_at',
+        'online_token_hash',
+        'online_token_expires_at',
     ];
 
     protected $casts = [
         'attendance_date' => 'date',
         'started_at' => 'datetime',
         'closed_at' => 'datetime',
+        'online_token_expires_at' => 'datetime',
     ];
 
     public function courseOffering(): BelongsTo

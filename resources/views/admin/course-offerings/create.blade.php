@@ -14,8 +14,8 @@
                             <i class="fas fa-plus-circle text-emerald-300 text-xl"></i>
                         </div>
                         <div>
-                            <h2 class="text-3xl font-bold tracking-tight">{{ __('បង្កើតការផ្តល់ជូនមុខវិជ្ជាថ្មី') }}</h2>
-                            <p class="text-slate-400 mt-1 text-sm">{{ __('បំពេញព័ត៌មានខាងក្រោមដើម្បីបង្កើតការផ្តល់ជូនមុខវិជ្ជាថ្មី') }}</p>
+                            <h2 class="text-3xl font-bold tracking-tight">{{ __('create_new_course_offering') }}</h2>
+                            <p class="text-slate-400 mt-1 text-sm">{{ __('fill_in_the_information_below_to_create_a_new_course_offering') }}</p>
                         </div>
                     </div>
                 </div>
@@ -30,7 +30,7 @@
                         <i class="fas fa-exclamation-circle text-red-500"></i>
                     </div>
                     <div class="flex-1">
-                        <p class="font-bold text-gray-900 text-sm">{{ __('មានបញ្ហា!') }}</p>
+                        <p class="font-bold text-gray-900 text-sm">{{ __('there_is_a_problem') }}</p>
                         <ul class="text-red-600 text-xs mt-1 space-y-0.5">
                             @if(session('error')) <li>{{ session('error') }}</li> @endif
                             @foreach ($errors->all() as $error) <li>{{ $error }}</li> @endforeach
@@ -55,18 +55,18 @@
                             <span class="text-emerald-600 font-bold text-sm">1</span>
                         </div>
                         <div>
-                            <h3 class="text-lg font-bold text-gray-900">{{ __('ព័ត៌មានមូលដ្ឋាន') }}</h3>
-                            <p class="text-xs text-gray-500">{{ __('ជ្រើសរើសនាយកដ្ឋាន ជំនាន់ និងមុខវិជ្ជា') }}</p>
+                            <h3 class="text-lg font-bold text-gray-900">{{ __('basic_information') }}</h3>
+                            <p class="text-xs text-gray-500">{{ __('basic_course_offering_info') }}</p>
                         </div>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         {{-- Faculty --}}
                         <div>
                             <label for="faculty_id" class="block text-sm font-bold text-gray-700 mb-1.5">
-                                {{ __('មហាវិទ្យាល័យ') }} <span class="text-red-500">*</span>
+                                {{ __('faculty') }} <span class="text-red-500">*</span>
                             </label>
                             <select id="faculty_id" data-dept-faculty class="w-full min-w-0 rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm px-4 py-2.5 bg-gray-50" required>
-                                <option value="">{{ __('ជ្រើសរើសមហាវិទ្យាល័យ') }}</option>
+                                <option value="">{{ __('select_a_faculty') }}</option>
                                 @foreach($faculties as $faculty)
                                     <option value="{{ $faculty->id }}" {{ old('faculty_id') == $faculty->id ? 'selected' : '' }}>{{ $faculty->name_km }}</option>
                                 @endforeach
@@ -76,10 +76,10 @@
                         {{-- Generation --}}
                         <div>
                             <label for="generation" class="block text-sm font-bold text-gray-700 mb-1.5">
-                                {{ __('ជំនាន់') }} <span class="text-red-500">*</span>
+                                {{ __('generation') }} <span class="text-red-500">*</span>
                             </label>
                             <select id="generation" name="generation" required class="w-full min-w-0 rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm px-4 py-2.5 bg-gray-50">
-                                <option value="">-- {{ __('ជ្រើសរើសជំនាន់') }} --</option>
+                                <option value="">-- {{ __('select_a_generation') }} --</option>
                                 @foreach($generations as $gen)
                                     <option value="{{ $gen->name }}" {{ old('generation') == $gen->name ? 'selected' : '' }}>G{{ $gen->name }}</option>
                                 @endforeach
@@ -89,10 +89,10 @@
                         {{-- Department --}}
                         <div>
                             <label for="department_id" class="block text-sm font-bold text-gray-700 mb-1.5">
-                                {{ __('នាយកដ្ឋាន') }} <span class="text-red-500">*</span>
+                                {{ __('department') }} <span class="text-red-500">*</span>
                             </label>
                             <select id="department_id" name="department_id" data-dept-department class="w-full min-w-0 rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm px-4 py-2.5 bg-gray-50" required>
-                                <option value="">{{ __('ជ្រើសរើសនាយកដ្ឋាន') }}</option>
+                                <option value="">{{ __('select_a_department') }}</option>
                                 @foreach($departments as $dept)
                                     <option value="{{ $dept->id }}" data-faculty-id="{{ $dept->faculty_id }}" {{ old('department_id') == $dept->id ? 'selected' : '' }}>{{ $dept->name_km }}</option>
                                 @endforeach
@@ -102,10 +102,10 @@
                         {{-- Course --}}
                         <div>
                             <label for="course_id" class="block text-sm font-bold text-gray-700 mb-1.5">
-                                {{ __('មុខវិជ្ជា') }} <span class="text-red-500">*</span>
+                                {{ __('course') }} <span class="text-red-500">*</span>
                             </label>
                             <select id="course_id" name="course_id" class="w-full min-w-0 rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm px-4 py-2.5 bg-gray-50" required>
-                                <option value="">{{ __('ជ្រើសរើសមុខវិជ្ជា') }}</option>
+                                <option value="">{{ __('select_course') }}</option>
                                 @foreach($courses as $course)
                                     <option value="{{ $course->id }}" data-department-id="{{ $course->department_id }}" {{ old('course_id') == $course->id ? 'selected' : '' }}>
                                         {{ $course->title_km }} ({{ $course->title_en }})
@@ -123,15 +123,15 @@
                             <span class="text-emerald-600 font-bold text-sm">2</span>
                         </div>
                         <div>
-                            <h3 class="text-lg font-bold text-gray-900">{{ __('ព័ត៌មានការផ្តល់ជូន') }}</h3>
-                            <p class="text-xs text-gray-500">{{ __('កំណត់សាស្ត្រាចារ្យ និងព័ត៌មានផ្សេងៗ') }}</p>
+                            <h3 class="text-lg font-bold text-gray-900">{{ __('offering_information') }}</h3>
+                            <p class="text-xs text-gray-500">{{ __('set_lecturer_and_other_information') }}</p>
                         </div>
                     </div>
                     <div class="space-y-4">
                         <div>
-                            <label for="lecturer_user_id" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('សាស្ត្រាចារ្យ') }} <span class="text-red-500">*</span></label>
+                            <label for="lecturer_user_id" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('professor') }} <span class="text-red-500">*</span></label>
                             <select id="lecturer_user_id" name="lecturer_user_id" class="w-full min-w-0 rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm px-4 py-2.5" required>
-                                <option value="">{{ __('ជ្រើសរើសសាស្ត្រាចារ្យ') }}</option>
+                                <option value="">{{ __('select_a_lecturer') }}</option>
                                 @foreach ($professors as $professor)
                                     <option value="{{ $professor->id }}" {{ old('lecturer_user_id') == $professor->id ? 'selected' : '' }}>{{ $professor->name }}</option>
                                 @endforeach
@@ -139,36 +139,36 @@
                         </div>
                         <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label for="academic_year" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ឆ្នាំសិក្សា') }} <span class="text-red-500">*</span></label>
+                                <label for="academic_year" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('academic_year') }} <span class="text-red-500">*</span></label>
                                 <select name="academic_year" id="academic_year" class="w-full min-w-0 rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm px-4 py-2.5" required>
-                                    <option value="">{{ __('ជ្រើសរើស') }}</option>
+                                    <option value="">{{ __('select_2') }}</option>
                                     @foreach ($academicYears as $year)
                                         <option value="{{ $year->name }}" data-start="{{ \Carbon\Carbon::parse($year->start_date)->format('Y-m-d') }}" data-end="{{ \Carbon\Carbon::parse($year->end_date)->format('Y-m-d') }}" {{ old('academic_year') == $year->name ? 'selected' : '' }}>
-                                            {{ $year->name }} {{ $year->is_current ? '('.__('បច្ចុប្បន្ន').')' : '' }}
+                                            {{ $year->name }} {{ $year->is_current ? '('.__('current').')' : '' }}
                                         </option>
                                     @endforeach
                                 </select>
                             </div>
                             <div>
-                                <label for="semester" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ឆមាស') }} <span class="text-red-500">*</span></label>
+                                <label for="semester" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('semester') }} <span class="text-red-500">*</span></label>
                                 <select name="semester" id="semester" class="w-full min-w-0 rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm px-4 py-2.5" required>
-                                    <option value="" disabled {{ old('semester') ? '' : 'selected' }}>{{ __('ជ្រើសរើស') }}</option>
-                                    <option value="ឆមាសទី១" {{ old('semester') == 'ឆមាសទី១' ? 'selected' : '' }}>{{ __('ឆមាសទី១') }}</option>
-                                    <option value="ឆមាសទី២" {{ old('semester') == 'ឆមាសទី២' ? 'selected' : '' }}>{{ __('ឆមាសទី២') }}</option>
+                                    <option value="" disabled {{ old('semester') ? '' : 'selected' }}>{{ __('select_2') }}</option>
+                                    <option value="ឆមាសទី១" {{ old('semester') == 'ឆមាសទី១' ? 'selected' : '' }}>{{ __('semester_1') }}</option>
+                                    <option value="ឆមាសទី២" {{ old('semester') == 'ឆមាសទី២' ? 'selected' : '' }}>{{ __('semester_2') }}</option>
                                 </select>
                             </div>
                         </div>
                         <div>
-                            <label for="capacity" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ចំនួននិស្សិតអតិបរមា') }} <span class="text-red-500">*</span></label>
-                            <input type="number" name="capacity" id="capacity" class="w-full min-w-0 rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm px-4 py-2.5" value="{{ old('capacity') }}" placeholder="{{ __('ឧទាហរណ៍: ៣០') }}" required>
+                            <label for="capacity" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('maximum_students') }} <span class="text-red-500">*</span></label>
+                            <input type="number" name="capacity" id="capacity" class="w-full min-w-0 rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm px-4 py-2.5" value="{{ old('capacity') }}" placeholder="{{ __('example_30') }}" required>
                         </div>
                         <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label for="start_date" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('កាលបរិច្ឆេទចាប់ផ្តើម') }} <span class="text-red-500">*</span></label>
+                                <label for="start_date" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('start_date') }} <span class="text-red-500">*</span></label>
                                 <input type="date" name="start_date" id="start_date" class="w-full min-w-0 rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm px-4 py-2.5" value="{{ old('start_date') }}" required>
                             </div>
                             <div>
-                                <label for="end_date" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('កាលបរិច្ឆេទបញ្ចប់') }} <span class="text-red-500">*</span></label>
+                                <label for="end_date" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('end_date') }} <span class="text-red-500">*</span></label>
                                 <input type="date" name="end_date" id="end_date" class="w-full min-w-0 rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm px-4 py-2.5" value="{{ old('end_date') }}" required>
                             </div>
                         </div>
@@ -183,12 +183,12 @@
                                 <span class="text-emerald-600 font-bold text-sm" id="session-count-badge">1</span>
                             </div>
                             <div>
-                                <h3 class="text-lg font-bold text-gray-900">{{ __('កាលវិភាគសរុប') }}</h3>
-                                <p class="text-xs text-gray-500">{{ __('ការកំណត់ ពេល បន្ទប់សិក្សារបស់គ្រូ') }}</p>
+                                <h3 class="text-lg font-bold text-gray-900">{{ __('full_schedule') }}</h3>
+                                <p class="text-xs text-gray-500">{{ __('set_times_and_classrooms_for_lecturers') }}</p>
                             </div>
                         </div>
                         <button type="button" id="add-schedule" class="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-600 rounded-xl text-sm font-bold hover:bg-emerald-100 transition-colors">
-                            <i class="fas fa-plus text-xs"></i> <span>{{ __('បន្ថែម') }}</span>
+                            <i class="fas fa-plus text-xs"></i> <span>{{ __('add') }}</span>
                         </button>
                     </div>
                     <div id="schedules-container" class="space-y-3"></div>
@@ -198,10 +198,10 @@
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                     <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
                         <a href="{{ route('admin.manage-course-offerings') }}" class="flex items-center gap-2 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl font-bold text-sm transition-colors">
-                            <i class="fas fa-times"></i> <span>{{ __('បោះបង់') }}</span>
+                            <i class="fas fa-times"></i> <span>{{ __('cancel_2') }}</span>
                         </a>
                         <button type="submit" class="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white px-8 py-3 rounded-xl font-bold text-sm shadow-lg shadow-emerald-500/25 transition-all">
-                            <i class="fas fa-check"></i> <span>{{ __('បង្កើតការផ្តល់ជូនមុខវិជ្ជា') }}</span>
+                            <i class="fas fa-check"></i> <span>{{ __('create_course_offering') }}</span>
                         </button>
                     </div>
                 </div>
@@ -298,30 +298,30 @@
                     '</div>' +
                     '<div class="grid grid-cols-2 md:grid-cols-4 gap-3">' +
                         '<div class="col-span-2 md:col-span-1">' +
-                            '<label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __("ថ្ងៃ") }}</label>' +
+                            '<label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __("days") }}</label>' +
                             '<select name="schedules[' + scheduleIndex + '][day_of_week]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>' +
-                                '<option value="">{{ __("រើសថ្ងៃ") }}</option>' +
-                                '<option value="Monday" ' + (initialData.day_of_week === 'Monday' ? 'selected' : '') + '>{{ __("ច័ន្ទ") }}</option>' +
-                                '<option value="Tuesday" ' + (initialData.day_of_week === 'Tuesday' ? 'selected' : '') + '>{{ __("អង្គារ") }}</option>' +
-                                '<option value="Wednesday" ' + (initialData.day_of_week === 'Wednesday' ? 'selected' : '') + '>{{ __("ពុធ") }}</option>' +
-                                '<option value="Thursday" ' + (initialData.day_of_week === 'Thursday' ? 'selected' : '') + '>{{ __("ព្រហស្បតិ៍") }}</option>' +
-                                '<option value="Friday" ' + (initialData.day_of_week === 'Friday' ? 'selected' : '') + '>{{ __("សុក្រ") }}</option>' +
-                                '<option value="Saturday" ' + (initialData.day_of_week === 'Saturday' ? 'selected' : '') + '>{{ __("សៅរ៍") }}</option>' +
-                                '<option value="Sunday" ' + (initialData.day_of_week === 'Sunday' ? 'selected' : '') + '>{{ __("អាទិត្យ") }}</option>' +
+                                '<option value="">{{ __("select_a_day") }}</option>' +
+                                '<option value="Monday" ' + (initialData.day_of_week === 'Monday' ? 'selected' : '') + '>{{ __("monday") }}</option>' +
+                                '<option value="Tuesday" ' + (initialData.day_of_week === 'Tuesday' ? 'selected' : '') + '>{{ __("tuesday") }}</option>' +
+                                '<option value="Wednesday" ' + (initialData.day_of_week === 'Wednesday' ? 'selected' : '') + '>{{ __("wednesday") }}</option>' +
+                                '<option value="Thursday" ' + (initialData.day_of_week === 'Thursday' ? 'selected' : '') + '>{{ __("thursday") }}</option>' +
+                                '<option value="Friday" ' + (initialData.day_of_week === 'Friday' ? 'selected' : '') + '>{{ __("friday") }}</option>' +
+                                '<option value="Saturday" ' + (initialData.day_of_week === 'Saturday' ? 'selected' : '') + '>{{ __("saturday") }}</option>' +
+                                '<option value="Sunday" ' + (initialData.day_of_week === 'Sunday' ? 'selected' : '') + '>{{ __("sunday") }}</option>' +
                             '</select>' +
                         '</div>' +
                         '<div class="col-span-2 md:col-span-1">' +
-                            '<label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __("បន្ទប់") }}</label>' +
+                            '<label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __("room") }}</label>' +
                             '<select name="schedules[' + scheduleIndex + '][room_id]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" required>' +
-                                '<option value="">{{ __("រើសបន្ទប់") }}</option>' + roomOptions +
+                                '<option value="">{{ __("select_a_room") }}</option>' + roomOptions +
                             '</select>' +
                         '</div>' +
                         '<div>' +
-                            '<label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __("ម៉ោងចាប់ផ្តើម") }}</label>' +
+                            '<label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __("start_time") }}</label>' +
                             '<input type="time" name="schedules[' + scheduleIndex + '][start_time]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" value="' + (initialData.start_time || '') + '" required>' +
                         '</div>' +
                         '<div>' +
-                            '<label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __("ម៉ោងបញ្ចប់") }}</label>' +
+                            '<label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __("end_time") }}</label>' +
                             '<input type="time" name="schedules[' + scheduleIndex + '][end_time]" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-emerald-500 text-sm" value="' + (initialData.end_time || '') + '" required>' +
                         '</div>' +
                     '</div>' +
@@ -398,7 +398,7 @@
                 const hasError = payload.internal || payload.conflict;
 
                 if (payload.internal) {
-                    html += warnBox('red', '{{ __("⚠ ម៉ោងនេះជាន់គ្នាជាមួយ Session ផ្សេងទៀតក្នុងបញ្ជីខាងក្រោម។") }}');
+                    html += warnBox('red', '{{ __("this_time_conflicts_with_another_session_listed_below") }}');
                 }
                 if (payload.conflict && payload.conflicts && payload.conflicts.length > 0) {
                     const c = payload.conflicts[0];
@@ -408,11 +408,11 @@
                         (c.start ? ' [' + c.start + '–' + c.end + ']' : ''));
                 }
                 if (!hasError && payload.no_time_available) {
-                    html += warnBox('amber', '{{ __("⛔ គ្មានម៉ោងទំនេរនៅសល់សម្រាប់ថ្ងៃនេះទៀតទេ — Session ទាំងអស់ពេញហើយ។") }}');
+                    html += warnBox('amber', '{{ __("no_free_slots_left_for_today_all_sessions_are_full") }}');
                 } else if (payload.slots && payload.slots.length > 0) {
                     html += '<div class="flex flex-wrap gap-1.5">' + payload.slots.map(function(slot) {
                         const free = slot.status === 'free';
-                        const title = free ? '{{ __("ទំនេរ") }}' : ((slot.course || '') + (slot.lecturer ? ' — ' + slot.lecturer : ''));
+                        const title = free ? '{{ __("free") }}' : ((slot.course || '') + (slot.lecturer ? ' — ' + slot.lecturer : ''));
                         return '<span class="px-2 py-0.5 rounded-lg text-[10px] font-bold border ' + (free ?
                                 'bg-emerald-50 text-emerald-700 border-emerald-100' :
                                 'bg-red-50 text-red-500 border-red-100 line-through') +
@@ -420,7 +420,7 @@
                     }).join('') + '</div>';
                 }
                 if (!payload.conflict && payload.times_match_session === false) {
-                    html += warnBox('info', '{{ __("ℹ ចំណាំ៖ ម៉ោងដែលបានជ្រើសរើសដែលមិនត្រូវនឹង Session ៩០ នាទី គឺមិនមែនជាម៉ោង ស្តង់ដារណាឡើយ។") }}');
+                    html += warnBox('info', '{{ __("schedule_times_mismatch") }}');
                 }
 
                 el.innerHTML = html;
@@ -466,7 +466,7 @@
                             renderFeedback(row, { internal: findInternalOverlap(row) });
                             const el = row.querySelector('.schedule-feedback');
                             if (el && el.innerHTML !== '') {
-                                el.insertAdjacentHTML('beforeend', warnBox('info', '{{ __("⚠ ពិនិត្យភាពរវល់របស់បន្ទប់មិនបានសម្រេច សូមព្យាយាមម្តងទៀត។") }}'));
+                                el.insertAdjacentHTML('beforeend', warnBox('info', '{{ __("room_availability_check_failed_please_try_again") }}'));
                             }
                         }
                     });
@@ -510,7 +510,7 @@
             if (lecturerEl) {
                 new TomSelect(lecturerEl, {
                     maxItems: 1,
-                    placeholder: '{{ __("ជ្រើសរើសសាស្ត្រាចារ្យ") }}',
+                    placeholder: '{{ __("select_a_lecturer") }}',
                     searchField: ['text'],
                     sortField: { field: 'text', direction: 'asc' },
                     plugins: {

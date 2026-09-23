@@ -42,7 +42,7 @@
                                 <span class="max-w-[140px] truncate">{{ $studentDepartment->name_km }}</span>
                                 <span class="bg-white/15 px-2 py-0.5 rounded-md text-[10px]">G{{ $user->generation }}</span>
                                 @if($computedYearLevel)
-                                    <span class="bg-white/15 px-2 py-0.5 rounded-md text-[10px]">{{ __('ឆ្នាំទី') }}{{ $computedYearLevel }}</span>
+                                    <span class="bg-white/15 px-2 py-0.5 rounded-md text-[10px]">{{ __('year') }}{{ $computedYearLevel }}</span>
                                 @endif
                             </div>
                         @endif
@@ -137,7 +137,7 @@
                 <div class="bg-white p-4 rounded-2xl border border-violet-100 shadow-sm flex items-center gap-3">
                     <div class="w-11 h-11 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center text-lg flex-shrink-0"><i class="fas fa-check-double"></i></div>
                     <div class="min-w-0">
-                        <p class="text-[10px] text-gray-400 font-bold uppercase truncate">{{ __('មុខវិជ្ជាបានបញ្ចប់') }}</p>
+                        <p class="text-[10px] text-gray-400 font-bold uppercase truncate">{{ __('completed_courses') }}</p>
                         <h4 class="text-xl font-black text-gray-800">{{ $completedCoursesCount ?? 0 }}<span class="text-sm font-bold text-gray-400">/{{ $totalCoursesInDepartment }}</span></h4>
                     </div>
                 </div>
@@ -153,10 +153,10 @@
                         <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm">
                             <i class="fas fa-chart-line"></i>
                         </div>
-                        <h4 class="text-base font-bold text-gray-800">{{ __('សមិទ្ធផលសិក្សា') }}</h4>
+                        <h4 class="text-base font-bold text-gray-800">{{ __('academic_achievement') }}</h4>
                     </div>
                     <a wire:navigate href="{{ route('student.my-grades') }}" class="text-xs font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1">
-                        {{ __('មើលពិន្ទុទាំងអស់') }} <i class="fas fa-arrow-right text-[10px]"></i>
+                        {{ __('view_all_grades') }} <i class="fas fa-arrow-right text-[10px]"></i>
                     </a>
                 </div>
                 <div class="p-6">
@@ -175,7 +175,7 @@
                                 <i class="fas fa-percent text-lg"></i>
                             </div>
                             <p class="text-2xl font-black text-blue-700">{{ $averageScore }}%</p>
-                            <p class="text-[10px] font-bold text-blue-500 uppercase tracking-wide mt-1">{{ __('មធ្យមភាគ') }}</p>
+                            <p class="text-[10px] font-bold text-blue-500 uppercase tracking-wide mt-1">{{ __('average') }}</p>
                         </div>
                         {{-- Rank --}}
                         <div class="text-center p-4 bg-purple-50/50 rounded-2xl border border-purple-100">
@@ -183,7 +183,7 @@
                                 <i class="fas fa-trophy text-lg"></i>
                             </div>
                             <p class="text-2xl font-black text-purple-700">{{ $overallRank }}<span class="text-sm font-bold text-purple-400">/{{ $totalClassmates }}</span></p>
-                            <p class="text-[10px] font-bold text-purple-500 uppercase tracking-wide mt-1">{{ __('ចំណាត់ថ្នាក់') }}</p>
+                            <p class="text-[10px] font-bold text-purple-500 uppercase tracking-wide mt-1">{{ __('rank') }}</p>
                         </div>
                         {{-- Grade --}}
                         <div class="text-center p-4 bg-amber-50/50 rounded-2xl border border-amber-100">
@@ -191,7 +191,7 @@
                                 <i class="fas fa-medal text-lg"></i>
                             </div>
                             <p class="text-2xl font-black text-amber-700">{{ $overallGrade }}</p>
-                            <p class="text-[10px] font-bold text-amber-500 uppercase tracking-wide mt-1">{{ __('និទ្ទេសរួម') }}</p>
+                            <p class="text-[10px] font-bold text-amber-500 uppercase tracking-wide mt-1">{{ __('overall_grade') }}</p>
                         </div>
                     </div>
                 </div>
@@ -263,7 +263,7 @@
                                 <h4 class="text-base font-bold text-gray-800">{{ __('stu_enrolled_courses') }}</h4>
                             </div>
                             <a wire:navigate href="{{ route('student.my-enrolled-courses') }}" class="text-xs font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1">
-                                {{ __('មើលទាំងអស់') }} <i class="fas fa-arrow-right text-[10px]"></i>
+                                {{ __('view_all') }} <i class="fas fa-arrow-right text-[10px]"></i>
                             </a>
                         </div>
 
@@ -273,7 +273,7 @@
                                     <i class="fas fa-book-open text-xl"></i>
                                 </div>
                                 <p class="text-sm font-bold text-gray-400">{{ __('stu_no_enrolled_courses') }}</p>
-                                <p class="text-xs text-gray-300 mt-1">{{ __('មិនមានមុខវិជ្ជាចូលរៀនថ្ងៃនេះទេ។') }}</p>
+                                <p class="text-xs text-gray-300 mt-1">{{ __('no_classes_today') }}</p>
                             </div>
                         @else
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -302,7 +302,7 @@
                                         </div>
                                         <div class="min-w-0">
                                             <h3 class="font-bold text-gray-800 text-sm leading-tight">{{ $course->course->title_km ?? ($course->course->title_en ?? '') }}</h3>
-                                            <p class="text-[10px] text-emerald-500 font-bold uppercase tracking-wider mt-0.5">{{ $course->academic_year }} • {{ __('ឆមាស') }} {{ $course->semester }}</p>
+                                            <p class="text-[10px] text-emerald-500 font-bold uppercase tracking-wider mt-0.5">{{ $course->academic_year }} • {{ __('semester') }} {{ $course->semester }}</p>
                                         </div>
                                     </div>
 
@@ -313,7 +313,7 @@
                                         <span class="text-xs font-semibold text-gray-600">{{ $course->lecturer->name ?? 'N/A' }}</span>
                                         @if($isLeader)
                                             <span class="ml-auto inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-50 text-amber-600 text-[10px] font-bold border border-amber-100">
-                                                <i class="fas fa-star text-[8px]"></i> {{ __('ប្រធានថ្នាក់') }}
+                                                <i class="fas fa-star text-[8px]"></i> {{ __('class_leader') }}
                                             </span>
                                         @endif
                                     </div>
@@ -321,17 +321,17 @@
                                     <div class="flex gap-2">
                                         @if($course->today_status == 'present')
                                             <button disabled class="flex-1 py-2.5 rounded-xl font-bold text-xs bg-green-50 text-green-600 cursor-default flex items-center justify-center gap-1.5">
-                                                <i class="fas fa-check"></i> {{ __('បានស្កែនរួចរាល់') }}
+                                                <i class="fas fa-check"></i> {{ __('already_scanned') }}
                                             </button>
                                         @else
                                             <a wire:navigate href="{{ route('student.scan') }}" class="flex-1 py-2.5 rounded-xl font-bold text-xs bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm shadow-emerald-100 transition-all flex items-center justify-center gap-1.5">
-                                                <i class="fas fa-qrcode"></i> {{ __('ស្កែនវត្តមាន') }}
+                                                <i class="fas fa-qrcode"></i> {{ __('scan_attendance') }}
                                             </a>
                                         @endif
 
                                         @if($isLeader)
                                             <a wire:navigate href="{{ route('student.leader.attendance', $course->id) }}"
-                                               class="py-2.5 px-3 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-800 hover:text-white transition-all flex items-center justify-center gap-1.5 text-xs font-bold" title="{{ __('គ្រប់គ្រងវត្តមាន (ប្រធានថ្នាក់)') }}">
+                                               class="py-2.5 px-3 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-800 hover:text-white transition-all flex items-center justify-center gap-1.5 text-xs font-bold" title="{{ __('manage_attendance_class_leader') }}">
                                                 <i class="fas fa-clipboard-check"></i>
                                             </a>
                                         @endif
@@ -350,7 +350,7 @@
                                 <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm">
                                     <i class="fas fa-plus-circle"></i>
                                 </div>
-                                <h4 class="text-base font-bold text-gray-800">{{ __('មុខវិជ្ជាដែលអាចចុះឈ្មោះ') }}</h4>
+                                <h4 class="text-base font-bold text-gray-800">{{ __('courses_available_for_enrollment') }}</h4>
                             </div>
                             <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-600">{{ $availableCoursesInDepartment->count() }}</span>
                         </div>
@@ -377,7 +377,7 @@
                                         @csrf
                                         <input type="hidden" name="course_offering_id" value="{{ $courseOffering->id }}">
                                         <button class="w-full bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white py-2.5 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-2 group">
-                                            <i class="fas fa-plus transition-transform group-hover:rotate-90"></i> {{ __('ចុះឈ្មោះចូលរៀន') }}
+                                            <i class="fas fa-plus transition-transform group-hover:rotate-90"></i> {{ __('enroll') }}
                                         </button>
                                     </form>
                                 </div>
@@ -389,7 +389,7 @@
                             <div class="w-12 h-12 bg-gray-50 text-gray-300 rounded-xl flex items-center justify-center mx-auto mb-3">
                                 <i class="fas fa-graduation-cap text-xl"></i>
                             </div>
-                            <p class="text-sm font-bold text-gray-400">{{ __('មិនទាន់មានកម្មវិធីសិក្សា? សូមទាក់ទងរដ្ឋបាល។') }}</p>
+                            <p class="text-sm font-bold text-gray-400">{{ __('no_programs_yet_please_contact_the_administration') }}</p>
                         </div>
                     @endif
                 </div>
@@ -416,7 +416,7 @@
                         {{-- progress bar --}}
                         <div class="mb-5">
                             <div class="flex items-center justify-between text-xs font-bold mb-1.5">
-                                <span class="text-gray-500">{{ __('វត្តមានសរុប') }}</span>
+                                <span class="text-gray-500">{{ __('total_attendance_2') }}</span>
                                 <span class="text-{{ $scoreColor }}-600">{{ $attendanceScore }}/15</span>
                             </div>
                             <div class="h-2.5 bg-slate-100 rounded-full overflow-hidden">
@@ -448,7 +448,7 @@
                                 <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm">
                                     <i class="fas fa-bell"></i>
                                 </div>
-                                <h4 class="text-sm font-bold text-gray-800">{{ __('ព័ត៌មានថ្មីៗ') }}</h4>
+                                <h4 class="text-sm font-bold text-gray-800">{{ __('latest_updates') }}</h4>
                             </div>
                             <span class="inline-flex items-center gap-1 bg-emerald-50 text-emerald-600 text-[10px] font-black px-2 py-1 rounded-md uppercase tracking-wider">
                                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Live
@@ -466,7 +466,7 @@
                                             <div class="flex-1 min-w-0">
                                                 <div class="flex items-center gap-2 mb-1">
                                                     <span class="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded {{ $item->type === 'announcement' ? 'bg-emerald-50 text-emerald-700' : 'bg-emerald-50 text-emerald-700' }}">
-                                                        {{ $item->type === 'announcement' ? __('សេចក្តីជូនដំណឹង') : __('ការជូនដំណឹង') }}
+                                                        {{ $item->type === 'announcement' ? __('announcement') : __('notifications') }}
                                                     </span>
                                                     <span class="text-[10px] text-gray-400 font-bold whitespace-nowrap">{{ $item->created_at->diffForHumans() }}</span>
                                                 </div>
@@ -477,7 +477,7 @@
                                                     @if(!$item->is_read)
                                                         <button onclick="markAsRead('{{ $item->type }}', '{{ $item->id }}')"
                                                                 class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-600 text-[10px] font-bold hover:bg-emerald-600 hover:text-white transition-all">
-                                                            {{ __('អានរួច') }}
+                                                            {{ __('read_2') }}
                                                         </button>
                                                     @endif
                                                 </div>
@@ -490,7 +490,7 @@
                                     <div class="w-12 h-12 bg-gray-50 text-gray-300 rounded-xl flex items-center justify-center mx-auto mb-3">
                                         <i class="fas fa-bell-slash text-lg"></i>
                                     </div>
-                                    <p class="font-bold text-sm text-gray-400">{{ __('មិនមានសេចក្តីប្រកាសថ្មីនៅឡើយទេ។') }}</p>
+                                    <p class="font-bold text-sm text-gray-400">{{ __('no_new_announcements_yet') }}</p>
                                 </div>
                             @endforelse
                         </div>
@@ -505,18 +505,18 @@
     <div id="telegramEntryModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z-[9999] p-4">
         <div class="bg-white rounded-3xl p-8 w-full max-w-md border border-slate-100 shadow-2xl">
             <h3 class="text-xl font-black text-slate-800 mb-6 flex items-center gap-3">
-                <i class="fab fa-telegram-plane text-emerald-500"></i> {{ __('ភ្ជាប់ Telegram') }}
+                <i class="fab fa-telegram-plane text-emerald-500"></i> {{ __('connect_telegram') }}
             </h3>
             <form action="{{ route('student.update_telegram') }}" method="POST">
                 @csrf
                 <div class="mb-6 text-xs text-slate-500 leading-relaxed bg-slate-50 p-4 rounded-2xl">
-                    <p>១. {{ __('ផ្ញើសារទៅ') }} <a href="https://t.me/userinfobot" target="_blank" class="text-emerald-600 font-bold">@userinfobot</a></p>
-                    <p class="mt-1">២. {{ __('ចុច START លើ') }} <a href="https://t.me/kong_grade_bot" target="_blank" class="text-emerald-600 font-bold">@kong_grade_bot</a></p>
+                    <p>១. {{ __('send_a_message_to') }} <a href="https://t.me/userinfobot" target="_blank" class="text-emerald-600 font-bold">@userinfobot</a></p>
+                    <p class="mt-1">២. {{ __('press_start_on') }} <a href="https://t.me/kong_grade_bot" target="_blank" class="text-emerald-600 font-bold">@kong_grade_bot</a></p>
                 </div>
-                <input type="number" name="telegram_chat_id" required placeholder="{{ __('បញ្ចូលលេខ Chat ID') }}" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl mb-4 focus:ring-4 focus:ring-emerald-500/10 outline-none">
+                <input type="number" name="telegram_chat_id" required placeholder="{{ __('enter_chat_id') }}" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl mb-4 focus:ring-4 focus:ring-emerald-500/10 outline-none">
                 <div class="flex gap-3">
-                    <button type="button" onclick="document.getElementById('telegramEntryModal').classList.add('hidden')" class="flex-1 py-4 bg-slate-100 rounded-2xl font-bold text-slate-500">{{ __('បោះបង់') }}</button>
-                    <button type="submit" class="flex-[2] py-4 bg-emerald-600 text-white rounded-2xl font-bold">{{ __('រក្សាទុក') }}</button>
+                    <button type="button" onclick="document.getElementById('telegramEntryModal').classList.add('hidden')" class="flex-1 py-4 bg-slate-100 rounded-2xl font-bold text-slate-500">{{ __('cancel_2') }}</button>
+                    <button type="submit" class="flex-[2] py-4 bg-emerald-600 text-white rounded-2xl font-bold">{{ __('save_2') }}</button>
                 </div>
             </form>
         </div>
@@ -563,7 +563,7 @@
         window.linkWithGoogle = () => {
             const btn = document.getElementById('btn-link-google');
             const originalHtml = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> {{ __("កំពុងដំណើរការ...") }}';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> {{ __("processing") }}';
             btn.disabled = true;
 
             signInWithPopup(auth, provider)
@@ -582,31 +582,31 @@
                     });
                 })
                 .then(async (res) => {
-                    const data = await res.json().catch(() => ({ status: 'error', message: '{{ __("មានបញ្ហាក្នុងការទាក់ទងនឹង server។") }}' }));
+                    const data = await res.json().catch(() => ({ status: 'error', message: '{{ __("problem_contacting_the_server") }}' }));
                     if (data.status === 'linked') {
                         Swal.fire({
                             icon: 'success',
-                            title: '{{ __("ជោគជ័យ") }}',
-                            text: '{{ __("គណនី Google ត្រូវបានភ្ជាប់!") }}',
+                            title: '{{ __("success_3") }}',
+                            text: '{{ __("google_account_linked") }}',
                             timer: 2000,
                             showConfirmButton: false
                         }).then(() => window.location.reload());
                     } else {
                         btn.innerHTML = originalHtml;
                         btn.disabled = false;
-                        Swal.fire('{{ __("បរាជ័យ") }}', data.message || '{{ __("មិនអាចភ្ជាប់ Google បានទេ") }}', 'error');
+                        Swal.fire('{{ __("failed_2") }}', data.message || '{{ __("cannot_link_google_account") }}', 'error');
                     }
                 })
                 .catch((error) => {
                     console.error("Firebase Error:", error.code);
                     btn.innerHTML = originalHtml;
                     btn.disabled = false;
-                    let msg = '{{ __("មិនអាចភ្ជាប់ Google បានទេ") }}';
-                    if (error.code === 'auth/popup-closed-by-user') msg = '{{ __("បង្អួចបានបិទមុនពេលភ្ជាប់បានសម្រេច។") }}';
-                    else if (error.code === 'auth/popup-blocked') msg = '{{ __("Popup ត្រូវបានបិទ។ សូមអនុញ្ញាត popup សម្រាប់ទំព័រនេះ។") }}';
-                    else if (error.code === 'auth/unauthorized-domain') msg = '{{ __("Domain នេះមិនទាន់បានអនុញ្ញាតនៅក្នុង Firebase Console ទេ។") }}';
+                    let msg = '{{ __("cannot_link_google_account") }}';
+                    if (error.code === 'auth/popup-closed-by-user') msg = '{{ __("the_window_was_closed_before_linking_completed") }}';
+                    else if (error.code === 'auth/popup-blocked') msg = '{{ __("popup_blocked_please_allow_popups_for_this_page") }}';
+                    else if (error.code === 'auth/unauthorized-domain') msg = '{{ __("this_domain_is_not_yet_authorized_in_the_firebase_console") }}';
                     else if (error.message) msg = error.message;
-                    Swal.fire('{{ __("បរាជ័យ") }}', msg, 'error');
+                    Swal.fire('{{ __("failed_2") }}', msg, 'error');
                 });
         };
     </script>

@@ -126,7 +126,7 @@ class ProfessorController extends Controller
                 $totalClasses = \App\Models\Schedule::where('course_offering_id', $offering->id)->count();
                 $attendedClasses = AttendanceRecord::where('course_offering_id', $offering->id)
                     ->where('student_user_id', $student->id)
-                    ->where('status', 'present')
+                    ->whereIn('status', ['present', 'late'])
                     ->count();
 
                 $attendanceRate = $totalClasses > 0 ? ($attendedClasses / $totalClasses) * 100 : 100;
@@ -174,7 +174,7 @@ class ProfessorController extends Controller
     /**
      * API to get course offerings with associated students for modals.
      */
-    public function getStudentsInCourseOffering($offering_id)
+    public function getStudentsInCourseOffering(Request $request, $offering_id)
     {
         $user = Auth::user();
 
@@ -184,6 +184,7 @@ class ProfessorController extends Controller
                 'course',
                 'department',
                 'studentCourseEnrollments.student.studentProfile',
+                'studentCourseEnrollments.student.profile',
                 'studentCourseEnrollments.student.studentDepartmentEnrollments.department',
             ])
             ->firstOrFail();
@@ -220,8 +221,28 @@ class ProfessorController extends Controller
                 $stats['leaders']++;
             }
 
+            $student->is_class_leader = (bool) $enrollment->is_class_leader;
+
             return $student;
         });
+
+        $search = trim((string) $request->input('search', ''));
+        if ($search !== '') {
+            $needle = mb_strtolower($search);
+            $students = $students->filter(function ($student) use ($needle) {
+                $values = [
+                    $student->name,
+                    $student->email,
+                    $student->student_id_code,
+                    $student->studentProfile?->full_name_km,
+                    $student->studentProfile?->full_name_en,
+                    $student->profile?->full_name_km,
+                    $student->profile?->full_name_en,
+                ];
+
+                return collect($values)->contains(fn ($value) => str_contains(mb_strtolower((string) $value), $needle));
+            })->values();
+        }
 
         // ៣. រៀបចំ Pagination
         $perPage = 10;
@@ -232,8 +253,9 @@ class ProfessorController extends Controller
             'path' => request()->url(),
             'pageName' => 'studentsPage',
         ]);
+        $paginatedStudents->appends(['search' => $search]);
 
-        return view('professor.students.index', compact('courseOffering', 'paginatedStudents', 'stats'));
+        return view('professor.students.index', compact('courseOffering', 'paginatedStudents', 'stats', 'search'));
     }
 
     /**
@@ -324,33 +346,13 @@ class ProfessorController extends Controller
         return view('professor.students.show_profile', compact('courseOffering', 'student', 'computedYearLevel'));
     }
 
-    public function showStudentsInCourse(CourseOffering $courseOffering)
+    public function redirectToCourseStudents(CourseOffering $courseOffering)
     {
-        if ($courseOffering->lecturer_user_id !== Auth::id()) {
-            abort(403, 'Unauthorized action.');
-        }
+        abort_unless($courseOffering->lecturer_user_id === Auth::id(), 403);
 
-        $courseOffering->load(['department', 'course']);
-
-        $studentIds = $courseOffering->studentCourseEnrollments()->pluck('student_user_id');
-        $students = User::whereIn('id', $studentIds)
-            ->with(['studentProfile', 'studentDepartmentEnrollments.department'])
-            ->orderBy('name', 'asc')
-            ->paginate(10);
-
-        // Compute year levels
-        $progressionService = app(\App\Services\StudentProgressionService::class);
-        $students->getCollection()->transform(function ($student) use ($progressionService) {
-            if ($student->department) {
-                $student->computed_year_level = $progressionService->getYearLevel($student, $student->department);
-            } else {
-                $student->computed_year_level = null;
-            }
-
-            return $student;
-        });
-
-        return view('professor.students.index', compact('courseOffering', 'students'));
+        return redirect()->route('professor.students.in-course-offering', [
+            'offering_id' => $courseOffering->id,
+        ]);
     }
 
     public function printStudents(CourseOffering $courseOffering)
@@ -516,7 +518,7 @@ class ProfessorController extends Controller
         ]);
 
         foreach ($request->attendance as $studentId => $status) {
-            if (! in_array($status, ['present', 'absent', 'permission'])) {
+            if (! in_array($status, ['present', 'absent', 'permission', 'late'])) {
                 continue;
             }
             DB::table('attendances')->updateOrInsert(
@@ -550,7 +552,7 @@ class ProfessorController extends Controller
             ->withCount([
                 'attendanceRecords as present_count' => function ($query) use ($courseOfferingId) {
                     $query->where('course_offering_id', $courseOfferingId)
-                        ->where('status', 'present');
+                        ->whereIn('status', ['present', 'late']);
                 },
                 'attendanceRecords as absent_count' => function ($query) use ($courseOfferingId) {
                     $query->where('course_offering_id', $courseOfferingId)
@@ -577,7 +579,7 @@ class ProfessorController extends Controller
             ->withCount([
                 'attendanceRecords as present_count' => function ($query) use ($courseOfferingId) {
                     $query->where('course_offering_id', $courseOfferingId)
-                        ->where('status', 'present');
+                        ->whereIn('status', ['present', 'late']);
                 },
                 'attendanceRecords as absent_count' => function ($query) use ($courseOfferingId) {
                     $query->where('course_offering_id', $courseOfferingId)

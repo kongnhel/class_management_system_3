@@ -2,7 +2,7 @@
     <div class="flex flex-col items-center gap-3">
         @if ($paginator->firstItem())
             <p class="text-sm font-medium text-slate-500">
-                {{ __('បង្ហាញ :min ដល់ :max ក្នុងចំណោម :total លទ្ធផល', [
+                {{ __('pagination_showing_min_to_max_of_total_results', [
                     'min'   => $paginator->firstItem(),
                     'max'   => $paginator->lastItem(),
                     'total' => $paginator->total(),

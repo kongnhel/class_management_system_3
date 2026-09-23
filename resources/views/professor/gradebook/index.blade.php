@@ -2,11 +2,11 @@
     <table class="w-full text-left border-collapse">
         <thead class="bg-slate-50 border-b border-slate-200">
             <tr>
-                <th class="px-6 py-4 text-sm font-semibold text-slate-700">{{ __('ចំណាត់ថ្នាក់') }}</th>
-                <th class="px-6 py-4 text-sm font-semibold text-slate-700">{{ __('អត្តលេខ') }}</th>
-                <th class="px-6 py-4 text-sm font-semibold text-slate-700">{{ __('ឈ្មោះនិស្សិត') }}</th>
-                <th class="px-6 py-4 text-sm font-semibold text-slate-700 text-center">{{ __('ពិន្ទុសរុប (100%)') }}</th>
-                <th class="px-6 py-4 text-sm font-semibold text-slate-700 text-center">{{ __('និទ្ទេស') }}</th>
+                <th class="px-6 py-4 text-sm font-semibold text-slate-700">{{ __('rank') }}</th>
+                <th class="px-6 py-4 text-sm font-semibold text-slate-700">{{ __('student_id') }}</th>
+                <th class="px-6 py-4 text-sm font-semibold text-slate-700">{{ __('student_name') }}</th>
+                <th class="px-6 py-4 text-sm font-semibold text-slate-700 text-center">{{ __('total_score_100') }}</th>
+                <th class="px-6 py-4 text-sm font-semibold text-slate-700 text-center">{{ __('grade') }}</th>
             </tr>
         </thead>
         <tbody class="divide-y divide-slate-100">

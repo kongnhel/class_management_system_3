@@ -5,7 +5,7 @@
                 {{-- Title --}}
                 <div class="text-center lg:text-left">
                     <h2 class="font-extrabold text-2xl text-slate-800 leading-tight tracking-tight">
-                        {{ __('កែសម្រួលពិន្ទុវត្តមាន') }}
+                        {{ __('edit_attendance_score') }}
                     </h2>
                     <div class="flex items-center justify-center lg:justify-start mt-1 text-slate-500 space-x-2">
                         <div class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></div>
@@ -22,7 +22,7 @@
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                         </svg>
-                        {{ __('ត្រឡប់ក្រោយ') }}
+                        {{ __('go_back') }}
                     </a>
                 </div>
             </div>
@@ -42,11 +42,11 @@
                         {{-- Top Stats Section --}}
                         <div class="grid grid-cols-2 gap-4 mb-10">
                             <div class="p-5 bg-slate-50 rounded-[2rem] border border-slate-100 text-center">
-                                <span class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{{ __('ពិន្ទុស្វ័យប្រវត្តិ') }}</span>
+                                <span class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{{ __('auto_score') }}</span>
                                 <span class="text-2xl font-black text-slate-700">{{ number_format($autoScore, 1) }}</span>
                             </div>
                             <div class="p-5 bg-emerald-50 rounded-[2rem] border border-emerald-100 text-center">
-                                <span class="block text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-2">{{ __('ពិន្ទុអតិបរមា') }}</span>
+                                <span class="block text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-2">{{ __('maximum_score') }}</span>
                                 <span class="text-2xl font-black text-emerald-700">15.0</span>
                             </div>
                         </div>
@@ -55,11 +55,11 @@
                         <div class="space-y-4">
                             <div class="flex items-center justify-between px-2">
                                 <label for="score" class="text-sm font-black text-slate-700 uppercase tracking-tight">
-                                    {{ __('បញ្ចូលពិន្ទុថ្មី (Manual Override)') }}
+                                    {{ __('attendance_score') }}
                                 </label>
                                 @if($enrollment->attendance_score_manual !== null)
                                     <span class="px-3 py-1 bg-amber-100 text-amber-700 text-[10px] font-bold rounded-full border border-amber-200 animate-pulse">
-                                        {{ __('កំពុងប្រើពិន្ទុដៃ') }}
+                                        {{ __('using_manual_score') }}
                                     </span>
                                 @endif
                             </div>
@@ -84,7 +84,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
                                 <p class="text-[11px] font-bold text-emerald-600 leading-relaxed">
-                                    {{ __('ប្រសិនបើលោកគ្រូបញ្ចូលពិន្ទុនៅទីនេះ ប្រព័ន្ធនឹងឈប់គណនាពិន្ទុតាមវត្តមាន (Auto) ហើយយកលេខនេះជាពិន្ទុចុងក្រោយភ្លាមៗ។ ទុកឱ្យនៅទំនេរវិញ ប្រសិនបើចង់ឱ្យប្រព័ន្ធគណនាដោយស្វ័យប្រវត្តិ។') }}
+                                    {{ __('manual_override') }}
                                 </p>
                             </div>
                         </div>
@@ -96,7 +96,7 @@
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
                             </svg>
-                            {{ __('រក្សាទុកពិន្ទុ') }}
+                            {{ __('save_score') }}
                         </button>
                     </div>
                 </div>

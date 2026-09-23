@@ -1,5 +1,5 @@
 <link rel="icon" type="image/png" href="{{ asset('assets/image/nmu_Logo.png') }}">
-<title>{{ config('app.name', 'Class Management System') }} - ផ្ទៀងផ្ទាត់កូដ</title>
+<title>{{ config('app.name', 'Class Management System') }} - {{ __('auth_verify_code') }}</title>
 
 <x-guest-layout>
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -22,9 +22,9 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                     </svg>
                 </div>
-                <h2 class="text-2xl font-extrabold text-gray-900">ផ្ទៀងផ្ទាត់កូដ</h2>
+                <h2 class="text-2xl font-extrabold text-gray-900">{{ __('auth_verify_code') }}</h2>
                 <p class="text-gray-500 mt-2 text-sm leading-relaxed">
-                    កូដផ្ទៀងផ្ទាត់ ៥ ខ្ទង់ត្រូវបានផ្ញើទៅកាន់<br>
+                    {{ __('auth_verify_code_sent_to') }}<br>
                     <span class="font-bold text-gray-700">{{ $maskedContact }}</span>
                 </p>
             </div>
@@ -50,20 +50,20 @@
                     @endif
 
                     <button type="submit" id="verifyBtn" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-emerald-200 hover:shadow-emerald-300 transition-all duration-200 text-sm disabled:opacity-50 disabled:cursor-not-allowed">
-                        ផ្ទៀងផ្ទាត់
+                        {{ __('auth_verify_btn') }}
                     </button>
                 </form>
 
                 <div class="mt-6 text-center">
-                    <p class="text-sm text-gray-500">មិនទទួលបានកូដ?</p>
+                    <p class="text-sm text-gray-500">{{ __('auth_no_code_received') }}</p>
                     <button type="button" id="resendBtn" onclick="resendOtp()" class="mt-2 text-sm font-bold text-emerald-600 hover:text-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                        ផ្ញើឡើងវិញ <span id="cooldown"></span>
+                        {{ __('auth_resend') }} <span id="cooldown"></span>
                     </button>
                 </div>
 
                 <div class="mt-4 text-center">
                     <a href="{{ route('login') }}" class="text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors">
-                        ← ត្រឡប់ទៅការចូលប្រព័ន្ធ
+                        ← {{ __('auth_back_to_login') }}
                     </a>
                 </div>
             </div>
@@ -168,7 +168,7 @@
                 if (data.status === 'success') {
                     showToast(data.message, 'success');
                 } else {
-                    showToast(data.message || 'មានបញ្ហា។', 'error');
+                    showToast(data.message || '{{ __(\'auth_error_generic\') }}', 'error');
                 }
             }).catch(() => {
                 window.location.reload();

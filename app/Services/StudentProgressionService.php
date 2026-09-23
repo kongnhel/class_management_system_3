@@ -13,18 +13,17 @@ use Illuminate\Support\Facades\DB;
 
 class StudentProgressionService
 {
-    /**
-     * Base year offset for generation mapping.
-     * Generation 16 = joined 2022, so base = 2022 - 16 = 2006.
-     */
-    private const GENERATION_BASE_YEAR = 2006;
+    private ?int $currentAcademicYearStart = null;
+
+    /** @var array<string, Collection> */
+    private array $yearCourseOfferingCache = [];
 
     /**
      * Convert a generation number to the join year.
      */
     public function generationToJoinYear(string|int $generation): int
     {
-        return self::GENERATION_BASE_YEAR + (int) $generation;
+        return (int) config('school.progression.generation_base_year', 2006) + (int) $generation;
     }
 
     /**
@@ -32,7 +31,7 @@ class StudentProgressionService
      */
     public function joinYearToGeneration(int $joinYear): int
     {
-        return $joinYear - self::GENERATION_BASE_YEAR;
+        return $joinYear - (int) config('school.progression.generation_base_year', 2006);
     }
 
     /**
@@ -56,6 +55,13 @@ class StudentProgressionService
 
         $startingYear = $enrollment?->starting_year_level ?? 1;
         $currentAcademicYear = $this->getCurrentAcademicYearStart();
+
+        // Students imported before their generation is known remain at their
+        // enrollment's starting level until the missing data is completed.
+        if ($student->generation === null || trim((string) $student->generation) === '') {
+            return $startingYear;
+        }
+
         $joinYear = $this->generationToJoinYear($student->generation);
 
         if ($joinYear <= 0 || $currentAcademicYear <= 0) {
@@ -297,14 +303,27 @@ class StudentProgressionService
         $advanced = 0;
 
         DB::transaction(function () use ($studentIds, $department, &$advanced) {
-            foreach ($studentIds as $studentId) {
-                $student = User::find($studentId);
+            foreach ($studentIds->unique() as $studentId) {
+                $student = User::whereKey($studentId)
+                    ->where('role', 'student')
+                    ->whereHas('studentDepartmentEnrollments', function ($query) use ($department) {
+                        $query->where('department_id', $department->id)
+                            ->where('status', 'active');
+                    })
+                    ->first();
+
                 if (! $student) {
                     continue;
                 }
 
                 $currentYear = $this->getYearLevel($student, $department);
                 $nextYear = $currentYear + 1;
+
+                // Re-check eligibility on the server. The page selection can
+                // be modified by a client, so UI filtering is not sufficient.
+                if ($this->hasFailedCourses($student, $department)) {
+                    continue;
+                }
 
                 $this->completeYearEnrollments($student, $currentYear);
 
@@ -343,11 +362,20 @@ class StudentProgressionService
      */
     public function enrollInNextYear(User $student, Department $department, int $nextYear): int
     {
+        if ($student->generation === null || trim((string) $student->generation) === '') {
+            return 0;
+        }
+
+        $joinYear = $this->generationToJoinYear($student->generation);
+        $targetYear = $joinYear + $nextYear - 1;
+        $academicYear = $targetYear.'-'.($targetYear + 1);
+
         $enrolledOfferingIds = StudentCourseEnrollment::where('student_user_id', $student->id)
             ->pluck('course_offering_id');
 
         $offerings = CourseOffering::where('department_id', $department->id)
             ->where('generation', $student->generation)
+            ->where('academic_year', $academicYear)
             ->whereNotIn('id', $enrolledOfferingIds)
             ->where('end_date', '>=', now())
             ->get();
@@ -512,11 +540,20 @@ class StudentProgressionService
      */
     private function getYearCourseOfferingIds(User $student, Department $department, int $yearLevel): Collection
     {
+        if ($student->generation === null || trim((string) $student->generation) === '') {
+            return collect();
+        }
+
         $joinYear = $this->generationToJoinYear($student->generation);
         $targetYear = $joinYear + $yearLevel - 1;
         $academicYear = $targetYear.'-'.($targetYear + 1);
+        $cacheKey = $department->id.'|'.$student->generation.'|'.$academicYear;
 
-        return CourseOffering::where('department_id', $department->id)
+        if (isset($this->yearCourseOfferingCache[$cacheKey])) {
+            return $this->yearCourseOfferingCache[$cacheKey];
+        }
+
+        return $this->yearCourseOfferingCache[$cacheKey] = CourseOffering::where('department_id', $department->id)
             ->where('generation', $student->generation)
             ->where('academic_year', $academicYear)
             ->pluck('course_offerings.id');
@@ -542,12 +579,16 @@ class StudentProgressionService
      */
     private function getCurrentAcademicYearStart(): int
     {
-        $current = \App\Models\AcademicYear::getCurrent();
-        if ($current && preg_match('/(\d{4})/', $current->name, $m)) {
-            return (int) $m[1];
+        if ($this->currentAcademicYearStart !== null) {
+            return $this->currentAcademicYearStart;
         }
 
-        return (int) date('Y');
+        $current = \App\Models\AcademicYear::getCurrent();
+        if ($current && preg_match('/(\d{4})/', $current->name, $m)) {
+            return $this->currentAcademicYearStart = (int) $m[1];
+        }
+
+        return $this->currentAcademicYearStart = (int) date('Y');
     }
 
     /**

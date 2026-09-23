@@ -12,15 +12,15 @@
                             </svg>
                         </div>
                         <div>
-                            <h1 class="text-3xl font-bold text-gray-900">{{ __('បញ្ជីសេចក្តីប្រកាស') }}</h1>
-                            <p class="text-gray-500 mt-1">{{ __('គ្រប់គ្រង និងកែសម្រួលសេចក្តីប្រកាសរបស់សាលា') }}</p>
+                            <h1 class="text-3xl font-bold text-gray-900">{{ __('announcement_list') }}</h1>
+                            <p class="text-gray-500 mt-1">{{ __('manage_and_edit_school_announcements') }}</p>
                         </div>
                     </div>
                     <a href="{{ route('admin.announcements.create') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white font-bold rounded-xl shadow-lg hover:from-emerald-700 hover:to-emerald-800 transition-all duration-200 hover:shadow-xl">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                         </svg>
-                        {{ __('បង្កើតសេចក្តីប្រកាសថ្មី') }}
+                        {{ __('create_new_announcement') }}
                     </a>
                 </div>
             </div>
@@ -39,17 +39,17 @@
                                 type="text"
                                 name="search"
                                 value="{{ request('search') }}"
-                                placeholder="{{ __('ស្វែងរកសេចក្តីប្រកាស...') }}"
+                                placeholder="{{ __('search_announcements') }}"
                                 class="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
                             />
                         </div>
                         @if(request('search'))
                             <a href="{{ route('admin.announcements.index') }}" class="px-4 py-3 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors duration-200">
-                                {{ __('សម្អាត') }}
+                                {{ __('clear') }}
                             </a>
                         @endif
                         <button type="submit" class="px-6 py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white font-bold text-sm rounded-xl shadow hover:from-emerald-700 hover:to-emerald-800 transition-all duration-200">
-                            {{ __('ស្វែងរក') }}
+                            {{ __('search_2') }}
                         </button>
                     </div>
                 </form>
@@ -61,12 +61,12 @@
                 <table class="w-full text-sm">
                     <thead>
                         <tr class="bg-gray-50 border-b border-gray-200">
-                            <th class="text-left px-6 py-4 font-bold text-gray-600 text-xs uppercase tracking-wider">{{ __('ចំណងជើង') }}</th>
-                            <th class="text-left px-6 py-4 font-bold text-gray-600 text-xs uppercase tracking-wider">{{ __('ខ្លឹមសារ') }}</th>
-                            <th class="text-left px-6 py-4 font-bold text-gray-600 text-xs uppercase tracking-wider">{{ __('អ្នកបង្ហោះ') }}</th>
-                            <th class="text-left px-6 py-4 font-bold text-gray-600 text-xs uppercase tracking-wider">{{ __('គោលដៅ') }}</th>
-                            <th class="text-left px-6 py-4 font-bold text-gray-600 text-xs uppercase tracking-wider">{{ __('កាលបរិច្ឆេទ') }}</th>
-                            <th class="text-right px-6 py-4 font-bold text-gray-600 text-xs uppercase tracking-wider">{{ __('សកម្មភាព') }}</th>
+                            <th class="text-left px-6 py-4 font-bold text-gray-600 text-xs uppercase tracking-wider">{{ __('title') }}</th>
+                            <th class="text-left px-6 py-4 font-bold text-gray-600 text-xs uppercase tracking-wider">{{ __('content') }}</th>
+                            <th class="text-left px-6 py-4 font-bold text-gray-600 text-xs uppercase tracking-wider">{{ __('posted_by') }}</th>
+                            <th class="text-left px-6 py-4 font-bold text-gray-600 text-xs uppercase tracking-wider">{{ __('target_audience') }}</th>
+                            <th class="text-left px-6 py-4 font-bold text-gray-600 text-xs uppercase tracking-wider">{{ __('date') }}</th>
+                            <th class="text-right px-6 py-4 font-bold text-gray-600 text-xs uppercase tracking-wider">{{ __('actions_2') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
@@ -99,13 +99,13 @@
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                         </svg>
-                                        {{ __('កែប្រែ') }}
+                                        {{ __('edit_2') }}
                                     </a>
                                     <button type="button" onclick="openDeleteModal('{{ route('admin.announcements.destroy', $announcement->id) }}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 rounded-lg transition-colors duration-150">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                         </svg>
-                                        {{ __('លុប') }}
+                                        {{ __('delete_2') }}
                                     </button>
                                 </div>
                             </td>
@@ -119,12 +119,12 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
                                         </svg>
                                     </div>
-                                    <p class="text-gray-500 font-medium">{{ __('មិនទាន់មានសេចក្តីប្រកាសណាមួយនៅឡើយ') }}</p>
+                                    <p class="text-gray-500 font-medium">{{ __('no_announcements_yet') }}</p>
                                     <a href="{{ route('admin.announcements.create') }}" class="mt-4 inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white font-bold text-sm rounded-xl hover:bg-emerald-700 transition-colors duration-200">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                                         </svg>
-                                        {{ __('បង្កើតសេចក្តីប្រកាសថ្មី') }}
+                                        {{ __('create_new_announcement') }}
                                     </a>
                                 </div>
                             </td>
@@ -166,13 +166,13 @@
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                             </svg>
-                            {{ __('កែប្រែ') }}
+                            {{ __('edit_2') }}
                         </a>
                         <button type="button" onclick="openDeleteModal('{{ route('admin.announcements.destroy', $announcement->id) }}')" class="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 text-sm font-bold text-red-700 bg-red-50 hover:bg-red-100 rounded-xl transition-colors duration-150">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                             </svg>
-                            {{ __('លុប') }}
+                            {{ __('delete_2') }}
                         </button>
                     </div>
                 </div>
@@ -183,12 +183,12 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
                         </svg>
                     </div>
-                    <p class="text-gray-500 font-medium">{{ __('មិនទាន់មានសេចក្តីប្រកាសណាមួយនៅឡើយ') }}</p>
+                    <p class="text-gray-500 font-medium">{{ __('no_announcements_yet') }}</p>
                     <a href="{{ route('admin.announcements.create') }}" class="mt-4 inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white font-bold text-sm rounded-xl hover:bg-emerald-700 transition-colors duration-200">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                         </svg>
-                        {{ __('បង្កើតសេចក្តីប្រកាសថ្មី') }}
+                        {{ __('create_new_announcement') }}
                     </a>
                 </div>
                 @endforelse
@@ -216,19 +216,19 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900" id="modal-title">{{ __('លុបសេចក្តីប្រកាស') }}</h3>
-                    <p class="mt-2 text-sm text-gray-500">{{ __('តើអ្នកពិតជាចង់លុបសេចក្តីប្រកាសនេះមែនទេ? សកម្មភាពនេះមិនអាចត្រឡប់វិញបានទេ។') }}</p>
+                    <h3 class="text-xl font-bold text-gray-900" id="modal-title">{{ __('delete_announcement') }}</h3>
+                    <p class="mt-2 text-sm text-gray-500">{{ __('are_you_sure_you_want_to_delete_this_announcement_this_action_cannot_be_undone') }}</p>
                 </div>
                 <div class="px-6 pb-6 flex gap-3">
                     <form id="delete-form" method="POST" action="" class="flex-1">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="w-full py-3 bg-gradient-to-r from-red-500 to-red-600 text-white font-bold text-sm rounded-xl shadow hover:from-red-600 hover:to-red-700 transition-all duration-200">
-                            {{ __('លុបចោលភ្លាម') }}
+                            {{ __('delete_now') }}
                         </button>
                     </form>
                     <button type="button" onclick="closeDeleteModal()" class="flex-1 py-3 bg-gray-100 text-gray-700 font-bold text-sm rounded-xl hover:bg-gray-200 transition-colors duration-200">
-                        {{ __('បោះបង់') }}
+                        {{ __('cancel_2') }}
                     </button>
                 </div>
             </div>

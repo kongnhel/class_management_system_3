@@ -6,13 +6,13 @@
     <x-slot name="header">
         <div class="flex justify-between items-center font-khmer">
             <div>
-                <h2 class="font-black text-3xl text-slate-800">{{ __('ប្រវត្តិវត្តមានរបស់លោកគ្រូ') }}</h2>
-                <p class="text-slate-500">{{ __('កំណត់ត្រាចុះវត្តមានទាំងអស់') }}</p>
+                <h2 class="font-black text-3xl text-slate-800">{{ __('teacher_attendance_history') }}</h2>
+                <p class="text-slate-500">{{ __('all_attendance_records') }}</p>
             </div>
             <div class="flex items-center gap-3">
                 <a wire:navigate href="{{ route('professor.dashboard') }}"
                    class="px-5 py-3 bg-white border border-slate-200 rounded-2xl font-bold text-slate-700 hover:bg-slate-50 transition-all flex items-center gap-2">
-                    <i class="fas fa-arrow-left"></i> {{ __('ត្រឡប់ក្រោយ') }}
+                    <i class="fas fa-arrow-left"></i> {{ __('go_back') }}
                 </a>
             </div>
         </div>
@@ -28,19 +28,19 @@
             <div class="bg-white rounded-2xl border border-slate-100 p-5 mb-6">
                 <form method="GET" action="{{ route('professor.attendance.history') }}" class="flex flex-col sm:flex-row gap-3 items-end">
                     <div class="flex-1">
-                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1 block">ឆមាស</label>
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1 block">{{ __('semester') }}</label>
                         <select name="semester"
                                 class="py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full transition-all">
-                            <option value="">ទាំងអស់</option>
+                            <option value="">{{ __('all') }}</option>
                             <option value="ឆមាសទី១" {{ ($semester ?? request('semester')) == 'ឆមាសទី១' ? 'selected' : '' }}>ឆមាសទី១</option>
                             <option value="ឆមាសទី២" {{ ($semester ?? request('semester')) == 'ឆមាសទី២' ? 'selected' : '' }}>ឆមាសទី២</option>
                         </select>
                     </div>
                     <div class="flex-1">
-                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1 block">ឆ្នាំសិក្សា</label>
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1 block">{{ __('academic_year') }}</label>
                         <select name="academic_year"
                                 class="py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full transition-all">
-                            <option value="">ទាំងអស់</option>
+                            <option value="">{{ __('all') }}</option>
                             @php
                                 $years = \App\Models\CourseOffering::whereNotNull('academic_year')->distinct()->pluck('academic_year')->sortDesc();
                             @endphp
@@ -50,12 +50,12 @@
                         </select>
                     </div>
                     <div class="flex-1">
-                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1 block">ប្រភេទថ្ងៃ</label>
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1 block">{{ __('day_type') }}</label>
                         <select name="day_type"
                                 class="py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full transition-all">
-                            <option value="">ទាំងអស់</option>
-                            <option value="weekday" {{ ($dayType ?? request('day_type')) == 'weekday' ? 'selected' : '' }}>ថ្ងៃសិក្សា (ចន្ទ-សុក្រ)</option>
-                            <option value="weekend" {{ ($dayType ?? request('day_type')) == 'weekend' ? 'selected' : '' }}>ថ្ងៃសប្តាហ៍ (សៅរ៍-អាទិត្យ)</option>
+                            <option value="">{{ __('all') }}</option>
+                            <option value="weekday" {{ ($dayType ?? request('day_type')) == 'weekday' ? 'selected' : '' }}>{{ __('weekday') }}</option>
+                            <option value="weekend" {{ ($dayType ?? request('day_type')) == 'weekend' ? 'selected' : '' }}>{{ __('weekend') }}</option>
                         </select>
                     </div>
                     <div class="flex gap-2 items-center">
@@ -65,15 +65,15 @@
                         @if(($semester ?? request('semester')) && ($academicYear ?? request('academic_year')) && ($dayType ?? request('day_type')))
                         <a href="{{ route('professor.attendance.export', ['semester' => $semester ?? request('semester'), 'academic_year' => $academicYear ?? request('academic_year'), 'day_type' => $dayType ?? request('day_type')]) }}"
                            class="px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-sm font-bold transition-all flex items-center gap-2">
-                            <i class="fas fa-download"></i> {{ __('នាំចេញ XLSX') }}
+                            <i class="fas fa-download"></i> {{ __('export_xlsx') }}
                         </a>
                         @else
                         <div class="relative group">
                             <button type="button" disabled class="px-4 py-2.5 bg-gray-300 text-gray-500 rounded-xl text-sm font-bold cursor-not-allowed flex items-center gap-2">
-                                <i class="fas fa-download"></i> {{ __('នាំចេញ XLSX') }}
+                                <i class="fas fa-download"></i> {{ __('export_xlsx') }}
                             </button>
                             <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs font-bold rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
-                                សូមជ្រើសរើសឆមាស ឆ្នាំសិក្សា និងប្រភេទថ្ងៃដើម្បីនាំចេញ
+                                {{ __('select_semester_academic_year_and_day_type_to_export') }}
                                 <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-900"></div>
                             </div>
                         </div>
@@ -90,7 +90,7 @@
                     </div>
                     <div>
                         <p class="text-2xl font-black text-slate-800">{{ $attendances->total() }}</p>
-                        <p class="text-xs text-slate-400 font-bold">{{ __('សរុបវត្តមាន') }}</p>
+                        <p class="text-xs text-slate-400 font-bold">{{ __('total_attendance') }}</p>
                     </div>
                 </div>
                 <div class="bg-white rounded-2xl border border-slate-100 p-5 flex items-center gap-4">
@@ -99,7 +99,7 @@
                     </div>
                     <div>
                         <p class="text-2xl font-black text-slate-800">{{ $attendances->where('verified_at', '>=', now()->startOfWeek())->count() }}</p>
-                        <p class="text-xs text-slate-400 font-bold">{{ __('សប្តាហ៍នេះ') }}</p>
+                        <p class="text-xs text-slate-400 font-bold">{{ __('this_week') }}</p>
                     </div>
                 </div>
                 <div class="bg-white rounded-2xl border border-slate-100 p-5 flex items-center gap-4">
@@ -108,7 +108,7 @@
                     </div>
                     <div>
                         <p class="text-2xl font-black text-slate-800">{{ $attendances->where('verified_at', '>=', now()->startOfMonth())->count() }}</p>
-                        <p class="text-xs text-slate-400 font-bold">{{ __('ខែនេះ') }}</p>
+                        <p class="text-xs text-slate-400 font-bold">{{ __('this_month') }}</p>
                     </div>
                 </div>
             </div>
@@ -116,7 +116,7 @@
             {{-- Attendance List --}}
             <div class="bg-white rounded-3xl border border-slate-100 overflow-hidden">
                 <div class="px-8 py-6 border-b border-slate-100">
-                    <h3 class="text-lg font-black text-slate-800">{{ __('កំណត់ត្រាចុះវត្តមាន') }}</h3>
+                    <h3 class="text-lg font-black text-slate-800">{{ __('attendance_records') }}</h3>
                 </div>
 
                 @forelse($attendances as $att)
@@ -136,7 +136,7 @@
                                     @endphp
                                     @if($gen)
                                         <span class="inline-flex items-center gap-1 bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full text-[10px] font-bold">
-                                            <i class="fas fa-graduation-cap"></i> {{ __('ជំនាន់ទី') }} {{ $gen }}
+                                            <i class="fas fa-graduation-cap"></i> {{ __('generation_2') }} {{ $gen }}
                                         </span>
                                     @endif
                                     <span class="inline-flex items-center gap-1 bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full text-[10px] font-bold">
@@ -150,6 +150,10 @@
                         </div>
 
                         <div class="flex items-center gap-5 text-sm pl-15 sm:pl-0">
+                            @php
+                                $mode = $att->attendance_mode ?? 'on_campus';
+                                $audit = $attendanceAuditLogs[$att->id] ?? null;
+                            @endphp
                             <div class="flex items-center gap-2 text-slate-500">
                                 <i class="fas fa-calendar-day text-xs"></i>
                                 <span class="font-bold">{{ \Carbon\Carbon::parse($att->verified_at)->format('d M Y') }}</span>
@@ -158,10 +162,29 @@
                                 <i class="fas fa-clock text-xs"></i>
                                 <span class="font-bold">{{ \Carbon\Carbon::parse($att->verified_at)->format('H:i') }}</span>
                             </div>
-                            <span class="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full text-xs font-bold">
-                                <i class="fas fa-check-double"></i> {{ __('វត្តមាន') }}
+                            <span class="inline-flex items-center gap-1.5 {{ $mode === 'online' ? 'bg-sky-50 text-sky-600' : 'bg-emerald-50 text-emerald-600' }} px-3 py-1 rounded-full text-xs font-bold">
+                                <i class="fas {{ $mode === 'online' ? 'fa-video' : 'fa-location-dot' }}"></i>
+                                {{ $mode === 'online' ? 'Online' : 'On-campus' }}
                             </span>
                         </div>
+                    </div>
+                    <div class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-slate-400 pl-15 sm:pl-0">
+                        @if($mode === 'on_campus' && $att->lat !== null && $att->lng !== null)
+                            <span class="inline-flex items-center gap-1" title="GPS coordinates">
+                                <i class="fas fa-location-crosshairs"></i>
+                                {{ number_format((float) $att->lat, 5) }}, {{ number_format((float) $att->lng, 5) }}
+                            </span>
+                        @endif
+                        @if($audit?->ip_address)
+                            <span class="inline-flex items-center gap-1">
+                                <i class="fas fa-network-wired"></i> {{ $audit->ip_address }}
+                            </span>
+                        @endif
+                        @if($audit?->user_agent)
+                            <span class="inline-flex items-center gap-1 max-w-full truncate" title="{{ $audit->user_agent }}">
+                                <i class="fas fa-desktop"></i> {{ IlluminateSupportStr::limit($audit->user_agent, 65) }}
+                            </span>
+                        @endif
                     </div>
                 </div>
                 @empty
@@ -169,7 +192,7 @@
                         <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
                             <i class="fas fa-calendar-times text-2xl text-slate-300"></i>
                         </div>
-                        <p class="text-slate-400 font-bold">{{ __('មិនទាន់មានកំណត់ត្រាវត្តមាននៅឡើយទេ') }}</p>
+                        <p class="text-slate-400 font-bold">{{ __('no_attendance_records_yet_2') }}</p>
                     </div>
                 @endforelse
             </div>

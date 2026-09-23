@@ -175,7 +175,8 @@
                     @if(isset($attendances) && count($attendances) > 0)
                         {{-- Summary Bar --}}
                         @php
-                            $presentCount = $attendances->where('status', 'present')->count();
+                            $presentCount = $attendances->whereIn('status', ['present', 'late'])->count();
+                            $lateCount = $attendances->where('status', 'late')->count();
                             $permissionCount = $attendances->where('status', 'permission')->count();
                         @endphp
                         <div class="flex items-center gap-3 mb-4 px-2">
@@ -183,6 +184,12 @@
                                 <div class="w-2 h-2 bg-green-500 rounded-full"></div>
                                 <span class="text-[11px] font-bold text-green-700">{{ $presentCount }} មក</span>
                             </div>
+                            @if($lateCount > 0)
+                            <div class="flex items-center gap-1.5 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-lg">
+                                <div class="w-2 h-2 bg-amber-500 rounded-full"></div>
+                                <span class="text-[11px] font-bold text-amber-700">{{ $lateCount }} មកយឺត</span>
+                            </div>
+                            @endif
                             @if($permissionCount > 0)
                             <div class="flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-lg">
                                 <div class="w-2 h-2 bg-emerald-500 rounded-full"></div>
@@ -197,6 +204,7 @@
                             @php
                                 $statusColors = [
                                     'present' => ['bg' => 'bg-green-50', 'border' => 'border-green-200', 'text' => 'text-green-700', 'dot' => 'bg-green-500', 'label' => 'មក'],
+                                    'late' => ['bg' => 'bg-amber-50', 'border' => 'border-amber-200', 'text' => 'text-amber-700', 'dot' => 'bg-amber-500', 'label' => 'មកយឺត'],
                                     'permission' => ['bg' => 'bg-emerald-50', 'border' => 'border-emerald-200', 'text' => 'text-emerald-700', 'dot' => 'bg-emerald-500', 'label' => 'ច្បាប់'],
                                     'absent' => ['bg' => 'bg-red-50', 'border' => 'border-red-200', 'text' => 'text-red-700', 'dot' => 'bg-red-500', 'label' => 'អវត្តមាន'],
                                 ];

@@ -9,7 +9,7 @@
                     <span class="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-emerald-100 text-emerald-600">
                         <i class="fas fa-eye"></i>
                     </span>
-                    {{ __('ពិនិត្យមុននាំចូល') }}
+                    {{ __('import_preview') }}
                 </h2>
             </div>
         </div>
@@ -27,7 +27,7 @@
                         </div>
                         <div>
                             <p class="text-2xl font-bold text-gray-900">{{ count($previewData) }}</p>
-                            <p class="text-sm text-gray-500">សរុបទិន្នន័យ</p>
+                            <p class="text-sm text-gray-500">{{ __('total_data') }}</p>
                         </div>
                     </div>
                 </div>
@@ -38,7 +38,7 @@
                         </div>
                         <div>
                             <p class="text-2xl font-bold text-emerald-600">{{ $validCount }}</p>
-                            <p class="text-sm text-gray-500">ត្រឹមត្រូវ</p>
+                            <p class="text-sm text-gray-500">{{ __('valid') }}</p>
                         </div>
                     </div>
                 </div>
@@ -49,7 +49,7 @@
                         </div>
                         <div>
                             <p class="text-2xl font-bold text-red-600">{{ $errorCount }}</p>
-                            <p class="text-sm text-gray-500">មានកំហុស</p>
+                            <p class="text-sm text-gray-500">{{ __('has_errors') }}</p>
                         </div>
                     </div>
                 </div>
@@ -60,7 +60,7 @@
             <div class="bg-red-50 border border-red-200 rounded-2xl p-5">
                 <h3 class="text-sm font-bold text-red-700 mb-3 flex items-center gap-2">
                     <i class="fas fa-exclamation-triangle"></i>
-                    កំហុសដែលត្រូវកែសម្រួល
+                    {{ __('errors_to_fix') }}
                 </h3>
                 <div class="space-y-2 max-h-48 overflow-y-auto">
                     @foreach($errors as $error)
@@ -78,20 +78,26 @@
                 <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
                     <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
                         <i class="fas fa-table text-emerald-600"></i>
-                        ទិន្នន័យដែលរកឃើញ
+                        {{ __('found_data') }}
                     </h3>
                     <div class="flex items-center gap-2">
                         <button onclick="toggleAll(true)" class="text-xs text-emerald-600 hover:text-emerald-700 font-semibold px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 transition">
-                            ជ្រើសរើសទាំងអស់
+                            {{ __('select_all') }}
                         </button>
                         <button onclick="toggleAll(false)" class="text-xs text-gray-500 hover:text-gray-700 font-semibold px-3 py-1.5 rounded-lg bg-gray-50 hover:bg-gray-100 transition">
-                            មិនជ្រើសរើស
+                            {{ __('deselect_all') }}
                         </button>
                     </div>
                 </div>
 
                 <form id="importForm" action="{{ route('admin.import.users') }}" method="POST">
                     @csrf
+                    <input type="hidden" name="import_token" value="{{ $previewToken }}">
+                    <input type="hidden" name="role" value="{{ $role }}">
+                    <input type="hidden" name="department_id" value="{{ $departmentId }}">
+                    <input type="hidden" name="generation" value="{{ $generation }}">
+                    <input type="hidden" name="duplicate_action" value="{{ $duplicateAction }}">
+                    <input type="hidden" name="enroll_in_matching_courses" value="{{ $enrollInMatchingCourses ? 1 : 0 }}">
 
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm">
@@ -100,19 +106,19 @@
                                     <th class="px-4 py-3 text-center w-10">
                                         <input type="checkbox" id="checkAll" onchange="toggleAll(this.checked)" class="rounded border-gray-300 text-emerald-500 focus:ring-emerald-500">
                                     </th>
-                                    <th class="px-4 py-3 text-left font-semibold text-gray-600">ល.រ</th>
-                                    <th class="px-4 py-3 text-left font-semibold text-gray-600">ឈ្មោះ</th>
-                                    <th class="px-4 py-3 text-left font-semibold text-gray-600">អ៊ីម៉ែល</th>
-                                    <th class="px-4 py-3 text-left font-semibold text-gray-600">ឈ្មោះខ្មែរ</th>
-                                    <th class="px-4 py-3 text-left font-semibold text-gray-600">ភេទ</th>
-                                    <th class="px-4 py-3 text-center font-semibold text-gray-600">ស្ថានភាព</th>
+                                    <th class="px-4 py-3 text-left font-semibold text-gray-600">{{ __('no') }}</th>
+                                    <th class="px-4 py-3 text-left font-semibold text-gray-600">{{ __('name') }}</th>
+                                    <th class="px-4 py-3 text-left font-semibold text-gray-600">{{ __('email') }}</th>
+                                    <th class="px-4 py-3 text-left font-semibold text-gray-600">{{ __('khmer_name') }}</th>
+                                    <th class="px-4 py-3 text-left font-semibold text-gray-600">{{ __('gender') }}</th>
+                                    <th class="px-4 py-3 text-center font-semibold text-gray-600">{{ __('status') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100">
-                                @foreach($previewData as $email => $student)
+                                @foreach($previewData as $student)
                                 <tr class="{{ $student['status'] === 'error' ? 'bg-red-50/50' : 'hover:bg-gray-50' }} transition">
                                     <td class="px-4 py-3 text-center">
-                                        <input type="checkbox" name="student_ids[]" value="{{ $email }}" 
+                                        <input type="checkbox" name="student_ids[]" value="{{ $student['row'] }}" 
                                             class="student-cb rounded border-gray-300 text-emerald-500 focus:ring-emerald-500"
                                             {{ $student['status'] === 'error' ? 'disabled' : '' }}>
                                     </td>
@@ -126,11 +132,11 @@
                                     <td class="px-4 py-3 text-center">
                                         @if($student['status'] === 'valid')
                                             <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">
-                                                <i class="fas fa-check text-[10px]"></i> ត្រឹមត្រូវ
+                                                 <i class="fas fa-check text-[10px]"></i> {{ __('valid') }}
                                             </span>
                                         @else
                                             <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-700">
-                                                <i class="fas fa-times text-[10px]"></i> កំហុស
+                                                <i class="fas fa-times text-[10px]"></i> {{ __('errors') }}
                                             </span>
                                         @endif
                                     </td>
@@ -143,15 +149,15 @@
                     {{-- Actions --}}
                     <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
                         <a href="{{ route('admin.import.index') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-300 rounded-xl font-bold text-gray-700 hover:bg-gray-50 transition shadow-sm">
-                            <i class="fas fa-arrow-left"></i> ត្រឡប់ក្រោយ
+                            <i class="fas fa-arrow-left"></i> {{ __('back') }}
                         </a>
                         <div class="flex items-center gap-3">
                             <p class="text-sm text-gray-500">
-                                នាំចូល <span id="selectedCount" class="font-bold text-emerald-600">0</span> នាក់
+                                {{ __('import') }} <span id="selectedCount" class="font-bold text-emerald-600">0</span> {{ __('people') }}
                             </p>
                             <button type="submit" id="submitBtn" disabled
                                 class="inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-emerald-600 rounded-xl font-bold text-white hover:from-emerald-700 hover:to-emerald-700 transition shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
-                                <i class="fas fa-file-import"></i> នាំចូល
+                                <i class="fas fa-file-import"></i> {{ __('import') }}
                             </button>
                         </div>
                     </div>

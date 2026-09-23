@@ -10,8 +10,8 @@
                         </svg>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-bold text-white">វត្តមានគ្រូបង្រៀន</h1>
-                        <p class="mt-1 text-sm text-slate-400">កំណត់ត្រាវត្តមានគ្រូបង្រៀនសម្រាប់ការគណនាប្រាក់ខែ</p>
+                        <h1 class="text-2xl font-bold text-white">{{ __('professor_attendance') }}</h1>
+                        <p class="mt-1 text-sm text-slate-400">{{ __('prof_attendance_desc') }}</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
@@ -23,15 +23,15 @@
                            data-export-active
                            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all shadow-sm {{ $hasAllFilters ? 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-emerald-200' : 'hidden' }}">
                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                            នាំចេញទាំងអស់
+                            {{ __('export_all') }}
                         </a>
                         <div data-export-disabled class="relative group {{ $hasAllFilters ? 'hidden' : '' }}">
                             <button type="button" disabled class="inline-flex items-center gap-2 bg-gray-300 text-gray-500 px-4 py-2.5 rounded-xl text-sm font-medium cursor-not-allowed">
                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                                នាំចេញទាំងអស់
+                                {{ __('export_all') }}
                             </button>
                             <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs font-bold rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
-                                សូមជ្រើសរើសឆមាស ឆ្នាំសិក្សា និងប្រភេទថ្ងៃដើម្បីនាំចេញ
+                                {{ __('export_tooltip') }}
                                 <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-900"></div>
                             </div>
                         </div>
@@ -43,13 +43,13 @@
                         @if($filteredProfessor)
                         <a href="{{ route('admin.attendance.professorExport', $filteredProfessor->id, ['semester' => request('semester'), 'academic_year' => request('academic_year'), 'day_type' => request('day_type')]) }}" class="inline-flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-all shadow-sm shadow-blue-200">
                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                            នាំចេញ {{ $filteredProfessor->name }}
+                            {{ __('export_professor') }} {{ $filteredProfessor->name }}
                         </a>
                         @endif
                     @endif
                     <a href="{{ route('admin.attendance.index') }}" class="inline-flex items-center gap-2 bg-white/10 backdrop-blur text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-white/20 transition-all">
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-                        ត្រឡប់ក្រោយ
+                        {{ __('back') }}
                     </a>
                 </div>
             </div>
@@ -66,28 +66,28 @@
                         <span class="text-white text-xs font-bold">①</span>
                     </div>
                     <div>
-                        <h3 class="text-sm font-semibold text-gray-900">តម្រង់ទិស</h3>
-                        <p class="text-xs text-gray-400">ស្វែងរក និងច្រោះកំណត់ត្រាវត្តមាន</p>
+                        <h3 class="text-sm font-semibold text-gray-900">{{ __('filters') }}</h3>
+                        <p class="text-xs text-gray-400">{{ __('filter_desc') }}</p>
                     </div>
                 </div>
                 <div class="p-6">
                     <form method="GET" action="{{ route('admin.attendance.professorCheckins') }}" data-admin-realtime-filter class="space-y-4">
                         <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
                             <div class="md:col-span-3">
-                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">ស្វែងរក</label>
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('search') }}</label>
                                 <div class="relative">
                                     <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
                                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                                     </span>
-                                    <input type="text" name="search" value="{{ request('search', '') }}" placeholder="ឈ្មោះគ្រូ..." autocomplete="off"
+                                    <input type="text" name="search" value="{{ request('search', '') }}" placeholder="{{ __('professor_name_placeholder') }}" autocomplete="off"
                                            class="pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full transition-all">
                                 </div>
                             </div>
                             <div class="md:col-span-2">
-                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">គ្រូបង្រៀន</label>
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('professor') }}</label>
                                 <select name="professor_id"
                                         class="py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full transition-all">
-                                    <option value="">ទាំងអស់</option>
+                                    <option value="">{{ __('all') }}</option>
                                     @foreach($professors as $p)
                                         <option value="{{ $p->id }}" {{ request('professor_id') == $p->id ? 'selected' : '' }}>
                                             {{ $p->name }}
@@ -96,19 +96,19 @@
                                 </select>
                             </div>
                             <div class="md:col-span-2">
-                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">ឆមាស</label>
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('semester') }}</label>
                                 <select name="semester"
                                         class="py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full transition-all">
-                                    <option value="">ទាំងអស់</option>
+                                    <option value="">{{ __('all') }}</option>
                                     <option value="ឆមាសទី១" {{ request('semester') == 'ឆមាសទី១' ? 'selected' : '' }}>ឆមាសទី១</option>
                                     <option value="ឆមាសទី២" {{ request('semester') == 'ឆមាសទី២' ? 'selected' : '' }}>ឆមាសទី២</option>
                                 </select>
                             </div>
                             <div class="md:col-span-2">
-                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">ឆ្នាំសិក្សា</label>
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('academic_year') }}</label>
                                 <select name="academic_year"
                                         class="py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full transition-all">
-                                    <option value="">ទាំងអស់</option>
+                                    <option value="">{{ __('all') }}</option>
                                     @php
                                         $years = \App\Models\CourseOffering::whereNotNull('academic_year')->distinct()->pluck('academic_year')->sortDesc();
                                     @endphp
@@ -118,21 +118,21 @@
                                 </select>
                             </div>
                             <div class="md:col-span-2">
-                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">ប្រភេទថ្ងៃ</label>
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('day_type') }}</label>
                                 <select name="day_type"
                                         class="py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full transition-all">
-                                    <option value="">ទាំងអស់</option>
-                                    <option value="weekday" {{ request('day_type') == 'weekday' ? 'selected' : '' }}>ថ្ងៃសិក្សា (ចន្ទ-សុក្រ)</option>
-                                    <option value="weekend" {{ request('day_type') == 'weekend' ? 'selected' : '' }}>ថ្ងៃសប្តាហ៍ (សៅរ៍-អាទិត្យ)</option>
+                                    <option value="">{{ __('all') }}</option>
+                                    <option value="weekday" {{ request('day_type') == 'weekday' ? 'selected' : '' }}>{{ __('weekday') }}</option>
+                                    <option value="weekend" {{ request('day_type') == 'weekend' ? 'selected' : '' }}>{{ __('weekend') }}</option>
                                 </select>
                             </div>
                             <div class="md:col-span-2">
-                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">ពីថ្ងៃ</label>
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('from_date') }}</label>
                                 <input type="date" name="date_from" value="{{ request('date_from', '') }}"
                                        class="py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full transition-all">
                             </div>
                             <div class="md:col-span-2">
-                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">ដល់ថ្ងៃ</label>
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('to_date') }}</label>
                                 <input type="date" name="date_to" value="{{ request('date_to', '') }}"
                                        class="py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full transition-all">
                             </div>
@@ -157,8 +157,8 @@
                         <span class="text-white text-xs font-bold">②</span>
                     </div>
                     <div>
-                        <h3 class="text-sm font-semibold text-gray-900">សង្ខេប</h3>
-                        <p class="text-xs text-gray-400">ទិន្នន័យវត្តមានគ្រូបង្រៀន</p>
+                        <h3 class="text-sm font-semibold text-gray-900">{{ __('summary') }}</h3>
+                        <p class="text-xs text-gray-400">{{ __('prof_attendance_data') }}</p>
                     </div>
                 </div>
                 <div class="p-6">
@@ -172,8 +172,8 @@
                                 </div>
                                 <span class="text-2xl font-bold text-gray-900">{{ $stats['total'] }}</span>
                             </div>
-                            <p class="text-sm font-medium text-gray-900">សរុប</p>
-                            <p class="text-xs text-gray-400 mt-0.5">កំណត់ត្រាទាំងអស់</p>
+                            <p class="text-sm font-medium text-gray-900">{{ __('total') }}</p>
+                            <p class="text-xs text-gray-400 mt-0.5">{{ __('all_records') }}</p>
                         </div>
 
                         <div class="bg-white border border-gray-200 rounded-xl p-5">
@@ -185,8 +185,8 @@
                                 </div>
                                 <span class="text-2xl font-bold text-gray-900">{{ $stats['this_month'] }}</span>
                             </div>
-                            <p class="text-sm font-medium text-gray-900">ខែនេះ</p>
-                            <p class="text-xs text-gray-400 mt-0.5">កំណត់ត្រាខែបច្ចុប្បន្ន</p>
+                            <p class="text-sm font-medium text-gray-900">{{ __('this_month') }}</p>
+                            <p class="text-xs text-gray-400 mt-0.5">{{ __('current_month_records') }}</p>
                         </div>
 
                         <div class="bg-white border border-gray-200 rounded-xl p-5">
@@ -198,8 +198,8 @@
                                 </div>
                                 <span class="text-2xl font-bold text-gray-900">{{ $stats['this_week'] }}</span>
                             </div>
-                            <p class="text-sm font-medium text-gray-900">សប្តាហ៍នេះ</p>
-                            <p class="text-xs text-gray-400 mt-0.5">កំណត់ត្រាសប្តាហ៍បច្ចុប្បន្ន</p>
+                            <p class="text-sm font-medium text-gray-900">{{ __('this_week') }}</p>
+                            <p class="text-xs text-gray-400 mt-0.5">{{ __('current_week_records') }}</p>
                         </div>
 
                         <div class="bg-white border border-gray-200 rounded-xl p-5">
@@ -211,8 +211,8 @@
                                 </div>
                                 <span class="text-2xl font-bold text-gray-900">{{ $stats['unique_professors'] }}</span>
                             </div>
-                            <p class="text-sm font-medium text-gray-900">គ្រូបង្រៀន</p>
-                            <p class="text-xs text-gray-400 mt-0.5">គ្រូដែលមានវត្តមានខែនេះ</p>
+                            <p class="text-sm font-medium text-gray-900">{{ __('professors_with_attendance') }}</p>
+                            <p class="text-xs text-gray-400 mt-0.5">{{ __('professors_this_month') }}</p>
                         </div>
                     </div>
                 </div>
@@ -226,11 +226,11 @@
                             <span class="text-white text-xs font-bold">③</span>
                         </div>
                         <div>
-                            <h3 class="text-sm font-semibold text-gray-900">កំណត់ត្រាវត្តមាន</h3>
-                            <p class="text-xs text-gray-400">បញ្ជីវត្តមានគ្រូបង្រៀនទាំងអស់</p>
+                            <h3 class="text-sm font-semibold text-gray-900">{{ __('attendance_records') }}</h3>
+                            <p class="text-xs text-gray-400">{{ __('all_professor_attendance') }}</p>
                         </div>
                     </div>
-                    <span class="text-xs text-gray-400">{{ $checkins->total() }} កំណត់ត្រា</span>
+                    <span class="text-xs text-gray-400">{{ $checkins->total() }} {{ __('records_count') }}</span>
                 </div>
 
                 @if($checkins->count() > 0)
@@ -239,14 +239,14 @@
                         <table class="w-full">
                             <thead class="bg-gray-50">
                                 <tr class="border-b border-gray-200">
-                                    <th class="px-6 py-3 text-left text-[11px] font-bold text-gray-500 uppercase">ល.រ</th>
-                                    <th class="px-6 py-3 text-left text-[11px] font-bold text-gray-500 uppercase">គ្រូបង្រៀន</th>
-                                    <th class="px-6 py-3 text-left text-[11px] font-bold text-gray-500 uppercase">មុខវិជ្ជា</th>
-                                    <th class="px-6 py-3 text-left text-[11px] font-bold text-gray-500 uppercase">ឆមាស</th>
-                                    <th class="px-6 py-3 text-left text-[11px] font-bold text-gray-500 uppercase">ឆ្នាំសិក្សា</th>
-                                    <th class="px-6 py-3 text-left text-[11px] font-bold text-gray-500 uppercase">ថ្ងៃ</th>
-                                    <th class="px-6 py-3 text-left text-[11px] font-bold text-gray-500 uppercase">ម៉ោងវត្តមាន</th>
-                                    <th class="px-6 py-3 text-left text-[11px] font-bold text-gray-500 uppercase">ស្ថានភាព</th>
+                                    <th class="px-6 py-3 text-left text-[11px] font-bold text-gray-500 uppercase">{{ __('no') }}</th>
+                                    <th class="px-6 py-3 text-left text-[11px] font-bold text-gray-500 uppercase">{{ __('professor') }}</th>
+                                    <th class="px-6 py-3 text-left text-[11px] font-bold text-gray-500 uppercase">{{ __('course') }}</th>
+                                    <th class="px-6 py-3 text-left text-[11px] font-bold text-gray-500 uppercase">{{ __('semester') }}</th>
+                                    <th class="px-6 py-3 text-left text-[11px] font-bold text-gray-500 uppercase">{{ __('academic_year') }}</th>
+                                    <th class="px-6 py-3 text-left text-[11px] font-bold text-gray-500 uppercase">{{ __('date') }}</th>
+                                    <th class="px-6 py-3 text-left text-[11px] font-bold text-gray-500 uppercase">{{ __('time') }}</th>
+                                    <th class="px-6 py-3 text-left text-[11px] font-bold text-gray-500 uppercase">{{ __('status') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100">
@@ -277,7 +277,7 @@
                                         <td class="px-6 py-3.5">
                                             <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-50 text-emerald-600">
                                                 <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
-                                                វត្តមាន
+                                                {{ __('present_status') }}
                                             </span>
                                         </td>
                                     </tr>
@@ -306,7 +306,7 @@
                                     </div>
                                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-50 text-emerald-600">
                                         <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
-                                        វត្តមាន
+                                        {{ __('present_status') }}
                                     </span>
                                 </div>
                                 <div class="flex items-center gap-4 text-xs text-gray-400 ml-11">
@@ -329,8 +329,8 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
                             </svg>
                         </div>
-                        <h3 class="text-sm font-semibold text-gray-900">មិនមានកំណត់ត្រា</h3>
-                        <p class="text-sm text-gray-400 mt-1">មិនមានកំណត់ត្រាវត្តមានគ្រូបង្រៀនទេ។</p>
+                        <h3 class="text-sm font-semibold text-gray-900">{{ __('no_professor_attendance') }}</h3>
+                        <p class="text-sm text-gray-400 mt-1">{{ __('no_professor_attendance_desc') }}</p>
                     </div>
                 @endif
             </div>

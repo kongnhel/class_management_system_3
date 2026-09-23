@@ -5,15 +5,15 @@
             <div class="mb-8">
                 <a href="{{ route('admin.academic-years.index') }}" class="inline-flex items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors mb-4">
                     <i class="fas fa-arrow-left"></i>
-                    {{ __('ត្រលប់ក្រោយ') }}
+                    {{ __('back_2') }}
                 </a>
                 <h2 class="text-3xl font-bold text-gray-900 flex items-center gap-3">
                     <span class="p-3 bg-emerald-100 text-emerald-600 rounded-2xl shadow-sm">
                         <i class="fas fa-plus-circle text-xl"></i>
                     </span>
-                    {{ __('បង្កើតឆ្នាំសិក្សាថ្មី') }}
+                    {{ __('create_new_academic_year') }}
                 </h2>
-                <p class="text-gray-500 mt-2 ml-14">{{ __('បំពេញព័ត៌មានសម្រាប់ឆ្នាំសិក្សាថ្មី') }}</p>
+                <p class="text-gray-500 mt-2 ml-14">{{ __('fill_in_the_information_for_the_new_academic_year') }}</p>
             </div>
 
             {{-- Error Messages --}}
@@ -24,7 +24,7 @@
                         <i class="fas fa-exclamation-circle text-red-600"></i>
                     </div>
                     <div>
-                        <p class="font-bold text-red-800 text-sm">{{ __('មានកំហុសក្នុងការបំពេញទម្រង់') }}</p>
+                        <p class="font-bold text-red-800 text-sm">{{ __('the_form_contains_errors') }}</p>
                         <ul class="mt-2 space-y-1">
                             @foreach($errors->all() as $error)
                             <li class="text-sm text-red-600 flex items-center gap-2">
@@ -43,7 +43,7 @@
                 <div class="px-6 py-4 border-b border-gray-100">
                     <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
                         <i class="fas fa-info-circle text-gray-400"></i>
-                        {{ __('ព័ត៌មានឆ្នាំសិក្សា') }}
+                        {{ __('academic_year_information') }}
                     </h3>
                 </div>
 
@@ -53,7 +53,7 @@
                         {{-- Name --}}
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">
-                                <span class="text-red-500">*</span> {{ __('ឈ្មោះឆ្នាំសិក្សា') }}
+                                <span class="text-red-500">*</span> {{ __('academic_year_name') }}
                             </label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -61,7 +61,7 @@
                                 </div>
                                 <input type="text" name="name" value="{{ old('name') }}" required
                                     class="block w-full pl-10 pr-4 py-3 rounded-xl border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 text-sm transition-all"
-                                    placeholder="{{ __('ឧ. 2025-2026') }}">
+                                    placeholder="{{ __('e_g_2025_2026') }}">
                             </div>
                         </div>
 
@@ -69,7 +69,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label class="block text-sm font-bold text-gray-700 mb-2">
-                                    <span class="text-red-500">*</span> {{ __('កាលបរិច្ឆេទចាប់ផ្តើម') }}
+                                    <span class="text-red-500">*</span> {{ __('start_date') }}
                                 </label>
                                 <div class="relative">
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -81,7 +81,7 @@
                             </div>
                             <div>
                                 <label class="block text-sm font-bold text-gray-700 mb-2">
-                                    <span class="text-red-500">*</span> {{ __('កាលបរិច្ឆេទបញ្ចប់') }}
+                                    <span class="text-red-500">*</span> {{ __('end_date') }}
                                 </label>
                                 <div class="relative">
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -96,7 +96,7 @@
                         {{-- Description --}}
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">
-                                {{ __('ការពិពណ៌នា') }}
+                                {{ __('description') }}
                             </label>
                             <div class="relative">
                                 <div class="absolute top-3 left-0 pl-3 flex items-start pointer-events-none">
@@ -104,7 +104,7 @@
                                 </div>
                                 <textarea name="description" rows="3"
                                     class="block w-full pl-10 pr-4 py-3 rounded-xl border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 text-sm transition-all resize-none"
-                                    placeholder="{{ __('ការពិពណ៌នាអំពីឆ្នាំសិក្សា...') }}">{{ old('description') }}</textarea>
+                                    placeholder="{{ __('description_of_the_academic_year') }}">{{ old('description') }}</textarea>
                             </div>
                         </div>
 
@@ -114,8 +114,8 @@
                                 <input type="checkbox" name="is_current" value="1" {{ old('is_current') ? 'checked' : '' }}
                                     class="h-5 w-5 text-emerald-600 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 transition-all">
                                 <div>
-                                    <span class="block text-sm font-bold text-gray-700">{{ __('កំណត់ជាឆ្នាំសិក្សាបច្ចុប្បន្ន') }}</span>
-                                    <span class="block text-xs text-gray-400 mt-0.5">{{ __('ឆ្នាំសិក្សាមួយអាចកំណត់ជាបច្ចុប្បន្នបាន') }}</span>
+                                    <span class="block text-sm font-bold text-gray-700">{{ __('set_as_current_academic_year') }}</span>
+                                    <span class="block text-xs text-gray-400 mt-0.5">{{ __('only_one_academic_year_can_be_set_as_current') }}</span>
                                 </div>
                             </label>
                         </div>
@@ -125,11 +125,11 @@
                     <div class="flex items-center justify-between mt-8 pt-6 border-t border-gray-100">
                         <a href="{{ route('admin.academic-years.index') }}" class="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">
                             <i class="fas fa-times"></i>
-                            {{ __('បោះបង់') }}
+                            {{ __('cancel_2') }}
                         </a>
                         <button type="submit" class="inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-emerald-100 hover:shadow-emerald-200 transition-all active:scale-95">
                             <i class="fas fa-save"></i>
-                            {{ __('រក្សាទុក') }}
+                            {{ __('save_2') }}
                         </button>
                     </div>
                 </form>

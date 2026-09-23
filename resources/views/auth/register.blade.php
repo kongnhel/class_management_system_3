@@ -21,10 +21,10 @@
             <div class="relative z-10 text-center px-12">
                 <img src="{{ asset('assets/image/nmu_Logo.png') }}" alt="Logo" class="w-28 h-28 mx-auto mb-8 drop-shadow-2xl">
                 <h1 class="text-4xl font-extrabold text-white leading-tight mb-4">Class Management<br>System</h1>
-                <p class="text-emerald-100 text-lg max-w-sm mx-auto leading-relaxed">ប្រព័ន្ធគ្រប់គ្រងសិក្សា សម្រាប់មហាវិទ្យាល័យ</p>
+                <p class="text-emerald-100 text-lg max-w-sm mx-auto leading-relaxed">{{ __('register_branding_subtitle') }}</p>
                 <div class="mt-10 flex items-center justify-center gap-3">
                     <div class="w-3 h-3 rounded-full bg-emerald-300 animate-pulse"></div>
-                    <span class="text-emerald-200 text-sm font-medium">សូមបំពេញព័ត៌មានដើម្បីចុះឈ្មោះ</span>
+                    <span class="text-emerald-200 text-sm font-medium">{{ __('register_please_fill_info') }}</span>
                 </div>
             </div>
         </div>
@@ -40,8 +40,8 @@
 
                 {{-- Header --}}
                 <div class="mb-6">
-                    <h2 class="text-3xl font-extrabold text-gray-900">បង្កើតគណនីថ្មី</h2>
-                    <p class="text-gray-500 mt-2 text-sm">សូមបំពេញព័ត៌មានខាងក្រោមដើម្បីចុះឈ្មោះ</p>
+                    <h2 class="text-3xl font-extrabold text-gray-900">{{ __('register_heading') }}</h2>
+                    <p class="text-gray-500 mt-2 text-sm">{{ __('register_subtitle') }}</p>
                 </div>
 
                 <form method="POST" action="{{ route('register') }}" class="space-y-4">
@@ -49,25 +49,25 @@
 
                     {{-- Student ID --}}
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('លេខសម្គាល់និស្សិត') }}</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('student_id_2') }}</label>
                         <input type="text" name="student_id_code" value="{{ old('student_id_code') }}" required 
                                class="block w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none" 
-                               placeholder="ID-0000X" />
-                        <p class="text-xs text-gray-400 mt-1">* បញ្ចូលលេខសម្គាល់ដើម្បីទាញយកព័ត៌មានដែលរៀបចំដោយរដ្ឋបាល</p>
+                               placeholder="B-XVI-XXXXXX" />
+                        <p class="text-xs text-gray-400 mt-1">{{ __('register_student_id_hint') }}</p>
                         <x-input-error :messages="$errors->get('student_id_code')" class="mt-1 text-xs text-red-500" />
                     </div>
 
                     {{-- Name + Email --}}
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('ឈ្មោះបង្ហាញ') }}</label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('display_name') }}</label>
                             <input type="text" name="name" value="{{ old('name') }}" required 
                                    class="block w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none" 
                                    placeholder="Full Name" />
                             <x-input-error :messages="$errors->get('name')" class="mt-1 text-xs text-red-500" />
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('អ៊ីមែល') }}</label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('email') }}</label>
                             <input type="email" name="email" value="{{ old('email') }}" required 
                                    class="block w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none" 
                                    placeholder="name@nmu.edu.kh" />
@@ -78,9 +78,9 @@
                     {{-- Department + Degree Level + Generation --}}
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('មុខវិជ្ជា') }}</label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('course') }}</label>
                             <select name="department_id" required class="block w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none">
-                                <option value="">{{ __('ជ្រើសរើសមុខវិជ្ជា') }}</option>
+                                <option value="">{{ __('select_course') }}</option>
                                 @foreach ($departments as $department)
                                     <option value="{{ $department->id }}" {{ old('department_id') == $department->id ? 'selected' : '' }}>{{ $department->name_km }}</option>
                                 @endforeach
@@ -88,9 +88,9 @@
                             <x-input-error :messages="$errors->get('department_id')" class="mt-1 text-xs text-red-500" />
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('កម្រិតសញ្ញាបត្រ') }}</label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('degree_level') }}</label>
                             <select name="degree_level" required class="block w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none">
-                                <option value="">{{ __('ជ្រើសរើសកម្រិតសញ្ញាបត្រ') }}</option>
+                                <option value="">{{ __('select_degree_level') }}</option>
                                 <option value="បរិញ្ញាបត្រ" {{ old('degree_level') == 'បរិញ្ញាបត្រ' ? 'selected' : '' }}>បរិញ្ញាបត្រ</option>
                                 <option value="បរិញ្ញាបត្ររង" {{ old('degree_level') == 'បរិញ្ញាបត្ររង' ? 'selected' : '' }}>បរិញ្ញាបត្ររង</option>
                                 <option value="អនុបណ្ឌិត" {{ old('degree_level') == 'អនុបណ្ឌិត' ? 'selected' : '' }}>អនុបណ្ឌិត</option>
@@ -101,9 +101,9 @@
                             <x-input-error :messages="$errors->get('degree_level')" class="mt-1 text-xs text-red-500" />
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('ជំនាន់') }}</label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('generation') }}</label>
                             <select name="generation" required class="block w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none">
-                                <option value="">{{ __('ជ្រើសរើសជំនាន់') }}</option>
+                                <option value="">{{ __('select_a_generation') }}</option>
                                 @foreach($generations as $generation)
                                     <option value="{{ $generation }}" {{ old('generation') == $generation ? 'selected' : '' }}>{{ $generation }}</option>
                                 @endforeach
@@ -115,7 +115,7 @@
                     {{-- Password + Confirm --}}
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('ពាក្យសម្ងាត់') }}</label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('password') }}</label>
                             <div class="relative">
                                 <input id="password" type="password" name="password" required 
                                        class="block w-full px-4 py-3 pr-12 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none" 
@@ -131,7 +131,7 @@
                             <x-input-error :messages="$errors->get('password')" class="mt-1 text-xs text-red-500" />
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('បញ្ជាក់ពាក្យសម្ងាត់') }}</label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('confirm_password') }}</label>
                             <div class="relative">
                                 <input id="password_confirmation" type="password" name="password_confirmation" required 
                                        class="block w-full px-4 py-3 pr-12 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none" 
@@ -146,13 +146,13 @@
                     </div>
 
                     <button type="submit" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-emerald-200 hover:shadow-emerald-300 transition-all duration-200 text-sm">
-                        {{ __('ចុះឈ្មោះឥឡូវនេះ') }}
+                        {{ __('btn_register') }}
                     </button>
                 </form>
 
                 <p class="text-center text-sm text-gray-500 mt-6">
-                    {{ __('មានគណនីរួចហើយ?') }}
-                    <a href="{{ route('login') }}" class="font-bold text-emerald-600 hover:text-emerald-700 ml-1">{{ __('ចូលគណនី') }}</a>
+                    {{ __('auth_already_have_account') }}
+                    <a href="{{ route('login') }}" class="font-bold text-emerald-600 hover:text-emerald-700 ml-1">{{ __('log_in') }}</a>
                 </p>
             </div>
         </div>
@@ -202,8 +202,8 @@
                     let code = this.value;
                     if (code.length >= 3) {
                         Swal.fire({
-                            title: 'កំពុងស្វែងរកទិន្នន័យ...',
-                            html: 'សូមរង់ចាំមួយភ្លែត',
+                            title: '{{ __('register_swal_loading_title') }}',
+                            html: '{{ __('register_swal_loading_text') }}',
                             allowOutsideClick: false,
                             didOpen: () => { Swal.showLoading(); }
                         });
@@ -214,32 +214,32 @@
                                 Swal.close();
                                 if (data.success) {
                                     Swal.fire({
-                                        title: 'រកឃើញអត្តសញ្ញាណរបស់អ្នក!',
-                                        html: `តើអ្នកពិតជាមានឈ្មោះ <b>${data.name}</b> ជំនាន់ <b>${data.generation}</b> មែនដែរឬទេ?`,
+                                        title: '{{ __('register_swal_found_title') }}',
+                                        html: `{{ __('register_swal_found_text') }} <b>${data.name}</b> {{ __('register_swal_found_generation') }} <b>${data.generation}</b> {{ __('register_swal_found_confirm') }}`,
                                         icon: 'question',
                                         showCancelButton: true,
                                         confirmButtonColor: '#10b981',
                                         cancelButtonColor: '#d33',
-                                        confirmButtonText: 'បាទ/ចាស ត្រឹមត្រូវ',
-                                        cancelButtonText: 'មិនមែនទេ'
+                                        confirmButtonText: '{{ __('register_swal_confirm_yes') }}',
+                                        cancelButtonText: '{{ __('register_swal_confirm_no') }}'
                                     }).then((result) => {
                                         if (result.isConfirmed) {
                                             document.querySelector('input[name="name"]').value = data.name;
                                             document.querySelector('select[name="department_id"]').value = data.department_id;
                                             document.querySelector('select[name="generation"]').value = data.generation;
-                                            Swal.fire({ title: 'អរគុណ!', text: 'សូមបន្តបង្កើតអ៊ីមែល និងពាក្យសម្ងាត់របស់អ្នក។', icon: 'success', timer: 2000, showConfirmButton: false });
+                                            Swal.fire({ title: '{{ __('register_swal_thanks_title') }}', text: '{{ __('register_swal_thanks_text') }}', icon: 'success', timer: 2000, showConfirmButton: false });
                                         } else {
                                             studentIdInput.value = '';
                                         }
                                     });
                                 } else {
-                                    Swal.fire({ title: 'រកមិនឃើញ!', text: 'លេខសម្គាល់និស្សិតនេះមិនទាន់មានក្នុងប្រព័ន្ធរដ្ឋបាលឡើយ។', icon: 'error' });
+                                    Swal.fire({ title: '{{ __('register_swal_not_found_title') }}', text: '{{ __('register_swal_not_found_text') }}', icon: 'error' });
                                     studentIdInput.value = '';
                                 }
                             })
                             .catch(error => {
                                 Swal.close();
-                                Swal.fire('Error!', 'មានបញ្ហាបច្ចេកទេស។', 'error');
+                                Swal.fire('Error!', '{{ __('register_swal_error_text') }}', 'error');
                             });
                     }
                 });

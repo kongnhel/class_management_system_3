@@ -11,8 +11,8 @@
                         </svg>
                     </span>
                     <div>
-                        <h2 class="text-3xl font-bold text-gray-900">{{ __('បង្កើតដេប៉ាតឺម៉ង់ថ្មី') }}</h2>
-                        <p class="mt-1 text-sm text-gray-500">{{ __('បំពេញព័ត៌មានខាងក្រោមដើម្បីបង្កើតដេប៉ាតឺម៉ង់ថ្មី') }}</p>
+                        <h2 class="text-3xl font-bold text-gray-900">{{ __('create_new_department') }}</h2>
+                        <p class="mt-1 text-sm text-gray-500">{{ __('fill_in_the_information_below_to_create_a_new_department') }}</p>
                     </div>
                 </div>
 
@@ -23,7 +23,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
                         </svg>
                         <div>
-                            <p class="text-sm font-bold text-red-800">{{ __('សូមពិនិត្យកំហុសខាងក្រោម៖') }}</p>
+                            <p class="text-sm font-bold text-red-800">{{ __('please_check_the_errors_below') }}</p>
                             <ul class="mt-1 text-sm text-red-700 list-disc list-inside">
                                 @foreach ($errors->all() as $error)
                                     <li>{{ $error }}</li>
@@ -38,26 +38,26 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label for="name_km" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ឈ្មោះដេប៉ាតឺម៉ង់ (ខ្មែរ)') }} <span class="text-red-500">*</span></label>
+                            <label for="name_km" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('department_name_khmer') }} <span class="text-red-500">*</span></label>
                             <input id="name_km" type="text" name="name_km" value="{{ old('name_km') }}" required autofocus
-                                placeholder="{{ __('បញ្ចូលឈ្មោះជាភាសាខ្មែរ') }}"
+                                placeholder="{{ __('enter_the_name_in_khmer') }}"
                                 class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition" />
                             @error('name_km') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                         </div>
 
                         <div>
-                            <label for="name_en" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ឈ្មោះដេប៉ាតឺម៉ង់ (អង់គ្លេស)') }} <span class="text-red-500">*</span></label>
+                            <label for="name_en" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('department_name_english') }} <span class="text-red-500">*</span></label>
                             <input id="name_en" type="text" name="name_en" value="{{ old('name_en') }}" required
-                                placeholder="{{ __('បញ្ចូលឈ្មោះជាភាសាអង់គ្លេស') }}"
+                                placeholder="{{ __('enter_the_name_in_english') }}"
                                 class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition" />
                             @error('name_en') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                         </div>
 
                         <div>
-                            <label for="faculty_id" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('មហាវិទ្យាល័យ') }} <span class="text-red-500">*</span></label>
+                            <label for="faculty_id" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('faculty') }} <span class="text-red-500">*</span></label>
                             <select id="faculty_id" name="faculty_id" required
                                 class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
-                                <option value="">{{ __('ជ្រើសរើសមហាវិទ្យាល័យ') }}</option>
+                                <option value="">{{ __('select_a_faculty') }}</option>
                                 @foreach ($faculties as $faculty)
                                     <option value="{{ $faculty->id }}" {{ old('faculty_id') == $faculty->id ? 'selected' : '' }}>
                                         {{ $faculty->name_km }} ({{ $faculty->name_en }})
@@ -68,10 +68,10 @@
                         </div>
 
                         <div>
-                            <label for="head_user_id" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ប្រធានដេប៉ាតឺម៉ង់') }}</label>
+                            <label for="head_user_id" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('department_head') }}</label>
                             <select id="head_user_id" name="head_user_id"
                                 class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
-                                <option value="">{{ __('ជ្រើសរើសប្រធាន (ស្រេចចិត្ត)') }}</option>
+                                <option value="">{{ __('select_a_head_optional') }}</option>
                                 @foreach ($professors as $professor)
                                     <option value="{{ $professor->id }}" {{ old('head_user_id') == $professor->id ? 'selected' : '' }}>
                                         {{ $professor->name }}
@@ -85,13 +85,13 @@
                     {{-- Actions --}}
                     <div class="flex items-center justify-between mt-8 pt-6 border-t border-gray-100">
                         <a href="{{ route('admin.manage-departments') }}" class="px-5 py-2.5 text-sm font-bold text-gray-600 bg-gray-100 rounded-xl hover:bg-gray-200 transition">
-                            {{ __('បោះបង់') }}
+                            {{ __('cancel_2') }}
                         </a>
                         <button type="submit" class="inline-flex items-center gap-2 px-6 py-2.5 bg-emerald-600 text-white text-sm font-bold rounded-xl shadow hover:bg-emerald-700 transition active:scale-95">
                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                             </svg>
-                            {{ __('បង្កើតដេប៉ាតឺម៉ង់') }}
+                            {{ __('create_department') }}
                         </button>
                     </div>
                 </form>

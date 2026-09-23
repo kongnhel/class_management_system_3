@@ -134,6 +134,12 @@
                                         <span class="text-[11px] font-bold text-emerald-700" x-text="counts.permission + ' ច្បាប់'"></span>
                                     </div>
                                 </template>
+                                <template x-if="counts.late > 0">
+                                    <div class="flex items-center gap-1.5 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-lg">
+                                        <div class="w-2 h-2 bg-amber-500 rounded-full"></div>
+                                        <span class="text-[11px] font-bold text-amber-700" x-text="counts.late + ' មកយឺត'"></span>
+                                    </div>
+                                </template>
                                 <template x-if="counts.manual > 0">
                                     <div class="flex items-center gap-1.5 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-lg">
                                         <div class="w-2 h-2 bg-amber-500 rounded-full"></div>
@@ -154,6 +160,7 @@
                                     <div class="flex items-center gap-3 p-3 rounded-xl border transition-all animate-fade-in hover:shadow-md"
                                          :class="{
                                             'bg-green-50 border-green-200': student.status === 'present',
+                                            'bg-amber-50 border-amber-200': student.status === 'late',
                                             'bg-emerald-50 border-emerald-200': student.status === 'permission',
                                             'bg-red-50 border-red-200': student.status === 'absent'
                                          }">
@@ -170,6 +177,7 @@
                                             <div class="absolute -bottom-0.5 -right-0.5 w-4 h-4 border-2 border-white rounded-full flex items-center justify-center"
                                                  :class="{
                                                     'bg-green-500': student.status === 'present',
+                                                    'bg-amber-500': student.status === 'late',
                                                     'bg-emerald-500': student.status === 'permission',
                                                     'bg-red-500': student.status === 'absent'
                                                  }">
@@ -189,10 +197,11 @@
                                                 <span class="text-[10px] font-bold uppercase"
                                                       :class="{
                                                         'text-green-700': student.status === 'present',
+                                                        'text-amber-700': student.status === 'late',
                                                         'text-emerald-700': student.status === 'permission',
                                                         'text-red-700': student.status === 'absent'
                                                       }"
-                                                      x-text="student.status === 'present' ? 'មក' : (student.status === 'permission' ? 'ច្បាប់' : 'អវត្តមាន')"></span>
+                                                      x-text="student.status === 'present' ? 'មក' : (student.status === 'late' ? 'មកយឺត' : (student.status === 'permission' ? 'ច្បាប់' : 'អវត្តមាន'))"></span>
                                                 <span class="text-slate-300">·</span>
                                                 <span class="text-[10px] text-slate-400 flex items-center gap-1">
                                                     <svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>

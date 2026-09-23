@@ -12,8 +12,8 @@
                             <i class="fas fa-user-plus text-emerald-300 text-xl"></i>
                         </div>
                         <div>
-                            <h2 class="text-3xl font-bold tracking-tight">{{ __('បង្កើតអ្នកប្រើប្រាស់ថ្មី') }}</h2>
-                            <p class="text-slate-400 mt-1 text-sm">{{ __('បំពេញព័ត៌មានខាងក្រោមដើម្បីបង្កើតអ្នកប្រើប្រាស់ថ្មី') }}</p>
+                            <h2 class="text-3xl font-bold tracking-tight">{{ __('create_new_user') }}</h2>
+                            <p class="text-slate-400 mt-1 text-sm">{{ __('fill_details_for_new_user_account') }}</p>
                         </div>
                     </div>
                 </div>
@@ -30,7 +30,7 @@
                         <i class="fas fa-exclamation-circle text-red-500"></i>
                     </div>
                     <div class="flex-1">
-                        <p class="font-bold text-gray-900 text-sm">{{ __('មានបញ្ហា!') }}</p>
+                        <p class="font-bold text-gray-900 text-sm">{{ __('there_is_a_problem') }}</p>
                         <ul class="text-red-600 text-xs mt-1 space-y-0.5">
                             @foreach ($errors->all() as $error)
                                 <li>{{ $error }}</li>
@@ -68,33 +68,33 @@
 
                         let err = '';
                         if (name === 'name') {
-                            if (!val.trim()) err = '{{ __("ឈ្មោះអ្នកប្រើប្រាស់ត្រូវតែបំពេញ") }}';
-                            else if (val.length > 255) err = '{{ __("ឈ្មោះមិនអាចធំជាង 255 តួអក្សរឡើយ") }}';
+                            if (!val.trim()) err = '{{ __("validation_name_required") }}';
+                            else if (val.length > 255) err = '{{ __("validation_name_max") }}';
                         } else if (name === 'role') {
-                            if (!val) err = '{{ __("សូមជ្រើសរើសតួនាទី") }}';
+                            if (!val) err = '{{ __("validation_role_required") }}';
                         } else if (name === 'email') {
-                            if ((this.userRole === 'admin' || this.userRole === 'professor') && !val.trim()) err = '{{ __("អ៊ីម៉ែលត្រូវតែបំពេញ") }}';
-                            else if (val && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) err = '{{ __("អ៊ីម៉ែលមិនត្រឹមត្រូវ") }}';
+                            if ((this.userRole === 'admin' || this.userRole === 'professor') && !val.trim()) err = '{{ __("validation_email_required") }}';
+                            else if (val && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) err = '{{ __("validation_email_invalid") }}';
                         } else if (name === 'password') {
                             if ((this.userRole === 'admin' || this.userRole === 'professor')) {
-                                if (!val) err = '{{ __("ពាក្យសម្ងាត់ត្រូវតែបំពេញ") }}';
-                                else if (val.length < 8) err = '{{ __("ពាក្យសម្ងាត់ត្រូវតែមានយ៉ាងតិច 8 តួអក្សរ") }}';
-                                else if (!/[a-z]/.test(val)) err = '{{ __("ពាក្យសម្ងាត់ត្រូវតែមានអក្ខរាតូចយ៉ាងតិចមួយ") }}';
-                                else if (!/[A-Z]/.test(val)) err = '{{ __("ពាក្យសម្ងាត់ត្រូវតែមានអក្ខរាធ្ងន់យ៉ាងតិចមួយ") }}';
-                                else if (!/[0-9]/.test(val)) err = '{{ __("ពាក្យសម្ងាត់ត្រូវតែមានចំនួនយ៉ាងតិចមួយ") }}';
-                                else if (!/[@$!%*?&#]/.test(val)) err = '{{ __("ពាក្យសម្ងាត់ត្រូវតែមានសញ្ញាពិសេសយ៉ាងតិចមួយ") }}';
+                                if (!val) err = '{{ __("validation_password_required") }}';
+                                else if (val.length < 8) err = '{{ __("validation_password_min") }}';
+                                else if (!/[a-z]/.test(val)) err = '{{ __("validation_password_lowercase") }}';
+                                else if (!/[A-Z]/.test(val)) err = '{{ __("validation_password_uppercase") }}';
+                                else if (!/[0-9]/.test(val)) err = '{{ __("validation_password_number") }}';
+                                else if (!/[@$!%*?&#]/.test(val)) err = '{{ __("validation_password_special") }}';
                             }
                         } else if (name === 'password_confirmation') {
                             let pw = document.getElementById('password')?.value || '';
-                            if ((this.userRole === 'admin' || this.userRole === 'professor') && val !== pw) err = '{{ __("ពាក្យសម្ងាត់មិនត្រូវគ្នា") }}';
+                            if ((this.userRole === 'admin' || this.userRole === 'professor') && val !== pw) err = '{{ __("validation_password_confirm") }}';
                         } else if (name === 'faculty_id') {
-                            if (this.userRole === 'professor' && !val) err = '{{ __("សូមជ្រើសរើសមហាវិទ្យាល័យ") }}';
+                            if (this.userRole === 'professor' && !val) err = '{{ __("validation_faculty_required") }}';
                         } else if (name === 'department_id') {
-                            if (this.userRole === 'student' && !val) err = '{{ __("សូមជ្រើសរើសដេប៉ាតឺម៉ង់") }}';
+                            if (this.userRole === 'student' && !val) err = '{{ __("please_select_a_department") }}';
                         } else if (name === 'degree_level') {
-                            if (this.userRole === 'student' && !val) err = '{{ __("សូមជ្រើសរើសកម្រិតសញ្ញាបត្រ") }}';
+                            if (this.userRole === 'student' && !val) err = '{{ __("validation_degree_required") }}';
                         } else if (name === 'generation') {
-                            if (this.userRole === 'student' && !val) err = '{{ __("សូមជ្រើសរើសជំនាន់") }}';
+                            if (this.userRole === 'student' && !val) err = '{{ __("validation_generation_required") }}';
                         }
 
                         if (err) this.fieldErrors[name] = err;
@@ -120,14 +120,14 @@
                             <span class="text-emerald-600 font-bold text-sm">1</span>
                         </div>
                         <div>
-                            <h3 class="text-lg font-bold text-gray-900">{{ __('ព័ត៌មានមូលដ្ឋាន') }}</h3>
-                            <p class="text-xs text-gray-500">{{ __('ជ្រើសរើសតួនាទី និងបំពេញឈ្មោះអ្នកប្រើប្រាស់') }}</p>
+                            <h3 class="text-lg font-bold text-gray-900">{{ __('basic_information') }}</h3>
+                            <p class="text-xs text-gray-500">{{ __('basic_info_for_new_user') }}</p>
                         </div>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
-                            <label for="name" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('ឈ្មោះអ្នកប្រើប្រាស់') }} <span class="text-red-500">*</span></label>
-                            <input id="name" type="text" name="name" value="{{ old('name') }}" placeholder="{{ __('បញ្ចូលឈ្មោះអ្នកប្រើប្រាស់') }}"
+                            <label for="name" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('user_name') }} <span class="text-red-500">*</span></label>
+                            <input id="name" type="text" name="name" value="{{ old('name') }}" placeholder="{{ __('enter_username') }}"
                                 class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition text-sm px-4 py-2.5"
                                 required autofocus @blur="onBlur('name')" @input="onInput('name')"
                                 x-bind:class="fieldErrors.name ? 'ring-2 ring-red-400 bg-red-50' : ''" />
@@ -135,12 +135,12 @@
                             <p x-show="fieldErrors.name" x-text="fieldErrors.name" class="text-sm text-red-600 mt-2"></p>
                         </div>
                         <div>
-                            <label for="role" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('តួនាទី') }} <span class="text-red-500">*</span></label>
+                            <label for="role" class="block text-sm font-bold text-gray-700 mb-1.5">{{ __('role') }} <span class="text-red-500">*</span></label>
                             <select id="role" name="role" x-model="userRole"
                                 class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition text-sm px-4 py-2.5"
                                 required @blur="onBlur('role')" @change="touched.role = true; validateField('role'); Object.keys(fieldErrors).forEach(k => { if (k !== 'role') validateField(k); })"
                                 x-bind:class="fieldErrors.role ? 'ring-2 ring-red-400 bg-red-50' : ''">
-                                <option value="">{{ __('ជ្រើសរើសតួនាទី') }}</option>
+                                <option value="">{{ __('select_a_role') }}</option>
                                 <option value="admin">Admin</option>
                                 <option value="professor">Professor</option>
                                 <option value="student">Student</option>
@@ -159,15 +159,15 @@
                             <span class="text-purple-600 font-bold text-sm">2</span>
                         </div>
                         <div>
-                            <h3 class="text-lg font-bold text-gray-900">{{ __('ព័ត៌មានគណនី') }}</h3>
-                            <p class="text-xs text-gray-500">{{ __('កំណត់អ៊ីម៉ែល និងពាក្យសម្ងាត់សម្រាប់ចូលប្រើប្រាស់') }}</p>
+                            <h3 class="text-lg font-bold text-gray-900">{{ __('account_information') }}</h3>
+                            <p class="text-xs text-gray-500">{{ __('fill_account_info_for_new_user') }}</p>
                         </div>
                     </div>
 
                     <div class="space-y-5">
                         <div>
                             <label for="email" class="block text-sm font-bold text-gray-700 mb-1.5">
-                                <i class="fas fa-envelope mr-1.5 text-purple-500"></i> {{ __('អ៊ីម៉ែល') }} <span class="text-red-500">*</span>
+                                <i class="fas fa-envelope mr-1.5 text-purple-500"></i> {{ __('email_2') }} <span class="text-red-500">*</span>
                             </label>
                             <input id="email" type="email" name="email" value="{{ old('email') }}" placeholder="example@gmail.com"
                                 class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition text-sm px-4 py-2.5"
@@ -181,11 +181,11 @@
                             {{-- Password --}}
                             <div>
                                 <label for="password" class="block text-sm font-bold text-gray-700 mb-1.5">
-                                    <i class="fas fa-lock mr-1.5 text-purple-500"></i> {{ __('ពាក្យសម្ងាត់') }} <span class="text-red-500">*</span>
+                                    <i class="fas fa-lock mr-1.5 text-purple-500"></i> {{ __('password') }} <span class="text-red-500">*</span>
                                 </label>
                                 <div class="relative">
                                     <input id="password" :type="passwordVisible ? 'text' : 'password'" name="password" autocomplete="new-password"
-                                        placeholder="{{ __('បញ្ចូលពាក្យសម្ងាត់') }}"
+                                        placeholder="{{ __('enter_password') }}"
                                         class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition text-sm px-4 py-2.5 pr-12"
                                         required @blur="onBlur('password')"
                                         @input="
@@ -197,7 +197,7 @@
                                             if (/[0-9]/.test(v)) s++;
                                             if (/[@$!%*?&]/.test(v)) s++;
                                             if (v.length >= 8) s++;
-                                            let levels = ['{{ __("ខ្សោយ") }}','{{ __("មធ្យម") }}','{{ __("ល្អ") }}','{{ __("ខ្លាំង") }}','{{ __("ខ្លាំងណាស់") }}'];
+                                            let levels = ['{{ __("weak") }}','{{ __("medium") }}','{{ __("good") }}','{{ __("strong") }}','{{ __("very_strong") }}'];
                                             let colors = ['text-red-400','text-yellow-400','text-green-400','text-green-500','text-green-600'];
                                             passwordStrength = v ? levels[s > 0 ? s - 1 : 0] : '';
                                             passwordStrengthColor = v ? colors[s > 0 ? s - 1 : 0] : '';
@@ -209,7 +209,7 @@
                                         <i class="fas" :class="passwordVisible ? 'fa-eye-slash' : 'fa-eye'"></i>
                                     </button>
                                 </div>
-                                <p x-show="passwordStrength" x-text="'{{ __("កម្លាំងពាក្យសម្ងាត់៖") }} ' + passwordStrength" :class="passwordStrengthColor" class="text-sm mt-2"></p>
+                                <p x-show="passwordStrength" x-text="'{{ __("password_strength") }} ' + passwordStrength" :class="passwordStrengthColor" class="text-sm mt-2"></p>
                                 {{-- Compact Password Requirements --}}
                                 <div x-show="passwordValue" class="flex flex-wrap gap-1.5 mt-2">
                                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold" :class="passwordValue.length >= 8 ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-400'">
@@ -235,11 +235,11 @@
                             {{-- Password Confirmation --}}
                             <div>
                                 <label for="password_confirmation" class="block text-sm font-bold text-gray-700 mb-1.5">
-                                    <i class="fas fa-shield-alt mr-1.5 text-purple-500"></i> {{ __('បញ្ជាក់ពាក្យសម្ងាត់') }} <span class="text-red-500">*</span>
+                                    <i class="fas fa-shield-alt mr-1.5 text-purple-500"></i> {{ __('confirm_password') }} <span class="text-red-500">*</span>
                                 </label>
                                 <div class="relative">
                                     <input id="password_confirmation" :type="passwordConfirmVisible ? 'text' : 'password'" name="password_confirmation" autocomplete="new-password"
-                                        placeholder="{{ __('វាយពាក្យសម្ងាត់ម្តងទៀត') }}"
+                                        placeholder="{{ __('type_the_password_again') }}"
                                         class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition text-sm px-4 py-2.5 pr-12"
                                         required @blur="onBlur('password_confirmation')" @input="onInput('password_confirmation')"
                                         x-bind:class="fieldErrors.password_confirmation ? 'ring-2 ring-red-400 bg-red-50' : ''" />
@@ -290,28 +290,28 @@
                                 <span class="text-emerald-600 font-bold text-sm">2</span>
                             </div>
                             <div>
-                                <h3 class="text-lg font-bold text-gray-900">{{ __('ព័ត៌មាននិស្សិត') }}</h3>
-                                <p class="text-xs text-gray-500">{{ __('កំណត់កម្មវិធីសិក្សា និងព័ត៌មានសិក្សា') }}</p>
+                                <h3 class="text-lg font-bold text-gray-900">{{ __('student_information') }}</h3>
+                                <p class="text-xs text-gray-500">{{ __('student_information') }}</p>
                             </div>
                         </div>
 
                         <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4 mb-5">
                             <p class="text-sm text-emerald-700 flex items-center gap-2">
                                 <i class="fas fa-info-circle"></i>
-                                {{ __('លេខសម្គាល់និស្សិត៖') }} <span id="preview-student-id" class="font-bold text-emerald-800 font-mono">—</span>
+                                {{ __('student_id') }} <span id="preview-student-id" class="font-bold text-emerald-800 font-mono">—</span>
                             </p>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
                             <div>
                                 <label for="student_department_id" class="block text-sm font-bold text-gray-700 mb-1.5">
-                                    <i class="fas fa-graduation-cap mr-1.5 text-emerald-500"></i> {{ __('ដេប៉ាតឺម៉ង់') }} <span class="text-red-500">*</span>
+                                    <i class="fas fa-graduation-cap mr-1.5 text-emerald-500"></i> {{ __('department_3') }} <span class="text-red-500">*</span>
                                 </label>
                                 <select id="student_department_id" name="department_id"
                                     class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition text-sm px-4 py-2.5"
                                     required @blur="onBlur('department_id')" @change="touched.department_id = true; validateField('department_id')"
                                     x-bind:class="fieldErrors.department_id ? 'ring-2 ring-red-400 bg-red-50' : ''">
-                                    <option value="">{{ __('ជ្រើសរើសដេប៉ាតឺម៉ង់') }}</option>
+                                    <option value="">{{ __('select_a_department_2') }}</option>
                                     @foreach($departments as $dept)
                                         <option value="{{ $dept->id }}">{{ $dept->name_km }}</option>
                                     @endforeach
@@ -321,31 +321,31 @@
                             </div>
                             <div>
                                 <label for="degree_level" class="block text-sm font-bold text-gray-700 mb-1.5">
-                                    <i class="fas fa-award mr-1.5 text-emerald-500"></i> {{ __('កម្រិតសញ្ញាបត្រ') }} <span class="text-red-500">*</span>
+                                    <i class="fas fa-award mr-1.5 text-emerald-500"></i> {{ __('degree_level') }} <span class="text-red-500">*</span>
                                 </label>
                                 <select id="degree_level" name="degree_level"
                                     class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition text-sm px-4 py-2.5"
                                     required @blur="onBlur('degree_level')" @change="touched.degree_level = true; validateField('degree_level')"
                                     x-bind:class="fieldErrors.degree_level ? 'ring-2 ring-red-400 bg-red-50' : ''">
-                                    <option value="">{{ __('ជ្រើសរើសកម្រិតសញ្ញាបត្រ') }}</option>
-                                    <option value="បរិញ្ញាបត្រ">{{ __('បរិញ្ញាបត្រ') }}</option>
-                                    <option value="បរិញ្ញាបត្ររង">{{ __('បរិញ្ញាបត្ររង') }}</option>
-                                    <option value="វិញ្ញាបនបត្រ">{{ __('វិញ្ញាបនបត្រ') }}</option>
-                                    <option value="ផ្សេងៗ">{{ __('ផ្សេងៗ') }}</option>
+                                    <option value="">{{ __('select_degree_level') }}</option>
+                                    <option value="បរិញ្ញាបត្រ">{{ __('bachelor_s_degree') }}</option>
+                                    <option value="បរិញ្ញាបត្ររង">{{ __('associate_degree') }}</option>
+                                    <option value="វិញ្ញាបនបត្រ">{{ __('certificate') }}</option>
+                                    <option value="ផ្សេងៗ">{{ __('other_2') }}</option>
                                 </select>
                                 <p x-show="fieldErrors.degree_level" x-text="fieldErrors.degree_level" class="text-sm text-red-600 mt-2"></p>
                             </div>
                             <div>
                                 <label for="generation" class="block text-sm font-bold text-gray-700 mb-1.5">
-                                    <i class="fas fa-layer-group mr-1.5 text-emerald-500"></i> {{ __('ជំនាន់') }} <span class="text-red-500">*</span>
+                                    <i class="fas fa-layer-group mr-1.5 text-emerald-500"></i> {{ __('generation') }} <span class="text-red-500">*</span>
                                 </label>
                                 <select id="generation" name="generation"
                                     class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition text-sm px-4 py-2.5"
                                     required @blur="onBlur('generation')" @change="touched.generation = true; validateField('generation')"
                                     x-bind:class="fieldErrors.generation ? 'ring-2 ring-red-400 bg-red-50' : ''">
-                                    <option value="">{{ __('ជ្រើសរើសជំនាន់') }}</option>
+                                    <option value="">{{ __('select_a_generation') }}</option>
                                     @foreach(\App\Models\Generation::where('is_active', true)->orderByDesc('name')->get() as $gen)
-                                        <option value="{{ $gen->name }}">{{ $gen->name }} ({{ __('ចូលរៀនឆ្នាំ') }} {{ $gen->join_year }})</option>
+                                        <option value="{{ $gen->name }}">{{ $gen->name }} ({{ __('enrolled_in_year') }} {{ $gen->join_year }})</option>
                                     @endforeach
                                 </select>
                                 <p x-show="fieldErrors.generation" x-text="fieldErrors.generation" class="text-sm text-red-600 mt-2"></p>
@@ -363,18 +363,18 @@
 
                     function updateDepartments(facultyId, defaultDepartmentId = null) {
                         if (!departmentSelect) return;
-                        departmentSelect.innerHTML = '<option value=\"{{ __("កំពុងទាញយក...") }}\"></option>';
+                        departmentSelect.innerHTML = '<option value=\"{{ __("loading_2") }}\"></option>';
                         departmentSelect.disabled = true;
 
                         if (!facultyId) {
-                            departmentSelect.innerHTML = '<option value=\"{{ __("សូមជ្រើសរើសមហាវិទ្យាល័យជាមុនសិន") }}\"></option>';
+                            departmentSelect.innerHTML = '<option value=\"{{ __("please_select_a_faculty_first") }}\"></option>';
                             return;
                         }
 
                         fetch('/admin/get-departments-by-faculty/' + facultyId)
                             .then(response => response.json())
                             .then(departments => {
-                                departmentSelect.innerHTML = '<option value=\"{{ __("ជ្រើសរើសដេប៉ាតឺម៉ង់") }}\"></option>';
+                                departmentSelect.innerHTML = '<option value=\"{{ __("select_a_department_2") }}\"></option>';
                                 departments.forEach(department => {
                                     const option = document.createElement('option');
                                     option.value = department.id;
@@ -398,20 +398,20 @@
                                 <span class="text-emerald-600 font-bold text-sm">2</span>
                             </div>
                             <div>
-                                <h3 class="text-lg font-bold text-gray-900">{{ __('ព័ត៌មានសាស្ត្រាចារ្យ') }}</h3>
-                                <p class="text-xs text-gray-500">{{ __('កំណត់មហាវិទ្យាល័យ និងដេប៉ាតឺម៉ង់') }}</p>
+                                <h3 class="text-lg font-bold text-gray-900">{{ __('lecturer_information') }}</h3>
+                                <p class="text-xs text-gray-500">{{ __('professor_information') }}</p>
                             </div>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div>
                                 <label for="faculty_id" class="block text-sm font-bold text-gray-700 mb-1.5">
-                                    <i class="fas fa-university mr-1.5 text-emerald-500"></i> {{ __('មហាវិទ្យាល័យ') }} <span class="text-red-500">*</span>
+                                    <i class="fas fa-university mr-1.5 text-emerald-500"></i> {{ __('faculty') }} <span class="text-red-500">*</span>
                                 </label>
                                 <select id="faculty_id" name="faculty_id"
                                     class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition text-sm px-4 py-2.5"
                                     @blur="onBlur('faculty_id')" @change="touched.faculty_id = true; validateField('faculty_id')"
                                     x-bind:class="fieldErrors.faculty_id ? 'ring-2 ring-red-400 bg-red-50' : ''">
-                                    <option value="">{{ __('ជ្រើសរើសមហាវិទ្យាល័យ') }}</option>
+                                    <option value="">{{ __('select_a_faculty') }}</option>
                                     @foreach($faculties as $faculty)
                                         <option value="{{ $faculty->id }}">{{ $faculty->name_km ?? $faculty->name_en }}</option>
                                     @endforeach
@@ -420,13 +420,13 @@
                             </div>
                             <div>
                                 <label for="professor_department_id" class="block text-sm font-bold text-gray-700 mb-1.5">
-                                    <i class="fas fa-building mr-1.5 text-emerald-500"></i> {{ __('ដេប៉ាតឺម៉ង់') }} <span class="text-red-500">*</span>
+                                    <i class="fas fa-building mr-1.5 text-emerald-500"></i> {{ __('department_3') }} <span class="text-red-500">*</span>
                                 </label>
                                 <select id="professor_department_id" name="department_id"
                                     class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition text-sm px-4 py-2.5"
                                     @blur="onBlur('department_id')" @change="touched.department_id = true; validateField('department_id')"
                                     x-bind:class="fieldErrors.department_id ? 'ring-2 ring-red-400 bg-red-50' : ''">
-                                    <option value="">{{ __('សូមជ្រើសរើសដេប៉ាតឺម៉ង់') }}</option>
+                                    <option value="">{{ __('please_select_a_department') }}</option>
                                 </select>
                                 <x-input-error :messages="$errors->get('department_id')" class="mt-2" />
                                 <p x-show="fieldErrors.department_id" x-text="fieldErrors.department_id" class="text-sm text-red-600 mt-2"></p>
@@ -442,8 +442,8 @@
                             <span class="text-orange-600 font-bold text-sm">3</span>
                         </div>
                         <div>
-                            <h3 class="text-lg font-bold text-gray-900">{{ __('ព័ត៌មានផ្ទាល់ខ្លួន') }}</h3>
-                            <p class="text-xs text-gray-500">{{ __('ព័ត៌មានបន្ថែមអំពីអ្នកប្រើប្រាស់') }}</p>
+                            <h3 class="text-lg font-bold text-gray-900">{{ __('personal_information') }}</h3>
+                            <p class="text-xs text-gray-500">{{ __('personal_information') }}</p>
                         </div>
                     </div>
 
@@ -466,7 +466,7 @@
                                             const file = $event.target.files[0];
                                             if (file) {
                                                 if (file.size > 5 * 1024 * 1024) {
-                                                    showToast('{{ __("រូបភាពធំពេក! សូមជ្រើសរើសរូបភាពដែលមានទំហំតូចជាង 5MB") }}', 'error');
+                                                    showToast('{{ __("validation_file_max_size") }}', 'error');
                                                     $event.target.value = '';
                                                     profilePicturePreview = '';
                                                 } else {
@@ -480,48 +480,48 @@
                                         ">
                                 </label>
                             </div>
-                            <p class="text-xs text-gray-500 font-medium">{{ __('រូបភាព Profile (4x6)') }}</p>
+                            <p class="text-xs text-gray-500 font-medium">{{ __('profile_picture_optional') }}</p>
                         </div>
 
                         <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div>
                                 <label for="full_name_km" class="block text-sm font-bold text-gray-700 mb-1.5">
-                                    <i class="fas fa-file-alt mr-1.5 text-orange-500"></i> {{ __('ឈ្មោះពេញ (ខ្មែរ)') }}
+                                    <i class="fas fa-file-alt mr-1.5 text-orange-500"></i> {{ __('full_name_khmer') }}
                                 </label>
-                                <input id="full_name_km" type="text" name="full_name_km" value="{{ old('full_name_km') }}" placeholder="{{ __('បញ្ចូលឈ្មោះពេញជាភាសាខ្មែរ') }}"
+                                <input id="full_name_km" type="text" name="full_name_km" value="{{ old('full_name_km') }}" placeholder="{{ __('enter_full_name_in_khmer') }}"
                                     class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition text-sm px-4 py-2.5" />
                             </div>
                             <div>
                                 <label for="full_name_en" class="block text-sm font-bold text-gray-700 mb-1.5">
-                                    <i class="fas fa-file-alt mr-1.5 text-orange-500"></i> {{ __('ឈ្មោះពេញ (អង់គ្លេស)') }}
+                                    <i class="fas fa-file-alt mr-1.5 text-orange-500"></i> {{ __('full_name_english') }}
                                 </label>
                                 <input id="full_name_en" type="text" name="full_name_en" value="{{ old('full_name_en') }}" placeholder="FULL NAME IN ENGLISH"
                                     class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition text-sm px-4 py-2.5" />
                             </div>
                             <div>
                                 <label for="gender" class="block text-sm font-bold text-gray-700 mb-1.5">
-                                    <i class="fas fa-venus-mars mr-1.5 text-orange-500"></i> {{ __('ភេទ') }}
+                                    <i class="fas fa-venus-mars mr-1.5 text-orange-500"></i> {{ __('gender') }}
                                 </label>
                                 <select id="gender" name="gender"
                                     class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition text-sm px-4 py-2.5">
-                                    <option value="">{{ __('ជ្រើសរើសភេទ') }}</option>
-                                    <option value="male" {{ old('gender') == 'male' ? 'selected' : '' }}>{{ __('ប្រុស') }}</option>
-                                    <option value="female" {{ old('gender') == 'female' ? 'selected' : '' }}>{{ __('ស្រី') }}</option>
-                                    <option value="other" {{ old('gender') == 'other' ? 'selected' : '' }}>{{ __('ផ្សេងទៀត') }}</option>
+                                    <option value="">{{ __('select_gender') }}</option>
+                                    <option value="male" {{ old('gender') == 'male' ? 'selected' : '' }}>{{ __('male') }}</option>
+                                    <option value="female" {{ old('gender') == 'female' ? 'selected' : '' }}>{{ __('female') }}</option>
+                                    <option value="other" {{ old('gender') == 'other' ? 'selected' : '' }}>{{ __('other') }}</option>
                                 </select>
                             </div>
                             <div>
                                 <label for="phone_number" class="block text-sm font-bold text-gray-700 mb-1.5">
-                                    <i class="fas fa-phone mr-1.5 text-orange-500"></i> {{ __('លេខទូរស័ព្ទ') }}
+                                    <i class="fas fa-phone mr-1.5 text-orange-500"></i> {{ __('phone_number') }}
                                 </label>
                                 <input id="phone_number" type="text" name="phone_number" value="{{ old('phone_number') }}" placeholder="012 345 678"
                                     class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition text-sm px-4 py-2.5" />
                             </div>
                             <div class="md:col-span-2">
                                 <label for="address" class="block text-sm font-bold text-gray-700 mb-1.5">
-                                    <i class="fas fa-map-marker-alt mr-1.5 text-orange-500"></i> {{ __('អាសយដ្ឋាន') }}
+                                    <i class="fas fa-map-marker-alt mr-1.5 text-orange-500"></i> {{ __('address') }}
                                 </label>
-                                <input id="address" type="text" name="address" value="{{ old('address') }}" placeholder="{{ __('បញ្ចូលអាសយដ្ឋាន') }}"
+                                <input id="address" type="text" name="address" value="{{ old('address') }}" placeholder="{{ __('enter_address') }}"
                                     class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition text-sm px-4 py-2.5" />
                             </div>
                         </div>
@@ -532,10 +532,10 @@
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                     <div class="flex items-center justify-between">
                         <a href="{{ route('admin.manage-users') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-xl font-bold text-gray-600 hover:bg-gray-50 transition text-sm">
-                            <i class="fas fa-times"></i> {{ __('បោះបង់') }}
+                            <i class="fas fa-times"></i> {{ __('cancel_2') }}
                         </a>
                         <button type="submit" class="inline-flex items-center gap-2 px-8 py-3 bg-emerald-600 rounded-xl font-bold text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all shadow-lg shadow-emerald-200 text-sm">
-                            <i class="fas fa-save"></i> {{ __('រក្សាទុក និងបង្កើតអ្នកប្រើប្រាស់') }}
+                            <i class="fas fa-save"></i> {{ __('save_and_create_user') }}
                         </button>
                     </div>
                 </div>

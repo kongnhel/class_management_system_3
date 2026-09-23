@@ -20,8 +20,6 @@ class Generation extends Model
         'is_active' => 'boolean',
     ];
 
-    private const BASE_YEAR = 2006;
-
     /**
      * Auto-generate join_year from name.
      */
@@ -31,7 +29,8 @@ class Generation extends Model
 
         static::saving(function (Generation $generation) {
             if (empty($generation->join_year) && ! empty($generation->name)) {
-                $generation->join_year = (int) $generation->name + self::BASE_YEAR;
+                $generation->join_year = (int) $generation->name
+                    + (int) config('school.progression.generation_base_year', 2006);
             }
         });
     }

@@ -57,20 +57,20 @@ class RoomController extends Controller
             if ($url) {
                 $data['wifi_qr_code'] = $url;
             } else {
-                return back()->withErrors(['wifi_qr_code' => __('ការ Upload ទៅ ImageKit បរាជ័យ។')]);
+                return back()->withErrors(['wifi_qr_code' => __('imagekit_upload_failed')]);
             }
         } elseif ($request->hasFile('wifi_qr_code')) {
             $url = $this->imageKitService->uploadWifiQrCode($request->file('wifi_qr_code'));
             if ($url) {
                 $data['wifi_qr_code'] = $url;
             } else {
-                return back()->withErrors(['wifi_qr_code' => __('ការ Upload ទៅ ImageKit បរាជ័យ។')]);
+                return back()->withErrors(['wifi_qr_code' => __('imagekit_upload_failed')]);
             }
         }
 
         Room::create($data);
 
-        return redirect()->route('admin.rooms.index')->with('success', __('បន្ទប់ត្រូវបានបង្កើតដោយជោគជ័យ។'));
+        return redirect()->route('admin.rooms.index')->with('success', __('room_created_successfully'));
     }
 
     public function edit(Room $room)
@@ -95,20 +95,20 @@ class RoomController extends Controller
             if ($url) {
                 $data['wifi_qr_code'] = $url;
             } else {
-                return back()->withErrors(['wifi_qr_code' => __('ការ Upload ទៅ ImageKit បរាជ័យ។')]);
+                return back()->withErrors(['wifi_qr_code' => __('imagekit_upload_failed')]);
             }
         } elseif ($request->hasFile('wifi_qr_code')) {
             $url = $this->imageKitService->uploadWifiQrCode($request->file('wifi_qr_code'));
             if ($url) {
                 $data['wifi_qr_code'] = $url;
             } else {
-                return back()->withErrors(['wifi_qr_code' => __('ការ Upload ទៅ ImageKit បរាជ័យ។')]);
+                return back()->withErrors(['wifi_qr_code' => __('imagekit_upload_failed')]);
             }
         }
 
         $room->update($data);
 
-        return redirect()->route('admin.rooms.index')->with('success', __('បន្ទប់ត្រូវបានកែប្រែដោយជោគជ័យ។'));
+        return redirect()->route('admin.rooms.index')->with('success', __('room_updated_successfully'));
     }
 
     public function destroy(Room $room)
@@ -131,14 +131,14 @@ class RoomController extends Controller
                 ->implode(', ');
 
             return redirect()->route('admin.rooms.index')
-                ->with('error', __('មិនអាចលុបបន្ទប់នេះបានទេ។ ព្រោះវាកំពុងត្រូវបានប្រើក្នុងកាលវិភាគសិក្សា៖ ')
+                ->with('error', __('cannot_delete_room_in_use')
                     .$courseNames
                     .($activeSchedules->count() > 3 ? ' ...' : '')
-                    .' ('.__('សរុប').' '.$activeSchedules->count().' '.__('ម៉ោងសិក្សា').')');
+                    .' ('.__('total').' '.$activeSchedules->count().' '.__('study_hours').')');
         }
 
         $room->delete();
 
-        return redirect()->route('admin.rooms.index')->with('success', __('បន្ទប់ត្រូវបានលុបដោយជោគជ័យ។'));
+        return redirect()->route('admin.rooms.index')->with('success', __('room_deleted_successfully'));
     }
 }

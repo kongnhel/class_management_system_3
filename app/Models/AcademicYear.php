@@ -32,10 +32,13 @@ class AcademicYear extends Model
     /**
      * Set this as the current academic year (unset others)
      */
-    public function setCurrent()
+    public function setCurrent(): void
     {
-        static::query()->update(['is_current' => false]);
-        $this->update(['is_current' => true]);
+        static::query()
+            ->whereKeyNot($this->getKey())
+            ->update(['is_current' => false]);
+
+        $this->forceFill(['is_current' => true])->save();
     }
 
     /**

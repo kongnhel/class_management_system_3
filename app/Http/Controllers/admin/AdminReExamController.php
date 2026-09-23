@@ -8,10 +8,12 @@ use App\Models\CourseOffering;
 use App\Models\Exam;
 use App\Models\ExamResult;
 use App\Models\ReExamResult;
+use App\Models\StudentCourseEnrollment;
 use App\Services\GradingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class AdminReExamController extends Controller
 {
@@ -133,6 +135,27 @@ class AdminReExamController extends Controller
                 $assessmentId = $entry['assessment_id'];
                 $newScore = (float) $entry['new_score'];
 
+                if (! StudentCourseEnrollment::where('course_offering_id', $offeringId)
+                    ->where('student_user_id', $studentId)
+                    ->exists()) {
+                    throw ValidationException::withMessages([
+                        'scores' => 'The selected student is not enrolled in this course offering.',
+                    ]);
+                }
+
+                $assessment = match ($type) {
+                    'assignment' => Assignment::where('id', $assessmentId)
+                        ->where('course_offering_id', $offeringId)->first(),
+                    'midterm', 'final' => Exam::where('id', $assessmentId)
+                        ->where('course_offering_id', $offeringId)->first(),
+                };
+
+                if (! $assessment || ($type !== 'assignment' && GradingService::classifyExamType($assessment) !== $type)) {
+                    throw ValidationException::withMessages([
+                        'scores' => 'The selected assessment does not belong to this course offering.',
+                    ]);
+                }
+
                 $maxScore = match ($type) {
                     'assignment' => Assignment::find($assessmentId)?->max_score ?? 20,
                     'midterm', 'final' => Exam::find($assessmentId)?->max_score ?? ($type === 'midterm' ? 15 : 50),
@@ -162,6 +185,6 @@ class AdminReExamController extends Controller
         });
 
         return redirect()->route('admin.grades.re-exam-form', $offeringId)
-            ->with('success', __('រក្សាទុកពិន្ទុប្រឡងសងបានជោគជ័យ។'));
+            ->with('success', __('re_exam_grades_saved_successfully'));
     }
 }

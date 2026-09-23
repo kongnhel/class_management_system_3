@@ -2,9 +2,9 @@
     <x-slot name="header">
         {{-- Responsive Header: Smaller text on mobile --}}
         <h2 class="font-extrabold text-2xl md:text-4xl text-gray-900 leading-tight tracking-wide">
-            {{ __('មុខវិជ្ជាដែលបានចុះឈ្មោះរបស់ខ្ញុំ') }}
+            {{ __('my_enrolled_courses') }}
         </h2>
-        <p class="mt-1 md:mt-2 text-sm md:text-lg text-gray-500">{{ __('បញ្ជីឈ្មោះមុខវិជ្ជាដែលអ្នកបានចុះឈ្មោះ') }}</p>
+        <p class="mt-1 md:mt-2 text-sm md:text-lg text-gray-500">{{ __('list_of_your_enrolled_courses') }}</p>
     </x-slot>
 
     <div class="bg-gray-50 min-h-screen">
@@ -17,12 +17,12 @@
                     <div class="flex flex-col md:flex-row justify-between items-center mb-6 md:mb-10 pb-5 border-b border-gray-200">
                         <h3 class="text-xl md:text-3xl font-extrabold text-green-700 mb-4 md:mb-0 flex items-center">
                             <i class="fas fa-graduation-cap text-xl md:text-3xl mr-3 text-green-600"></i>
-                            {{ __('ជំនាញ') }}: {{ $studentDepartment->name_km }}
+                            {{ __('department_2') }}: {{ $studentDepartment->name_km }}
                         </h3>
                     </div>
                 @else
                     <div class="bg-gray-100 p-6 md:p-8 rounded-2xl text-center text-gray-500 mb-10 shadow-inner">
-                        <p class="text-lg md:text-2xl font-bold text-gray-800 mb-2">{{ __('អ្នកមិនទាន់បានចុះឈ្មោះក្នុងកម្មវិធីសិក្សាណាមួយនៅឡើយទេ') }}</p>
+                        <p class="text-lg md:text-2xl font-bold text-gray-800 mb-2">{{ __('you_have_not_enrolled_in_any_program_yet') }}</p>
                     </div>
                 @endif
 
@@ -40,7 +40,7 @@
                 <div class="mt-6 md:mt-8">
                     @if ($enrollments->isEmpty())
                         <div class="bg-gray-100 p-8 rounded-2xl text-center text-gray-500 shadow-inner">
-                            <p class="text-xl md:text-2xl font-bold text-gray-800">{{ __('អ្នកមិនទាន់បានចុះឈ្មោះក្នុងមុខវិជ្ជាណាមួយនៅឡើយទេ') }}</p>
+                            <p class="text-xl md:text-2xl font-bold text-gray-800">{{ __('you_have_not_enrolled_in_any_courses_yet') }}</p>
                         </div>
                     @else
                         {{-- Responsive Grid: Gap reduced on mobile --}}
@@ -83,7 +83,7 @@
                                                         </div>
                                                     @endif
                                                     <div>
-                                                        <p class="text-[9px] md:text-[10px] text-gray-400 font-extrabold uppercase tracking-tighter">{{ __('សាស្ត្រាចារ្យ') }}</p>
+                                                        <p class="text-[9px] md:text-[10px] text-gray-400 font-extrabold uppercase tracking-tighter">{{ __('professor') }}</p>
                                                         <p class="font-bold text-gray-800 text-xs md:text-sm">{{ $lecturer->name ?? 'N/A' }}</p>
                                                     </div>
                                                 </div>
@@ -99,10 +99,10 @@
                                             {{-- Status Badge --}}
                                             <div class="flex items-center justify-between px-2">
                                                 <span class="text-xs md:text-sm font-semibold text-gray-600 flex items-center">
-                                                    <i class="fas fa-info-circle mr-2 text-green-500"></i> {{ __('ស្ថានភាព') }}:
+                                                    <i class="fas fa-info-circle mr-2 text-green-500"></i> {{ __('status') }}:
                                                 </span>
                                                 <span class="px-2 py-0.5 md:px-3 md:py-1 rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-widest {{ $enrollment->status == 'enrolled' ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-yellow-100 text-yellow-700 border border-yellow-200' }}">
-                                                    {{ $enrollment->status == 'enrolled' ? __('បានចុះឈ្មោះ') : __('រង់ចាំ') }}
+                                                    {{ $enrollment->status == 'enrolled' ? __('enrolled') : __('pending') }}
                                                 </span>
                                             </div>
                                         </div>
@@ -111,14 +111,14 @@
                                         @if($enrollment->is_class_leader == 1)
                                             <div class="mb-4 md:mb-6 p-3 md:p-4 bg-gradient-to-br from-yellow-50 to-orange-50 border border-yellow-100 rounded-2xl shadow-sm">
                                                 <p class="text-[10px] md:text-[11px] font-black text-yellow-700 mb-2 md:mb-3 flex items-center uppercase">
-                                                    <i class="fas fa-star-badge mr-2"></i> {{ __('ឧបករណ៍ប្រធានថ្នាក់') }}
+                                                    <i class="fas fa-star-badge mr-2"></i> {{ __('class_leader_tools') }}
                                                 </p>
                                                 <div class="grid grid-cols-2 gap-2 md:gap-3">
                                                     <a wire:navigate href="{{ route('student.leader.attendance', $enrollment->course_offering_id) }}" class="flex items-center justify-center bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded-xl text-[9px] md:text-[10px] font-bold transition shadow-sm">
-                                                        <i class="fas fa-clipboard-list mr-1"></i> {{ __('វត្តមាន') }}
+                                                        <i class="fas fa-clipboard-list mr-1"></i> {{ __('attendance') }}
                                                     </a>
                                                     <a wire:navigate href="{{ route('student.leader.report', $enrollment->course_offering_id) }}" class="flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-xl text-[9px] md:text-[10px] font-bold transition shadow-sm">
-                                                        <i class="fas fa-file-invoice mr-1"></i> {{ __('របាយការណ៍') }}
+                                                        <i class="fas fa-file-invoice mr-1"></i> {{ __('report') }}
                                                     </a>
                                                 </div>
                                             </div>
@@ -127,7 +127,7 @@
                                         {{-- Schedule Section --}}
                                         <div class="pt-4 md:pt-5 border-t border-gray-100">
                                             <p class="text-xs md:text-sm font-bold text-gray-800 mb-3 md:mb-4 flex items-center">
-                                                <i class="far fa-calendar-alt mr-2 text-green-500"></i> {{ __('កាលវិភាគសិក្សា') }}
+                                                <i class="far fa-calendar-alt mr-2 text-green-500"></i> {{ __('class_schedule') }}
                                             </p>
                                             <div class="space-y-2 md:space-y-3">
                                                 @forelse (($enrollment->courseOffering?->schedules ?? collect()) as $schedule)
@@ -140,13 +140,13 @@
                                                         </div>
                                                         <div class="text-[9px] md:text-[10px] text-gray-400 mt-1.5 md:mt-2 flex items-center">
                                                             <i class="fas fa-map-marker-alt mr-2 text-red-400"></i> 
-                                                            <span class="font-medium">{{ __('បន្ទប់') }}:</span> 
+                                                            <span class="font-medium">{{ __('room') }}:</span> 
                                                             <span class="ml-1 text-gray-700 font-bold">{{ $schedule->room->room_number ?? 'N/A' }}</span>
                                                         </div>
                                                     </div>
                                                 @empty
                                                     <div class="text-center py-2 italic text-gray-400 text-[10px]">
-                                                        {{ __('មិនទាន់មានកាលវិភាគនៅឡើយ') }}
+                                                        {{ __('no_schedule_yet_2') }}
                                                     </div>
                                                 @endforelse
                                             </div>

@@ -9,14 +9,22 @@ return new class extends Migration
 {
     public function up(): void
     {
-        DB::statement('
-            DELETE a1 FROM attendances a1
-            INNER JOIN attendances a2
-            WHERE a1.id > a2.id
-            AND a1.course_offering_id = a2.course_offering_id
-            AND a1.student_user_id = a2.student_user_id
-            AND a1.date = a2.date
-        ');
+        // Remove duplicates using the query builder so this migration works
+        // on both MySQL and SQLite test databases.
+        $duplicates = DB::table('attendances')
+            ->select('course_offering_id', 'student_user_id', 'date', DB::raw('MIN(id) as keep_id'))
+            ->groupBy('course_offering_id', 'student_user_id', 'date')
+            ->havingRaw('COUNT(*) > 1')
+            ->get();
+
+        foreach ($duplicates as $duplicate) {
+            DB::table('attendances')
+                ->where('course_offering_id', $duplicate->course_offering_id)
+                ->where('student_user_id', $duplicate->student_user_id)
+                ->where('date', $duplicate->date)
+                ->where('id', '!=', $duplicate->keep_id)
+                ->delete();
+        }
 
         Schema::table('attendances', function (Blueprint $table) {
             $table->unique(['course_offering_id', 'student_user_id', 'date'], 'unique_attendance_per_day');

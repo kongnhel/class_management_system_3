@@ -9,12 +9,12 @@
                         <i class="fas fa-redo text-white text-lg"></i>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-bold text-gray-900">{{ __('ប្រឡងសង') }}</h1>
+                        <h1 class="text-2xl font-bold text-gray-900">{{ __('retake') }}</h1>
                         <p class="text-sm text-gray-500 mt-0.5">{{ $offering->course->title_km ?? $offering->course->title_en ?? 'N/A' }} · {{ $offering->academic_year }} · {{ $offering->semester }}</p>
                     </div>
                 </div>
                 <a wire:navigate href="{{ route('professor.my-course-offerings') }}" class="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 text-gray-700 rounded-xl font-bold text-sm hover:bg-gray-50 shadow-sm transition-all">
-                    <i class="fas fa-arrow-left"></i> {{ __('ត្រឡប់ក្រោយ') }}
+                    <i class="fas fa-arrow-left"></i> {{ __('go_back') }}
                 </a>
             </div>
 
@@ -40,24 +40,24 @@
             <div class="bg-white rounded-2xl border border-gray-200 p-5 mb-6">
                 <div class="flex items-center gap-3 mb-3">
                     <i class="fas fa-info-circle text-amber-500"></i>
-                    <h3 class="font-bold text-gray-800 text-sm">{{ __('ព័ត៌មានប្រឡងសង') }}</h3>
+                    <h3 class="font-bold text-gray-800 text-sm">{{ __('re_exam_information') }}</h3>
                 </div>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                     <div>
-                        <span class="text-gray-400 text-xs font-bold uppercase">{{ __('មុខវិជ្ជា') }}</span>
+                        <span class="text-gray-400 text-xs font-bold uppercase">{{ __('course') }}</span>
                         <p class="font-semibold text-gray-800">{{ $offering->course->title_km ?? $offering->course->title_en }}</p>
                     </div>
                     <div>
-                        <span class="text-gray-400 text-xs font-bold uppercase">{{ __('ឆ្នាំសិក្សា') }}</span>
+                        <span class="text-gray-400 text-xs font-bold uppercase">{{ __('academic_year') }}</span>
                         <p class="font-semibold text-gray-800">{{ $offering->academic_year }}</p>
                     </div>
                     <div>
-                        <span class="text-gray-400 text-xs font-bold uppercase">{{ __('ឆមាស') }}</span>
+                        <span class="text-gray-400 text-xs font-bold uppercase">{{ __('semester') }}</span>
                         <p class="font-semibold text-gray-800">{{ $offering->semester }}</p>
                     </div>
                     <div>
-                        <span class="text-gray-400 text-xs font-bold uppercase">{{ __('សិស្សត្រូវប្រឡងសង') }}</span>
-                        <p class="font-semibold text-amber-600">{{ $studentsWithFailed->count() }} {{ __('នាក់') }}</p>
+                        <span class="text-gray-400 text-xs font-bold uppercase">{{ __('students_needing_re_exam') }}</span>
+                        <p class="font-semibold text-amber-600">{{ $studentsWithFailed->count() }} {{ __('students_2') }}</p>
                     </div>
                 </div>
             </div>
@@ -68,8 +68,8 @@
                     <div class="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4">
                         <i class="fas fa-check-circle text-green-400 text-2xl"></i>
                     </div>
-                    <h3 class="text-lg font-bold text-gray-800 mb-2">{{ __('គ្មានសិស្សត្រូវប្រឡងសង') }}</h3>
-                    <p class="text-sm text-gray-500">{{ __('គ្រប់សិស្សទាំងអស់បានឆ្លងកាត់វត្តមាន និងពិន្ទុសំខាន់ៗ។') }}</p>
+                    <h3 class="text-lg font-bold text-gray-800 mb-2">{{ __('no_students_need_re_exam') }}</h3>
+                    <p class="text-sm text-gray-500">{{ __('all_students_have_passed_attendance_and_key_assessments') }}</p>
                 </div>
             @else
                 <form action="{{ route('professor.re-exam-store', $offering->id) }}" method="POST" class="space-y-6">
@@ -92,7 +92,7 @@
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-2">
-                                    <span class="text-xs font-bold text-gray-400">{{ __('វត្តមាន') }}:</span>
+                                    <span class="text-xs font-bold text-gray-400">{{ __('attendance') }}:</span>
                                     <span class="px-2 py-0.5 rounded text-xs font-bold {{ $studentData['attendance_score'] >= 10 ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600' }}">
                                         {{ number_format($studentData['attendance_score'], 1) }} / 15
                                     </span>
@@ -105,9 +105,9 @@
                                     @php
                                         $i = $loop->parent->index . '_' . $idx;
                                         $typeLabel = match($item['assessment_type']) {
-                                            'assignment' => __('កិច្ចការ'),
-                                            'midterm' => __('ប្រឡងពាក់កណ្ដាល់'),
-                                            'final' => __('ប្រឡងប្រចាំឆមាស'),
+                                            'assignment' => __('assignment'),
+                                            'midterm' => __('midterm_exam'),
+                                            'final' => __('final_exam'),
                                             default => ucfirst($item['assessment_type']),
                                         };
                                     @endphp
@@ -115,17 +115,17 @@
                                         <div class="flex items-center gap-2 mb-2">
                                             <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-600">{{ $typeLabel }}</span>
                                             @if($item['has_re_exam'])
-                                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-600">{{ __('ប្រឡងសងរួច') }}</span>
+                                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-600">{{ __('re_exam_completed') }}</span>
                                             @endif
                                         </div>
                                         <p class="text-sm font-semibold text-gray-800 mb-2">{{ $item['title'] }}</p>
                                         <div class="flex items-center gap-3 mb-3 text-xs text-gray-400">
-                                            <span>{{ __('ពិន្ទុបច្ចុប្បន្ន') }}: <span class="font-bold text-red-500">{{ number_format($item['current_score'], 1) }}</span> / {{ $item['max_score'] }}</span>
+                                            <span>{{ __('current_score') }}: <span class="font-bold text-red-500">{{ number_format($item['current_score'], 1) }}</span> / {{ $item['max_score'] }}</span>
                                             <span>·</span>
-                                            <span>{{ __('ត្រូវការ') }}: <span class="font-bold text-amber-600">≥ {{ $item['threshold'] }}</span></span>
+                                            <span>{{ __('required') }}: <span class="font-bold text-amber-600">≥ {{ $item['threshold'] }}</span></span>
                                         </div>
                                         <div>
-                                            <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">{{ __('ពិន្ទុប្រឡងសង') }}</label>
+                                            <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">{{ __('re_exam_score') }}</label>
                                             <input type="number"
                                                 name="scores[{{ $i }}][new_score]"
                                                 min="0"
@@ -147,10 +147,10 @@
                     {{-- Submit --}}
                     <div class="flex items-center justify-end gap-3">
                         <a wire:navigate href="{{ route('professor.re-exam-form', $offering->id) }}" class="px-5 py-2.5 bg-gray-100 text-gray-600 rounded-xl font-bold text-sm hover:bg-gray-200 transition-all">
-                            {{ __('កំណត់ឡើងវិញ') }}
+                            {{ __('reset_2') }}
                         </a>
                         <button type="submit" class="px-6 py-2.5 bg-amber-500 text-white rounded-xl font-bold text-sm hover:bg-amber-600 shadow-md shadow-amber-200 transition-all">
-                            <i class="fas fa-save mr-1.5"></i> {{ __('រក្សាទុកពិន្ទុប្រឡងសង') }}
+                            <i class="fas fa-save mr-1.5"></i> {{ __('save_re_exam_scores') }}
                         </button>
                     </div>
                 </form>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ __('បញ្ជីឈ្មោះនិស្សិត') }}</title>
+    <title>{{ __('student_list_2') }}</title>
     <link rel="icon" type="image/png" href="{{ asset('assets/image/nmu_Logo.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -70,9 +70,9 @@
 
 <div class="container">
     <div class="toolbar">
-        <h2>{{ __('បញ្ជីឈ្មោះនិស្សិត') }}</h2>
+        <h2>{{ __('student_list_2') }}</h2>
         <div>
-            <a href="{{ url()->previous() }}" class="btn btn-back">{{ __('ត្រឡប់ក្រោយ') }}</a>
+            <a href="{{ url()->previous() }}" class="btn btn-back">{{ __('go_back') }}</a>
             <button onclick="window.print()" class="btn btn-print">🖨️ Print</button>
         </div>
     </div>
@@ -81,9 +81,9 @@
         $totalStudents = $students->count();
         $maleCount = $students->filter(fn($s) => ($s->studentProfile->gender ?? $s->profile?->gender) === 'male')->count();
         $femaleCount = $totalStudents - $maleCount;
-        $departmentName = $department?->name_km ?? ($students->first()?->department->name_km ?? __('មិនកំណត់'));
-        $facultyName = $department?->faculty->name_km ?? ($students->first()?->department->faculty->name_km ?? __('មិនកំណត់'));
-        $generationDisplay = $generation ?? ($students->first()?->generation ?? __('មិនកំណត់'));
+        $departmentName = $department?->name_km ?? ($students->first()?->department->name_km ?? __('unspecified'));
+        $facultyName = $department?->faculty->name_km ?? ($students->first()?->department->faculty->name_km ?? __('unspecified'));
+        $generationDisplay = $generation ?? ($students->first()?->generation ?? __('unspecified'));
         $currentYear = \Carbon\Carbon::now()->year + 543;
         $academicYearName = $currentAcademicYear?->name ?? $currentYear . ' - ' . ($currentYear + 1);
 
@@ -98,42 +98,42 @@
             <img src="{{ asset('assets/image/nmu_Logo.png') }}" alt="NMU Logo">
         </div>
         <div class="text header-kh">
-            <p class="line1">{{ __('ព្រះរាជាណាចក្រកម្ពុជា') }}</p>
-            <p class="line2">{{ __('ជាតិ សាសនា ព្រះមហាក្សត្រ') }}</p>
+            <p class="line1">{{ __('kingdom_of_cambodia') }}</p>
+            <p class="line2">{{ __('nation_religion_king') }}</p>
             <p class="line-motto"><img src="{{ asset('assets/image/2.png') }}" alt="motto" style="height:18px;"></p>
-            <p class="line3">{{ __('ឆ្នាំសិក្សា') }} {{ $academicYearName }}</p>
-            <p class="line4">{{ __('សាកលវិទ្យាល័យជាតិមានជ័យ') }}</p>
+            <p class="line3">{{ __('academic_year') }} {{ $academicYearName }}</p>
+            <p class="line4">{{ __('national_meanchey_university') }}</p>
             <p class="line5">{{ $facultyName }}</p>
-            <p class="line6">{{ __('បញ្ជីឈ្មោះនិស្សិត') }}</p>
-            <p class="line7">{{ __('ចំនួន') }} {{ toKhmerNums((string) $totalStudents) }} {{ __('នាក់') }}</p>
+            <p class="line6">{{ __('student_list_2') }}</p>
+            <p class="line7">{{ __('total_3') }} {{ toKhmerNums((string) $totalStudents) }} {{ __('students_2') }}</p>
         </div>
     </div>
 
     <div class="info-row">
-        <span>{{ __('ដេប៉ាតឺម៉ង់៖') }} <strong>{{ $departmentName }}</strong></span>
-        <span>{{ __('ជំនាន់ទី៖') }} <strong>{{ $generationDisplay }}</strong></span>
-        <span>{{ __('សរុប៖') }} <strong>{{ $totalStudents }}</strong> {{ __('នាក់') }} ({{ __('ប្រុស') }} <strong>{{ $maleCount }}</strong> {{ __('នាក់') }}, {{ __('ស្រី') }} <strong>{{ $femaleCount }}</strong> {{ __('នាក់') }})</span>
+        <span>{{ __('department_4') }} <strong>{{ $departmentName }}</strong></span>
+        <span>{{ __('generation_3') }} <strong>{{ $generationDisplay }}</strong></span>
+        <span>{{ __('total_4') }} <strong>{{ $totalStudents }}</strong> {{ __('students_2') }} ({{ __('male') }} <strong>{{ $maleCount }}</strong> {{ __('students_2') }}, {{ __('female') }} <strong>{{ $femaleCount }}</strong> {{ __('students_2') }})</span>
     </div>
 
     <table>
         <thead>
             <tr>
-                <th class="col-stt">{{ __('ល.រ') }}</th>
-                <th class="col-id">{{ __('អត្តសញ្ញាណ') }}</th>
-                <th class="col-name-kh">{{ __('គោត្តនាម និងនាម') }}</th>
-                <th class="col-name-en">{{ __('ឈ្មោះអង់គ្លេស') }}</th>
-                <th class="col-gender">{{ __('ភេទ') }}</th>
-                <th class="col-dob">{{ __('ថ្ងៃខែឆ្នាំកំណើត') }}</th>
-                <th class="col-year">{{ __('ឆ្នាំទី') }}</th>
-                <th class="col-phone">{{ __('ទូរស័ព្ទ') }}</th>
-                <th class="col-address text-left">{{ __('អាសយដ្ឋាន') }}</th>
+                <th class="col-stt">{{ __('key_no_2') }}</th>
+                <th class="col-id">{{ __('key_id') }}</th>
+                <th class="col-name-kh">{{ __('full_name_3') }}</th>
+                <th class="col-name-en">{{ __('english_name') }}</th>
+                <th class="col-gender">{{ __('gender') }}</th>
+                <th class="col-dob">{{ __('date_of_birth') }}</th>
+                <th class="col-year">{{ __('year') }}</th>
+                <th class="col-phone">{{ __('phone') }}</th>
+                <th class="col-address text-left">{{ __('address') }}</th>
             </tr>
         </thead>
         <tbody>
             @foreach($students as $index => $student)
                 @php
                     $gender = ($student->studentProfile->gender ?? $student->profile?->gender) ?? '';
-                    $genderText = $gender === 'male' ? __('ប') : ($gender === 'female' ? __('ស') : '');
+                    $genderText = $gender === 'male' ? __('key_m') : ($gender === 'female' ? __('key_f') : '');
                 @endphp
                 <tr>
                     <td class="col-stt">{{ $index + 1 }}</td>
@@ -152,13 +152,13 @@
 
     <div class="signature-section">
         <div class="signature-block">
-            <div class="date-line">{{ __('ថ្ងៃទី') }} ..... {{ __('ខែ') }} ..... {{ __('ឆ្នាំ') }} {{ $currentYear }}</div>
-            <div class="title">{{ __('ហត្ថលេខារបស់អ្នករៀបចំ') }}</div>
+            <div class="date-line">{{ __('day') }} ..... {{ __('month') }} ..... {{ __('years') }} {{ $currentYear }}</div>
+            <div class="title">{{ __('signature_of_preparer') }}</div>
             <div class="sign-line"></div>
         </div>
         <div class="signature-block">
-            <div class="date-line">{{ __('ថ្ងៃទី') }} ..... {{ __('ខែ') }} ..... {{ __('ឆ្នាំ') }} {{ $currentYear }}</div>
-            <div class="title">{{ __('ហត្ថលេខារបស់នាយកសាលា') }}</div>
+            <div class="date-line">{{ __('day') }} ..... {{ __('month') }} ..... {{ __('years') }} {{ $currentYear }}</div>
+            <div class="title">{{ __('signature_of_school_director') }}</div>
             <div class="sign-line"></div>
         </div>
     </div>

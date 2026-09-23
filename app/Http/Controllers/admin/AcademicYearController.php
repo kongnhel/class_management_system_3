@@ -36,7 +36,7 @@ class AcademicYearController extends Controller
         }
 
         return redirect()->route('admin.academic-years.index')
-            ->with('success', __('ឆ្នាំសិក្សាត្រូវបានបង្កើតដោយជោគជ័យ។'));
+            ->with('success', __('academic_year_created_successfully'));
     }
 
     public function edit(AcademicYear $academicYear)
@@ -46,6 +46,10 @@ class AcademicYearController extends Controller
 
     public function update(Request $request, AcademicYear $academicYear)
     {
+        // Editing the name, dates, or description must not accidentally unset
+        // the currently selected academic year.
+        $wasCurrent = (bool) $academicYear->is_current;
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255', \Illuminate\Validation\Rule::unique('academic_years')->ignore($academicYear->id)],
             'start_date' => 'required|date',
@@ -57,10 +61,14 @@ class AcademicYearController extends Controller
 
         if ($request->boolean('is_current')) {
             $academicYear->setCurrent();
+        } elseif ($wasCurrent) {
+            // Keep the existing current state when the checkbox is omitted by
+            // the browser or the edit form is submitted without changing it.
+            $academicYear->update(['is_current' => true]);
         }
 
         return redirect()->route('admin.academic-years.index')
-            ->with('success', __('ឆ្នាំសិក្សាត្រូវបានកែប្រែដោយជោគជ័យ។'));
+            ->with('success', __('academic_year_updated_successfully'));
     }
 
     public function destroy(AcademicYear $academicYear)
@@ -68,7 +76,7 @@ class AcademicYearController extends Controller
         $academicYear->delete();
 
         return redirect()->route('admin.academic-years.index')
-            ->with('success', __('ឆ្នាំសិក្សាត្រូវបានលុបដោយជោគជ័យ។'));
+            ->with('success', __('academic_year_deleted_successfully'));
     }
 
     public function setCurrent(AcademicYear $academicYear)
@@ -76,6 +84,6 @@ class AcademicYearController extends Controller
         $academicYear->setCurrent();
 
         return redirect()->route('admin.academic-years.index')
-            ->with('success', __('ឆ្នាំសិក្សាត្រូវបានកំណត់ជាឆ្នាំសិក្សាបច្ចុប្បន្ន។'));
+            ->with('success', __('academic_year_set_as_current'));
     }
 }

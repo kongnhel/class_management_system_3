@@ -3,8 +3,8 @@
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between mb-8">
                 <div>
-                    <h1 class="text-3xl font-black text-slate-800">{{ __('មុខវិជ្ជាដែលអាចចុះឈ្មោះបាន') }}</h1>
-                    <p class="text-sm text-slate-500 mt-1">{{ __('គ្រប់គ្រងការចុះឈ្មោះសិក្សាតាមមុខវិជ្ជា') }}</p>
+                    <h1 class="text-3xl font-black text-slate-800">{{ __('available_courses') }}</h1>
+                    <p class="text-sm text-slate-500 mt-1">{{ __('browse_enroll_courses') }}</p>
                 </div>
             </div>
 
@@ -13,8 +13,8 @@
                     <div class="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-4">
                         <i class="fas fa-graduation-cap text-slate-400 text-2xl"></i>
                     </div>
-                    <h3 class="text-lg font-bold text-slate-600 mb-2">{{ __('មិនទាន់មានមុខវិជ្ជា') }}</h3>
-                    <p class="text-sm text-slate-500">{{ __('មិនទាន់មានមុខវិជ្ជាណាមួយសម្រាប់ចុះឈ្មោះនៅឡើយទេ។ សូមទាក់ទងរដ្ឋបាល។') }}</p>
+                    <h3 class="text-lg font-bold text-slate-600 mb-2">{{ __('no_courses_yet') }}</h3>
+                    <p class="text-sm text-slate-500">{{ __('no_departments_available_yet') }}</p>
                 </div>
             @else
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -54,7 +54,7 @@
                                     @csrf
                                     <input type="hidden" name="department_id" value="{{ $dept->id }}">
                                     <button type="submit" class="w-full py-2 px-4 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-xl transition-colors">
-                                        {{ __('ចុះឈ្មោះ') }}
+                                        {{ __('register') }}
                                     </button>
                                 </form>
                             </div>

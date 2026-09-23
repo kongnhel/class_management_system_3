@@ -1,5 +1,5 @@
 <link rel="icon" type="image/png" href="{{ asset('assets/image/nmu_Logo.png') }}">
-<title>{{ config('app.name', 'Class Management System') }} - ពិនិត្យស្ថានភាពផ្ទៀងផ្ទាត់</title>
+<title>{{ config('app.name', 'Class Management System') }} - {{ __('auth_check_verification') }}</title>
 
 <x-guest-layout>
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -19,9 +19,9 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                     </svg>
                 </div>
-                <h2 class="text-2xl font-extrabold text-gray-900">ពិនិត្យស្ថានភាពផ្ទៀងផ្ទាត់</h2>
+                <h2 class="text-2xl font-extrabold text-gray-900">{{ __('auth_check_verification') }}</h2>
                 <p class="text-gray-500 mt-2 text-sm leading-relaxed">
-                    បញ្ចូលអ៊ីមែល ឬលេខទូរស័ព្ទរបស់អ្នកដើម្បីពិនិត្យមើលស្ថានភាពគណនី
+                    {{ __('auth_check_verification_subtitle') }}
                 </p>
             </div>
 
@@ -30,21 +30,19 @@
                     @csrf
 
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">អ៊ីមែល / លេខទូរស័ព្ទ / លេខសម្គាល់</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('login_identifier_label') }}</label>
                         <input type="text" name="identifier" value="{{ old('identifier') }}" required autofocus
                                class="block w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none"
                                placeholder="example@gmail.com / 012345678 / ID-0000X" />
                         <x-input-error :messages="$errors->get('identifier')" class="mt-1.5 text-xs text-red-500" />
                     </div>
 
-                    <button type="submit" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-emerald-200 hover:shadow-emerald-300 transition-all duration-200 text-sm">
-                        ពិនិត្យមើល
-                    </button>
+                    <button type="submit" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-emerald-200 hover:shadow-emerald-300 transition-all duration-200 text-sm">{{ __('auth_check_btn') }}</button>
                 </form>
 
                 <div class="mt-6 text-center">
                     <a href="{{ route('login') }}" class="text-sm font-bold text-emerald-600 hover:text-emerald-700 transition-colors">
-                        ← ត្រឡប់ទៅការចូលប្រព័ន្ធ
+                        ← {{ __('auth_back_to_login') }}
                     </a>
                 </div>
             </div>

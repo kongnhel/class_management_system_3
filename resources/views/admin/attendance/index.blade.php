@@ -7,8 +7,8 @@
                     <i class="fas fa-calendar-check text-white text-lg"></i>
                 </div>
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-900">{{ __('ទិន្នន័យវត្តមាន') }}</h1>
-                    <p class="text-gray-500 mt-0.5">{{ __('តាមដានវត្តមានសិស្សក្នុងមុខវិជ្ជាផ្សេងៗ') }}</p>
+                    <h1 class="text-3xl font-bold text-gray-900">{{ __('attendance_data') }}</h1>
+                    <p class="text-gray-500 mt-0.5">{{ __('track_student_attendance_across_courses') }}</p>
                 </div>
             </div>
 
@@ -16,48 +16,66 @@
             <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-8">
                 <form action="{{ route('admin.attendance.index') }}" method="GET" data-admin-realtime-filter class="space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
-                        <div class="md:col-span-3">
-                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('ស្វែងរកមុខវិជ្ជា/សាស្ត្រាចារ្យ') }}</label>
+                        <div class="md:col-span-2">
+                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('search_course_professor') }}</label>
                             <div class="relative">
                                 <span class="absolute inset-y-0 left-0 flex items-center pl-3">
                                     <i class="fas fa-search text-gray-400"></i>
                                 </span>
-                                <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('វាយបញ្ចូលឈ្មោះមុខវិជ្ជា ឬសាស្ត្រាចារ្យ...') }}"
+                                <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('type_a_course_or_lecturer_name') }}"
                                     class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
                             </div>
                         </div>
-                        <div class="md:col-span-3">
-                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('កម្មវិធីសិក្សា') }}</label>
+                        <div class="md:col-span-2">
+                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('study_program') }}</label>
                             <select name="department_id" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
-                                <option value="">{{ __('បង្ហាញទាំងអស់') }}</option>
+                                <option value="">{{ __('show_all') }}</option>
                                 @foreach($departments as $dept)
                                     <option value="{{ $dept->id }}" {{ request('department_id') == $dept->id ? 'selected' : '' }}>{{ $dept->name_km }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="md:col-span-2">
-                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('ឆមាស') }}</label>
+                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('professor') }}</label>
+                            <select name="professor_id" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
+                                <option value="">{{ __('show_all') }}</option>
+                                @foreach($professors as $professor)
+                                    <option value="{{ $professor->id }}" {{ request('professor_id') == $professor->id ? 'selected' : '' }}>{{ $professor->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="md:col-span-1">
+                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('semester') }}</label>
                             <select name="semester" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
-                                <option value="">{{ __('ទាំងអស់') }}</option>
-                                <option value="ឆមាសទី១" {{ request('semester') == 'ឆមាសទី១' ? 'selected' : '' }}>{{ __('ឆមាសទី១') }}</option>
-                                <option value="ឆមាសទី២" {{ request('semester') == 'ឆមាសទី២' ? 'selected' : '' }}>{{ __('ឆមាសទី២') }}</option>
+                                <option value="">{{ __('all_2') }}</option>
+                                <option value="ឆមាសទី១" {{ request('semester') == 'ឆមាសទី១' ? 'selected' : '' }}>{{ __('semester_1') }}</option>
+                                <option value="ឆមាសទី២" {{ request('semester') == 'ឆមាសទី២' ? 'selected' : '' }}>{{ __('semester_2') }}</option>
+                            </select>
+                        </div>
+                        <div class="md:col-span-1">
+                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('generation') }}</label>
+                            <select name="generation" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
+                                <option value="">{{ __('all_2') }}</option>
+                                @foreach($generations as $gen)
+                                    <option value="{{ $gen->name }}" {{ request('generation') == $gen->name ? 'selected' : '' }}>{{ __('generation_2') }}{{ $gen->name }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="md:col-span-2">
-                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('ជំនាន់') }}</label>
-                            <select name="generation" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
-                                <option value="">{{ __('ទាំងអស់') }}</option>
-                                @foreach($generations as $gen)
-                                    <option value="{{ $gen->name }}" {{ request('generation') == $gen->name ? 'selected' : '' }}>{{ __('ជំនាន់ទី') }}{{ $gen->name }}</option>
+                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">Academic year</label>
+                            <select name="academic_year" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
+                                <option value="">{{ __('all_2') }}</option>
+                                @foreach($academicYears as $academicYear)
+                                    <option value="{{ $academicYear }}" {{ request('academic_year') === $academicYear ? 'selected' : '' }}>{{ $academicYear }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="md:col-span-2 flex gap-2">
                             <a href="{{ route('admin.attendance.index') }}" class="px-3 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl transition-colors font-bold text-xs whitespace-nowrap">
-                                <i class="fas fa-sync-alt"></i> {{ __('កំណត់វិញ') }}
+                                <i class="fas fa-sync-alt"></i> {{ __('reset') }}
                             </a>
                             <button type="submit" class="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-bold px-4 py-2.5 rounded-xl transition-all shadow-md text-xs whitespace-nowrap">
-                                <i class="fas fa-filter"></i> {{ __('តម្រង់') }}
+                                <i class="fas fa-filter"></i> {{ __('filter') }}
                             </button>
                         </div>
                     </div>
@@ -67,7 +85,7 @@
             <div data-admin-results>
             {{-- Results Count --}}
             <div class="flex items-center justify-between mb-4">
-                <p class="text-sm text-gray-500">{{ __('រកឃើញ') }} <span class="font-bold text-gray-700">{{ $courseOfferings->total() }}</span> {{ __('មុខវិជ្ជា') }}</p>
+                <p class="text-sm text-gray-500">{{ __('found') }} <span class="font-bold text-gray-700">{{ $courseOfferings->total() }}</span> {{ __('course') }}</p>
             </div>
 
             {{-- Table Card --}}
@@ -76,11 +94,11 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead>
                             <tr class="bg-gray-50">
-                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('មុខវិជ្ជា') }}</th>
-                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('សាស្ត្រាចារ្យ') }}</th>
-                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('ឆមាស / ឆ្នាំសិក្សា') }}</th>
-                                <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('សិស្ស') }}</th>
-                                <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('សកម្មភាព') }}</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('course') }}</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('professor') }}</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('semester_academic_year') }}</th>
+                                <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('students') }}</th>
+                                <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('actions_2') }}</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-100">
@@ -98,7 +116,7 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <span class="text-sm text-gray-700">{{ $offering->lecturer?->name ?? __('មិនទាន់កំណត់') }}</span>
+                                    <span class="text-sm text-gray-700">{{ $offering->lecturer?->name ?? __('not_set') }}</span>
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-2">
@@ -113,7 +131,7 @@
                                 </td>
                                 <td class="px-6 py-4 text-center">
                                     <a href="{{ route('admin.attendance.show', $offering->id) }}" class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-xl transition-colors text-sm font-bold">
-                                        <i class="fas fa-eye"></i> {{ __('មើល') }}
+                                        <i class="fas fa-eye"></i> {{ __('view') }}
                                     </a>
                                 </td>
                             </tr>
@@ -124,8 +142,8 @@
                                         <div class="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center">
                                             <i class="fas fa-inbox text-gray-300 text-2xl"></i>
                                         </div>
-                                        <p class="text-sm font-bold text-gray-400">{{ __('មិនមានទិន្នន័យ') }}</p>
-                                        <p class="text-xs text-gray-300">{{ __('សូមព្យាយាមស្វែងរកឡើងវិញ') }}</p>
+                                        <p class="text-sm font-bold text-gray-400">{{ __('no_data_2') }}</p>
+                                        <p class="text-xs text-gray-300">{{ __('please_try_searching_again') }}</p>
                                     </div>
                                 </td>
                             </tr>

@@ -2,11 +2,11 @@
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                {{ __('កំណត់ត្រាសកម្មភាព') }}
+                {{ __('audit_logs') }}
             </h2>
             <div class="flex space-x-2">
                 <a href="{{ route('admin.audit-logs.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                    {{ __('សម្អាត') }}
+                    {{ __('clear') }}
                 </a>
             </div>
         </div>
@@ -45,7 +45,7 @@
                         </div>
                         <div class="md:col-span-4 flex justify-end">
                             <button type="submit" class="inline-flex items-center px-4 py-2 bg-emerald-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                                {{ __('ស្វែងរក') }}
+                                {{ __('search_2') }}
                             </button>
                         </div>
                     </form>
@@ -55,22 +55,22 @@
                             <thead class="bg-gray-50 dark:bg-gray-700">
                                 <tr>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                        {{ __('អ្នកប្រើប្រាស់') }}
+                                        {{ __('users') }}
                                     </th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                        {{ __('សកម្មភាព') }}
+                                        {{ __('actions_2') }}
                                     </th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                        {{ __('ពិពណ៌នា') }}
+                                        {{ __('description') }}
                                     </th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                         {{ __('IP Address') }}
                                     </th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                        {{ __('កាលបរិច្ឆេទ') }}
+                                        {{ __('date') }}
                                     </th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                        {{ __('សកម្មភាព') }}
+                                        {{ __('actions_2') }}
                                     </th>
                                 </tr>
                             </thead>
@@ -118,7 +118,7 @@
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                             <a href="{{ route('admin.audit-logs.show', $log) }}" class="text-emerald-600 hover:text-emerald-900 dark:text-emerald-400 dark:hover:text-emerald-300">
-                                                {{ __('មើល') }}
+                                                {{ __('view') }}
                                             </a>
                                         </td>
                                     </tr>

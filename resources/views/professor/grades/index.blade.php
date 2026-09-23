@@ -2,29 +2,49 @@
     <x-slot name="header">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 print:hidden">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                <div class="text-center lg:text-left">
-                    <h2 class="font-extrabold text-2xl text-slate-800 leading-tight tracking-tight">
-                        {{ __('តារាងពិន្ទុរួម') }}
-                    </h2>
-                    <div class="flex items-center justify-center lg:justify-start mt-1 text-slate-500 space-x-2">
-                        <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
-                        <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">{{ __('ការគ្រប់គ្រង និងតាមដានលទ្ធផលសិក្សា') }}</p>
+                <div class="flex items-center gap-3">
+                    <a wire:navigate href="{{ route('professor.my-course-offerings') }}"
+                        class="inline-flex items-center gap-2 px-4 h-10 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-emerald-600 hover:border-emerald-200 hover:bg-emerald-50 transition-colors shadow-sm print:hidden text-xs font-bold"
+                        aria-label="{{ __('go_back') }}" title="{{ __('go_back') }}">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                        </svg>
+                        <span>{{ __('go_back') }}</span>
+                    </a>
+                    <div class="text-center lg:text-left">
+                        <h2 class="font-extrabold text-2xl text-slate-800 leading-tight tracking-tight">
+                            {{ __('gradebook') }}
+                        </h2>
+                        <div class="flex items-center justify-center lg:justify-start mt-1 text-slate-500 space-x-2">
+                            <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                            <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">{{ __('live') }}</p>
+                        </div>
                     </div>
                 </div>
 
                 <div class="flex flex-wrap items-center justify-center lg:justify-end gap-3">
                     <div class="hidden lg:block text-right pr-4 border-r border-slate-200">
-                        <p class="text-[10px] text-slate-400 uppercase font-black tracking-widest leading-none">{{ __('មុខវិជ្ជា') }}</p>
-                        <p class="text-sm font-bold text-emerald-600 mt-1 leading-none">{{ $courseOffering->course->title_km }}</p>
+                        <p class="text-[10px] text-slate-400 uppercase font-black tracking-widest leading-none">{{ __('course') }}</p>
+                        <p class="text-sm font-bold text-emerald-600 mt-1 leading-none">{{ $courseOffering->course?->title_km ?? $courseOffering->course?->title_en ?? 'N/A' }}</p>
+                        <p class="text-[10px] text-slate-400 mt-1">{{ $courseOffering->course?->code ?? '' }} · {{ $courseOffering->semester }} / {{ $courseOffering->academic_year }}</p>
+                        <p class="text-[10px] text-slate-400 mt-0.5">{{ $courseOffering->room_number ?? __('Online') }}@if($courseOffering->generation) · G{{ $courseOffering->generation }}@endif</p>
                     </div>
 
-                    <div class="grid grid-cols-3 md:flex items-center gap-3 w-full md:w-auto">
+                    <div class="grid grid-cols-2 md:flex items-center gap-3 w-full md:w-auto">
+                        <a wire:navigate href="{{ route('professor.students.in-course-offering', ['offering_id' => $courseOffering->id]) }}"
+                            class="inline-flex items-center justify-center px-4 py-2.5 bg-white hover:bg-emerald-50 border border-slate-200 hover:border-emerald-200 text-slate-600 hover:text-emerald-700 rounded-2xl font-bold text-xs transition-all">
+                            <i class="fas fa-users mr-2"></i> {{ __('view_students') }}
+                        </a>
+                        <a wire:navigate href="{{ route('professor.manage-attendance', ['offering_id' => $courseOffering->id]) }}"
+                            class="inline-flex items-center justify-center px-4 py-2.5 bg-white hover:bg-emerald-50 border border-slate-200 hover:border-emerald-200 text-slate-600 hover:text-emerald-700 rounded-2xl font-bold text-xs transition-all">
+                            <i class="fas fa-calendar-check mr-2"></i> {{ __('attendance') }}
+                        </a>
                         <a wire:navigate href="{{ route('professor.assessments.create', ['offering_id' => $courseOffering->id]) }}"
                             class="group inline-flex items-center justify-center px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-bold text-xs transition-all duration-200 shadow-sm hover:shadow-emerald-200">
                             <svg class="w-4 h-4 mr-2 group-hover:rotate-90 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                             </svg>
-                            {{ __('បង្កើតការវាយតម្លៃ') }}
+                            {{ __('add_assessment') }}
                         </a>
 
                         <button onclick="window.open('{{ route('professor.grades.print', ['offering_id' => $courseOffering->id]) }}', '_blank')"
@@ -32,7 +52,7 @@
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
                             </svg>
-                            {{ __('បោះពុម្ព') }}
+                            {{ __('print_2') }}
                         </button>
                     </div>
                 </div>
@@ -102,19 +122,19 @@
             {{-- Summary Stats --}}
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6 print:hidden">
                 <div class="bg-white rounded-2xl border border-slate-200 p-4 text-center shadow-sm">
-                    <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest">{{ __('និស្សិតសរុប') }}</p>
+                    <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest">{{ __('total_students_2') }}</p>
                     <p class="text-2xl font-black text-slate-700 mt-1">{{ $totalStudents }}</p>
                 </div>
                 <div class="bg-white rounded-2xl border border-emerald-200 p-4 text-center shadow-sm">
-                    <p class="text-[11px] font-black text-emerald-400 uppercase tracking-widest">{{ __('មធ្យមពិន្ទុ') }}</p>
+                    <p class="text-[11px] font-black text-emerald-400 uppercase tracking-widest">{{ __('class_average') }}</p>
                     <p class="text-2xl font-black text-emerald-600 mt-1">{{ number_format($classAvg, 1) }}</p>
                 </div>
                 <div class="bg-white rounded-2xl border border-emerald-200 p-4 text-center shadow-sm">
-                    <p class="text-[11px] font-black text-emerald-500 uppercase tracking-widest">{{ __('អត្រាប្រឡងជាប់') }}</p>
+                    <p class="text-[11px] font-black text-emerald-500 uppercase tracking-widest">{{ __('pass_rate') }}</p>
                     <p class="text-2xl font-black text-emerald-600 mt-1">{{ $passRate }}%</p>
                 </div>
                 <div class="bg-white rounded-2xl border border-slate-200 p-4 text-center shadow-sm">
-                    <p class="text-[11px] font-black text-amber-500 uppercase tracking-widest">{{ __('ពិន្ទុខ្ពស់/ទាប') }}</p>
+                    <p class="text-[11px] font-black text-amber-500 uppercase tracking-widest">{{ __('score_range') }}</p>
                     <p class="text-sm font-black text-slate-700 mt-1">{{ number_format($highestScore, 1) }} / {{ number_format($lowestScore, 1) }}</p>
                 </div>
             </div>
@@ -148,7 +168,7 @@
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                                 </svg>
-                                {{ __('ទាញយក') }}
+                                {{ __('download') }}
                             </a>
 
                             <div class="w-px h-8 bg-slate-200"></div>
@@ -165,7 +185,7 @@
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
                                     </svg>
-                                    {{ __('បញ្ចូល') }}
+                                    {{ __('add_2') }}
                                 </button>
 
                                 {{-- File Selected State --}}
@@ -186,7 +206,7 @@
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                         </svg>
-                                        {{ __('អាប់ដែត') }}
+                                        {{ __('save_changes') }}
                                     </button>
                                 </div>
                             </form>
@@ -199,7 +219,7 @@
             <div class="block lg:hidden space-y-6 print:hidden">
                 <div x-data="{ open: false }" class="bg-white rounded-3xl border border-emerald-100 shadow-sm overflow-hidden">
                     <button @click="open = !open" class="w-full flex items-center justify-between p-5 bg-emerald-50/50">
-                        <span class="text-sm font-black text-emerald-700 uppercase tracking-tight">{{ __('គ្រប់គ្រងការវាយតម្លៃ') }}</span>
+                        <span class="text-sm font-black text-emerald-700 uppercase tracking-tight">{{ __('filter_options') }}</span>
                         <svg class="w-5 h-5 text-emerald-500 transition-transform" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
                     </button>
                     <div x-show="open" x-collapse class="p-4 space-y-3 bg-white">
@@ -240,31 +260,32 @@
                         $grade = $student->letterGrade ?? \App\Services\GradingService::getLetterGrade($rowTotal);
                     @endphp
                     <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden student-card"
-                         data-name="{{ mb_strtolower($student->profile->full_name_km ?? $student->name ?? '', 'UTF-8') }}"
-                         data-id="{{ mb_strtolower($student->student_id_code ?? '', 'UTF-8') }}">
+                         data-name="{{ mb_strtolower($student->studentProfile?->full_name_km ?? $student->profile?->full_name_km ?? $student->name ?? '', 'UTF-8') }}"
+                         data-id="{{ mb_strtolower($student->student_id_code ?? '', 'UTF-8') }}"
+                         data-search="{{ mb_strtolower(implode(' ', array_filter([$student->studentProfile?->full_name_en, $student->profile?->full_name_en, $student->email])), 'UTF-8') }}">
                         <div class="p-6">
                             <div class="flex items-center justify-between mb-5">
                                 <div class="flex items-center gap-3">
                                     <div class="relative">
                                         <div class="h-12 w-12 rounded-2xl bg-emerald-600 text-white flex flex-col items-center justify-center shadow-lg shadow-emerald-100">
-                                            <span class="text-[10px] font-black uppercase leading-none mb-0.5 opacity-70">{{ __('ចំណាត់ថ្នាក់') }}</span>
+                                            <span class="text-[10px] font-black uppercase leading-none mb-0.5 opacity-70">{{ __('rank') }}</span>
                                             <span class="text-sm font-black leading-none">{{ $loop->iteration }}</span>
                                         </div>
                                     </div>
                                     <div>
-                                        <h3 class="text-base font-bold text-slate-800 leading-tight">{{ $student->profile->full_name_km ?? $student->name }}</h3>
+                                        <h3 class="text-base font-bold text-slate-800 leading-tight">{{ $student->studentProfile?->full_name_km ?? $student->profile?->full_name_km ?? $student->name }}</h3>
                                         <p class="text-xs text-slate-400 font-bold tracking-wider">{{ $student->student_id_code }}</p>
                                     </div>
                                 </div>
                                 <div class="h-12 w-12 rounded-2xl flex flex-col items-center justify-center text-sm font-black {{ $student->isPassing ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-rose-50 text-rose-600 border border-rose-100' }}">
-                                     <span class="text-[10px] uppercase mb-0.5 opacity-70">{{ __('និទ្ទេស') }}</span>
+                                     <span class="text-[10px] uppercase mb-0.5 opacity-70">{{ __('grade') }}</span>
                                      {{ $grade }}
                                 </div>
                             </div>
 
                             <div class="space-y-2">
                                 <div class="flex justify-between items-center p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                    <span class="text-xs font-bold text-slate-500">{{ __('វត្តមាន (15%)') }}</span>
+                                    <span class="text-xs font-bold text-slate-500">{{ __('attendance_score') }}</span>
                                     <div class="flex items-center gap-2">
                                         <span class="text-xs font-black text-slate-700">{{ number_format($attendanceScore, 1) }}</span>
                                     </div>
@@ -294,7 +315,7 @@
                                 @endforeach
 
                                 <div class="flex justify-between items-center p-4 bg-emerald-600 rounded-2xl mt-4 shadow-lg shadow-emerald-100">
-                                    <span class="text-xs font-black text-white uppercase">{{ __('សរុបរួម') }}</span>
+                                    <span class="text-xs font-black text-white uppercase">{{ __('grand_total') }}</span>
                                     <span class="text-sm font-black text-white">{{ number_format($rowTotal, 1) }}</span>
                                 </div>
                             </div>
@@ -302,7 +323,7 @@
                     </div>
                 @empty
                     <div class="text-center py-20 bg-white rounded-2xl border-2 border-dashed border-slate-200">
-                        <p class="text-slate-400 font-bold">{{ __('មិនទាន់មាននិស្សិត') }}</p>
+                        <p class="text-slate-400 font-bold">{{ __('no_students_found') }}</p>
                     </div>
                 @endforelse
             </div>
@@ -380,14 +401,14 @@
 
                                 <th class="sticky left-0 bg-white z-30 px-6 py-6 border-r border-slate-100 shadow-[4px_0_10px_-5px_rgba(0,0,0,0.05)] w-72">
                                     <button onclick="sortTable('name')" class="flex items-center gap-1 text-[11px] font-black text-slate-500 uppercase tracking-widest hover:text-emerald-600 transition-colors">
-                                        {{ __('ឈ្មោះនិស្សិត') }}
+                                        {{ __('student_name') }}
                                         <svg class="w-3 h-3 sort-icon" data-col="name" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/></svg>
                                     </button>
                                 </th>
 
                                 <th class="px-4 py-6 text-center w-32 border-r border-slate-50 bg-slate-50/30">
                                     <div class="flex flex-col items-center gap-1">
-                                        <span class="text-[11px] font-black text-slate-500 uppercase">{{ __('វត្តមាន') }}</span>
+                                        <span class="text-[11px] font-black text-slate-500 uppercase">{{ __('attendance') }}</span>
                                         <span class="text-[10px] text-emerald-500 font-bold bg-emerald-50 px-2 py-0.5 rounded-full">15%</span>
                                     </div>
                                 </th>
@@ -404,7 +425,7 @@
                                     <th class="px-4 py-6 text-center border-r border-slate-50 min-w-[175px] group relative bg-white transition-all">
                                         <div class="flex flex-col items-center gap-1.5">
                                             <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase border {{ $colors[$type] }}">
-                                                {{ $type === 'assignment' ? __('កិច្ចការ') : ($type === 'quiz' ? 'Quiz' : __('ប្រឡង')) }}
+                                                {{ $type === 'assignment' ? __('assignment') : ($type === 'quiz' ? 'Quiz' : __('exam')) }}
                                             </span>
                                             @if ($type === 'quiz')
                                                 <span class="text-[9px] font-bold text-amber-500 uppercase tracking-wide">+ Bonus</span>
@@ -414,24 +435,24 @@
                                                 {{ $assessment->title_km }}
                                             </a>
                                             <span class="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">
-                                                {{ $assessment->max_score }} {{ __('ពិន្ទុ') }}
+                                                {{ $assessment->max_score }} {{ __('score') }}
                                             </span>
 
                                             <form action="{{ route('professor.send_all_telegram', $courseOffering->id) }}" method="POST" class="inline">
                                                 @csrf
                                                 <input type="hidden" name="assessment_id" value="{{ $assessment->id }}">
                                                 <input type="hidden" name="assessment_type" value="{{ $type }}">
-                                                <button type="submit" title="{{ __('ផ្ញើដំណឹងពិន្ទុ') }}"
+                                                <button type="submit" title="{{ __('send_notification') }}"
                                                         class="p-1.5 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-600 hover:text-white transition-all shadow-sm flex items-center gap-1 text-[10px] font-bold print:hidden">
                                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
-                                                    {{ __('ផ្ញើដំណឹង') }}
+                                                    {{ __('send_notification') }}
                                                 </button>
                                             </form>
                                         </div>
 
                                         <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-200 flex gap-1">
                                             <a wire:navigate href="{{ route('professor.assessments.edit', ['id' => $assessment->id, 'type' => $type]) }}"
-                                               class="p-1.5 bg-white text-slate-400 hover:text-emerald-600 border border-slate-100 rounded-lg shadow-sm" title="{{ __('កែសម្រួល') }}">
+                                               class="p-1.5 bg-white text-slate-400 hover:text-emerald-600 border border-slate-100 rounded-lg shadow-sm" title="{{ __('edit_4') }}">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                                             </a>
                                             <button type="button"
@@ -445,13 +466,13 @@
 
                                 <th class="sticky right-24 bg-slate-50 z-20 px-6 py-6 text-center border-l border-slate-200 w-32 shadow-[-4px_0_10px_-5px_rgba(0,0,0,0.05)]">
                                     <button onclick="sortTable('total')" class="flex items-center justify-center gap-1 text-[11px] font-black text-emerald-700 uppercase tracking-widest hover:text-emerald-900 transition-colors mx-auto">
-                                        {{ __('សរុប') }}
+                                        {{ __('total_2') }}
                                         <svg class="w-3 h-3 sort-icon" data-col="total" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/></svg>
                                     </button>
                                 </th>
                                 <th class="sticky right-0 bg-slate-100 z-20 px-4 py-6 text-center border-l border-slate-200 w-24">
                                     <button onclick="sortTable('grade')" class="flex items-center justify-center gap-1 text-[11px] font-black text-slate-500 uppercase tracking-widest hover:text-emerald-600 transition-colors mx-auto">
-                                        {{ __('និទ្ទេស') }}
+                                        {{ __('grade') }}
                                         <svg class="w-3 h-3 sort-icon" data-col="grade" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/></svg>
                                     </button>
                                 </th>
@@ -467,8 +488,9 @@
                                     $isPassing = $student->isPassing ?? false;
                                 @endphp
                                 <tr class="hover:bg-slate-50/50 transition-colors duration-150 group student-row"
-                                    data-name="{{ mb_strtolower($student->profile->full_name_km ?? $student->name ?? '', 'UTF-8') }}"
+                                    data-name="{{ mb_strtolower($student->studentProfile?->full_name_km ?? $student->profile?->full_name_km ?? $student->name ?? '', 'UTF-8') }}"
                                     data-id="{{ mb_strtolower($student->student_id_code ?? '', 'UTF-8') }}"
+                                    data-search="{{ mb_strtolower(implode(' ', array_filter([$student->studentProfile?->full_name_en, $student->profile?->full_name_en, $student->email])), 'UTF-8') }}"
                                     data-total="{{ $rowTotal }}"
                                     data-grade="{{ $grade }}">
                                     <td class="px-4 py-5 text-center">
@@ -482,12 +504,12 @@
                                                 @if($profilePic)
                                                     <img src="{{ $profilePic }}" class="w-full h-full object-cover" alt="">
                                                 @else
-                                                    {{ mb_substr($student->profile->full_name_km ?? $student->name, 0, 1) }}
+                                                    {{ mb_substr($student->studentProfile?->full_name_km ?? $student->profile?->full_name_km ?? $student->name, 0, 1) }}
                                                 @endif
                                             </div>
                                             <div class="ml-3">
                                                 <div class="text-[13px] font-bold text-slate-800 leading-none group-hover:text-emerald-700 transition-colors">
-                                                    {{ $student->profile->full_name_km ?? $student->name }}
+                                                    {{ $student->studentProfile?->full_name_km ?? $student->profile?->full_name_km ?? $student->name }}
                                                 </div>
                                                 <div class="text-[10px] text-slate-400 font-bold tracking-wider mt-1.5">{{ $student->student_id_code }}</div>
                                             </div>
@@ -532,7 +554,7 @@
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
                                                 </svg>
                                             </div>
-                                            <p class="font-bold text-slate-400 text-lg">{{ __('មិនទាន់មាននិស្សិតក្នុងថ្នាក់នេះនៅឡើយ') }}</p>
+                                            <p class="font-bold text-slate-400 text-lg">{{ __('no_grades') }}</p>
                                         </div>
                                     </td>
                                 </tr>
@@ -593,10 +615,10 @@
                         </svg>
                     </div>
                     <div class="mt-3 text-center sm:ml-6 sm:mt-0 sm:text-left">
-                        <h3 class="text-xl font-black leading-6 text-slate-800">{{ __('លុបការវាយតម្លៃ') }}</h3>
+                        <h3 class="text-xl font-black leading-6 text-slate-800">{{ __('confirm_delete') }}</h3>
                         <div class="mt-3">
                             <p class="text-sm font-medium text-slate-500 leading-relaxed">
-                                {{ __('តើអ្នកប្រាកដថាចង់លុបការវាយតម្លៃនេះមែនទេ? រាល់ទិន្នន័យពិន្ទុរបស់និស្សិតទាំងអស់ក្នុងផ្នែកនេះនឹងត្រូវបាត់បង់ជារៀងរហូត។') }}
+                                {{ __('confirm_delete_assessment') }}
                             </p>
                         </div>
                     </div>
@@ -604,7 +626,7 @@
                 <div class="mt-8 flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
                     <button @click="open = false" type="button"
                             class="inline-flex justify-center rounded-2xl bg-white px-6 py-3 text-sm font-bold text-slate-700 border border-slate-200 hover:bg-slate-50 transition-all">
-                        {{ __('បោះបង់') }}
+                        {{ __('cancel_2') }}
                     </button>
                     <form :action="postUrl" method="POST">
                         @csrf
@@ -612,7 +634,7 @@
                         <input type="hidden" name="assessment_type" :value="assessmentType">
                         <button type="submit"
                                 class="inline-flex w-full justify-center rounded-2xl bg-rose-500 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-rose-200 hover:bg-rose-600 transition-all">
-                            {{ __('យល់ព្រមលុប') }}
+                            {{ __('confirm_delete_2') }}
                         </button>
                     </form>
                 </div>
@@ -702,14 +724,16 @@
             rows.forEach(row => {
                 const name = row.dataset.name || '';
                 const id = row.dataset.id || '';
-                const matches = name.includes(query) || id.includes(query);
+                const extra = row.dataset.search || '';
+                const matches = name.includes(query) || id.includes(query) || extra.includes(query);
                 row.style.display = matches ? '' : 'none';
             });
 
             countTarget.forEach(row => {
                 const name = row.dataset.name || '';
                 const id = row.dataset.id || '';
-                if (name.includes(query) || id.includes(query)) visibleCount++;
+                const extra = row.dataset.search || '';
+                if (name.includes(query) || id.includes(query) || extra.includes(query)) visibleCount++;
             });
 
             clearButton?.classList.toggle('hidden', query === '');

@@ -9,11 +9,19 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (DB::connection()->getDriverName() !== 'mysql') {
+            return;
+        }
+
         DB::statement('ALTER TABLE `courses` MODIFY `credits` DECIMAL(4,1) NOT NULL DEFAULT 0');
     }
 
     public function down(): void
     {
+        if (DB::connection()->getDriverName() !== 'mysql') {
+            return;
+        }
+
         DB::statement('ALTER TABLE `courses` MODIFY `credits` INT NOT NULL DEFAULT 0');
     }
 };

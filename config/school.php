@@ -2,6 +2,11 @@
 
 return [
 
+    'progression' => [
+        // Generation 1 corresponds to the school's first intake year.
+        'generation_base_year' => (int) env('SCHOOL_GENERATION_BASE_YEAR', 2006),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Schedule Settings

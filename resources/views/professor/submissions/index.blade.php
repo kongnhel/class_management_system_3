@@ -4,7 +4,7 @@
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                 <div class="text-center lg:text-left">
                     <h2 class="font-extrabold text-2xl text-slate-800 leading-tight tracking-tight">
-                        {{ __('ការដាក់ស្នើសម្រាប់') }} {{ $assignment->title_km ?? $assignment->title_en }}
+                        {{ __('submissions_for') }} {{ $assignment->title_km ?? $assignment->title_en }}
                     </h2>
                     <div class="flex items-center justify-center lg:justify-start mt-1 text-slate-500 space-x-2">
                         <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
@@ -18,7 +18,7 @@
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                         </svg>
-                        {{ __('ត្រឡប់ទៅបញ្ជីកិច្ចការ') }}
+                        {{ __('back_to_assignment_list') }}
                     </a>
                 </div>
             </div>
@@ -61,7 +61,7 @@
                             </svg>
                         </div>
                         <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-500">{{ __('សរុបការដាក់ស្នើ') }}</p>
+                            <p class="text-sm font-medium text-gray-500">{{ __('total_submissions') }}</p>
                             <p class="text-2xl font-bold text-gray-900">{{ $submissions->total() }}</p>
                         </div>
                     </div>
@@ -75,7 +75,7 @@
                             </svg>
                         </div>
                         <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-500">{{ __('បានពិន្ទុ') }}</p>
+                            <p class="text-sm font-medium text-gray-500">{{ __('graded_2') }}</p>
                             <p class="text-2xl font-bold text-gray-900">{{ $submissions->where('grade_received', '!=', null)->count() }}</p>
                         </div>
                     </div>
@@ -89,7 +89,7 @@
                             </svg>
                         </div>
                         <div class="ml-4">
-                            <p class="text-sm font-medium text-gray-500">{{ __('មិនទាន់ពិន្ទុ') }}</p>
+                            <p class="text-sm font-medium text-gray-500">{{ __('not_graded') }}</p>
                             <p class="text-2xl font-bold text-gray-900">{{ $submissions->where('grade_received', null)->count() }}</p>
                         </div>
                     </div>
@@ -100,22 +100,22 @@
             <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 mb-6">
                 <form action="{{ route('professor.submissions.index', ['offering_id' => $courseOffering->id, 'assignment_id' => $assignment->id]) }}" method="GET" data-admin-realtime-filter class="flex flex-col md:flex-row gap-4">
                     <div class="flex-1 relative">
-                        <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('ស្វែងរកនិស្សិត...') }}"
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('search_students') }}"
                             class="w-full px-4 pr-11 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
-                        <button type="button" data-admin-clear-search aria-label="{{ __('សម្អាតការស្វែងរក') }}"
+                        <button type="button" data-admin-clear-search aria-label="{{ __('clear_search') }}"
                             class="{{ request('search') ? '' : 'hidden' }} absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700">
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
                     <div class="w-full md:w-48">
                         <select name="status" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
-                            <option value="">{{ __('ទាំងអស់') }}</option>
-                            <option value="graded" {{ request('status') === 'graded' ? 'selected' : '' }}>{{ __('បានពិន្ទុ') }}</option>
-                            <option value="ungraded" {{ request('status') === 'ungraded' ? 'selected' : '' }}>{{ __('មិនទាន់ពិន្ទុ') }}</option>
+                            <option value="">{{ __('all_2') }}</option>
+                            <option value="graded" {{ request('status') === 'graded' ? 'selected' : '' }}>{{ __('graded_2') }}</option>
+                            <option value="ungraded" {{ request('status') === 'ungraded' ? 'selected' : '' }}>{{ __('not_graded') }}</option>
                         </select>
                     </div>
                     <button type="submit" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-sm transition-all">
-                        {{ __('ស្វែងរក') }}
+                        {{ __('search_2') }}
                     </button>
                 </form>
             </div>
@@ -126,13 +126,13 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('ល.រ') }}</th>
-                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('និស្សិត') }}</th>
-                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('កាលបរិច្ឆេទដាក់ស្នើ') }}</th>
-                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('ឯកសារ') }}</th>
-                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('ពិន្ទុ') }}</th>
-                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('ស្ថានភាព') }}</th>
-                                <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('សកម្មភាព') }}</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('key_no_2') }}</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('students_3') }}</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('submission_date') }}</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('file') }}</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('score') }}</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('status') }}</th>
+                                <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('actions_2') }}</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
@@ -159,7 +159,7 @@
                                                 <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                                                 </svg>
-                                                {{ __('ទាញយក') }}
+                                                {{ __('download') }}
                                             </a>
                                         @else
                                             <span class="text-gray-400 text-xs">---</span>
@@ -176,9 +176,9 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         @if($submission->grade_received !== null)
-                                            <span class="px-2 py-1 text-xs font-bold rounded-lg bg-green-100 text-green-800">{{ __('បានពិន្ទុ') }}</span>
+                                            <span class="px-2 py-1 text-xs font-bold rounded-lg bg-green-100 text-green-800">{{ __('graded_2') }}</span>
                                         @else
-                                            <span class="px-2 py-1 text-xs font-bold rounded-lg bg-yellow-100 text-yellow-800">{{ __('មិនទាន់ពិន្ទុ') }}</span>
+                                            <span class="px-2 py-1 text-xs font-bold rounded-lg bg-yellow-100 text-yellow-800">{{ __('not_graded') }}</span>
                                         @endif
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-center">
@@ -188,7 +188,7 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                                             </svg>
-                                            {{ __('មើល') }}
+                                            {{ __('view') }}
                                         </a>
                                     </td>
                                 </tr>
@@ -199,7 +199,7 @@
                                             <svg class="w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                             </svg>
-                                            <p class="text-gray-500 font-medium">{{ __('មិនមានការដាក់ស្នើទេ') }}</p>
+                                            <p class="text-gray-500 font-medium">{{ __('no_submissions') }}</p>
                                         </div>
                                     </td>
                                 </tr>

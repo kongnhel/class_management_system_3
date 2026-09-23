@@ -9,7 +9,7 @@
      style="bottom: 24px; right: 24px; touch-action: none;">
 
     <div class="mb-3 bg-gray-900 text-white px-4 py-2.5 rounded-2xl shadow-xl text-xs font-medium opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 pointer-events-none relative mr-2 whitespace-nowrap">
-        {{ __('AI Chatbot assistant ​​​ហ្នឹងមកដល់ក្នុងពេលឆាប់ៗនេះ') }}
+        {{ __('ai_assistant') }}
         <div class="absolute -bottom-1 right-4 w-2 h-2 bg-gray-900 rotate-45"></div>
     </div>
 
@@ -52,7 +52,7 @@
         <div class="flex items-center gap-2 relative z-10">
             <button onclick="showClearConfirm()"
                     class="p-2.5 bg-white/15 hover:bg-white/25 text-white rounded-xl transition-all backdrop-blur-sm border border-white/20"
-                    title="{{ __('លុបប្រវត្តិ') }}">
+                    title="{{ __('clear_history') }}">
                 <i class="fas fa-trash-alt text-sm"></i>
             </button>
             <button onclick="toggleAIChat()" class="p-2.5 hover:bg-white/15 rounded-xl transition-all">
@@ -66,13 +66,13 @@
     {{-- Mode Tabs --}}
     <div class="flex border-b border-gray-100 bg-white px-3 py-2 gap-1">
         <button type="button" onclick="setOption('info')" id="btn-info" class="flex-1 py-2.5 rounded-xl text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold transition-all flex items-center justify-center gap-1.5">
-            <i class="fas fa-info-circle text-[10px]"></i> {{ __('ព័ត៌មាន') }}
+            <i class="fas fa-info-circle text-[10px]"></i> {{ __('information') }}
         </button>
         <button type="button" onclick="setOption('search')" id="btn-search" class="flex-1 py-2.5 rounded-xl text-xs text-gray-400 hover:text-gray-600 hover:bg-gray-50 font-bold transition-all flex items-center justify-center gap-1.5">
-            <i class="fas fa-search text-[10px]"></i> {{ __('ស្វែងរក') }}
+            <i class="fas fa-search text-[10px]"></i> {{ __('search_2') }}
         </button>
         <button type="button" onclick="setOption('process')" id="btn-process" class="flex-1 py-2.5 rounded-xl text-xs text-gray-400 hover:text-gray-600 hover:bg-gray-50 font-bold transition-all flex items-center justify-center gap-1.5">
-            <i class="fas fa-lightbulb text-[10px]"></i> {{ __('របៀបប្រើ') }}
+            <i class="fas fa-lightbulb text-[10px]"></i> {{ __('how_to_use') }}
         </button>
     </div>
 
@@ -89,11 +89,11 @@
                     <div class="w-2 h-2 bg-emerald-500 rounded-full animate-bounce" style="animation-delay: -0.3s"></div>
                     <div class="w-2 h-2 bg-emerald-500 rounded-full animate-bounce" style="animation-delay: -0.5s"></div>
                 </div>
-                <span class="text-xs text-gray-400 font-medium">{{ __('កំពុងគិត...') }}</span>
+                <span class="text-xs text-gray-400 font-medium">{{ __('thinking') }}</span>
             </div>
             <button id="stop-btn" onclick="stopGenerating()" class="px-3 py-1.5 bg-red-50 text-red-500 text-[11px] font-bold rounded-lg hover:bg-red-100 transition-all flex items-center gap-1.5 border border-red-100">
                 <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
-                {{ __('ឈប់') }}
+                {{ __('stop') }}
             </button>
         </div>
     </div>
@@ -106,7 +106,7 @@
             <div class="flex-1 relative">
                 <input type="text" id="user-input" autocomplete="off"
                     class="w-full bg-gray-50 border border-gray-200 rounded-2xl pl-5 pr-12 py-3.5 text-sm outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 transition-all placeholder:text-gray-400"
-                    placeholder="{{ __('សរសេរសំណួរនៅទីនេះ...') }}" required>
+                    placeholder="{{ __('write_your_question_here') }}" required>
                 <button type="submit" class="absolute right-2 top-1/2 -translate-y-1/2 bg-emerald-500 text-white p-2.5 rounded-xl hover:bg-emerald-600 active:scale-95 shadow-md transition-all">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
@@ -124,14 +124,14 @@
             <div class="mx-auto w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mb-5">
                 <i class="fas fa-trash-alt text-red-500 text-2xl"></i>
             </div>
-            <h3 class="text-xl font-bold text-gray-900 mb-2">{{ __('លុបប្រវត្តិសន្ទនា?') }}</h3>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">{{ __('clear_chat_history') }}</h3>
             <p class="text-sm text-gray-500 leading-relaxed">
-                {{ __('សកម្មភាពនេះនឹងលុបប្រវត្តិសន្ទនាទាំងអស់ជាអចិន្ត្រៃយ៍។') }}
+                {{ __('this_action_will_permanently_delete_all_chat_history') }}
             </p>
         </div>
         <div class="px-6 pb-6 flex gap-3">
-            <button onclick="hideConfirmModal()" class="flex-1 py-3 font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-2xl transition-all text-sm">{{ __('បោះបង់') }}</button>
-            <button onclick="confirmClearHistory()" class="flex-1 py-3 font-semibold text-white bg-red-500 hover:bg-red-600 rounded-2xl transition-all shadow-lg shadow-red-200 text-sm">{{ __('លុបចោល') }}</button>
+            <button onclick="hideConfirmModal()" class="flex-1 py-3 font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-2xl transition-all text-sm">{{ __('cancel_2') }}</button>
+            <button onclick="confirmClearHistory()" class="flex-1 py-3 font-semibold text-white bg-red-500 hover:bg-red-600 rounded-2xl transition-all shadow-lg shadow-red-200 text-sm">{{ __('delete_4') }}</button>
         </div>
     </div>
 </div>

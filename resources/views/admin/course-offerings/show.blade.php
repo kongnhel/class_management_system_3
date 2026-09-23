@@ -26,7 +26,7 @@
                                     <h2 class="text-3xl font-bold tracking-tight">{{ $courseOffering->course->title_km ?? $courseOffering->course->title_en }}</h2>
                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold {{ match($status) { 'active' => 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30', 'upcoming' => 'bg-amber-500/20 text-amber-300 border border-amber-500/30', default => 'bg-red-500/20 text-red-300 border border-red-500/30' } }}">
                                         <span class="w-1.5 h-1.5 rounded-full {{ match($status) { 'active' => 'bg-emerald-400', 'upcoming' => 'bg-amber-400', default => 'bg-red-400' } }}"></span>
-                                        {{ match($status) { 'active' => __('សកម្ម'), 'upcoming' => __('មិនទាន់ចាប់ផ្តើម'), default => __('ផុតកំណត់') } }}
+                                        {{ match($status) { 'active' => __('active'), 'upcoming' => __('upcoming'), default => __('expired') } }}
                                     </span>
                                 </div>
                                 <p class="text-slate-400 text-sm">{{ $courseOffering->semester }} / {{ $courseOffering->academic_year }}</p>
@@ -35,10 +35,10 @@
                     </div>
                     <div class="flex gap-3">
                         <a href="{{ route('admin.edit-course-offering', $courseOffering->id) }}" class="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg transition-all">
-                            <i class="fas fa-edit"></i> <span>{{ __('កែប្រែ') }}</span>
+                            <i class="fas fa-edit"></i> <span>{{ __('edit_2') }}</span>
                         </a>
                         <a href="{{ route('admin.manage-course-offerings') }}" class="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-5 py-2.5 rounded-xl font-bold text-sm transition-all">
-                            <i class="fas fa-arrow-left"></i> <span>{{ __('ត្រឡប់ក្រោយ') }}</span>
+                            <i class="fas fa-arrow-left"></i> <span>{{ __('go_back') }}</span>
                         </a>
                     </div>
                 </div>
@@ -55,7 +55,7 @@
                         </div>
                         <div>
                             <p class="text-2xl font-bold text-gray-900">{{ $enrollmentCount }}</p>
-                            <p class="text-xs text-gray-500">{{ __('សិស្សចុះឈ្មោះ') }}</p>
+                            <p class="text-xs text-gray-500">{{ __('enrolled_students') }}</p>
                         </div>
                     </div>
                 </div>
@@ -65,8 +65,8 @@
                             <i class="fas fa-user-tie text-emerald-500"></i>
                         </div>
                         <div>
-                            <p class="text-sm font-bold text-gray-900 truncate max-w-[120px]">{{ $courseOffering->lecturer->name ?? __('មិនទាន់កំណត់') }}</p>
-                            <p class="text-xs text-gray-500">{{ __('សាស្ត្រាចារ្យ') }}</p>
+                            <p class="text-sm font-bold text-gray-900 truncate max-w-[120px]">{{ $courseOffering->lecturer->name ?? __('not_set') }}</p>
+                            <p class="text-xs text-gray-500">{{ __('professor') }}</p>
                         </div>
                     </div>
                 </div>
@@ -88,7 +88,7 @@
                         </div>
                         <div>
                             <p class="text-2xl font-bold text-gray-900">{{ $courseOffering->capacity }}</p>
-                            <p class="text-xs text-gray-500">{{ __('សមត្ថភាព') }}</p>
+                            <p class="text-xs text-gray-500">{{ __('capacity') }}</p>
                         </div>
                     </div>
                 </div>
@@ -104,31 +104,31 @@
                             <div class="w-8 h-8 rounded-xl bg-emerald-50 flex items-center justify-center">
                                 <i class="fas fa-book text-emerald-500 text-sm"></i>
                             </div>
-                            {{ __('ព័ត៌មានមុខវិជ្ជា') }}
+                            {{ __('course_information') }}
                         </h3>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div class="bg-gray-50 rounded-xl p-4">
-                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide">{{ __('ឈ្មោះមុខវិជ្ជា') }}</label>
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide">{{ __('course_name') }}</label>
                                 <p class="text-gray-900 font-semibold mt-1">{{ $courseOffering->course->title_km }}</p>
                             </div>
                             <div class="bg-gray-50 rounded-xl p-4">
-                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide">{{ __('ឆមាស') }}</label>
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide">{{ __('semester') }}</label>
                                 <p class="text-gray-900 font-semibold mt-1">{{ $courseOffering->semester }}</p>
                             </div>
                             <div class="bg-gray-50 rounded-xl p-4">
-                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide">{{ __('ឆ្នាំសិក្សា') }}</label>
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide">{{ __('academic_year') }}</label>
                                 <p class="text-gray-900 font-semibold mt-1">{{ $courseOffering->academic_year }}</p>
                             </div>
                             <div class="bg-gray-50 rounded-xl p-4">
-                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide">{{ __('សមត្ថភាព') }}</label>
-                                <p class="text-gray-900 font-semibold mt-1">{{ $courseOffering->capacity }} {{ __('សិស្ស') }}</p>
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide">{{ __('capacity') }}</label>
+                                <p class="text-gray-900 font-semibold mt-1">{{ $courseOffering->capacity }} {{ __('students') }}</p>
                             </div>
                             <div class="bg-gray-50 rounded-xl p-4">
-                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide">{{ __('កាលបរិច្ឆេទចាប់ផ្តើម') }}</label>
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide">{{ __('start_date') }}</label>
                                 <p class="text-gray-900 font-semibold mt-1">{{ \Carbon\Carbon::parse($courseOffering->start_date)->format('d/m/Y') }}</p>
                             </div>
                             <div class="bg-gray-50 rounded-xl p-4">
-                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide">{{ __('កាលបរិច្ឆេទបញ្ចប់') }}</label>
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide">{{ __('end_date') }}</label>
                                 <p class="text-gray-900 font-semibold mt-1">{{ \Carbon\Carbon::parse($courseOffering->end_date)->format('d/m/Y') }}</p>
                             </div>
                         </div>
@@ -141,19 +141,19 @@
                                 <div class="w-8 h-8 rounded-xl bg-emerald-50 flex items-center justify-center">
                                     <i class="fas fa-list text-emerald-500 text-sm"></i>
                                 </div>
-                                {{ __('បញ្ជីសិស្ស') }}
+                                {{ __('student_list') }}
                             </h3>
-                            <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-emerald-50 text-emerald-700">{{ $enrollmentCount }} {{ __('នាក់') }}</span>
+                            <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-emerald-50 text-emerald-700">{{ $enrollmentCount }} {{ __('students_2') }}</span>
                         </div>
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
                                     <tr>
                                         <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">#</th>
-                                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">{{ __('ឈ្មោះ') }}</th>
-                                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">{{ __('អ៊ីមែល') }}</th>
-                                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">{{ __('ថ្ងៃចុះឈ្មោះ') }}</th>
-                                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">{{ __('ស្ថានភាព') }}</th>
+                                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">{{ __('name') }}</th>
+                                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">{{ __('email') }}</th>
+                                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">{{ __('registration_date') }}</th>
+                                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">{{ __('status') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-100">
@@ -170,7 +170,7 @@
                                         <td class="px-4 py-3 text-sm text-gray-500">{{ \Carbon\Carbon::parse($enrollment->enrollment_date)->format('d/m/Y') }}</td>
                                         <td class="px-4 py-3">
                                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs font-bold {{ $enrollment->status === 'enrolled' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-gray-100 text-gray-600 border border-gray-200' }}">
-                                                {{ $enrollment->status === 'enrolled' ? __('ចុះឈ្មោះ') : $enrollment->status }}
+                                                {{ $enrollment->status === 'enrolled' ? __('register') : $enrollment->status }}
                                             </span>
                                         </td>
                                     </tr>
@@ -180,7 +180,7 @@
                                             <div class="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-3">
                                                 <i class="fas fa-user-slash text-gray-300 text-2xl"></i>
                                             </div>
-                                            <p class="text-gray-400 text-sm">{{ __('មិនមានសិស្សចុះឈ្មោះ') }}</p>
+                                            <p class="text-gray-400 text-sm">{{ __('no_enrolled_students') }}</p>
                                         </td>
                                     </tr>
                                     @endforelse
@@ -196,13 +196,13 @@
                                 <div class="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center">
                                     <i class="fas fa-clipboard-check text-blue-500 text-sm"></i>
                                 </div>
-                                {{ __('ប្រវត្តិវត្តមានសាស្ត្រាចារ្យ') }}
+                                {{ __('lecturer_attendance_history') }}
                             </h3>
                             @php
                                 $totalRecords = $attendanceRecords->flatten()->count();
                                 $totalDates = $attendanceRecords->count();
                             @endphp
-                            <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-blue-50 text-blue-700">{{ $totalDates }} {{ __('ថ្ងៃ') }} | {{ $totalRecords }} {{ __('កំណត់ត្រា') }}</span>
+                            <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-blue-50 text-blue-700">{{ $totalDates }} {{ __('days') }} | {{ $totalRecords }} {{ __('records') }}</span>
                         </div>
 
                         @if($attendanceRecords->isEmpty())
@@ -210,7 +210,7 @@
                                 <div class="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-3">
                                     <i class="fas fa-clipboard text-gray-300 text-2xl"></i>
                                 </div>
-                                <p class="text-gray-400 text-sm">{{ __('មិនទាន់មានកំណត់ត្រាវត្តមាន') }}</p>
+                                <p class="text-gray-400 text-sm">{{ __('no_attendance_records_yet') }}</p>
                             </div>
                         @else
                             <div class="space-y-4 max-h-[600px] overflow-y-auto">
@@ -258,8 +258,8 @@
                                                 <thead class="bg-gray-100">
                                                     <tr>
                                                         <th class="px-4 py-2 text-left text-xs font-bold text-gray-500">#</th>
-                                                        <th class="px-4 py-2 text-left text-xs font-bold text-gray-500">{{ __('ឈ្មោះនិស្សិត') }}</th>
-                                                        <th class="px-4 py-2 text-center text-xs font-bold text-gray-500">{{ __('ស្ថានភាព') }}</th>
+                                                        <th class="px-4 py-2 text-left text-xs font-bold text-gray-500">{{ __('student_name') }}</th>
+                                                        <th class="px-4 py-2 text-center text-xs font-bold text-gray-500">{{ __('status') }}</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody class="divide-y divide-gray-100">
@@ -276,9 +276,9 @@
                                                                         'absent' => 'bg-rose-50 text-rose-700 border-rose-200',
                                                                     ];
                                                                     $statusLabels = [
-                                                                        'present' => __('វត្តមាន'),
-                                                                        'permission' => __('ច្បាប់'),
-                                                                        'absent' => __('អវត្តមាន'),
+                                                                        'present' => __('attendance'),
+                                                                        'permission' => __('permission_2'),
+                                                                        'absent' => __('absent'),
                                                                     ];
                                                                 @endphp
                                                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs font-bold border {{ $statusColors[$record->status] ?? 'bg-gray-100 text-gray-600 border-gray-200' }}">
@@ -305,21 +305,21 @@
                             <div class="w-8 h-8 rounded-xl bg-emerald-50 flex items-center justify-center">
                                 <i class="fas fa-user-tie text-emerald-500 text-sm"></i>
                             </div>
-                            {{ __('សាស្ត្រាចារ្យ') }}
+                            {{ __('professor') }}
                         </h3>
                         <div class="space-y-3">
                             <div class="bg-gray-50 rounded-xl p-4">
-                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide">{{ __('ឈ្មោះ') }}</label>
-                                <p class="text-gray-900 font-semibold mt-1">{{ $courseOffering->lecturer->name ?? __('មិនទាន់កំណត់') }}</p>
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide">{{ __('name') }}</label>
+                                <p class="text-gray-900 font-semibold mt-1">{{ $courseOffering->lecturer->name ?? __('not_set') }}</p>
                             </div>
                             @if($courseOffering->lecturer->profile)
                             <div class="bg-gray-50 rounded-xl p-4">
-                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide">{{ __('ឈ្មោះខ្មែរ') }}</label>
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide">{{ __('khmer_name') }}</label>
                                 <p class="text-gray-900 font-semibold mt-1">{{ $courseOffering->lecturer->profile->full_name_km ?? '-' }}</p>
                             </div>
                             @endif
                             <div class="bg-gray-50 rounded-xl p-4">
-                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide">{{ __('អ៊ីមែល') }}</label>
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide">{{ __('email') }}</label>
                                 <p class="text-gray-900 font-semibold mt-1">{{ $courseOffering->lecturer->email ?? '-' }}</p>
                             </div>
                         </div>
@@ -331,7 +331,7 @@
                             <div class="w-8 h-8 rounded-xl bg-amber-50 flex items-center justify-center">
                                 <i class="fas fa-graduation-cap text-amber-500 text-sm"></i>
                             </div>
-                            {{ __('នាយកដ្ឋាន និងជំនាន់') }}
+                            {{ __('enrolled_students') }}
                         </h3>
                         <div class="space-y-2">
                             @if($courseOffering->department)
@@ -340,7 +340,7 @@
                                 <span class="text-xs bg-emerald-200 text-emerald-800 px-2.5 py-0.5 rounded-lg font-bold">G{{ $courseOffering->generation }}</span>
                             </div>
                             @else
-                            <p class="text-gray-400 text-sm italic text-center py-4">{{ __('មិនទាន់មាននាយកដ្ឋាន') }}</p>
+                            <p class="text-gray-400 text-sm italic text-center py-4">{{ __('no_schedules_assigned_yet') }}</p>
                             @endif
                         </div>
                     </div>
@@ -351,7 +351,7 @@
                             <div class="w-8 h-8 rounded-xl bg-purple-50 flex items-center justify-center">
                                 <i class="fas fa-calendar-alt text-purple-500 text-sm"></i>
                             </div>
-                            {{ __('កាលវិភាគសិក្សា') }}
+                            {{ __('class_schedule') }}
                         </h3>
                         <div class="space-y-2">
                             @forelse($courseOffering->schedules as $schedule)
@@ -370,7 +370,7 @@
                                 </span>
                             </div>
                             @empty
-                            <p class="text-gray-400 text-sm italic text-center py-4">{{ __('មិនទាន់មានកាលវិភាគ') }}</p>
+                            <p class="text-gray-400 text-sm italic text-center py-4">{{ __('no_schedule_yet') }}</p>
                             @endforelse
                         </div>
                     </div>

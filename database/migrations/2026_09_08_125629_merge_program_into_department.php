@@ -23,6 +23,12 @@ return new class extends Migration
 
     public function up(): void
     {
+        // This migration uses MySQL-specific foreign-key introspection. The
+        // schema is already represented in fresh SQLite test databases.
+        if (DB::connection()->getDriverName() !== 'mysql') {
+            return;
+        }
+
         // 1. Ensure departments has the needed columns
         if (! Schema::hasColumn('departments', 'degree_level')) {
             Schema::table('departments', function (Blueprint $table) {

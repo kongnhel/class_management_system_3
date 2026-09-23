@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Kreait\Firebase\Contract\Auth as FirebaseAuth;
+use App\Services\ProfessorLoginSecurityService;
 
 class GoogleAuthController extends Controller
 {
@@ -47,6 +48,7 @@ class GoogleAuthController extends Controller
         }
 
         Auth::login($user);
+        app(ProfessorLoginSecurityService::class)->recordLogin($request, $user);
 
         return response()->json(['status' => 'success']);
     }

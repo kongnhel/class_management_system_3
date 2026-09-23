@@ -9,14 +9,14 @@
                     </div>
                     <div>
                         <h1 class="text-3xl font-bold text-gray-900">{{ $courseOffering->course->title_km ?? $courseOffering->course->title_en }}</h1>
-                        <p class="text-gray-500 mt-0.5">{{ __('វត្តមានសិស្សក្នុងមុខវិជ្ជា') }} {{ $courseOffering->semester }} / {{ $courseOffering->academic_year }}</p>
+                        <p class="text-gray-500 mt-0.5">{{ __('student_attendance_for_course') }} {{ $courseOffering->semester }} / {{ $courseOffering->academic_year }}</p>
                     </div>
                 </div>
                 <a href="{{ route('admin.attendance.index') }}" class="flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-700 px-5 py-2.5 rounded-xl font-bold shadow-sm border border-gray-200 transition-all text-sm">
-                    <i class="fas fa-arrow-left"></i> {{ __('ត្រឡប់ក្រោយ') }}
+                    <i class="fas fa-arrow-left"></i> {{ __('go_back') }}
                 </a>
-                <a href="{{ route('admin.attendance.export', $courseOffering->id) }}" class="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2.5 rounded-xl font-bold shadow-sm transition-all text-sm">
-                    <i class="fas fa-download"></i> {{ __('នាំចេញ XLSX') }}
+                <a href="{{ route('admin.attendance.export', array_merge([$courseOffering->id], request()->only(['date_from', 'date_to']))) }}" class="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2.5 rounded-xl font-bold shadow-sm transition-all text-sm">
+                    <i class="fas fa-download"></i> {{ __('export_xlsx') }}
                 </a>
             </div>
 
@@ -27,7 +27,7 @@
                         <div class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
                             <i class="fas fa-users text-gray-500"></i>
                         </div>
-                        <span class="text-xs font-bold text-gray-500 uppercase">{{ __('សិស្សសរុប') }}</span>
+                        <span class="text-xs font-bold text-gray-500 uppercase">{{ __('total_students') }}</span>
                     </div>
                     <div class="text-2xl font-bold text-gray-900">{{ $stats['total_students'] }}</div>
                 </div>
@@ -36,7 +36,7 @@
                         <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
                             <i class="fas fa-list text-emerald-500"></i>
                         </div>
-                        <span class="text-xs font-bold text-gray-500 uppercase">{{ __('កំណត់ត្រាសរុប') }}</span>
+                        <span class="text-xs font-bold text-gray-500 uppercase">{{ __('total_records') }}</span>
                     </div>
                     <div class="text-2xl font-bold text-emerald-600">{{ $stats['total_records'] }}</div>
                 </div>
@@ -45,7 +45,7 @@
                         <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
                             <i class="fas fa-check-circle text-emerald-500"></i>
                         </div>
-                        <span class="text-xs font-bold text-gray-500 uppercase">{{ __('មានវត្តមាន') }}</span>
+                        <span class="text-xs font-bold text-gray-500 uppercase">{{ __('present') }}</span>
                     </div>
                     <div class="text-2xl font-bold text-emerald-600">{{ $stats['present_total'] }}</div>
                 </div>
@@ -54,7 +54,7 @@
                         <div class="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center">
                             <i class="fas fa-times-circle text-rose-500"></i>
                         </div>
-                        <span class="text-xs font-bold text-gray-500 uppercase">{{ __('អវត្តមាន') }}</span>
+                        <span class="text-xs font-bold text-gray-500 uppercase">{{ __('absent') }}</span>
                     </div>
                     <div class="text-2xl font-bold text-rose-600">{{ $stats['absent_total'] }}</div>
                 </div>
@@ -63,30 +63,55 @@
                         <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
                             <i class="fas fa-percentage text-emerald-500"></i>
                         </div>
-                        <span class="text-xs font-bold text-gray-500 uppercase">{{ __('អត្រាវត្តមាន') }}</span>
+                        <span class="text-xs font-bold text-gray-500 uppercase">{{ __('attendance_rate') }}</span>
                     </div>
                     <div class="text-2xl font-bold text-emerald-600">{{ $stats['overall_rate'] }}%</div>
                 </div>
             </div>
 
+            <form method="GET" action="{{ route('admin.attendance.show', $courseOffering->id) }}" data-admin-realtime-filter class="mb-6">
+                <div class="flex flex-col sm:flex-row gap-3 max-w-3xl">
+                    <div class="relative flex-1">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-4">
+                            <i class="fas fa-search text-gray-400"></i>
+                        </span>
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Search student name, ID, or email..."
+                            class="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 bg-white shadow-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm">
+                    </div>
+                    <select name="attendance_status" class="rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm shadow-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                        <option value="">All attendance statuses</option>
+                        <option value="no_records" {{ request('attendance_status') === 'no_records' ? 'selected' : '' }}>No attendance records</option>
+                        <option value="low_attendance" {{ request('attendance_status') === 'low_attendance' ? 'selected' : '' }}>Low attendance</option>
+                        <option value="below_passing" {{ request('attendance_status') === 'below_passing' ? 'selected' : '' }}>Below passing score</option>
+                        <option value="good_attendance" {{ request('attendance_status') === 'good_attendance' ? 'selected' : '' }}>Good attendance</option>
+                    </select>
+                    <input type="date" name="date_from" value="{{ request('date_from') }}" aria-label="From date" onchange="this.form.requestSubmit()"
+                        class="rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm shadow-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                    <input type="date" name="date_to" value="{{ request('date_to') }}" aria-label="To date" onchange="this.form.requestSubmit()"
+                        class="rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm shadow-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                </div>
+            </form>
+
+            <div data-admin-results>
             {{-- Attendance Table --}}
             <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-                    <h3 class="text-lg font-bold text-gray-900">{{ __('វត្តមានសិស្ស') }}</h3>
-                    <span class="px-3 py-1 rounded-full bg-gray-100 text-xs font-bold text-gray-500">{{ $studentAttendance->count() }} {{ __('នាក់') }}</span>
+                    <h3 class="text-lg font-bold text-gray-900">{{ __('student_attendance') }}</h3>
+                    <span class="px-3 py-1 rounded-full bg-gray-100 text-xs font-bold text-gray-500">{{ $studentAttendance->count() }} {{ __('students_2') }}</span>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead>
                             <tr class="bg-gray-50">
                                 <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">#</th>
-                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('ឈ្មោះ') }}</th>
-                                <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('ពិន្ទុវត្តមាន') }}</th>
-                                <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('សរុប') }}</th>
-                                <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('មានវត្តមាន') }}</th>
-                                <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('អវត្តមាន') }}</th>
-                                <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('អនុគ្រោះ') }}</th>
-                                <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('អត្រា') }}</th>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('name') }}</th>
+                                <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('student_id') }}</th>
+                                <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('total_2') }}</th>
+                                <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('attendance_score') }}</th>
+                                <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('present') }}</th>
+                                <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('absent') }}</th>
+                                <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('permission') }}</th>
+                                <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('rate') }}</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-100">
@@ -111,6 +136,7 @@
                                         </div>
                                     </div>
                                 </td>
+                                <td class="px-6 py-4 text-center text-sm font-bold text-gray-700">{{ $data['student']->student_id_code ?? '-' }}</td>
                                 <td class="px-6 py-4 text-center text-sm font-bold text-gray-700">{{ $data['total_days'] }}</td>
                                 <td class="px-6 py-4 text-center">
                                     @php
@@ -162,13 +188,13 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="8" class="px-6 py-16">
+                                <td colspan="9" class="px-6 py-16">
                                     <div class="flex flex-col items-center gap-3">
                                         <div class="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center">
                                             <i class="fas fa-inbox text-gray-300 text-2xl"></i>
                                         </div>
-                                        <p class="text-sm font-bold text-gray-400">{{ __('មិនមានទិន្នន័យវត្តមាន') }}</p>
-                                        <p class="text-xs text-gray-300">{{ __('សូមពិនិត្យមើលកំណត់ត្រាវត្តមាននៅក្នុងផ្នែកគ្រប់គ្រង') }}</p>
+                                        <p class="text-sm font-bold text-gray-400">{{ __('no_attendance_data') }}</p>
+                                        <p class="text-xs text-gray-300">{{ __('check_attendance_records_in_the_management_section') }}</p>
                                     </div>
                                 </td>
                             </tr>
@@ -176,6 +202,7 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
             </div>
         </div>
     </div>
