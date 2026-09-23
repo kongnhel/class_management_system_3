@@ -45,7 +45,7 @@
                                     {{ $courseOffering->course->title_km ?? $courseOffering->course->title_en }}
                                 </h6>
                                 <div class="flex items-center gap-2">
-                                    <span class="text-xs text-gray-500 italic">{{ $courseOffering->lecturer->name ?? 'មិនទាន់កំណត់' }}</span>
+                                    <span class="text-xs text-gray-500 italic">{{ $courseOffering->lecturer->name ?? __('not_assigned_yet') }}</span>
                                 </div>
                             </div>
 

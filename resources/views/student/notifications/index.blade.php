@@ -62,8 +62,8 @@
                                 </p>
                                 <div class="text-xs text-gray-400 mt-2 flex items-center justify-between">
                                     <span>
-                                        {{ __('key_by') }} <strong>{{ $notification->data['from_user_name'] ?? 'System' }}</strong>
-                                        - {{ $notification->created_at->locale('km')->diffForHumans() }}
+                                        {{ __('key_by') }} <strong>{{ $notification->data['from_user_name'] ?? __('system') }}</strong>
+                                        - {{ $notification->created_at->diffForHumans() }}
                                     </span>
                                     @if (!$notification->read_at)
                                         <button @click="markAsRead('{{ $notification->id }}', $el)"
@@ -119,7 +119,7 @@
                     .then(data => {
                         if (data.success) {
                             this.updateNotificationElement(element);
-                            this.successMessage = 'ការជូនដំណឹងត្រូវបានសម្គាល់ថាបានអាន។';
+                            this.successMessage = '{{ __("notification_marked_as_read") }}';
                             setTimeout(() => this.successMessage = '', 3000);
                         }
                     });
@@ -131,7 +131,7 @@
                         const id = el.dataset.id;
                         this.markAsRead(id, el);
                     });
-                    this.successMessage = 'បានសម្គាល់ថាការជូនដំណឹងទាំងអស់អានហើយ។';
+                    this.successMessage = '{{ __("all_notifications_marked_as_read") }}';
                     setTimeout(() => this.successMessage = '', 3000);
                 },
 
@@ -144,7 +144,7 @@
                     if (button) {
                         const readStatus = document.createElement('span');
                         readStatus.className = 'text-sm text-green-600 font-semibold flex items-center gap-1';
-                        readStatus.innerHTML = '<i class="fas fa-check-circle"></i> បានអាន';
+                        readStatus.innerHTML = '<i class="fas fa-check-circle"></i> {{ __("read") }}';
                         button.parentNode.replaceChild(readStatus, button);
                     }
                 }

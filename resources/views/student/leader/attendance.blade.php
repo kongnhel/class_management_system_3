@@ -8,7 +8,7 @@
                     <i class="fas fa-clipboard-check text-white text-lg"></i>
                 </div>
                 <div>
-                    <h1 class="text-2xl font-bold text-gray-900">ស្រង់វត្តមាន</h1>
+                    <h1 class="text-2xl font-bold text-gray-900">{{ __('take_attendance') }}</h1>
                     <p class="text-sm text-gray-500 mt-0.5">{{ $courseOffering->course?->title_km ?? $courseOffering->course?->title_en }}</p>
                 </div>
             </div>
@@ -27,21 +27,21 @@
                 {{-- Date + Submit --}}
                 <div class="bg-white rounded-2xl border border-gray-200 p-5 mb-6 flex flex-col sm:flex-row items-end sm:items-center justify-between gap-4">
                     <div class="w-full sm:w-64">
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">កាលបរិច្ឆេទ</label>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">{{ __('date') }}</label>
                         <input type="date" name="attendance_date" value="{{ $today }}" 
                                class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
                     </div>
                     <button type="submit" class="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white rounded-xl font-bold text-sm shadow-md transition-all active:scale-95">
-                        <i class="fas fa-check"></i> បញ្ជូនវត្តមាន
+                        <i class="fas fa-check"></i> {{ __('submit_attendance') }}
                     </button>
                 </div>
 
                 {{-- Student List --}}
                 <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
                     <div class="px-5 py-4 border-b border-gray-200 flex items-center justify-between">
-                        <h3 class="font-bold text-gray-800 text-sm">បញ្ជីឈ្មោះសិស្ស</h3>
+                        <h3 class="font-bold text-gray-800 text-sm">{{ __('student_list') }}</h3>
                         <span class="px-3 py-1 rounded-full bg-gray-100 text-xs font-bold text-gray-500">
-                            {{ $students->count() - 1 }} នាក់
+                            {{ $students->count() - 1 }} {{ __('students_suffix') }}
                         </span>
                     </div>
                     <div class="divide-y divide-gray-100">
@@ -70,19 +70,19 @@
                                     <label class="cursor-pointer">
                                         <input type="radio" name="attendance[{{ $student->id }}]" value="present" checked class="hidden peer">
                                         <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-[11px] font-bold text-gray-500 peer-checked:bg-white peer-checked:text-emerald-600 peer-checked:shadow-sm transition-all whitespace-nowrap">
-                                            មក
+                                            {{ __('present_3') }}
                                         </span>
                                     </label>
                                     <label class="cursor-pointer">
                                         <input type="radio" name="attendance[{{ $student->id }}]" value="permission" class="hidden peer">
                                         <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-[11px] font-bold text-gray-500 peer-checked:bg-white peer-checked:text-amber-500 peer-checked:shadow-sm transition-all whitespace-nowrap">
-                                            ច្បាប់
+                                            {{ __('permission_2') }}
                                         </span>
                                     </label>
                                     <label class="cursor-pointer">
                                         <input type="radio" name="attendance[{{ $student->id }}]" value="absent" class="hidden peer">
                                         <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-[11px] font-bold text-gray-500 peer-checked:bg-white peer-checked:text-rose-500 peer-checked:shadow-sm transition-all whitespace-nowrap">
-                                            អវត្តមាន
+                                            {{ __('absent') }}
                                         </span>
                                     </label>
                                 </div>

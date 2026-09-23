@@ -95,7 +95,7 @@
                                     </p>
                                 </div>
                                 <h3 class="text-sm font-bold text-slate-900 truncate leading-snug">
-                                    {{ $attendance->courseOffering->course->title_en ?? 'Unknown Course' }}
+                                    {{ $attendance->courseOffering->course->title_en ?? __('Unknown Course') }}
                                 </h3>
                             </div>
                             <div class="text-right flex-shrink-0">

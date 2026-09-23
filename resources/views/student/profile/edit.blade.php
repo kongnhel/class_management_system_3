@@ -224,7 +224,7 @@
                 var img = document.createElement('img');
                 img.id = 'profile-picture-preview';
                 img.src = dataUrl;
-                img.alt = 'Profile Picture';
+                img.alt = '{{ __("profile_picture") }}';
                 img.className = 'w-full h-full object-cover';
                 placeholderElement.replaceWith(img);
             }

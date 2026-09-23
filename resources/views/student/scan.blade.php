@@ -15,7 +15,7 @@
         
         {{-- HTTPS Warning --}}
         <div id="https-warning" class="hidden w-full max-w-md mb-4 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded shadow-md">
-            <p class="font-bold">⚠️ Security Error</p>
+            <p class="font-bold">⚠️ {{ __('security_error') }}</p>
             <p class="text-sm">{!! __('please_use_https_for_camera_to_work') !!}</p>
         </div>
 
@@ -38,7 +38,7 @@
                 {{-- 2. Camera box --}}
                 <div class="relative rounded-2xl overflow-hidden bg-black aspect-square shadow-inner isolate mb-4">
                     <div id="reader" class="w-full h-full absolute inset-0"></div>
-                    <div id="scan-status" class="hidden">⚡ កំពុងស្កែន...</div>
+                    <div id="scan-status" class="hidden">⚡ {{ __('qr_scanning') }}</div>
 
                     {{-- Overlay UI --}}
                     <div id="scan-overlay" class="hidden absolute inset-0 pointer-events-none p-6 flex-col justify-between z-10">
@@ -87,7 +87,7 @@
             <div id="status-icon-container" class="mx-auto w-24 h-24 rounded-full flex items-center justify-center mb-6"></div>
             <h3 id="modal-title" class="text-2xl font-black text-gray-900 mb-2"></h3>
             <p id="modal-message" class="text-gray-500 mb-8"></p>
-            <button onclick="window.location.reload()" class="w-full py-4 rounded-2xl font-bold text-white bg-emerald-600 shadow-lg" id="modal-btn">OK</button>
+            <button onclick="window.location.reload()" class="w-full py-4 rounded-2xl font-bold text-white bg-emerald-600 shadow-lg" id="modal-btn">{{ __('ok') }}</button>
         </div>
     </div>
 
@@ -103,8 +103,8 @@
                 <div class="text-red-400 mb-4">
                     <svg class="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                 </div>
-                <h3 class="text-lg font-bold mb-2 text-red-400">បណ្ណាល័យ QR មិនផ្ទុក</h3>
-                <p class="text-sm text-gray-400 mb-4">សូមផ្ទុកទំព័រឡើងវិញ ឬប្រើប៊ូតុងបញ្ចូលកូដដោយដៃខាងក្រោម។</p>
+                <h3 class="text-lg font-bold mb-2 text-red-400">{{ __('qr_library_not_loaded') }}</h3>
+                <p class="text-sm text-gray-400 mb-4">{{ __('qr_reload_or_use_manual') }}</p>
             `;
         }
 
@@ -126,7 +126,7 @@
 
         function startCamera() {
             if (!html5QrCode) {
-                showOnScreenError('QR Library មិនផ្ទុក! សូមប្រើប៊ូតុងបញ្ចូលកូដដោយដៃ។');
+                showOnScreenError('{{ __("qr_library_not_loaded_error") }}');
                 return;
             }
 
@@ -140,7 +140,7 @@
             html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess, onScanFailure)
             .then(() => {
                 console.log('[QR] Camera started successfully');
-                document.getElementById('scan-status').textContent = '⚡ កំពុងស្កែន...';
+                document.getElementById('scan-status').textContent = '⚡ {{ __("qr_scanning") }}';
             })
             .catch(err => {
                 console.error("[QR] Camera Error:", err);
@@ -156,7 +156,7 @@
             if (isProcessing) return;
             isProcessing = true;
 
-            document.getElementById('scan-status').textContent = '✓ បានស្កែន! កំពុងផ្ញើ...';
+            document.getElementById('scan-status').textContent = '{{ __("qr_scanned_sending") }}';
 
             // Stop Camera
             if (html5QrCode) {
@@ -193,7 +193,7 @@
             })
             .catch(error => {
                 console.error('[QR] Fetch error:', error);
-                showModal('error', error.message || 'មានបញ្ហាក្នុងការទាក់ទង server');
+                showModal('error', error.message || '{{ __("server_connection_problem") }}');
             });
         }
 
@@ -210,7 +210,7 @@
             const imageFile = input.files[0];
 
             if (!html5QrCode) {
-                showOnScreenError('QR Library មិនផ្ទុក!');
+                showOnScreenError('{{ __("qr_library_not_loaded_short") }}');
                 return;
             }
 

@@ -58,13 +58,22 @@
                         </div>
                     @endif
 
-                    <form method="POST" action="{{ route('professor.security.trusted-device.store') }}">
-                        @csrf
-                        <button type="submit"
-                            class="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur border border-white/20 text-white px-4 py-2.5 rounded-xl font-bold text-xs transition-all">
-                            <i class="fas fa-shield-halved"></i> {{ __('trust_device') }}
-                        </button>
-                    </form>
+                    @if($currentDeviceTrusted ?? false)
+                        <span class="inline-flex items-center gap-2 bg-emerald-500/20 border border-emerald-400/30 text-emerald-100 px-4 py-2.5 rounded-xl font-bold text-xs"
+                              title="{{ __('trusted_devices') }}">
+                            <i class="fas fa-shield-check"></i> {{ __('trusted_devices') }}
+                        </span>
+                    @else
+                        <form method="POST" action="{{ route('professor.security.trusted-device.store') }}"
+                              onsubmit="const button = this.querySelector('button[type=submit]'); if (button) { button.disabled = true; button.setAttribute('aria-busy', 'true'); button.setAttribute('aria-disabled', 'true'); button.classList.add('opacity-60', 'cursor-not-allowed'); }">
+                            @csrf
+                            <button type="submit"
+                                aria-busy="false"
+                                class="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur border border-white/20 text-white px-4 py-2.5 rounded-xl font-bold text-xs transition-all">
+                                <i class="fas fa-shield-halved"></i> {{ __('trust_device') }}
+                            </button>
+                        </form>
+                    @endif
                     <a wire:navigate href="{{ route('professor.security.trusted-devices') }}"
                         class="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur border border-white/20 text-white px-3 py-2.5 rounded-xl font-bold text-xs transition-all"
                         title="Manage trusted devices">

@@ -45,7 +45,7 @@
                                 @if($dept->duration_years)
                                     <div class="flex items-center gap-2">
                                         <i class="fas fa-clock text-slate-400 w-4"></i>
-                                        <span>{{ $dept->duration_years }} ឆ្នាំ</span>
+                                        <span>{{ $dept->duration_years }} {{ __('years_unit') }}</span>
                                     </div>
                                 @endif
                             </div>

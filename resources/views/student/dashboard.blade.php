@@ -167,7 +167,7 @@
                                 <i class="fas fa-award text-lg"></i>
                             </div>
                             <p class="text-2xl font-black text-emerald-700">{{ $gpa }}</p>
-                            <p class="text-[10px] font-bold text-emerald-500 uppercase tracking-wide mt-1">GPA (4.0)</p>
+                            <p class="text-[10px] font-bold text-emerald-500 uppercase tracking-wide mt-1">{{ __('gpa_4') }}</p>
                         </div>
                         {{-- Average --}}
                         <div class="text-center p-4 bg-blue-50/50 rounded-2xl border border-blue-100">
@@ -451,7 +451,7 @@
                                 <h4 class="text-sm font-bold text-gray-800">{{ __('latest_updates') }}</h4>
                             </div>
                             <span class="inline-flex items-center gap-1 bg-emerald-50 text-emerald-600 text-[10px] font-black px-2 py-1 rounded-md uppercase tracking-wider">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Live
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> {{ __('live') }}
                             </span>
                         </div>
                         <div class="p-4 space-y-3 max-h-[500px] overflow-y-auto custom-scrollbar">
@@ -510,8 +510,8 @@
             <form action="{{ route('student.update_telegram') }}" method="POST">
                 @csrf
                 <div class="mb-6 text-xs text-slate-500 leading-relaxed bg-slate-50 p-4 rounded-2xl">
-                    <p>១. {{ __('send_a_message_to') }} <a href="https://t.me/userinfobot" target="_blank" class="text-emerald-600 font-bold">@userinfobot</a></p>
-                    <p class="mt-1">២. {{ __('press_start_on') }} <a href="https://t.me/kong_grade_bot" target="_blank" class="text-emerald-600 font-bold">@kong_grade_bot</a></p>
+                    <p>1. {{ __('send_a_message_to') }} <a href="https://t.me/userinfobot" target="_blank" class="text-emerald-600 font-bold">@userinfobot</a></p>
+                    <p class="mt-1">2. {{ __('press_start_on') }} <a href="https://t.me/kong_grade_bot" target="_blank" class="text-emerald-600 font-bold">@kong_grade_bot</a></p>
                 </div>
                 <input type="number" name="telegram_chat_id" required placeholder="{{ __('enter_chat_id') }}" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl mb-4 focus:ring-4 focus:ring-emerald-500/10 outline-none">
                 <div class="flex gap-3">

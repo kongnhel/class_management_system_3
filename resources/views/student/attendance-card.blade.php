@@ -13,17 +13,17 @@
             @if ($card && ! $card->revoked_at)
                 <div class="bg-white rounded-3xl shadow-xl border border-slate-200 p-6 text-center">
                     <div id="attendance-card-image" class="rounded-2xl bg-slate-900 p-5 text-white">
-                        <p class="text-xs font-bold uppercase tracking-[0.25em] text-emerald-300">NMU Attendance</p>
+                        <p class="text-xs font-bold uppercase tracking-[0.25em] text-emerald-300">{{ __('nmu_attendance') }}</p>
                         @if($photoUrl)
                             <div class="mt-3 mx-auto w-20 h-20 rounded-full overflow-hidden ring-4 ring-emerald-400/40 border-2 border-white shadow-xl">
-                                <img src="{{ $photoUrl }}" alt="Student photo" class="w-full h-full object-cover">
+                                <img src="{{ $photoUrl }}" alt="{{ __('profile_picture') }}" class="w-full h-full object-cover">
                             </div>
                         @endif
                         <h2 class="mt-3 text-xl font-black">{{ $user->studentProfile?->full_name_km ?? $user->name }}</h2>
                         <p class="mt-1 text-sm text-slate-300">{{ $user->student_id_code }}</p>
                         <div class="mt-5 rounded-2xl bg-white p-3">
                             <div class="relative mx-auto w-full max-w-xs">
-                                <img src="{{ route('student.attendance-card.qr') }}" alt="Attendance card QR code" class="mx-auto w-full">
+                                <img src="{{ route('student.attendance-card.qr') }}" alt="{{ __('wifi_qr') }}" class="mx-auto w-full">
                                 @if($photoCenter)
                                     <img src="{{ $photoUrl }}" alt="" class="absolute inset-0 m-auto w-16 h-16 rounded-full border-4 border-white shadow-lg object-cover">
                                 @endif

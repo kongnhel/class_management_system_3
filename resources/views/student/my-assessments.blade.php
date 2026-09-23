@@ -54,7 +54,7 @@
                             </span>
                             @if($courseData['quiz_bonus'] > 0)
                                 <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-50 text-amber-700 text-[10px] font-bold">
-                                    <i class="fas fa-star"></i> Quiz Bonus: +{{ number_format($courseData['quiz_bonus'], 1) }}
+                                    <i class="fas fa-star"></i> {{ __('quiz_bonus') }}: +{{ number_format($courseData['quiz_bonus'], 1) }}
                                 </span>
                             @endif
                             @if(!empty($courseData['needs_re_exam']))
@@ -78,7 +78,7 @@
                                     <th class="text-left px-6 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider">{{ __('type') }}</th>
                                     <th class="text-left px-6 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider">{{ __('name') }}</th>
                                     <th class="text-center px-6 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider">{{ __('score') }}</th>
-                                    <th class="text-center px-6 py-3 text-[10px] font-bold text-blue-500 uppercase tracking-wider">Re-exam</th>
+                                    <th class="text-center px-6 py-3 text-[10px] font-bold text-blue-500 uppercase tracking-wider">{{ __('re_exam') }}</th>
                                     <th class="text-center px-6 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider">{{ __('max') }}</th>
                                     <th class="text-left px-6 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider">{{ __('notes') }}</th>
                                 </tr>

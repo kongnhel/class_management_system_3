@@ -163,7 +163,7 @@
                                     </span>
                                     <input type="text" name="full_name_en" id="full_name_en" value="{{ old('full_name_en', $studentProfile->full_name_en ?? '') }}" 
                                            class="block w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 focus:bg-white outline-none transition-all font-bold text-slate-700" 
-                                           placeholder="Full Name in English">
+                                           placeholder="{{ __('full_name_in_english') }}">
                                 </div>
                             </div>
 

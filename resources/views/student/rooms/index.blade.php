@@ -64,7 +64,7 @@
                                 <div class="mb-6 relative flex flex-col items-center p-6 bg-slate-50 rounded-[2rem] border border-slate-100 group-hover:bg-white transition-colors">
                                     @if($room->wifi_qr_code)
                                         <div class="relative bg-white p-3 rounded-2xl shadow-lg border border-slate-50">
-                                            <img src="{{ $room->wifi_qr_code}}" alt="WiFi QR" class="w-32 h-32 md:w-40 md:h-40 object-cover rounded-lg">
+                                            <img src="{{ $room->wifi_qr_code}}" alt="{{ __('wifi_qr') }}" class="w-32 h-32 md:w-40 md:h-40 object-cover rounded-lg">
                                         </div>
                                         <div class="mt-4 flex items-center gap-2 px-4 py-1.5 bg-white text-emerald-600 border border-emerald-100 rounded-full shadow-sm">
                                             <i class="fas fa-wifi text-xs"></i>

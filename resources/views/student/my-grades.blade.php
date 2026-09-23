@@ -11,7 +11,7 @@
                         </div>
                         <div>
                             <h2 class="text-2xl font-bold text-slate-800 tracking-tight leading-none">{{ __('stu_grades_title') }}</h2>
-                            <p class="text-xs text-slate-500 font-medium mt-1 uppercase tracking-wider">Academic Performance Record</p>
+                            <p class="text-xs text-slate-500 font-medium mt-1 uppercase tracking-wider">{{ __('academic_performance_record') }}</p>
                         </div>
                     </div>
                     <div class="flex items-center gap-3">
@@ -57,7 +57,7 @@
                             <i class="fas fa-filter mr-1.5"></i> {{ __('filter_2') }}
                         </button>
                         <a wire:navigate href="{{ route('student.my-grades') }}" class="px-5 py-2 bg-slate-100 text-slate-600 rounded-xl font-bold text-sm hover:bg-slate-200 transition-all">
-                            Reset
+                            {{ __('reset') }}
                         </a>
                     </div>
                 </form>
