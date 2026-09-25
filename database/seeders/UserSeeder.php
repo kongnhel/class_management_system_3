@@ -12,7 +12,8 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        $password = Hash::make('password');
+        // Sets the actual login password to Pnp@123456$
+        $password = Hash::make('Pnp@123456$');
 
         // Admin
         $admin = User::updateOrCreate(
