@@ -94,7 +94,7 @@
                                 <option value="បរិញ្ញាបត្រ" {{ old('degree_level') == 'បរិញ្ញាបត្រ' ? 'selected' : '' }}>បរិញ្ញាបត្រ</option>
                                 <option value="បរិញ្ញាបត្ររង" {{ old('degree_level') == 'បរិញ្ញាបត្ររង' ? 'selected' : '' }}>បរិញ្ញាបត្ររង</option>
                                 <option value="អនុបណ្ឌិត" {{ old('degree_level') == 'អនុបណ្ឌិត' ? 'selected' : '' }}>អនុបណ្ឌិត</option>
-                                <option value="បណ្ឌិត" {{ old('degree_level') == 'បណ្ឌិត' ? 'selected' : '' }}>បណ្ឌិត</option>
+                                <!-- <option value="បណ្ឌិត" {{ old('degree_level') == 'បណ្ឌិត' ? 'selected' : '' }}>បណ្ឌិត</option> -->
                                 <option value="វិញ្ញាបនបត្រ" {{ old('degree_level') == 'វិញ្ញាបនបត្រ' ? 'selected' : '' }}>វិញ្ញាបនបត្រ</option>
                                 <option value="ផ្សេងៗ" {{ old('degree_level') == 'ផ្សេងៗ' ? 'selected' : '' }}>ផ្សេងៗ</option>
                             </select>
