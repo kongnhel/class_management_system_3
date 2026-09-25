@@ -14,12 +14,12 @@
                         <i class="fas fa-clipboard-check text-white text-lg"></i>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-bold text-gray-900">គ្រប់គ្រងវត្តមាន</h1>
+                        <h1 class="text-2xl font-bold text-gray-900">{{ __('manage_attendance') }}</h1>
                         <p class="text-sm text-gray-500 mt-0.5">{{ $courseOffering->course?->title_km ?? $courseOffering->course?->title_en ?? 'N/A' }} · {{ $courseOffering->academic_year }} · {{ $courseOffering->semester }}</p>
                     </div>
                 </div>
                 <a wire:navigate href="{{ route('professor.my-course-offerings') }}" class="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 text-gray-700 rounded-xl font-bold text-sm hover:bg-gray-50 shadow-sm transition-all">
-                    <i class="fas fa-arrow-left"></i> ត្រឡប់ក្រោយ
+                    <i class="fas fa-arrow-left"></i> {{ __('back_4') }}
                 </a>
             </div>
 
@@ -40,7 +40,7 @@
             {{-- Add Record Form --}}
             <div class="bg-white rounded-2xl border border-gray-200 p-5 mb-6">
                 <h3 class="font-bold text-gray-800 text-sm mb-4 flex items-center gap-2">
-                    <i class="fas fa-plus-circle text-emerald-500"></i> បន្ថែមកំណត់ត្រាថ្មី
+                    <i class="fas fa-plus-circle text-emerald-500"></i> {{ __('add_new_record') }}
                 </h3>
                 <form action="{{ route('professor.attendances.store') }}" method="POST" id="addAttendanceForm">
                     @csrf
@@ -50,10 +50,10 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
                         {{-- Student Multi-Select Dropdown --}}
                         <div class="relative" @click.away="studentDropdownOpen = false">
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">និស្សិត</label>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">{{ __('students_2') }}</label>
                             <button type="button" @click="toggleStudentDropdown()"
                                 class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all text-left flex items-center justify-between">
-                                <span x-text="getStudentNames() || 'ជ្រើសរើសនិស្សិត'"></span>
+                                <span x-text="getStudentNames() || '{{ __("select_students") }}'"></span>
                                 <i class="fas fa-chevron-down text-gray-400 text-xs" :class="studentDropdownOpen ? 'rotate-180' : ''"></i>
                             </button>
                             <div x-show="studentDropdownOpen" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
@@ -62,7 +62,7 @@
                                     <label class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 cursor-pointer">
                                         <input type="checkbox" x-model="selectAll" @change="toggleAllStudents()"
                                             class="w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500">
-                                        <span class="text-sm font-bold text-gray-700">ជ្រើសរើសទាំងអស់</span>
+                                        <span class="text-sm font-bold text-gray-700">{{ __('select_all') }}</span>
                                     </label>
                                 </div>
                                 <div class="p-1">
@@ -77,25 +77,25 @@
                                     </template>
                                 </div>
                                 <div class="p-2 border-t border-gray-100 sticky bottom-0 bg-white" x-show="selectedStudents.length > 0">
-                                    <button type="button" @click="clearStudents()" class="w-full text-xs font-bold text-gray-400 hover:text-gray-600 py-1">បោះបង់ការជ្រើសរើស</button>
+                                    <button type="button" @click="clearStudents()" class="w-full text-xs font-bold text-gray-400 hover:text-gray-600 py-1">{{ __('clear_selection') }}</button>
                                 </div>
                             </div>
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">កាលបរិច្ឆេទ</label>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">{{ __('date_4') }}</label>
                             <input type="date" name="date" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">ស្ថានភាព</label>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">{{ __('status_2') }}</label>
                             <select name="status" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
-                                <option value="present">មានវត្តមាន</option>
-                                <option value="absent">អវត្តមាន</option>
-                                <option value="permission">មានច្បាប់</option>
+                                <option value="present">{{ __('present_2') }}</option>
+                                <option value="absent">{{ __('absent_2') }}</option>
+                                <option value="permission">{{ __('permission_2') }}</option>
                             </select>
                         </div>
                         <button type="submit" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white rounded-xl font-bold text-sm shadow-md transition-all active:scale-95">
-                            <i class="fas fa-save"></i> រក្សាទុក
+                            <i class="fas fa-save"></i> {{ __('save_4') }}
                         </button>
                     </div>
                 </form>
@@ -104,8 +104,8 @@
             {{-- Records Table --}}
             <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
                 <div class="px-5 py-4 border-b border-gray-200 flex items-center justify-between">
-                    <h3 class="font-bold text-gray-800 text-sm">កំណត់ត្រាវត្តមាន</h3>
-                    <span class="px-3 py-1 rounded-full bg-gray-100 text-xs font-bold text-gray-500">{{ $attendanceRecords->count() }} កំណត់ត្រា</span>
+                    <h3 class="font-bold text-gray-800 text-sm">{{ __('attendance_records') }}</h3>
+                    <span class="px-3 py-1 rounded-full bg-gray-100 text-xs font-bold text-gray-500">{{ $attendanceRecords->count() }} {{ __('records') }}</span>
                 </div>
 
                 @if($attendanceRecords->count() > 0)
@@ -113,10 +113,10 @@
                     <table class="min-w-full divide-y divide-gray-100">
                         <thead>
                             <tr class="bg-gray-50">
-                                <th class="px-5 py-3 text-left text-xs font-bold text-gray-500 uppercase">និស្សិត</th>
-                                <th class="px-5 py-3 text-left text-xs font-bold text-gray-500 uppercase">កាលបរិច្ឆេទ</th>
-                                <th class="px-5 py-3 text-left text-xs font-bold text-gray-500 uppercase">ស្ថានភាព</th>
-                                <th class="px-5 py-3 text-center text-xs font-bold text-gray-500 uppercase">សកម្មភាព</th>
+                                <th class="px-5 py-3 text-left text-xs font-bold text-gray-500 uppercase">{{ __('student_2') }}</th>
+                                <th class="px-5 py-3 text-left text-xs font-bold text-gray-500 uppercase">{{ __('date_4') }}</th>
+                                <th class="px-5 py-3 text-left text-xs font-bold text-gray-500 uppercase">{{ __('status_2') }}</th>
+                                <th class="px-5 py-3 text-center text-xs font-bold text-gray-500 uppercase">{{ __('actions_2') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
@@ -139,7 +139,7 @@
                                 <td class="px-5 py-3">
                                     @php
                                         $colors = ['present' => 'green', 'absent' => 'red', 'permission' => 'blue', 'late' => 'amber'];
-                                        $labels = ['present' => 'មានវត្តមាន', 'absent' => 'អវត្តមាន', 'permission' => 'មានច្បាប់', 'late' => 'មកយឺត'];
+                                        $labels = ['present' => __('present_2'), 'absent' => __('absent_2'), 'permission' => __('permission_2'), 'late' => __('late_2')];
                                         $color = $colors[$record->status] ?? 'gray';
                                     @endphp
                                     <span class="inline-flex px-2.5 py-1 rounded-lg text-xs font-bold bg-{{ $color }}-50 text-{{ $color }}-700 border border-{{ $color }}-100">
@@ -155,12 +155,12 @@
                                             data-date="{{ \Carbon\Carbon::parse($record->date)->format('Y-m-d') }}"
                                             data-status="{{ $record->status }}"
                                             data-remarks="{{ $record->remarks ?? '' }}">
-                                            <i class="fas fa-pen mr-1"></i> កែ
+                                            <i class="fas fa-pen mr-1"></i> {{ __('edit_5') }}
                                         </button>
                                         <form action="{{ route('professor.attendances.destroy', $record->id) }}" method="POST" id="delete-form-{{ $record->id }}">
                                             @csrf @method('DELETE')
                                             <button type="button" @click="deleteId = {{ $record->id }}; deleteStudentName = '{{ $record->student?->studentProfile?->full_name_km ?? $record->student?->name ?? '' }}'; showDelete = true" class="text-xs font-bold text-red-500 hover:text-red-600 hover:bg-red-50 px-3 py-1.5 rounded-lg transition-colors">
-                                                <i class="fas fa-trash mr-1"></i> លុប
+                                                <i class="fas fa-trash mr-1"></i> {{ __('delete_3') }}
                                             </button>
                                         </form>
                                     </div>
@@ -176,8 +176,8 @@
                 @else
                 <div class="px-5 py-16 text-center">
                     <i class="fas fa-inbox text-gray-300 text-3xl mb-3"></i>
-                    <p class="text-sm font-bold text-gray-400">មិនមានកំណត់ត្រា</p>
-                    <p class="text-xs text-gray-300 mt-1">សូមប្រើទម្រង់ខាងលើដើម្បីបន្ថែម</p>
+                    <p class="text-sm font-bold text-gray-400">{{ __('no_records') }}</p>
+                    <p class="text-xs text-gray-300 mt-1">{{ __('please_use_the_form_above_to_add') }}</p>
                 </div>
                 @endif
             </div>
@@ -190,13 +190,13 @@
                      x-transition:enter="transition ease-out duration-200"
                      x-transition:enter-start="opacity-0 scale-95"
                      x-transition:enter-end="opacity-100 scale-100">
-                    <h3 class="text-lg font-bold text-gray-800 mb-4">កែសម្រួលកំណត់ត្រា</h3>
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">{{ __('edit_record') }}</h3>
                     <form :action="updateRoute.replace('0', attendanceId)" method="POST">
                         @csrf @method('PUT')
                         <input type="hidden" name="course_offering_id" value="{{ $courseOffering->id }}">
                         <div class="space-y-3">
                             <div>
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">និស្សិត</label>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('student_2') }}</label>
                                 <select name="student_user_id" x-model="studentUserId" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500">
                                     @foreach($courseOffering->studentCourseEnrollments->unique('student_user_id') as $enrollment)
                                         @if($enrollment->student)
@@ -206,21 +206,21 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">កាលបរិច្ឆេទ</label>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('date_4') }}</label>
                                 <input type="date" name="date" x-model="date" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">ស្ថានភាព</label>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{{ __('status_2') }}</label>
                                 <select name="status" x-model="status" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500">
-                                    <option value="present">មានវត្តមាន</option>
-                                    <option value="absent">អវត្តមាន</option>
-                                    <option value="permission">មានច្បាប់</option>
+                                    <option value="present">{{ __('present_2') }}</option>
+                                    <option value="absent">{{ __('absent_2') }}</option>
+                                    <option value="permission">{{ __('permission_2') }}</option>
                                 </select>
                             </div>
                         </div>
                         <div class="flex justify-end gap-3 mt-6">
-                            <button type="button" @click="open = false" class="px-4 py-2.5 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl font-bold text-sm transition-colors">បោះបង់</button>
-                            <button type="submit" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-sm shadow-md transition-all">រក្សាទុក</button>
+                            <button type="button" @click="open = false" class="px-4 py-2.5 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl font-bold text-sm transition-colors">{{ __('cancel_2') }}</button>
+                            <button type="submit" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-sm shadow-md transition-all">{{ __('save_4') }}</button>
                         </div>
                     </form>
                 </div>
@@ -237,13 +237,13 @@
                     <div class="mx-auto w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mb-4">
                         <i class="fas fa-trash-alt text-red-500 text-xl"></i>
                     </div>
-                    <h3 class="text-lg font-bold text-gray-800 mb-1">តើអ្នកពិតជាចង់លុបមែនទេ?</h3>
+                    <h3 class="text-lg font-bold text-gray-800 mb-1">{{ __('are_you_sure_you_want_to_delete') }}</h3>
                     <p class="text-sm text-gray-500 mb-6">
-                        កំណត់ត្រាវត្តមានរបស់ <span class="font-semibold text-gray-700" x-text="deleteStudentName"></span> នឹងត្រូវបានលុបចេញ។
+                        {{ __('attendance_record_of') }} <span class="font-semibold text-gray-700" x-text="deleteStudentName"></span> {{ __('will_be_deleted') }}
                     </p>
                     <div class="flex gap-3">
-                        <button @click="showDelete = false" class="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-bold text-sm transition-colors">បោះបង់</button>
-                        <button @click="document.getElementById('delete-form-' + deleteId)?.submit()" class="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold text-sm shadow-md transition-all">លុប</button>
+                        <button @click="showDelete = false" class="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-bold text-sm transition-colors">{{ __('cancel_2') }}</button>
+                        <button @click="document.getElementById('delete-form-' + deleteId)?.submit()" class="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold text-sm shadow-md transition-all">{{ __('delete_3') }}</button>
                     </div>
                 </div>
             </div>
@@ -290,7 +290,7 @@
                         const s = this.students.find(s => s.id === this.selectedStudents[0]);
                         return s ? s.name : '';
                     }
-                    return this.selectedStudents.length + ' និស្សិតត្រូវបានជ្រើសរើស';
+                    return this.selectedStudents.length + ' {{ __("students_selected") }}';
                 }
             }
         }

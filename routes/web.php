@@ -332,8 +332,16 @@ Route::middleware(['auth', 'role:professor', 'throttle:120,1'])->prefix('profess
     Route::get('/profile/edit', [ProfessorProfileController::class, 'editProfile'])->name('profile.edit');
     Route::put('/profile', [ProfessorProfileController::class, 'updateProfile'])->name('profile.update');
 
-    Route::get('/quizzes/{quiz}/questions', [ProfessorController::class, 'manageQuizQuestions'])->name('quizzes.questions.index');
-    Route::post('/quizzes/{quiz}/questions', [ProfessorController::class, 'storeQuizQuestion'])->name('quizzes.questions.store');
+    Route::controller(\App\Http\Controllers\professor\ProfessorQuizController::class)->group(function () {
+        Route::get('/my-course-offerings/{offering_id}/quizzes', 'index')->name('quizzes.index');
+        Route::post('/my-course-offerings/{offering_id}/quizzes', 'store')->name('quizzes.store');
+        Route::put('/quizzes/{quiz}', 'update')->name('quizzes.update');
+        Route::delete('/my-course-offerings/{offering_id}/quizzes/{quiz}', 'destroy')->name('quizzes.destroy');
+        Route::get('/my-course-offerings/{offering_id}/quizzes/{quiz}/questions', 'manageQuestions')->name('quizzes.manage-questions');
+        Route::post('/my-course-offerings/{offering_id}/quizzes/{quiz}/questions', 'storeQuestion')->name('quizzes.questions.store');
+        Route::put('/my-course-offerings/{offering_id}/quizzes/{quiz}/questions/{question}', 'updateQuestion')->name('quizzes.questions.update');
+        Route::delete('/my-course-offerings/{offering_id}/quizzes/{quiz}/questions/{question}', 'destroyQuestion')->name('quizzes.questions.destroy');
+    });
 
     // Telegram webhook is registered outside this authenticated professor group below.
 

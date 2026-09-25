@@ -15,15 +15,15 @@
                 <td class="px-6 py-4">
                     @if($student->rank == 1)
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                            🏆 លេខ ១
+                            🏆 {{ __('rank') }} 1
                         </span>
                     @elseif($student->rank == 2)
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-200 text-slate-800">
-                            🥈 លេខ ២
+                            🥈 {{ __('rank') }} 2
                         </span>
                     @elseif($student->rank == 3)
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-                            🥉 លេខ ៣
+                            🥉 {{ __('rank') }} 3
                         </span>
                     @else
                         <span class="text-slate-600 font-medium ml-4">{{ $student->rank }}</span>

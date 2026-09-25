@@ -16,7 +16,17 @@ class Quiz extends Model
         'title_en',
         'max_score',
         'quiz_date',
+        'description_km',
+        'description_en',
+        'start_time',
+        'end_time',
+        'is_published',
     ];
+
+    public function questions()
+    {
+        return $this->hasMany(QuizQuestion::class);
+    }
 
     // Relationship ទៅកាន់ ExamResult
     public function examResults()

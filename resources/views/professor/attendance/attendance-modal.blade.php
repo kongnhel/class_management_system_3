@@ -50,15 +50,15 @@
                                   <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                                   <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                                 </span>
-                                <span class="text-[10px] font-bold tracking-widest uppercase text-emerald-400">Live Attendance</span>
+                                <span class="text-[10px] font-bold tracking-widest uppercase text-emerald-400">{{ __('Live Attendance') }}</span>
                             @else
                                 <span class="relative flex h-2 w-2">
                                   <span class="relative inline-flex rounded-full h-2 w-2 bg-slate-500"></span>
                                 </span>
-                                <span class="text-[10px] font-bold tracking-widest uppercase text-slate-400">{{ $scanStatus === 'not_started' ? 'រង់ចាំ' : ($scanStatus === 'ended' ? 'បានបញ្ចប់' : 'មិនដំណើរការ') }}</span>
+                                <span class="text-[10px] font-bold tracking-widest uppercase text-slate-400">{{ $scanStatus === 'not_started' ? __('waiting') : ($scanStatus === 'ended' ? __('ended_2') : __('inactive')) }}</span>
                             @endif
                         </div>
-                        <h2 class="text-xl lg:text-4xl font-black text-white tracking-tight mb-1">ស្កែនវត្តមាន</h2>
+                        <h2 class="text-xl lg:text-4xl font-black text-white tracking-tight mb-1">{{ __('scan_attendance') }}</h2>
                         <p class="text-emerald-300 text-xs lg:text-sm font-bold uppercase truncate max-w-[250px] lg:max-w-none">{{ $courseName }}</p>
                     </div>
 
@@ -71,9 +71,9 @@
                                 <span class="font-bold">{{ $scheduleInfo['start_time'] }} - {{ $scheduleInfo['end_time'] }}</span>
                             </div>
                             @if($scanStatus === 'active' && isset($scheduleInfo['minutes_remaining']))
-                                <span class="text-emerald-400 font-bold text-xs">នៅសល់ {{ $scheduleInfo['minutes_remaining'] }} នាទី</span>
+                                <span class="text-emerald-400 font-bold text-xs">{{ __('remaining') }} {{ $scheduleInfo['minutes_remaining'] }} {{ __('minutes') }}</span>
                             @elseif($scanStatus === 'not_started' && isset($scheduleInfo['minutes_until']))
-                                <span class="text-yellow-400 font-bold text-xs">ចាប់ផ្តើមក្នុង {{ $scheduleInfo['minutes_until'] }} នាទី</span>
+                                <span class="text-yellow-400 font-bold text-xs">{{ __('starts_in') }} {{ $scheduleInfo['minutes_until'] }} {{ __('minutes') }}</span>
                             @endif
                         </div>
                     </div>
@@ -96,7 +96,7 @@
                         {{-- Countdown Timer --}}
                         <div class="mt-4 lg:mt-8 w-48 lg:w-full" x-data="{ timeLeft: 30 }" x-init="setInterval(() => { timeLeft = timeLeft > 1 ? timeLeft - 1 : 30 }, 1000)">
                             <div class="flex items-center justify-between text-slate-400 text-[10px] lg:text-sm font-medium mb-1.5 px-1">
-                                <span>QR ប្តូរថ្មី</span>
+                                <span>{{ __('qr_refresh') }}</span>
                                 <span class="font-mono text-white font-bold"><span x-text="timeLeft">30</span>s</span>
                             </div>
                             <div class="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
@@ -109,11 +109,11 @@
                             <div class="w-20 h-20 bg-yellow-500/10 rounded-full flex items-center justify-center mb-4">
                                 <svg class="w-10 h-10 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                             </div>
-                            <h3 class="text-lg font-bold text-white mb-1">មិនទាន់ដល់ម៉ោង</h3>
-                            <p class="text-slate-400 text-xs">សូមរង់ចាំដល់ម៉ោងកំណត់ទើបអាចស្កែនបាន។</p>
+                            <h3 class="text-lg font-bold text-white mb-1">{{ __('not_time_yet') }}</h3>
+                            <p class="text-slate-400 text-xs">{{ __('please_wait_until_scheduled_time_to_scan') }}</p>
                             @if(isset($scheduleInfo['minutes_until']))
                                 <div class="mt-4 text-3xl font-black text-yellow-400">{{ $scheduleInfo['minutes_until'] }}</div>
-                                <div class="text-xs text-slate-400">នាទីទៀត</div>
+                                <div class="text-xs text-slate-400">{{ __('minutes_remaining') }}</div>
                             @endif
                         </div>
                     @elseif($scanStatus === 'ended')
@@ -121,16 +121,16 @@
                             <div class="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mb-4">
                                 <svg class="w-10 h-10 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
                             </div>
-                            <h3 class="text-lg font-bold text-white mb-1">ការស្កែនបានបញ្ចប់</h3>
-                            <p class="text-slate-400 text-xs">ម៉ោងកាលវិភាគបានចប់ហើយ។</p>
+                            <h3 class="text-lg font-bold text-white mb-1">{{ __('scanning_ended') }}</h3>
+                            <p class="text-slate-400 text-xs">{{ __('schedule_time_has_ended') }}</p>
                         </div>
                     @else
                         <div class="flex flex-col items-center text-center py-8">
                             <div class="w-20 h-20 bg-slate-500/10 rounded-full flex items-center justify-center mb-4">
                                 <svg class="w-10 h-10 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                             </div>
-                            <h3 class="text-lg font-bold text-white mb-1">មិនមានកាលវិភាគ</h3>
-                            <p class="text-slate-400 text-xs">ថ្ងៃនេះមិនមានកាលវិភាគសម្រាប់មុខវិជ្ជានេះទេ។</p>
+                            <h3 class="text-lg font-bold text-white mb-1">{{ __('no_schedule') }}</h3>
+                            <p class="text-slate-400 text-xs">{{ __('no_schedule_for_this_course_today') }}</p>
                         </div>
                     @endif
                 </div>
@@ -141,12 +141,12 @@
                 
                 <div class="px-6 py-4 border-b border-slate-200 bg-white sticky top-0 z-30 flex justify-between items-center shrink-0">
                     <div>
-                        <h3 class="text-lg lg:text-xl font-bold text-slate-800">បញ្ជីឈ្មោះសិស្ស</h3>
+                        <h3 class="text-lg lg:text-xl font-bold text-slate-800">{{ __('student_list') }}</h3>
                         <p class="text-[10px] text-slate-500 font-medium uppercase tracking-wider">
                             @if($scanStatus === 'active')
-                                កំពុងរង់ចាំសិស្សស្កែន...
+                                {{ __('waiting_for_students_to_scan') }}
                             @else
-                                ការស្កែនមិនទាន់ដំណើរការ
+                                {{ __('scanning_not_started_yet') }}
                             @endif
                         </p>
                     </div>
@@ -159,7 +159,7 @@
                                 <span class="text-sm font-black text-slate-600 leading-none">
                                     {{ count($attendances) }}/{{ $totalEnrolled }}
                                 </span>
-                                <span class="text-[8px] font-bold text-slate-400 uppercase">សិស្ស</span>
+                                <span class="text-[8px] font-bold text-slate-400 uppercase">{{ __('students_suffix') }}</span>
                             </div>
                         @endif
                         <div class="bg-emerald-50 px-4 py-1.5 rounded-xl border border-emerald-100 flex flex-col items-center">
@@ -182,18 +182,18 @@
                         <div class="flex items-center gap-3 mb-4 px-2">
                             <div class="flex items-center gap-1.5 bg-green-50 border border-green-200 px-3 py-1.5 rounded-lg">
                                 <div class="w-2 h-2 bg-green-500 rounded-full"></div>
-                                <span class="text-[11px] font-bold text-green-700">{{ $presentCount }} មក</span>
+                                <span class="text-[11px] font-bold text-green-700">{{ $presentCount }} {{ __('came') }}</span>
                             </div>
                             @if($lateCount > 0)
                             <div class="flex items-center gap-1.5 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-lg">
                                 <div class="w-2 h-2 bg-amber-500 rounded-full"></div>
-                                <span class="text-[11px] font-bold text-amber-700">{{ $lateCount }} មកយឺត</span>
+                                <span class="text-[11px] font-bold text-amber-700">{{ $lateCount }} {{ __('late_2') }}</span>
                             </div>
                             @endif
                             @if($permissionCount > 0)
                             <div class="flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-lg">
                                 <div class="w-2 h-2 bg-emerald-500 rounded-full"></div>
-                                <span class="text-[11px] font-bold text-emerald-700">{{ $permissionCount }} ច្បាប់</span>
+                                <span class="text-[11px] font-bold text-emerald-700">{{ $permissionCount }} {{ __('permission_2') }}</span>
                             </div>
                             @endif
                         </div>
@@ -203,10 +203,10 @@
                         @foreach($attendances as $index => $record)
                             @php
                                 $statusColors = [
-                                    'present' => ['bg' => 'bg-green-50', 'border' => 'border-green-200', 'text' => 'text-green-700', 'dot' => 'bg-green-500', 'label' => 'មក'],
-                                    'late' => ['bg' => 'bg-amber-50', 'border' => 'border-amber-200', 'text' => 'text-amber-700', 'dot' => 'bg-amber-500', 'label' => 'មកយឺត'],
-                                    'permission' => ['bg' => 'bg-emerald-50', 'border' => 'border-emerald-200', 'text' => 'text-emerald-700', 'dot' => 'bg-emerald-500', 'label' => 'ច្បាប់'],
-                                    'absent' => ['bg' => 'bg-red-50', 'border' => 'border-red-200', 'text' => 'text-red-700', 'dot' => 'bg-red-500', 'label' => 'អវត្តមាន'],
+                                    'present' => ['bg' => 'bg-green-50', 'border' => 'border-green-200', 'text' => 'text-green-700', 'dot' => 'bg-green-500', 'label' => __('came')],
+                                    'late' => ['bg' => 'bg-amber-50', 'border' => 'border-amber-200', 'text' => 'text-amber-700', 'dot' => 'bg-amber-500', 'label' => __('late_2')],
+                                    'permission' => ['bg' => 'bg-emerald-50', 'border' => 'border-emerald-200', 'text' => 'text-emerald-700', 'dot' => 'bg-emerald-500', 'label' => __('permission_2')],
+                                    'absent' => ['bg' => 'bg-red-50', 'border' => 'border-red-200', 'text' => 'text-red-700', 'dot' => 'bg-red-500', 'label' => __('absent_2')],
                                 ];
                                 $color = $statusColors[$record->status] ?? $statusColors['absent'];
                                 $studentName = $record->student->profile->full_name_km ?? $record->student->name ?? 'N/A';
@@ -266,8 +266,8 @@
                             <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-4">
                                 <svg class="w-10 h-10 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4" /></svg>
                             </div>
-                            <h4 class="text-slate-500 font-bold text-sm mb-1">មិនទាន់មានសិស្សស្កែន</h4>
-                            <p class="text-slate-400 text-xs">សូមរង់ចាំសិស្សស្កែន QR Code</p>
+                            <h4 class="text-slate-500 font-bold text-sm mb-1">{{ __('no_students_scanned_yet') }}</h4>
+                            <p class="text-slate-400 text-xs">{{ __('please_wait_for_students_to_scan_qr_code') }}</p>
                         </div>
                     @endif
                 </div>
@@ -275,12 +275,12 @@
                 {{-- Action Bar --}}
                 <div class="p-4 lg:p-6 border-t border-slate-200 bg-white flex flex-row gap-3 shrink-0 z-30 pb-10 lg:pb-6">
                     <button wire:click="close" class="flex-1 px-4 py-3 rounded-xl font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors text-sm">
-                        បិទផ្ទាំង
+                        {{ __('close_modal') }}
                     </button>
 
                     <button wire:click="$set('showConfirmation', true)"
                             class="flex-[2] relative px-4 py-3 rounded-xl font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-200 transition-all active:scale-95 text-sm">
-                        បញ្ចប់ និងរក្សាទុក
+                        {{ __('finish_and_save') }}
                     </button>
                 </div>
             </div>
@@ -295,13 +295,13 @@
             <div class="mx-auto w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4 text-red-600">
                 <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
             </div>
-            <h3 class="text-lg font-black text-slate-800 mb-2">តើអ្នកប្រាកដទេ?</h3>
+            <h3 class="text-lg font-black text-slate-800 mb-2">{{ __('are_you_sure_2') }}</h3>
             <p class="text-slate-500 text-xs mb-6">
-                ការបញ្ចប់នឹងកំណត់សិស្សដែលមិនទាន់ស្កែនជា "អវត្តមាន" ដោយស្វ័យប្រវត្តិ។
+                {{ __('ending_will_mark_unscanned_students_as_absent_automatically') }}
             </p>
             <div class="flex gap-3">
-                <button wire:click="$set('showConfirmation', false)" class="flex-1 py-3 rounded-xl font-bold text-slate-600 bg-slate-100"> បោះបង់ </button>
-                <button wire:click="closeAttendance" class="flex-1 py-3 rounded-xl font-bold text-white bg-red-600"> យល់ព្រម </button>
+                <button wire:click="$set('showConfirmation', false)" class="flex-1 py-3 rounded-xl font-bold text-slate-600 bg-slate-100"> {{ __('cancel_2') }} </button>
+                <button wire:click="closeAttendance" class="flex-1 py-3 rounded-xl font-bold text-white bg-red-600"> {{ __('confirm_2') }} </button>
             </div>
         </div>
     </div>

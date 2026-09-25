@@ -31,9 +31,9 @@
                                           <span class="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                                           <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                                         </span>
-                                        <span class="text-[10px] font-bold tracking-widest uppercase text-emerald-400">Live Attendance</span>
+                                        <span class="text-[10px] font-bold tracking-widest uppercase text-emerald-400">{{ __('Live Attendance') }}</span>
                                     </div>
-                                    <h2 class="text-xl lg:text-3xl font-black text-white tracking-tight mb-1">ស្កែនវត្តមាន</h2>
+                                    <h2 class="text-xl lg:text-3xl font-black text-white tracking-tight mb-1">{{ __('scan_attendance') }}</h2>
                                     <p class="text-emerald-300 text-xs lg:text-sm font-bold uppercase truncate max-w-[240px] lg:max-w-none" x-text="courseName"></p>
                                 </div>
 
@@ -65,7 +65,7 @@
                                     </div>
                                     <div class="mt-2 w-full max-w-[240px]">
                                         <div class="flex items-center justify-between text-slate-400 text-[9px] mb-1 px-1">
-                                            <span>ប្តូរថ្មី</span>
+                                            <span>{{ __('refresh_2') }}</span>
                                             <span class="font-mono text-white font-bold"><span x-text="qrTimeLeft">10</span>s</span>
                                         </div>
                                         <div class="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
@@ -75,7 +75,7 @@
                                         </div>
                                         <div x-show="qrError" x-transition class="mt-2 flex items-center justify-center gap-1.5 text-red-400 text-[10px] font-bold">
                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-                                            <span>មិនអាចប្តូរ QR បានទេ សូមព្យាយាមម្តងទៀត</span>
+                                            <span>{{ __('qr_refresh_failed_try_again') }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -85,7 +85,7 @@
                                     <div class="relative rounded-2xl overflow-hidden bg-black shadow-inner w-full max-w-[240px] aspect-square">
                                         <div id="card-scanner-reader" class="w-full h-full absolute inset-0"></div>
                                     </div>
-                                    <p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 mt-2">ស្កែនប័ណ្ណសិស្ស</p>
+                                    <p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 mt-2">{{ __('scan_student_card') }}</p>
                                     <div x-show="cardScanStatus" x-transition
                                          :class="cardScanStatus === 'success' ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : 'bg-red-500/10 border-red-500/30 text-red-400'"
                                          class="mt-2 px-3 py-2 rounded-xl border text-[10px] font-bold text-center max-w-[240px] w-full">
@@ -100,15 +100,15 @@
                 
                 <div class="px-6 py-4 border-b border-slate-200 bg-white sticky top-0 z-30 flex justify-between items-center shrink-0">
                     <div>
-                        <h3 class="text-lg lg:text-xl font-bold text-slate-800" x-text="isReadOnly ? 'ប្រវត្តិវត្តមាន' : 'បញ្ជីឈ្មោះសិស្ស'"></h3>
-                        <p class="text-[10px] text-slate-500 font-medium uppercase tracking-wider" x-text="isReadOnly ? 'មើលប្រវត្តិវត្តមានសិស្ស' : 'កំពុងរង់ចាំសិស្សស្កែន...'"></p>
+                        <h3 class="text-lg lg:text-xl font-bold text-slate-800" x-text="isReadOnly ? '{{ __("attendance_history") }}' : '{{ __("student_list") }}'"></h3>
+                        <p class="text-[10px] text-slate-500 font-medium uppercase tracking-wider" x-text="isReadOnly ? '{{ __("view_student_attendance_history") }}' : '{{ __("waiting_for_students_to_scan") }}'"></p>
                     </div>
                     <div class="flex items-center gap-3">
                         <template x-if="students.length > 0">
                             <div class="bg-slate-100 px-3 py-1.5 rounded-xl flex flex-col items-center">
                                 <span class="text-sm font-black text-slate-600 leading-none"
                                       x-text="students.length + '/' + totalEnrolled"></span>
-                                <span class="text-[8px] font-bold text-slate-400 uppercase">សិស្ស</span>
+                                <span class="text-[8px] font-bold text-slate-400 uppercase">{{ __('students_suffix') }}</span>
                             </div>
                         </template>
                         <div class="bg-emerald-50 px-4 py-1.5 rounded-xl border border-emerald-100 flex flex-col items-center">
@@ -126,24 +126,24 @@
                             <div class="flex items-center gap-3 mb-4 px-2 flex-wrap">
                                 <div class="flex items-center gap-1.5 bg-green-50 border border-green-200 px-3 py-1.5 rounded-lg">
                                     <div class="w-2 h-2 bg-green-500 rounded-full"></div>
-                                    <span class="text-[11px] font-bold text-green-700" x-text="counts.present + ' មក'"></span>
+                                    <span class="text-[11px] font-bold text-green-700" x-text="counts.present + ' {{ __("came") }}'"></span>
                                 </div>
                                 <template x-if="counts.permission > 0">
                                     <div class="flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-lg">
                                         <div class="w-2 h-2 bg-emerald-500 rounded-full"></div>
-                                        <span class="text-[11px] font-bold text-emerald-700" x-text="counts.permission + ' ច្បាប់'"></span>
+                                        <span class="text-[11px] font-bold text-emerald-700" x-text="counts.permission + ' {{ __("permission_2") }}'"></span>
                                     </div>
                                 </template>
                                 <template x-if="counts.late > 0">
                                     <div class="flex items-center gap-1.5 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-lg">
                                         <div class="w-2 h-2 bg-amber-500 rounded-full"></div>
-                                        <span class="text-[11px] font-bold text-amber-700" x-text="counts.late + ' មកយឺត'"></span>
+                                        <span class="text-[11px] font-bold text-amber-700" x-text="counts.late + ' {{ __("late_2") }}'"></span>
                                     </div>
                                 </template>
                                 <template x-if="counts.manual > 0">
                                     <div class="flex items-center gap-1.5 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-lg">
                                         <div class="w-2 h-2 bg-amber-500 rounded-full"></div>
-                                        <span class="text-[11px] font-bold text-amber-700" x-text="counts.manual + ' បញ្ចូនដោយដៃ'"></span>
+                                        <span class="text-[11px] font-bold text-amber-700" x-text="counts.manual + ' {{ __("manual_entry") }}'"></span>
                                     </div>
                                 </template>
                                 <template x-if="counts.qr > 0">
@@ -201,7 +201,7 @@
                                                         'text-emerald-700': student.status === 'permission',
                                                         'text-red-700': student.status === 'absent'
                                                       }"
-                                                      x-text="student.status === 'present' ? 'មក' : (student.status === 'late' ? 'មកយឺត' : (student.status === 'permission' ? 'ច្បាប់' : 'អវត្តមាន'))"></span>
+                                                      x-text="student.status === 'present' ? '{{ __("came") }}' : (student.status === 'late' ? '{{ __("late_2") }}' : (student.status === 'permission' ? '{{ __("permission_2") }}' : '{{ __("absent_2") }}'))"></span>
                                                 <span class="text-slate-300">·</span>
                                                 <span class="text-[10px] text-slate-400 flex items-center gap-1">
                                                     <svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
@@ -210,7 +210,7 @@
                                                 <template x-if="student.source === 'manual'">
                                                     <span class="inline-flex items-center gap-1 text-[9px] font-bold text-amber-600 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded">
                                                         <svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
-                                                        បញ្ចូនដោយដៃ
+                                                        {{ __('manual_entry') }}
                                                     </span>
                                                 </template>
                                                 <template x-if="student.source === 'qr'">
@@ -237,8 +237,8 @@
                             <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-4">
                                 <svg class="w-10 h-10 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4" /></svg>
                             </div>
-                            <h4 class="text-slate-500 font-bold text-sm mb-1">មិនទាន់មានសិស្សស្កែន</h4>
-                            <p class="text-slate-400 text-xs">សូមរង់ចាំសិស្សស្កែន QR Code ឬបញ្ចូនវត្តមានដោយដៃ</p>
+                            <h4 class="text-slate-500 font-bold text-sm mb-1">{{ __('no_students_scanned_yet') }}</h4>
+                            <p class="text-slate-400 text-xs">{{ __('please_wait_for_students_to_scan_or_enter_manually') }}</p>
                         </div>
                     </template>
                 </div>
@@ -246,10 +246,10 @@
                 {{-- Action Bar --}}
                 <div x-show="!isReadOnly" class="p-4 lg:p-6 border-t border-slate-200 bg-white flex flex-row gap-3 shrink-0 z-30 pb-10 lg:pb-6">
                     <button @click="closeModal()" class="flex-1 px-4 py-3 rounded-xl font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors text-sm">
-                        បិទផ្ទាំង
+                        {{ __('close_modal') }}
                     </button>
                     <button @click="showConfirm = true" class="flex-[2] relative px-4 py-3 rounded-xl font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-200 transition-all active:scale-95 text-sm">
-                        បញ្ចប់ និងរក្សាទុក
+                        {{ __('finish_and_save') }}
                     </button>
                 </div>
             </div>
@@ -266,14 +266,14 @@
             <div class="mx-auto w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4 text-red-600">
                 <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
             </div>
-            <h3 class="text-lg font-black text-slate-800 mb-2">តើអ្នកប្រាកដទេ?</h3>
+            <h3 class="text-lg font-black text-slate-800 mb-2">{{ __('are_you_sure_2') }}</h3>
             <p class="text-slate-500 text-xs mb-6">
-                ការបញ្ចប់នឹងកំណត់សិស្សដែលមិនទាន់ស្កែនជា "អវត្តមាន" ដោយស្វ័យប្រវត្តិ។
+                {{ __('ending_will_mark_unscanned_students_as_absent_automatically') }}
             </p>
             <div class="flex gap-3">
-                <button @click="showConfirm = false" class="flex-1 py-3 rounded-xl font-bold text-slate-600 bg-slate-100"> បោះបង់ </button>
+                <button @click="showConfirm = false" class="flex-1 py-3 rounded-xl font-bold text-slate-600 bg-slate-100"> {{ __('cancel_2') }} </button>
                 <button @click="closeSession()" class="flex-1 py-3 rounded-xl font-bold text-white bg-red-600"
-                        :disabled="closing" x-text="closing ? 'កំពុងបញ្ចប់...' : 'យល់ព្រម'">យល់ព្រម</button>
+                        :disabled="closing" x-text="closing ? '{{ __("finishing_up") }}' : '{{ __("confirm_2") }}'">{{ __('confirm_2') }}</button>
             </div>
         </div>
     </div>
@@ -361,7 +361,7 @@ function attendanceModal() {
                     console.error('Failed to start session:', e);
                 }
             } else {
-                this.courseName = 'ប្រវត្តិវត្តមាន';
+                this.courseName = '{{ __("attendance_history") }}';
                 this.stopPolling();
             }
 
@@ -415,15 +415,15 @@ function attendanceModal() {
                 if (data.success) {
                     this.playScanSound();
                     this.cardScanStatus = 'success';
-                    this.cardScanMessage = '✓ ' + (data.student?.name ?? 'សិស្ស') + ' បានចុះវត្តមាន';
+                    this.cardScanMessage = '✓ ' + (data.student?.name ?? '{{ __("student_2") }}') + ' {{ __("has_checked_in") }}';
                     await this.fetchStudents();
                 } else {
                     this.cardScanStatus = 'error';
-                    this.cardScanMessage = data.message || 'មានបញ្ហា';
+                    this.cardScanMessage = data.message || '{{ __("there_is_a_problem") }}';
                 }
             } catch (e) {
                 this.cardScanStatus = 'error';
-                this.cardScanMessage = 'មានបញ្ហាក្នុងការតភ្ជាប់';
+                this.cardScanMessage = '{{ __("connection_problem") }}';
             } finally {
                 setTimeout(() => { this._scanCooldown = false; }, 1200);
                 setTimeout(() => { this.cardScanStatus = null; this.cardScanMessage = ''; }, 3000);
@@ -558,7 +558,7 @@ function attendanceModal() {
                     this.isOpen = false;
                     this.stopPolling();
                     if (typeof Swal !== 'undefined') {
-                        await Swal.fire('ជោគជ័យ', data.message, 'success');
+                        await Swal.fire('{{ __("success_3") }}', data.message, 'success');
                     }
                     window.location.reload();
                 }

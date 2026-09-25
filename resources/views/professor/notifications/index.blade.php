@@ -147,7 +147,7 @@
                                                 <td class="px-6 py-4 text-sm text-gray-500">
                                                     @php
                                                         $recipientIds = $notification->data['recipient_ids'] ?? [];
-                                                        $recipientNames = collect($recipientIds)->map(fn($id) => $allRecipients[$id] ?? 'Unknown User')->all();
+                                                        $recipientNames = collect($recipientIds)->map(fn($id) => $allRecipients[$id] ?? __('Unknown User'))->all();
                                                     @endphp
                                                     <button @click="recipients = {{ json_encode($recipientNames) }}; notificationTitle = '{{ addslashes($notification->data['title'] ?? '') }}'; showRecipientsModal = true;" class="text-green-600 hover:underline font-semibold">
                                                         {{ count($recipientIds) }} {{ __('students_3') }}

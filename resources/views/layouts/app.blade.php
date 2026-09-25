@@ -353,6 +353,36 @@
         'clear-history': "{{ route('ai.clear-history') }}",
         feedback: "{{ route('ai.feedback') }}"
     };
+    window.I18N = {
+        ai_ph_info: @json(__('ai_ph_info')),
+        ai_ph_search: @json(__('ai_ph_search')),
+        ai_ph_process: @json(__('ai_ph_process')),
+        ai_loading_history: @json(__('ai_loading_history')),
+        ai_qa_search_students: @json(__('ai_qa_search_students')),
+        ai_qa_professors: @json(__('ai_qa_professors')),
+        ai_qa_courses: @json(__('ai_qa_courses')),
+        ai_qa_nmu_info: @json(__('ai_qa_nmu_info')),
+        ai_qa_my_classes: @json(__('ai_qa_my_classes')),
+        ai_qa_my_students: @json(__('ai_qa_my_students')),
+        ai_qa_attendance_how: @json(__('ai_qa_attendance_how')),
+        ai_qa_my_grades: @json(__('ai_qa_my_grades')),
+        ai_qa_my_attendance: @json(__('ai_qa_my_attendance')),
+        ai_qa_my_schedule: @json(__('ai_qa_my_schedule')),
+        ai_welcome_hello: @json(__('ai_welcome_hello')),
+        ai_welcome_intro: @json(__('ai_welcome_intro')),
+        ai_welcome_hint: @json(__('ai_welcome_hint')),
+        ai_deleting: @json(__('ai_deleting')),
+        ai_history_deleted: @json(__('ai_history_deleted')),
+        ai_delete_failed: @json(__('ai_delete_failed')),
+        ai_please_wait: @json(__('ai_please_wait')),
+        ai_error_generic: @json(__('ai_error_generic')),
+        ai_error_technical: @json(__('ai_error_technical')),
+        ai_response_stopped: @json(__('ai_response_stopped')),
+        ai_connect_failed: @json(__('ai_connect_failed')),
+        ai_copy: @json(__('ai_copy')),
+        ai_good: @json(__('ai_good')),
+        ai_bad: @json(__('ai_bad')),
+    };
 </script>
 @endauth
 

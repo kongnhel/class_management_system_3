@@ -150,9 +150,9 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                                 </svg>
                                 <input type="text" id="studentSearch" oninput="filterStudents()"
-                                    placeholder="ស្វែងរកឈ្មោះ ឬ អត្តលេខ..."
+                                    placeholder="{{ __('search_name_or_id') }}"
                                     class="w-full pl-10 pr-10 py-2.5 bg-slate-50 border-0 rounded-xl text-sm font-medium text-slate-700 placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500/20 focus:bg-white transition-all">
-                                <button type="button" id="clearStudentSearch" aria-label="សម្អាតការស្វែងរក"
+                                <button type="button" id="clearStudentSearch" aria-label="{{ __('clear_search') }}"
                                     class="hidden absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700">
                                     <i class="fas fa-times"></i>
                                 </button>
@@ -239,7 +239,7 @@
                                         @csrf
                                         <input type="hidden" name="assessment_id" value="{{ $assessment->id }}">
                                         <input type="hidden" name="assessment_type" value="{{ $type }}">
-                                        <button type="submit" title="ផ្ញើដំណឹងពិន្ទុ" class="p-2 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-xl shadow-sm print:hidden">
+                                        <button type="submit" title="{{ __('send_grade_notification') }}" class="p-2 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-xl shadow-sm print:hidden">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
                                         </button>
                                     </form>
@@ -740,8 +740,8 @@
             status?.classList.toggle('hidden', query === '');
             if (status && query !== '') {
                 status.textContent = visibleCount > 0
-                    ? `រកឃើញ ${visibleCount} នាក់`
-                    : 'មិនឃើញលទ្ធផលស្វែងរក';
+                    ? `{{ __('found') }} ${visibleCount} {{ __('results') }}`
+                    : '{{ __("no_search_results") }}';
                 status.classList.toggle('text-rose-500', visibleCount === 0);
                 status.classList.toggle('text-slate-400', visibleCount > 0);
             }

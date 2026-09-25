@@ -318,7 +318,7 @@
                     <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ __('notes_optional') }}</label>
                     <input type="text" id="batchNote"
                            class="w-full mt-1 px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-sm font-bold text-slate-700 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all"
-                           placeholder="ឧ. ល្អ, ត្រូវកែ...">
+                           placeholder="{{ __('example_good_needs_fix') }}">
                 </div>
             </div>
             <div class="flex gap-3 mt-6">

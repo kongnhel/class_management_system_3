@@ -13,8 +13,8 @@
                     <i class="fas fa-clipboard-check text-white text-lg"></i>
                 </div>
                 <div>
-                    <h1 class="text-2xl font-bold text-gray-900">វត្តមានទាំងអស់</h1>
-                    <p class="text-sm text-gray-500 mt-0.5">ពិនិត្យ និងកត់ត្រាវត្តមានសម្រាប់មុខវិជ្ជារបស់អ្នក</p>
+                    <h1 class="text-2xl font-bold text-gray-900">{{ __('all_attendance') }}</h1>
+                    <p class="text-sm text-gray-500 mt-0.5">{{ __('check_and_record_attendance_for_your_courses') }}</p>
                 </div>
             </div>
 
@@ -35,16 +35,16 @@
             {{-- Add Form --}}
             <div class="bg-white rounded-2xl border border-gray-200 p-5 mb-6">
                 <h3 class="font-bold text-gray-800 text-sm mb-4 flex items-center gap-2">
-                    <i class="fas fa-plus-circle text-emerald-500"></i> បន្ថែមកំណត់ត្រាថ្មី
+                    <i class="fas fa-plus-circle text-emerald-500"></i> {{ __('add_new_record') }}
                 </h3>
                 <form action="{{ route('professor.attendances.store') }}" method="POST">
                     @csrf
                     <input type="hidden" name="student_user_ids" :value="selectedStudents.join(',')">
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">វគ្គសិក្សា</label>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">{{ __('course_2') }}</label>
                             <select name="course_offering_id" x-model="selectedCourse" @change="fetchStudents($event.target.value)" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
-                                <option value="">ជ្រើសរើសវគ្គសិក្សា</option>
+                                <option value="">{{ __('select_course') }}</option>
                                 @foreach($professorCourseOfferings as $offering)
                                     <option value="{{ $offering->id }}">{{ $offering->course?->title_km ?? $offering->course?->title_en ?? 'N/A' }} ({{ $offering->academic_year }})</option>
                                 @endforeach
@@ -53,10 +53,10 @@
 
                         {{-- Student Multi-Select Dropdown --}}
                         <div class="relative" @click.away="studentDropdownOpen = false">
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">និស្សិត</label>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">{{ __('students_2') }}</label>
                             <button type="button" @click="toggleStudentDropdown()"
                                 class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all text-left flex items-center justify-between">
-                                <span x-text="getStudentNames() || 'ជ្រើសរើសនិស្សិត'"></span>
+                                <span x-text="getStudentNames() || '{{ __("select_students") }}'"></span>
                                 <i class="fas fa-chevron-down text-gray-400 text-xs" :class="studentDropdownOpen ? 'rotate-180' : ''"></i>
                             </button>
                             <div x-show="studentDropdownOpen" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
@@ -65,7 +65,7 @@
                                     <label class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 cursor-pointer">
                                         <input type="checkbox" x-model="selectAll" @change="toggleAllStudents()"
                                             class="w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500">
-                                        <span class="text-sm font-bold text-gray-700">ជ្រើសរើសទាំងអស់</span>
+                                        <span class="text-sm font-bold text-gray-700">{{ __('select_all') }}</span>
                                     </label>
                                 </div>
                                 <div class="p-1">
@@ -80,26 +80,26 @@
                                     </template>
                                 </div>
                                 <div class="p-2 border-t border-gray-100 sticky bottom-0 bg-white" x-show="selectedStudents.length > 0">
-                                    <button type="button" @click="clearStudents()" class="w-full text-xs font-bold text-gray-400 hover:text-gray-600 py-1">បោះបង់ការជ្រើសរើស</button>
+                                    <button type="button" @click="clearStudents()" class="w-full text-xs font-bold text-gray-400 hover:text-gray-600 py-1">{{ __('clear_selection') }}</button>
                                 </div>
                             </div>
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">កាលបរិច្ឆេទ</label>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">{{ __('date_4') }}</label>
                             <input type="date" name="date" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">ស្ថានភាព</label>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">{{ __('status_2') }}</label>
                             <select name="status" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
-                                <option value="present">មានវត្តមាន</option>
-                                <option value="absent">អវត្តមាន</option>
-                                <option value="permission">មានច្បាប់</option>
-                                <option value="late">មកយឺត</option>
+                                <option value="present">{{ __('present_2') }}</option>
+                                <option value="absent">{{ __('absent_2') }}</option>
+                                <option value="permission">{{ __('permission_2') }}</option>
+                                <option value="late">{{ __('late_2') }}</option>
                             </select>
                         </div>
                         <button type="submit" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white rounded-xl font-bold text-sm shadow-md transition-all active:scale-95">
-                            <i class="fas fa-save"></i> រក្សាទុក
+                            <i class="fas fa-save"></i> {{ __('save_4') }}
                         </button>
                     </div>
                 </form>
@@ -115,7 +115,7 @@
                             type="text"
                             x-model="search"
                             @compositionstart="isComposing = true" @compositionend="isComposing = false; filterRows()" @input="if (!isComposing && !$event.isComposing) filterRows()"
-                            placeholder="ស្វែងរកឈ្មោះសិស្ស..."
+                            placeholder="{{ __('search_student_name') }}"
                             class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-gray-50"
                         >
                     </div>
@@ -127,7 +127,7 @@
                             @change="filterRows()"
                             class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-gray-50 appearance-none"
                         >
-                            <option value="">មុខវិជ្ជា​ទាំងអស់</option>
+                            <option value="">{{ __('all_courses') }}</option>
                             <template x-for="c in courses" :key="c">
                                 <option :value="c" x-text="c"></option>
                             </template>
@@ -142,11 +142,11 @@
                             @change="filterRows()"
                             class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-gray-50 appearance-none"
                         >
-                            <option value="">ស្ថានភាព​ទាំងអស់</option>
-                            <option value="present">មានវត្តមាន</option>
-                            <option value="absent">អវត្តមាន</option>
-                            <option value="permission">មានច្បាប់</option>
-                            <option value="late">មកយឺត</option>
+                            <option value="">{{ __('all_statuses') }}</option>
+                            <option value="present">{{ __('present_2') }}</option>
+                            <option value="absent">{{ __('absent_2') }}</option>
+                            <option value="permission">{{ __('permission_2') }}</option>
+                            <option value="late">{{ __('late_2') }}</option>
                         </select>
                         <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-[10px] pointer-events-none"></i>
                     </div>
@@ -158,7 +158,7 @@
                             @change="filterRows()"
                             class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-gray-50 appearance-none"
                         >
-                            <option value="">កាលបរិច្ឆេទ​ទាំងអស់</option>
+                            <option value="">{{ __('all_dates') }}</option>
                             <template x-for="d in dates" :key="d">
                                 <option :value="d" x-text="d"></option>
                             </template>
@@ -171,20 +171,20 @@
                         @click="clearFilters()"
                         class="px-4 py-2.5 rounded-xl bg-red-50 text-red-600 text-xs font-bold hover:bg-red-100 transition-colors whitespace-nowrap"
                     >
-                        <i class="fas fa-times mr-1"></i> សម្អាត
+                        <i class="fas fa-times mr-1"></i> {{ __('clear_2') }}
                     </button>
                 </div>
                 {{-- Result count --}}
                 <div class="mt-3 text-xs text-gray-400 font-bold" x-show="search || courseFilter || statusFilter || dateFilter">
-                    រកឃើញ <span x-text="visibleCount" class="text-emerald-600"></span> ក្នុងចំណោម <span x-text="totalCount" class="text-gray-600"></span> កំណត់ត្រា
+                    {{ __('found') }} <span x-text="visibleCount" class="text-emerald-600"></span> {{ __('out_of') }} <span x-text="totalCount" class="text-gray-600"></span> {{ __('records') }}
                 </div>
             </div>
 
             {{-- Records Table --}}
             <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
                 <div class="px-5 py-4 border-b border-gray-200 flex items-center justify-between">
-                    <h3 class="font-bold text-gray-800 text-sm">កំណត់ត្រាវត្តមាន</h3>
-                    <span class="px-3 py-1 rounded-full bg-gray-100 text-xs font-bold text-gray-500">{{ $attendances->total() }} កំណត់ត្រា</span>
+                    <h3 class="font-bold text-gray-800 text-sm">{{ __('attendance_records') }}</h3>
+                    <span class="px-3 py-1 rounded-full bg-gray-100 text-xs font-bold text-gray-500">{{ $attendances->total() }} {{ __('records') }}</span>
                 </div>
 
                 @if($attendances->count() > 0)
@@ -192,11 +192,11 @@
                     <table class="min-w-full divide-y divide-gray-100">
                         <thead>
                             <tr class="bg-gray-50">
-                                <th class="px-5 py-3 text-left text-[10px] font-bold text-gray-500 uppercase">និស្សិត</th>
-                                <th class="px-5 py-3 text-left text-[10px] font-bold text-gray-500 uppercase">មុខវិជ្ជា</th>
-                                <th class="px-5 py-3 text-left text-[10px] font-bold text-gray-500 uppercase">កាលបរិច្ឆេទ</th>
-                                <th class="px-5 py-3 text-left text-[10px] font-bold text-gray-500 uppercase">ស្ថានភាព</th>
-                                <th class="px-5 py-3 text-left text-[10px] font-bold text-gray-500 uppercase">កំណត់ចំណាំ</th>
+                                <th class="px-5 py-3 text-left text-[10px] font-bold text-gray-500 uppercase">{{ __('student_2') }}</th>
+                                <th class="px-5 py-3 text-left text-[10px] font-bold text-gray-500 uppercase">{{ __('course_2') }}</th>
+                                <th class="px-5 py-3 text-left text-[10px] font-bold text-gray-500 uppercase">{{ __('date_4') }}</th>
+                                <th class="px-5 py-3 text-left text-[10px] font-bold text-gray-500 uppercase">{{ __('status_2') }}</th>
+                                <th class="px-5 py-3 text-left text-[10px] font-bold text-gray-500 uppercase">{{ __('remarks_2') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
@@ -236,7 +236,7 @@
                                 <tr>
                                     <td colspan="5" class="px-6 py-16 text-center">
                                         <i class="fas fa-inbox text-gray-300 text-3xl mb-3"></i>
-                                        <p class="text-sm font-bold text-gray-400">មិនមានកំណត់ត្រា</p>
+<p class="text-sm font-bold text-gray-400">{{ __('no_records') }}</p>
                                     </td>
                                 </tr>
                             @endforelse
@@ -246,8 +246,8 @@
                 {{-- No results message --}}
                 <div id="no-results" class="px-6 py-16 text-center hidden">
                     <i class="fas fa-search text-gray-300 text-3xl mb-3"></i>
-                    <p class="text-sm font-bold text-gray-400">មិនพบលទ្ធផល</p>
-                    <p class="text-xs text-gray-300 mt-1">សូមព្យាយាមស្វែងរកផ្សេង</p>
+                    <p class="text-sm font-bold text-gray-400">{{ __('no_results_found') }}</p>
+                    <p class="text-xs text-gray-300 mt-1">{{ __('please_try_another_search') }}</p>
                 </div>
                 <div class="px-5 py-3 border-t border-gray-100">
                     {{ $attendances->links('pagination::tailwind') }}
@@ -255,8 +255,8 @@
                 @else
                 <div class="px-6 py-16 text-center">
                     <i class="fas fa-inbox text-gray-300 text-3xl mb-3"></i>
-                    <p class="text-sm font-bold text-gray-400">មិនមានកំណត់ត្រា</p>
-                    <p class="text-xs text-gray-300 mt-1">សូមប្រើទម្រង់ខាងលើដើម្បីបន្ថែម</p>
+                    <p class="text-sm font-bold text-gray-400">{{ __('no_records') }}</p>
+                    <p class="text-xs text-gray-300 mt-1">{{ __('please_use_the_form_above_to_add') }}</p>
                 </div>
                 @endif
             </div>
@@ -295,7 +295,7 @@
                         const s = this.courseFilterStudents.find(s => s.id === this.selectedStudents[0]);
                         return s ? s.name : '';
                     }
-                    return this.selectedStudents.length + ' និស្សិតត្រូវបានជ្រើសរើស';
+                    return this.selectedStudents.length + ' {{ __("students_selected") }}';
                 },
                 fetchStudents(courseId) {
                     this.selectedStudents = [];

@@ -104,7 +104,7 @@ document.getElementById('course_offering_id').addEventListener('change', functio
     toggleBtn.classList.add('hidden');
 
     if (!courseId) {
-        container.innerHTML = '<p class="text-gray-500 text-sm">{{ __("khmer_fba6be422e") }}</p>';
+        container.innerHTML = '<p class="text-gray-500 text-sm">{{ __("please_select_a_course") }}</p>';
         return;
     }
 
@@ -115,7 +115,7 @@ document.getElementById('course_offering_id').addEventListener('change', functio
         .then(data => {
             container.innerHTML = '';
 
-            // ✅ ប្រាកដថា response ជា array
+            // ✅ ប្រាកដថា response ជា array — DB field name, keep as-is
             if (!Array.isArray(data)) {
                 container.innerHTML = `<p class="text-red-500 text-sm">${data.error || '{{ __("problem_fetching_data_2") }}'}</p>`;
                 return;
@@ -144,12 +144,12 @@ document.getElementById('course_offering_id').addEventListener('change', functio
         });
 });
 
-// ✅ Select / Unselect all
+// ✅ Select / Unselect all — JS comment, keep as-is
 document.getElementById('toggle-select-all').addEventListener('click', function() {
     let checkboxes = document.querySelectorAll('#students-list input[type="checkbox"]');
     let allChecked = Array.from(checkboxes).every(cb => cb.checked);
     checkboxes.forEach(cb => cb.checked = !allChecked);
-    this.textContent = allChecked ? '{{ __("khmer_68073503b6") }}' : '{{ __("khmer_a9860ef48c") }}';
+    this.textContent = allChecked ? '{{ __("unselect_all") }}' : '{{ __("select_all") }}';
 });
 </script>
 

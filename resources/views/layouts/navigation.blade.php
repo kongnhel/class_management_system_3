@@ -313,23 +313,23 @@
         </div>
 
         {{-- Footer --}}
-        <div class="shrink-0 px-3 py-3 border-t border-slate-700/50">
-            <div class="mb-2 grid grid-cols-2 gap-1 rounded-lg bg-slate-800 p-1" aria-label="{{ __('nav_language') }}">
+        <div class="shrink-0 px-3 py-4 border-t border-slate-700/50">
+            <div class="mb-3 grid grid-cols-2 gap-1 rounded-lg bg-slate-800 p-1" aria-label="{{ __('nav_language') }}">
                 <a href="{{ route('locale.switch', ['locale' => 'km']) }}"
-                   class="flex items-center justify-center gap-1 rounded-md px-2 py-1.5 text-xs font-semibold transition-colors {{ app()->getLocale() === 'km' ? 'bg-green-600 text-white' : 'text-gray-400 hover:bg-slate-700 hover:text-white' }}"
+                   class="flex items-center justify-center gap-1 rounded-md px-3 py-2 text-xs font-semibold transition-colors {{ app()->getLocale() === 'km' ? 'bg-green-600 text-white' : 'text-gray-400 hover:bg-slate-700 hover:text-white' }}"
                    aria-current="{{ app()->getLocale() === 'km' ? 'true' : 'false' }}">
                     <span aria-hidden="true">ខ្មែរ</span>
                     <span class="sr-only">{{ __('nav_khmer') }}</span>
                 </a>
                 <a href="{{ route('locale.switch', ['locale' => 'en']) }}"
-                   class="flex items-center justify-center gap-1 rounded-md px-2 py-1.5 text-xs font-semibold transition-colors {{ app()->getLocale() === 'en' ? 'bg-green-600 text-white' : 'text-gray-400 hover:bg-slate-700 hover:text-white' }}"
+                   class="flex items-center justify-center gap-1 rounded-md px-3 py-2 text-xs font-semibold transition-colors {{ app()->getLocale() === 'en' ? 'bg-green-600 text-white' : 'text-gray-400 hover:bg-slate-700 hover:text-white' }}"
                    aria-current="{{ app()->getLocale() === 'en' ? 'true' : 'false' }}">
                     <span aria-hidden="true">EN</span>
                     <span class="sr-only">{{ __('nav_english') }}</span>
                 </a>
             </div>
             <div x-data="{ open: false }" class="relative">
-                <button @click="open = !open" class="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-gray-300 hover:bg-slate-700/60 hover:text-white transition-all">
+                <button @click="open = !open" class="flex items-center gap-3 w-full px-3 py-3 rounded-lg text-sm font-medium text-gray-300 hover:bg-slate-700/60 hover:text-white transition-all">
                     <div class="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center text-xs font-bold bg-gradient-to-br from-green-500 to-emerald-600 shrink-0">
                         @if($profileUrl)
                             <img src="{{ $profileUrl }}" alt="" class="object-cover w-full h-full">

@@ -1,294 +1,115 @@
 <x-app-layout>
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Hanuman:wght@400;700;900&family=Inter:wght@400;500;600;700&display=swap');
-
-    .page-wrap { 
-        font-family: 'Inter', system-ui, sans-serif; 
-    }
-    .khmer { 
-        font-family: 'Hanuman', serif; 
-    }
-
-    /* Main Container */
-    .dashboard-bg {
-        background: #f8fafc;
-        min-height: 100vh;
-    }
-
-    /* Card Styles */
-    .course-card {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 16px;
-        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    }
-    
-    .course-card:hover {
-        border-color: #22c55e;
-        box-shadow: 0 10px 25px -5px rgba(34, 197, 94, 0.12),
-                    0 8px 10px -6px rgba(34, 197, 94, 0.1);
-        transform: translateY(-4px);
-    }
-
-    /* Header Accent */
-    .header-accent {
-        height: 4px;
-        background: linear-gradient(to right, #16a34a, #4ade80);
-        border-radius: 4px;
-    }
-
-    /* Badge */
-    .badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        padding: 5px 11px;
-        border-radius: 9999px;
-        background: #f0fdf4;
-        color: #166534;
-        border: 1px solid #bbf7d0;
-    }
-
-    /* Button */
-    .btn-primary {
-        background: linear-gradient(135deg, #16a34a, #15803d);
-        color: white;
-        font-weight: 600;
-        padding: 14px 24px;
-        border-radius: 12px;
-        border: none;
-        transition: all 0.2s ease;
-        box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
-    }
-    
-    .btn-primary:hover {
-        background: linear-gradient(135deg, #15803d, #14532d);
-        transform: translateY(-1px);
-        box-shadow: 0 6px 16px rgba(22, 163, 74, 0.35);
-    }
-
-    /* Modal */
-    .modal-overlay {
-        background: rgba(15, 23, 42, 0.6);
-        backdrop-filter: blur(8px);
-    }
-
-    .modal-content {
-        background: #ffffff;
-        border-radius: 20px;
-        box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
-        max-width: 460px;
-        width: 100%;
-    }
-
-    .menu-item {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-        padding: 16px 20px;
-        border-radius: 12px;
-        color: #334155;
-        font-weight: 500;
-        transition: all 0.2s ease;
-        text-decoration: none;
-    }
-    
-    .menu-item:hover {
-        background: #f0fdf4;
-        color: #166534;
-    }
-
-    .flash-message {
-        border-left: 4px solid;
-        padding: 14px 18px;
-        border-radius: 12px;
-        font-weight: 500;
-    }
-
-    [x-cloak] { display: none !important; }
-</style>
-
-<div class="page-wrap dashboard-bg py-10">
-    <div class="max-w-6xl mx-auto px-6">
-
-        {{-- Header --}}
-        <div class="mb-10">
-            <div class="flex items-center gap-4 mb-3">
-                <div class="header-accent w-8"></div>
-                <h1 class="khmer text-3xl font-bold text-slate-900 tracking-tight">
-                    {{ __('my_teaching_courses') }}
-                </h1>
-            </div>
-            <p class="khmer text-slate-600 pl-12 text-[15px]">
-                {{ __('all_course_offerings_you_are_teaching') }}
-            </p>
+<x-slot name="header">
+    <div class="flex items-center justify-between gap-4">
+        <div>
+            <h2 class="font-bold text-xl text-gray-800 leading-tight">{{ __('my_teaching_courses') }}</h2>
+            <p class="text-sm text-slate-500 mt-0.5">{{ __('all_course_offerings_you_are_teaching') }}</p>
         </div>
-
-        {{-- Flash Messages --}}
-        @if (session('success'))
-            <div class="flash-message bg-emerald-50 border-emerald-500 text-emerald-800 mb-8 flex items-center gap-3">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                </svg>
-                <span class="khmer">{{ session('success') }}</span>
-            </div>
-        @endif
-
-        @if (session('error'))
-            <div class="flash-message bg-red-50 border-red-500 text-red-800 mb-8 flex items-center gap-3">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6h12a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2z" />
-                </svg>
-                <span class="khmer">{{ session('error') }}</span>
-            </div>
-        @endif
-
-        {{-- Content --}}
-        @if ($courseOfferings->isEmpty())
-            <div class="bg-white border border-dashed border-slate-300 rounded-2xl py-20 text-center">
-                <div class="mx-auto w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mb-6">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-9 h-9 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M12 6.253v13m0-13C10.832 5.462 9.492 5 8 5a4 4 0 00-4 4v8a4 4 0 004 4c1.492 0 2.832-.462 4-1.253m0-13C13.168 5.462 14.508 5 16 5a4 4 0 014 4v8a4 4 0 01-4 4c-1.492 0-2.832-.462-4-1.253" />
-                    </svg>
-                </div>
-                <p class="khmer text-xl font-semibold text-slate-700 mb-2">{{ __('no_courses_assigned_yet') }}</p>
-                <p class="khmer text-slate-500">{{ __('please_contact_the_administration_if_you_have_any_questions') }}</p>
-            </div>
-        @else
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                @foreach ($courseOfferings as $offering)
-                    <div class="course-card p-7 flex flex-col">
-                        <div class="flex justify-between items-start mb-6">
-                            <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.25">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.462 9.492 5 8 5a4 4 0 00-4 4v8a4 4 0 004 4c1.492 0 2.832-.462 4-1.253m0-13C13.168 5.462 14.508 5 16 5a4 4 0 014 4v8a4 4 0 01-4 4c-1.492 0-2.832-.462-4-1.253" />
-                                </svg>
-                            </div>
-                            
-                            <div class="flex gap-2">
-                                <span class="badge khmer">
-                                    <span>{{ $offering->academic_year }}</span>
-                                </span>
-                                <span class="badge khmer">
-                                    {{ __('semester') }} {{ $offering->semester }}
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="flex-1 mb-8">
-                            <h3 class="khmer text-xl font-semibold text-slate-900 leading-tight mb-2">
-                                {{ $offering->course?->title_km ?? 'N/A' }}
-                            </h3>
-                            <p class="text-sm text-slate-500 line-clamp-2">
-                                {{ $offering->course?->title_en ?? 'N/A' }}
-                            </p>
-                        </div>
-
-                        <button
-                            x-data="{}"
-                            x-on:click="$dispatch('open-course-management-modal', { courseOfferingId: {{ $offering->id }} })"
-                            class="btn-primary w-full flex items-center justify-center gap-2 text-base khmer">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.608 3.292 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                            {{ __('manage_course_offerings') }}
-                        </button>
-                    </div>
-                @endforeach
-            </div>
-
-            {{-- Pagination --}}
-            <div class="mt-10 flex justify-center">
-                {{ $courseOfferings->links('pagination::tailwind') }}
-            </div>
-        @endif
+        <span class="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-600 tabular-nums">
+            {{ $courseOfferings->total() }} {{ __('courses_teaching') }}
+        </span>
     </div>
-</div>
+</x-slot>
 
-{{-- Modal --}}
-<div x-data="{ open: false, courseOfferingId: null }"
-     x-on:open-course-management-modal.window="open = true; courseOfferingId = $event.detail.courseOfferingId"
-     x-show="open"
-     x-cloak
-     class="fixed inset-0 z-50 flex items-center justify-center p-4">
+<div class="bg-slate-50 min-h-screen font-['Battambang'] antialiased">
+<div class="p-6 max-w-7xl mx-auto">
 
-    <div x-show="open" 
-         class="modal-overlay fixed inset-0"
-         @click="open = false"></div>
-
-    <div x-show="open"
-         class="modal-content relative">
-        
-        {{-- Header --}}
-        <div class="px-8 pt-8 pb-6 border-b border-slate-100">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                    <div class="w-11 h-11 bg-emerald-50 rounded-2xl flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.462 9.492 5 8 5a4 4 0 00-4 4v8a4 4 0 004 4c1.492 0 2.832-.462 4-1.253m0-13C13.168 5.462 14.508 5 16 5a4 4 0 014 4v8a4 4 0 01-4 4c-1.492 0-2.832-.462-4-1.253" />
-                        </svg>
-                    </div>
-                    <h3 class="khmer text-2xl font-bold text-slate-900">{{ __('manage_course_offerings') }}</h3>
-                </div>
-                
-                <button @click="open = false" 
-                        class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-colors">
-                    ✕
-                </button>
-            </div>
+    {{-- Flash Messages --}}
+    @if (session('success'))
+        <div class="mb-6 bg-emerald-50 border border-emerald-200 text-emerald-700 px-5 py-4 rounded-2xl flex items-center gap-3 text-sm font-semibold">
+            <i class="fas fa-check-circle text-emerald-500"></i>
+            {{ session('success') }}
         </div>
+    @endif
 
-        {{-- Menu --}}
-        <div class="p-6 space-y-2">
-            @php
-                $menuItems = [
-                    [
-                        'route' => 'professor.students.in-course-offering',
-                        'label' => __('view_students'),
-                        'desc'  => 'View enrolled students',
-                        'icon'  => 'M17 20h5v-2a3 3 0 01-5.356-1.857M17 20H7m5-2v-2c0-.656-.126-1.284-.356-1.852M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.284.356-1.852m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z',
-                    ],
-                    [
-                        'route' => 'professor.manage-grades',
-                        'label' => __('manage_grades'),
-                        'desc'  => 'Manage student grades',
-                        'icon'  => 'M19 21V5a2 2 0 01-2 2H7a2 2 0 01-2 2v16m14 0h2m-2 0h-5m-4 0H3',
-                    ],
-                ];
-            @endphp
+    @if (session('error'))
+        <div class="mb-6 bg-red-50 border border-red-200 text-red-700 px-5 py-4 rounded-2xl flex items-center gap-3 text-sm font-semibold">
+            <i class="fas fa-exclamation-triangle text-red-500"></i>
+            {{ session('error') }}
+        </div>
+    @endif
 
-            @foreach ($menuItems as $item)
-                <a href="#"
-                   :href="courseOfferingId ? '{{ route($item['route'], ['offering_id' => ':id']) }}'.replace(':id', courseOfferingId) : '#'"
-                   class="menu-item">
-                    <div class="w-10 h-10 bg-emerald-50 rounded-2xl flex items-center justify-center flex-shrink-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.25">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="{{ $item['icon'] }}" />
-                        </svg>
+    @if ($courseOfferings->isEmpty())
+        {{-- Empty state --}}
+        <div class="flex flex-col items-center justify-center bg-white border border-dashed border-slate-300 rounded-2xl py-16 text-center">
+            <div class="w-16 h-16 bg-slate-50 text-slate-300 rounded-2xl flex items-center justify-center mb-4">
+                <i class="fas fa-book-open text-2xl"></i>
+            </div>
+            <p class="text-sm font-bold text-slate-500">{{ __('no_courses_assigned_yet') }}</p>
+            <p class="text-xs text-slate-400 mt-1">{{ __('please_contact_the_administration_if_you_have_any_questions') }}</p>
+        </div>
+    @else
+        {{-- Course cards --}}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @foreach ($courseOfferings as $offering)
+                <div class="bg-white rounded-2xl border border-slate-200/70 p-6 hover:shadow-md hover:-translate-y-0.5 hover:border-slate-300 transition-all flex flex-col">
+
+                    {{-- icon + year/semester chips --}}
+                    <div class="flex items-start justify-between gap-3 mb-4">
+                        <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <div class="flex flex-wrap justify-end gap-1.5">
+                            <span class="text-[11px] font-semibold bg-slate-50 border border-slate-100 text-slate-500 px-2.5 py-1 rounded-lg tabular-nums">{{ $offering->academic_year }}</span>
+                            <span class="text-[11px] font-semibold bg-slate-50 border border-slate-100 text-slate-500 px-2.5 py-1 rounded-lg">{{ __('semester') }} {{ $offering->semester }}</span>
+                        </div>
                     </div>
+
+                    {{-- titles --}}
                     <div class="flex-1">
-                        <div class="khmer font-semibold text-slate-800">{{ __($item['label']) }}</div>
-                        <div class="text-xs text-slate-500">{{ $item['desc'] }}</div>
+                        <h3 class="text-base font-semibold text-slate-800 leading-snug break-words">
+                            {{ $offering->course?->title_km ?? 'N/A' }}
+                        </h3>
+                        <p class="text-xs text-slate-500 mt-1 line-clamp-2">
+                            {{ $offering->course?->title_en ?? 'N/A' }}
+                        </p>
+
+                        {{-- meta: department + student count --}}
+                        <div class="flex flex-wrap items-center gap-2 mt-3">
+                            @if($offering->course?->department?->name_km)
+                                <span class="text-[11px] font-medium bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-md">
+                                    {{ $offering->course->department->name_km }}
+                                </span>
+                            @endif
+                            <span class="inline-flex items-center gap-1 text-[11px] text-slate-500 font-medium tabular-nums">
+                                <i class="fas fa-user-graduate text-slate-300 text-[10px]"></i>
+                                {{ $offering->student_course_enrollments_count }} {{ __('students_2') }}
+                            </span>
+                        </div>
                     </div>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" />
-                    </svg>
-                </a>
+
+                    {{-- direct actions --}}
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-5 pt-5 border-t border-slate-100">
+                        <a wire:navigate href="{{ route('professor.students.in-course-offering', ['offering_id' => $offering->id]) }}"
+                           class="flex items-center justify-center gap-2 h-11 rounded-xl bg-slate-50 hover:bg-emerald-50 text-slate-600 hover:text-emerald-700 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40">
+                            <i class="fas fa-users text-[11px]"></i>
+                            {{ __('view_students') }}
+                        </a>
+                        <a wire:navigate href="{{ route('professor.manage-grades', ['offering_id' => $offering->id]) }}"
+                           class="flex items-center justify-center gap-2 h-11 rounded-xl bg-slate-50 hover:bg-emerald-50 text-slate-600 hover:text-emerald-700 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40">
+                            <i class="fas fa-chart-line text-[11px]"></i>
+                            {{ __('manage_grades') }}
+                        </a>
+                        <a wire:navigate href="{{ route('professor.attendance.index', ['courseOffering' => $offering->id]) }}"
+                           class="flex items-center justify-center gap-2 h-11 rounded-xl bg-slate-50 hover:bg-emerald-50 text-slate-600 hover:text-emerald-700 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40">
+                            <i class="fas fa-clipboard-check text-[11px]"></i>
+                            {{ __('attendance') }}
+                        </a>
+                        <a wire:navigate href="{{ route('professor.quizzes.index', ['offering_id' => $offering->id]) }}"
+                           class="flex items-center justify-center gap-2 h-11 rounded-xl bg-slate-50 hover:bg-emerald-50 text-slate-600 hover:text-emerald-700 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40">
+                            <i class="fas fa-stopwatch text-[11px]"></i>
+                            {{ __('quiz') }}
+                        </a>
+                    </div>
+                </div>
             @endforeach
         </div>
 
-        {{-- Footer --}}
-        <div class="p-6 border-t border-slate-100">
-            <button @click="open = false"
-                    class="khmer w-full py-3.5 text-slate-600 font-medium bg-slate-100 hover:bg-slate-200 rounded-2xl transition-colors">
-                {{ __('close_3') }}
-            </button>
+        {{-- Pagination --}}
+        <div class="mt-10 flex justify-center">
+            {{ $courseOfferings->links('pagination::tailwind') }}
         </div>
-    </div>
+    @endif
 </div>
-
+</div>
 </x-app-layout>

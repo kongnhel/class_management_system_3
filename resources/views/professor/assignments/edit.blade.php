@@ -63,7 +63,7 @@
                                         {{ $category->name_km }} ({{ $category->weight_percentage }}%)
                                     </option>
                                 @empty
-                                    <option value="" disabled>សូមបង្កើតប្រភេទពិន្ទុសម្រាប់មុខវិជ្ជានេះជាមុនសិន</option>
+                                    <option value="" disabled>{{ __('create_grading_category_first') }}</option>
                                 @endforelse
                             </select>
                         </div> --}}
