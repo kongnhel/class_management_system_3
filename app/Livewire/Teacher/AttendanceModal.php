@@ -146,6 +146,7 @@ class AttendanceModal extends Component
         }
 
         AttendanceQrToken::where('course_offering_id', $this->courseId)->delete();
+        \Illuminate\Support\Facades\Cache::forget('nmu.att_scores.'.$this->courseId);
         $this->showConfirmation = false;
 
         $this->isOpen = false;

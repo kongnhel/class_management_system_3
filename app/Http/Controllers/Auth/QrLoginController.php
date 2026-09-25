@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Events\QrLoginSuccessful;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -38,8 +37,6 @@ class QrLoginController extends Controller
             Cache::forget('login_token_'.$token);
 
             Cache::put('authorized_user_'.$token, $user->id, now()->addMinutes(2));
-
-            broadcast(new QrLoginSuccessful($token, $user->id));
 
             return response()->json(['status' => 'success']);
 

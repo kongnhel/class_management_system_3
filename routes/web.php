@@ -36,22 +36,10 @@ use App\Http\Controllers\Student\StudentRoomController;
 use App\Http\Controllers\StudentProfileController;
 use App\Http\Controllers\StudentRegistrationController;
 use App\Http\Controllers\TelegramController;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\File;
+use App\Http\Controllers\UtilityController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/vendor/livewire/livewire.js', function () {
-    $path = base_path('vendor/livewire/livewire/dist/livewire.js');
-
-    if (! File::exists($path)) {
-        abort(404);
-    }
-
-    return response()->file($path, [
-        'Content-Type' => 'application/javascript; charset=utf-8',
-        'Cache-Control' => 'public, max-age=31536000',
-    ]);
-});
+Route::get('/vendor/livewire/livewire.js', [UtilityController::class, 'livewireJs']);
 
 // ========================================================
 // AUTHENTICATED ROUTES - AI Chat (All Authenticated Users)
@@ -63,15 +51,7 @@ Route::middleware(['auth', 'throttle:60,1'])->group(function () {
     Route::post('/ai/feedback', [SmartAssistantController::class, 'feedback'])->name('ai.feedback');
 });
 
-Route::get('/locale/{locale}', function (string $locale) {
-    if (! in_array($locale, ['km', 'en'])) {
-        abort(400);
-    }
-    session(['locale' => $locale]);
-    app()->setLocale($locale);
-
-    return redirect()->back();
-})->name('locale.switch');
+Route::get('/locale/{locale}', [UtilityController::class, 'switchLocale'])->name('locale.switch');
 
 Route::post('/professor/telegram/webhook', [TelegramController::class, 'handleWebhook'])
     ->middleware('throttle:60,1')
@@ -82,24 +62,7 @@ Route::post('/professor/telegram/webhook', [TelegramController::class, 'handleWe
 | Public Routes
 |--------------------------------------------------------------------------
 */
-Route::get('/', function () {
-    if (Auth::check()) {
-        $user = Auth::user();
-        if ($user->isAdmin()) {
-            return redirect()->route('admin.dashboard');
-        }
-        if ($user->isProfessor()) {
-            return redirect()->route('professor.dashboard');
-        }
-        if ($user->isStudent()) {
-            return redirect()->route('student.dashboard');
-        }
-
-        return redirect()->route('auth.login');
-    }
-
-    return redirect()->route('login');
-});
+Route::get('/', [UtilityController::class, 'root']);
 
 Route::middleware(['throttle:10,1'])->group(function () {
     Route::get('/api/check-student/{code}', [StudentRegistrationController::class, 'checkStudent'])
@@ -112,15 +75,7 @@ Route::middleware(['throttle:10,1'])->group(function () {
 */
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/dashboard', function () {
-        if (Auth::user()->isAdmin()) {
-            return redirect()->route('admin.dashboard');
-        } elseif (Auth::user()->isProfessor()) {
-            return redirect()->route('professor.dashboard');
-        } else { // Default to student role
-            return redirect()->route('student.dashboard');
-        }
-    })->name('dashboard');
+    Route::get('/dashboard', [UtilityController::class, 'dashboard'])->name('dashboard');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -450,9 +405,7 @@ Route::middleware(['auth', 'role:student', 'throttle:120,1'])->prefix('student')
     });
     Route::post('/update-telegram', [StudentController::class, 'updateTelegram'])
         ->name('update_telegram');
-    Route::get('/scan', function () {
-        return view('student.scan');
-    })->name('scan');
+    Route::view('/scan', 'student.scan')->name('scan');
 
     // API សម្រាប់ទទួលទិន្នន័យស្កែន
     Route::post('/process-scan', [AttendanceController::class, 'processScan'])
@@ -466,10 +419,6 @@ Route::middleware(['auth', 'role:professor', 'throttle:60,1'])->group(function (
 });
 
 Route::middleware(['auth', 'role:professor'])->group(function () {
-    Route::get('/check-time', function () {
-        dd(now()->toDateTimeString(), config('app.timezone'));
-    });
-
     Route::get('assessment/{id}/export-csv', [ProfessorGradeController::class, 'exportCSV'])->name('grades.export');
     Route::post('/assessment/{id}/import-csv', [ProfessorGradeController::class, 'importCSV'])->name('grades.import');
 });

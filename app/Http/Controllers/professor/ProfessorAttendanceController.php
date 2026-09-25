@@ -219,9 +219,9 @@ class ProfessorAttendanceController extends Controller
         }
 
         // គណនាចម្ងាយ
-        $schoolLat = config('services.nmu.lat', env('NMU_LAT', 13.57952292));
-        $schoolLng = config('services.nmu.lng', env('NMU_LNG', 102.92898894));
-        $allowedRadius = config('services.nmu.radius', env('NMU_RADIUS', 100));
+        $schoolLat = config('services.nmu.lat');
+        $schoolLng = config('services.nmu.lng');
+        $allowedRadius = config('services.nmu.radius');
 
         $distance = $this->calculateDistance($request->lat, $request->lng, $schoolLat, $schoolLng);
 

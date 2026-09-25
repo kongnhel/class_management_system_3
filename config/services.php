@@ -48,6 +48,12 @@ return [
         'private_key' => env('IMAGEKIT_PRIVATE_KEY', ''),
     ],
 
+    'nmu' => [
+        'lat' => env('NMU_LAT', 13.57952292),
+        'lng' => env('NMU_LNG', 102.92898894),
+        'radius' => env('NMU_RADIUS', 100),
+    ],
+
     'telegram' => [
         'bot_token' => env('TELEGRAM_BOT_TOKEN'),
         'schedule_bot_token' => env('TELEGRAM_BOT_TOKEN2', env('TELEGRAM_BOT_TOKEN')),

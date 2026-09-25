@@ -256,28 +256,42 @@ class User extends Authenticatable
 
     /**
      * គណនាពិន្ទុវត្តមានស្វ័យប្រវត្តិ (Auto Calculation)
-     * Uses a single query for both absent and permission counts.
+     * Whole-course data is loaded with 2 queries and cached for 30 seconds,
+     * so listing a class of N students costs 2 queries instead of 2xN (N+1 fix).
      */
     public function getAttendanceScoreByCourse($course_id)
     {
         $maxScore = 15;
 
-        $manualScore = \App\Models\StudentCourseEnrollment::where('student_user_id', $this->id)
-            ->where('course_offering_id', $course_id)
-            ->value('attendance_score_manual');
+        $cacheKey = 'nmu.att_scores.'.$course_id;
 
-        if ($manualScore !== null) {
-            return max(0, min($maxScore, (float) $manualScore));
+        $data = \Illuminate\Support\Facades\Cache::remember($cacheKey, 30, function () use ($course_id) {
+            return [
+                'manual' => \App\Models\StudentCourseEnrollment::where('course_offering_id', $course_id)
+                    ->whereNotNull('attendance_score_manual')
+                    ->pluck('attendance_score_manual', 'student_user_id')
+                    ->all(),
+                'counts' => \App\Models\AttendanceRecord::where('course_offering_id', $course_id)
+                    ->whereIn('status', ['absent', 'permission'])
+                    ->selectRaw("student_user_id,
+                        SUM(CASE WHEN status = 'absent' THEN 1 ELSE 0 END) as absent_count,
+                        SUM(CASE WHEN status = 'permission' THEN 1 ELSE 0 END) as permission_count")
+                    ->groupBy('student_user_id')
+                    ->get()
+                    ->keyBy('student_user_id')
+                    ->all(),
+            ];
+        });
+
+        $manual = $data['manual'][$this->id] ?? null;
+
+        if ($manual !== null) {
+            return max(0, min($maxScore, (float) $manual));
         }
 
-        $counts = $this->attendanceRecords()
-            ->where('course_offering_id', $course_id)
-            ->whereIn('status', ['absent', 'permission'])
-            ->selectRaw("SUM(CASE WHEN status = 'absent' THEN 1 ELSE 0 END) as absent_count, SUM(CASE WHEN status = 'permission' THEN 1 ELSE 0 END) as permission_count")
-            ->first();
-
-        $absentDeduction = floor(($counts->absent_count ?? 0) / 2);
-        $permissionDeduction = floor(($counts->permission_count ?? 0) / 4);
+        $row = $data['counts'][$this->id] ?? null;
+        $absentDeduction = floor(($row->absent_count ?? 0) / 2);
+        $permissionDeduction = floor(($row->permission_count ?? 0) / 4);
 
         $score = $maxScore - ($absentDeduction + $permissionDeduction);
 

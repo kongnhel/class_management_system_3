@@ -808,7 +808,7 @@ class ProfessorController extends Controller
     {
         return app(TelegramBotService::class)->send($chatId, $message);
 
-        $token = env('TELEGRAM_BOT_TOKEN');
+        $token = config('services.telegram.bot_token');
 
         // ឆែកមើលថាតើមាន Token និង Chat ID ឬអត់មុននឹងផ្ញើ
         if (! $token || ! $chatId) {
@@ -865,7 +865,7 @@ class ProfessorController extends Controller
             return back()->with('error', 'និស្សិតនេះមិនទាន់បានភ្ជាប់ជាមួយ Telegram Bot នៅឡើយទេ!');
         }
 
-        $token = env('TELEGRAM_BOT_TOKEN');
+        $token = config('services.telegram.bot_token');
 
         $message = "<b>🔔 លទ្ធផលសិក្សា</b>\n\n";
         $message .= "និស្សិត៖ <b>{$studentUser->name}</b>\n";
@@ -975,7 +975,7 @@ class ProfessorController extends Controller
 
     public function sendTelegramSchedule($chatId, $message)
     {
-        $botToken = env('TELEGRAM_BOT_TOKEN');
+        $botToken = config('services.telegram.bot_token');
 
         $response = Http::post("https://api.telegram.org/bot{$botToken}/sendMessage", [
             'chat_id' => $chatId,
@@ -1021,7 +1021,7 @@ class ProfessorController extends Controller
         $schedule->call(function () {
             // ១. ទាញយកសាស្ត្រាចារ្យទាំងឡាយណាដែលមាន Telegram Chat ID
             $users = User::whereNotNull('telegram_chat_id')->get();
-            $botToken = env('TELEGRAM_BOT_TOKEN2'); // កុំភ្លេចដាក់ក្នុង .env
+            $botToken = config('services.telegram.schedule_bot_token'); // កុំភ្លេចដាក់ក្នុង .env
 
             foreach ($users as $user) {
                 // ២. ទាញយកកាលវិភាគថ្ងៃនេះរបស់សាស្ត្រាចារ្យម្នាក់ៗ

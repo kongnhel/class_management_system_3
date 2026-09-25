@@ -35,7 +35,7 @@ class TelegramController extends Controller
 
     private function sendReply($chatId, $message)
     {
-        $token = env('TELEGRAM_BOT_TOKEN');
+        $token = config('services.telegram.bot_token');
         \Illuminate\Support\Facades\Http::post("https://api.telegram.org/bot{$token}/sendMessage", [
             'chat_id' => $chatId,
             'text' => $message,
@@ -46,7 +46,7 @@ class TelegramController extends Controller
     {
         $schedule->call(function () {
             $users = User::whereNotNull('telegram_chat_id')->get();
-            $botToken = env('TELEGRAM_BOT_TOKEN2');
+            $botToken = config('services.telegram.schedule_bot_token');
 
             foreach ($users as $user) {
                 $todaySchedules = \App\Models\Schedule::where('professor_id', $user->id)

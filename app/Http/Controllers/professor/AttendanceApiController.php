@@ -371,6 +371,8 @@ class AttendanceApiController extends Controller
             $session->update(['closed_at' => Carbon::now('Asia/Phnom_Penh')]);
             AttendanceQrToken::where('attendance_session_id', $session->id)->delete();
 
+            \Illuminate\Support\Facades\Cache::forget('nmu.att_scores.'.$offering->id);
+
             return count($rows);
         });
 
