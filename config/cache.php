@@ -15,9 +15,7 @@ return [
     |
     */
 
-    // 'default' => env('CACHE_STORE', 'database'),
-    // Vercel មិន support file cache ទេ
-    'default' => env('CACHE_DRIVER', 'array'),
+    'default' => env('CACHE_STORE', 'file'),
 
     /*
     |--------------------------------------------------------------------------
