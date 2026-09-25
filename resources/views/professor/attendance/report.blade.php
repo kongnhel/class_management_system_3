@@ -82,7 +82,7 @@
                             <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                         </div>
                         <div>
-                            <p class="text-xs text-gray-400 font-bold uppercase tracking-wide">និស្សិតសរុប</p>
+                            <p class="text-xs text-gray-400 font-bold uppercase tracking-wide">{{ __('total_students_2') }}</p>
                             <p class="text-2xl font-extrabold text-gray-800">{{ $totalStudents }}</p>
                         </div>
                     </div>
@@ -93,7 +93,7 @@
                             <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         </div>
                         <div>
-                            <p class="text-xs text-gray-400 font-bold uppercase tracking-wide">វត្តមាន</p>
+                            <p class="text-xs text-gray-400 font-bold uppercase tracking-wide">{{ __('attendance_2') }}</p>
                             <p class="text-2xl font-extrabold text-emerald-600">{{ $totalPresent }}</p>
                         </div>
                     </div>
@@ -104,7 +104,7 @@
                             <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         </div>
                         <div>
-                            <p class="text-xs text-gray-400 font-bold uppercase tracking-wide">សុំច្បាប់</p>
+                            <p class="text-xs text-gray-400 font-bold uppercase tracking-wide">{{ __('permission_3') }}</p>
                             <p class="text-2xl font-extrabold text-amber-600">{{ $totalPermission }}</p>
                         </div>
                     </div>
@@ -115,7 +115,7 @@
                             <svg class="w-5 h-5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         </div>
                         <div>
-                            <p class="text-xs text-gray-400 font-bold uppercase tracking-wide">អវត្តមាន</p>
+                            <p class="text-xs text-gray-400 font-bold uppercase tracking-wide">{{ __('absent_3') }}</p>
                             <p class="text-2xl font-extrabold text-rose-600">{{ $totalAbsent }}</p>
                         </div>
                     </div>
@@ -136,13 +136,13 @@
                                 <span class="w-1 h-1 rounded-full bg-gray-300"></span>
                                 <span>{{ $courseOffering->semester }}</span>
                                 <span class="w-1 h-1 rounded-full bg-gray-300"></span>
-                                <span>{{ $totalStudents }} និស្សិត</span>
+                                <span>{{ $totalStudents }} {{ __('students_suffix') }}</span>
                             </div>
                         </div>
                     </div>
                     <div class="flex items-center gap-3">
                         <div class="text-right">
-                            <p class="text-xs text-gray-400 font-bold uppercase tracking-wide">អត្រាវត្តមានជាមធ្យម</p>
+                            <p class="text-xs text-gray-400 font-bold uppercase tracking-wide">{{ __('average_attendance_rate') }}</p>
                             <p class="text-xl font-extrabold {{ $avgAttendance >= 75 ? 'text-emerald-600' : ($avgAttendance >= 50 ? 'text-amber-600' : 'text-rose-600') }}">
                                 {{ number_format($avgAttendance, 1) }}%
                             </p>
@@ -160,19 +160,19 @@
             {{-- Students Table --}}
             <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between no-print">
-                    <h3 class="font-bold text-gray-700">បញ្ជីឈ្មោះនិស្សិត</h3>
-                    <span class="text-xs text-gray-400 font-medium bg-gray-50 px-3 py-1 rounded-full">{{ $totalStudents }} នាក់</span>
+                    <h3 class="font-bold text-gray-700">{{ __('student_name_list') }}</h3>
+                    <span class="text-xs text-gray-400 font-medium bg-gray-50 px-3 py-1 rounded-full">{{ $totalStudents }} {{ __('units') }}</span>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full">
                         <thead>
                             <tr class="bg-gray-50/80 border-b border-gray-100">
                                 <th class="px-6 py-3 text-left text-[11px] font-bold text-gray-400 uppercase tracking-wider">#</th>
-                                <th class="px-6 py-3 text-left text-[11px] font-bold text-gray-400 uppercase tracking-wider">ឈ្មោះនិស្សិត</th>
+                                <th class="px-6 py-3 text-left text-[11px] font-bold text-gray-400 uppercase tracking-wider">{{ __('student_name_2') }}</th>
                                 <th class="px-4 py-3 text-center text-[11px] font-bold text-emerald-500 uppercase tracking-wider">P</th>
                                 <th class="px-4 py-3 text-center text-[11px] font-bold text-rose-500 uppercase tracking-wider">A</th>
-                                <th class="px-4 py-3 text-center text-[11px] font-bold text-gray-400 uppercase tracking-wider">សរុប</th>
-                                <th class="px-6 py-3 text-right text-[11px] font-bold text-gray-400 uppercase tracking-wider">ភាគរយ</th>
+                                <th class="px-4 py-3 text-center text-[11px] font-bold text-gray-400 uppercase tracking-wider">{{ __('total_3') }}</th>
+                                <th class="px-6 py-3 text-right text-[11px] font-bold text-gray-400 uppercase tracking-wider">{{ __('percentage') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-50">
@@ -229,7 +229,7 @@
                                             <div class="w-14 h-14 rounded-2xl bg-gray-50 flex items-center justify-center">
                                                 <svg class="w-7 h-7 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                                             </div>
-                                            <p class="text-sm font-bold text-gray-400">មិនទាន់មានទិន្នន័យវត្តមាន</p>
+                                            <p class="text-sm font-bold text-gray-400">{{ __('no_attendance_data_yet') }}</p>
                                         </div>
                                     </td>
                                 </tr>

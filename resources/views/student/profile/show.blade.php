@@ -1,329 +1,160 @@
-﻿<x-app-layout>
+<x-app-layout>
+<x-slot name="header">
+    <h2 class="font-bold text-xl text-gray-800 leading-tight">{{ __('profile_title') }}</h2>
+    <p class="text-sm text-slate-500 mt-0.5">{{ __('profile_subtitle') }}</p>
+</x-slot>
+
+<div class="bg-slate-50 min-h-screen font-['Battambang'] antialiased">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
     @php
-        $profileUrl = $studentProfile?->profile_picture_url ?? $studentProfile?->profile_picture_url;
+        $user = $user ?? auth()->user();
+        $studentProfile = $studentProfile ?? $user->studentProfile;
+        $departmentName = $studentDepartmentEnrollment?->department?->name_km;
+        $facultyName = $studentDepartmentEnrollment?->department?->faculty?->name_km;
     @endphp
 
-    <div class="py-12 bg-[#f8fafc] min-h-screen font-['Battambang']">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-
-            {{-- Academic Info Card --}}
-            @if($studentDepartmentEnrollment)
-            <div class="bg-white shadow-xl shadow-slate-200/50 rounded-[2rem] overflow-hidden border border-slate-100 mb-6">
-                <div class="px-8 py-6 border-b border-slate-100">
-                    <h3 class="text-lg font-black text-slate-800 flex items-center gap-2">
-                        <i class="fas fa-graduation-cap text-emerald-600"></i>
-                        {{ __('academic_info') }}
-                    </h3>
-                </div>
-                <div class="px-8 py-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                    {{-- Department --}}
-                    <div class="flex items-start gap-3">
-                        <div class="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <i class="fas fa-book-open text-emerald-600 text-sm"></i>
-                        </div>
-                        <div>
-                            <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest">{{ __('course') }}</p>
-                            <p class="text-sm font-bold text-slate-800 mt-0.5">{{ $studentDepartmentEnrollment->department->name_km ?? 'N/A' }}</p>
-                        </div>
-                    </div>
-                    {{-- Faculty --}}
-                    <div class="flex items-start gap-3">
-                        <div class="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <i class="fas fa-university text-blue-600 text-sm"></i>
-                        </div>
-                        <div>
-                            <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest">{{ __('faculty') }}</p>
-                            <p class="text-sm font-bold text-slate-800 mt-0.5">{{ $studentDepartmentEnrollment->department?->faculty?->name_km ?? 'N/A' }}</p>
-                        </div>
-                    </div>
-                    {{-- Degree Level --}}
-                    <div class="flex items-start gap-3">
-                        <div class="w-9 h-9 rounded-xl bg-amber-50 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <i class="fas fa-medal text-amber-600 text-sm"></i>
-                        </div>
-                        <div>
-                            <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest">{{ __('degree_level_2') }}</p>
-                            <p class="text-sm font-bold text-slate-800 mt-0.5">{{ $studentDepartmentEnrollment->degree_level ?? 'N/A' }}</p>
-                        </div>
-                    </div>
-                    {{-- Generation --}}
-                    <div class="flex items-start gap-3">
-                        <div class="w-9 h-9 rounded-xl bg-rose-50 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <i class="fas fa-users text-rose-600 text-sm"></i>
-                        </div>
-                        <div>
-                            <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest">{{ __('generation') }}</p>
-                            <p class="text-sm font-bold text-slate-800 mt-0.5">G{{ $user->generation ?? 'N/A' }}</p>
-                        </div>
-                    </div>
-                    {{-- Year Level --}}
-                    <div class="flex items-start gap-3">
-                        <div class="w-9 h-9 rounded-xl bg-teal-50 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <i class="fas fa-layer-group text-teal-600 text-sm"></i>
-                        </div>
-                        <div>
-                            <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest">{{ __('academic_year') }}</p>
-                            <p class="text-sm font-bold text-slate-800 mt-0.5">{{ $computedYearLevel ? __('year') . $computedYearLevel : 'N/A' }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            @endif
-            
-            {{-- Form Card --}}
-            <div class="bg-white shadow-xl shadow-slate-200/50 rounded-[3rem] overflow-hidden border border-slate-100">
-                
-                {{-- Header Section --}}
-                <div class="relative h-32 bg-gradient-to-r from-emerald-600 to-emerald-500">
-                    <div class="absolute -bottom-16 left-0 right-0 flex justify-center">
-                        <div class="relative group">
-                            {{-- Profile Picture Container --}}
-                            <div id="profile-picture-container" class="w-32 h-32 md:w-36 md:h-36 rounded-[2.5rem] bg-white p-1.5 shadow-2xl cursor-pointer overflow-hidden transition-transform active:scale-95">
-<div class="w-full h-full rounded-[2rem] overflow-hidden bg-slate-100 flex items-center justify-center">
-    @if ($profileUrl)
-        {{-- ប្រើ URL ពី ImageKit រួចថែម Parameter សម្រាប់កាត់រូបភាពចំផ្ទៃមុខ (Smart Face Crop) --}}
-        <img src="{{ $profileUrl }}?tr=w-400,h-400,fo-face" 
-             alt="{{ $user->name }}" 
-             class="object-cover w-full h-full" 
-             id="profile-picture-preview">
-    @else
-        <div id="profile-picture-placeholder" class="text-emerald-500 text-4xl font-black">
-            {{ Str::upper(Str::substr($user->name, 0, 1)) }}
+    @if(session('success'))
+        <div class="mb-6 bg-emerald-50 border border-emerald-200 text-emerald-700 px-5 py-4 rounded-2xl flex items-center gap-3 text-sm font-semibold">
+            <i class="fas fa-check-circle text-emerald-500"></i>
+            {{ session('success') }}
         </div>
     @endif
-</div>
-                                {{-- Overlay icon --}}
-                                <div class="absolute inset-1.5 bg-black/40 rounded-[2rem] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <i class="fas fa-camera text-white text-xl"></i>
-                                </div>
-                            </div>
-                            {{-- Badge --}}
-                            <div class="absolute bottom-1 right-1 bg-emerald-500 text-white w-8 h-8 rounded-full border-4 border-white flex items-center justify-center shadow-lg">
-                                <i class="fas fa-plus text-[10px]"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="pt-20 pb-12 px-8 md:px-16">
-                    @if (session('error'))
-                        <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl text-red-700 text-sm font-bold">
-                            <i class="fas fa-exclamation-triangle mr-2"></i>{{ session('error') }}
-                        </div>
+    {{-- ============================================================ --}}
+    {{-- MAIN TWO-COLUMN SPLIT GRID                                   --}}
+    {{-- ============================================================ --}}
+    <div class="w-full grid grid-cols-1 lg:grid-cols-3 gap-6 p-6">
+
+        {{-- ===== LEFT CARD PANEL ===== --}}
+        <div class="col-span-1 bg-white rounded-2xl shadow-sm p-6 text-center">
+
+            {{-- avatar wrapper + profile picture --}}
+            <div class="mx-auto w-fit p-2 rounded-[2rem] bg-gradient-to-br from-emerald-500 via-teal-500 to-emerald-600 shadow-lg shadow-emerald-500/25">
+                <div class="w-24 h-24 rounded-3xl overflow-hidden bg-white flex items-center justify-center">
+                    @if($studentProfile?->profile_picture_url)
+                        <img src="{{ $studentProfile->profile_picture_url }}?tr=w-400,h-400,fo-face,q-auto,f-auto"
+                             alt="{{ $user->name }}" class="w-full h-full object-cover">
+                    @else
+                        <span class="text-emerald-600 text-3xl font-semibold">{{ Str::upper(Str::substr($user->name, 0, 1)) }}</span>
                     @endif
-                    @if (session('success'))
-                        <div class="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-emerald-700 text-sm font-bold">
-                            <i class="fas fa-check-circle mr-2"></i>{{ session('success') }}
-                        </div>
-                    @endif
-                    @if ($errors->any())
-                        <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl text-sm font-bold">
-                            <i class="fas fa-exclamation-triangle mr-2 text-red-500"></i>
-                            <ul class="list-disc list-inside text-red-700 mt-1">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
-                    <div class="text-center mb-10">
-                        <h2 class="text-2xl font-black text-slate-800">{{ __('edit_profile') }}</h2>
-                        <p class="text-sm text-slate-400 font-medium mt-1">{{ __('keep_your_personal_information_up_to_date') }}</p>
-                    </div>
-
-                    <form method="POST" action="{{ route('student.profile.update') }}" enctype="multipart/form-data" class="space-y-8">
-                        @csrf
-                        @method('PUT')
-
-                        <input id="profile_picture" name="" type="file" class="hidden" accept="image/*" />
-                        <input type="hidden" id="profile_picture_base64" name="profile_picture_base64" value="" />
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            
-                            {{-- Full Name (Khmer) --}}
-                            <div class="space-y-2">
-                                <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">{{ __('full_name_khmer') }} <span class="text-red-400">*</span></label>
-                                <div class="relative">
-                                    <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400">
-                                        <i class="fas fa-user-tag"></i>
-                                    </span>
-                                    <input type="text" name="full_name_km" id="full_name_km" value="{{ old('full_name_km', $studentProfile->full_name_km ?? '') }}" required 
-                                           class="block w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 focus:bg-white outline-none transition-all font-bold text-slate-700" 
-                                           placeholder="{{ __('confirm_your_name_in_khmer') }}">
-                                </div>
-                                <x-input-error :messages="$errors->get('full_name_km')" class="mt-2" />
-                            </div>
-
-                            {{-- Full Name (English) --}}
-                            <div class="space-y-2">
-                                <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">{{ __('full_name_english') }}</label>
-                                <div class="relative">
-                                    <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400">
-                                        <i class="fas fa-id-card"></i>
-                                    </span>
-                                    <input type="text" name="full_name_en" id="full_name_en" value="{{ old('full_name_en', $studentProfile->full_name_en ?? '') }}" 
-                                           class="block w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 focus:bg-white outline-none transition-all font-bold text-slate-700" 
-                                           placeholder="{{ __('full_name_in_english') }}">
-                                </div>
-                            </div>
-
-                            {{-- Gender --}}
-                            <div class="space-y-2">
-                                <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">{{ __('gender') }} <span class="text-red-400">*</span></label>
-                                <div class="relative">
-                                    <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400 pointer-events-none">
-                                        <i class="fas fa-venus-mars"></i>
-                                    </span>
-                                    <select id="gender" name="gender" required 
-                                            class="block w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 focus:bg-white outline-none transition-all font-bold text-slate-700 appearance-none cursor-pointer">
-                                        <option value="" disabled selected>{{ __('select_gender') }}</option>
-                                        <option value="male" @if(old('gender', $studentProfile->gender ?? '') == 'male') selected @endif>{{ __('male') }}</option>
-                                        <option value="female" @if(old('gender', $studentProfile->gender ?? '') == 'female') selected @endif>{{ __('female') }}</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            {{-- Date of Birth --}}
-                            <div class="space-y-2">
-                                <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">{{ __('date_of_birth') }}</label>
-                                <div class="relative">
-                                    <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400">
-                                        <i class="fas fa-calendar-alt"></i>
-                                    </span>
-                                    <input type="date" name="date_of_birth" id="date_of_birth" value="{{ old('date_of_birth', isset($studentProfile->date_of_birth) ? \Carbon\Carbon::parse($studentProfile->date_of_birth)->format('Y-m-d') : '') }}" 
-                                           class="block w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 focus:bg-white outline-none transition-all font-bold text-slate-700">
-                                </div>
-                            </div>
-
-                            {{-- Phone Number --}}
-                            <div class="space-y-2">
-                                <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">{{ __('phone_number') }}</label>
-                                <div class="relative">
-                                    <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400">
-                                        <i class="fas fa-phone-alt"></i>
-                                    </span>
-                                    <input type="text" name="phone_number" id="phone_number" value="{{ old('phone_number', $studentProfile->phone_number ?? '') }}" 
-                                           class="block w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 focus:bg-white outline-none transition-all font-bold text-slate-700" 
-                                           placeholder="012 345 678">
-                                </div>
-                            </div>
-
-                            {{-- Address --}}
-                            <div class="space-y-2 md:col-span-2">
-                                <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">{{ __('address') }}</label>
-                                <div class="relative">
-                                    <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400">
-                                        <i class="fas fa-map-marker-alt"></i>
-                                    </span>
-                                    <input type="text" name="address" id="address" value="{{ old('address', $studentProfile->address ?? '') }}" 
-                                           class="block w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 focus:bg-white outline-none transition-all font-bold text-slate-700" 
-                                           placeholder="{{ __('phnom_penh_cambodia') }}">
-                                </div>
-                            </div>
-                        </div>
-
-                        {{-- Action Buttons --}}
-                        <div class="flex flex-col sm:flex-row items-center gap-4 pt-10">
-                            <button type="submit" 
-                                    class="w-full sm:flex-[2] py-4 bg-emerald-600 text-white rounded-2xl font-black shadow-xl shadow-emerald-100 hover:bg-emerald-700 hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-2">
-                                <i class="fas fa-save"></i>
-                                {{ __('save_changes') }}
-                            </button>
-                            
-                            <a wire:navigate href="{{ route('student.profile.show') }}"
-                               class="w-full sm:flex-1 py-4 bg-white border border-slate-200 text-slate-500 rounded-2xl font-black text-center hover:bg-slate-50 transition-all">
-                                {{ __('cancel_2') }}
-                            </a>
-                        </div>
-                    </form>
                 </div>
             </div>
+
+            {{-- role + name + email --}}
+            <span class="inline-flex items-center gap-1.5 mt-5 bg-emerald-50 border border-emerald-100 text-emerald-700 text-[11px] font-bold px-3 py-1 rounded-full">
+                <i class="fas fa-user-graduate text-[10px]"></i>
+                {{ __('student_2') }}
+            </span>
+            <h1 class="text-lg font-semibold text-slate-800 tracking-tight mt-3 break-words leading-relaxed">
+                {{ $studentProfile?->full_name_km ?? $user->name }}
+            </h1>
+            <p class="text-sm text-slate-400 font-medium mt-1 break-all leading-relaxed">{{ $user->email }}</p>
+
+            {{-- department --}}
+            @if($departmentName)
+                <p class="inline-flex items-center gap-1.5 text-sm font-medium text-slate-600 mt-3 leading-relaxed">
+                    <i class="fas fa-building-columns text-slate-400 text-xs"></i>
+                    {{ $departmentName }}
+                </p>
+            @endif
+
+            {{-- student ID --}}
+            @if($user->student_id_code)
+                <p class="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 mt-2 tabular-nums leading-relaxed">
+                    <i class="fas fa-id-badge text-slate-400 text-xs"></i>
+                    {{ $user->student_id_code }}
+                </p>
+            @endif
+
+            {{-- edit profile: full-width secondary button --}}
+            <a wire:navigate href="{{ route('student.profile.edit') }}"
+               class="mt-6 inline-flex items-center justify-center gap-2 w-full h-11 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-700 text-sm font-semibold hover:bg-emerald-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40 active:scale-[0.98]">
+                <i class="fas fa-user-edit text-xs"></i>
+                {{ __('edit_profile') }}
+            </a>
+        </div>
+
+        {{-- ===== RIGHT DETAIL PANEL ===== --}}
+        <div class="col-span-1 lg:col-span-2 bg-white rounded-2xl shadow-sm p-6">
+
+            {{-- panel heading --}}
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-id-card text-sm"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-semibold text-slate-800">{{ __('details_2') }}</h3>
+                    <p class="text-xs text-slate-400 mt-0.5">{{ __('profile_details_desc') }}</p>
+                </div>
+            </div>
+
+            @php
+                $details = [
+                    ['label' => __('khmer_name'),      'icon' => 'fas fa-user',           'value' => $studentProfile?->full_name_km],
+                    ['label' => __('english_name'),    'icon' => 'fas fa-font',           'value' => $studentProfile?->full_name_en],
+                    ['label' => __('gender'),          'icon' => 'fas fa-venus-mars',      'value' => $studentProfile?->gender ? ($studentProfile->gender == 'male' ? __('male') : ($studentProfile->gender == 'female' ? __('female') : __('other'))) : null],
+                    ['label' => __('date_of_birth_2'), 'icon' => 'fas fa-calendar',        'value' => $studentProfile?->date_of_birth ? \Carbon\Carbon::parse($studentProfile->date_of_birth)->format('d M Y') : null],
+                    ['label' => __('phone'),           'icon' => 'fas fa-phone',          'value' => $studentProfile?->phone_number],
+                    ['label' => __('address'),          'icon' => 'fas fa-map-marker-alt',  'value' => $studentProfile?->address, 'full' => true],
+                ];
+            @endphp
+
+            {{-- minimal 2-column data grid --}}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                @foreach($details as $detail)
+                    <div class="{{ isset($detail['full']) ? 'md:col-span-2' : '' }} bg-slate-50 border border-slate-100 rounded-xl p-4 transition-colors hover:bg-slate-100/60">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-white text-emerald-600 shadow-sm flex items-center justify-center flex-shrink-0 text-xs">
+                                <i class="{{ $detail['icon'] }}"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-[11px] text-slate-400 font-semibold uppercase tracking-wide">{{ $detail['label'] }}</p>
+                                <p class="text-sm font-medium text-slate-800 mt-0.5 break-words leading-relaxed">{{ $detail['value'] ?? '-' }}</p>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+            {{-- academic info section --}}
+            @if($studentDepartmentEnrollment)
+                <div class="flex items-center gap-3 mt-8 mb-4">
+                    <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-graduation-cap text-sm"></i>
+                    </div>
+                    <h3 class="text-base font-semibold text-slate-800">{{ __('academic_info') }}</h3>
+                </div>
+
+                @php
+                    $academic = [
+                        ['icon' => 'fas fa-building-columns', 'label' => __('department'),    'value' => $departmentName],
+                        ['icon' => 'fas fa-university',       'label' => __('faculty'),       'value' => $facultyName],
+                        ['icon' => 'fas fa-medal',            'label' => __('degree_level_2'), 'value' => $studentDepartmentEnrollment->degree_level],
+                        ['icon' => 'fas fa-users',            'label' => __('generation'),     'value' => $user->generation ? 'G' . $user->generation : null],
+                        ['icon' => 'fas fa-layer-group',      'label' => __('academic_year'),  'value' => $computedYearLevel ? __('year') . $computedYearLevel : null],
+                    ];
+                @endphp
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    @foreach($academic as $item)
+                        <div class="bg-slate-50 border border-slate-100 rounded-xl p-4 transition-colors hover:bg-slate-100/60">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-white text-emerald-600 shadow-sm flex items-center justify-center flex-shrink-0 text-xs">
+                                    <i class="{{ $item['icon'] }}"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="text-[11px] text-slate-400 font-semibold uppercase tracking-wide">{{ $item['label'] }}</p>
+                                    <p class="text-sm font-medium text-slate-800 mt-0.5 break-words leading-relaxed">{{ $item['value'] ?? '-' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+
         </div>
     </div>
-
-    <script>
-        document.getElementById('profile-picture-container').addEventListener('click', function() {
-            document.getElementById('profile_picture').click();
-        });
-
-        document.getElementById('profile_picture').addEventListener('change', async function(e) {
-            var file = e.target.files[0];
-            var preview = document.getElementById('profile-picture-preview');
-            var placeholder = document.getElementById('profile-picture-placeholder');
-            var base64Input = document.getElementById('profile_picture_base64');
-
-            if (!file) return;
-
-            var dataUrl;
-            try {
-                dataUrl = await compressToBase64(file);
-            } catch (err) {
-                console.error('Compression failed:', err);
-                dataUrl = await readFileAsBase64(file);
-            }
-
-            base64Input.value = dataUrl;
-
-            if (preview) {
-                preview.src = dataUrl;
-            } else if (placeholder) {
-                var img = document.createElement('img');
-                img.src = dataUrl;
-                img.id = 'profile-picture-preview';
-                img.className = 'object-cover w-full h-full';
-                placeholder.replaceWith(img);
-            }
-        });
-
-        function readFileAsBase64(file) {
-            return new Promise(function(resolve, reject) {
-                var reader = new FileReader();
-                reader.onload = function(ev) { resolve(ev.target.result); };
-                reader.onerror = reject;
-                reader.readAsDataURL(file);
-            });
-        }
-
-        function compressToBase64(file) {
-            return new Promise(function(resolve, reject) {
-                var reader = new FileReader();
-                reader.onload = function(ev) {
-                    var img = new Image();
-                    img.onload = function() {
-                        var canvas = document.createElement('canvas');
-                        var ctx = canvas.getContext('2d');
-                        var w = img.width, h = img.height;
-                        if (w > 1920 || h > 1920) {
-                            var r = Math.min(1920 / w, 1920 / h);
-                            w = Math.round(w * r);
-                            h = Math.round(h * r);
-                        }
-                        canvas.width = w;
-                        canvas.height = h;
-                        ctx.drawImage(img, 0, 0, w, h);
-                        var quality = 0.8;
-                        function tryCompress() {
-                            canvas.toBlob(function(blob) {
-                                if (!blob) return reject('Canvas failed');
-                                if (blob.size <= 1024 * 1024 || quality <= 0.3) {
-                                    var fr = new FileReader();
-                                    fr.onload = function(ev) { resolve(ev.target.result); };
-                                    fr.onerror = reject;
-                                    fr.readAsDataURL(blob);
-                                    return;
-                                }
-                                quality -= 0.05;
-                                tryCompress();
-                            }, 'image/jpeg', quality);
-                        }
-                        tryCompress();
-                    };
-                    img.onerror = reject;
-                    img.src = ev.target.result;
-                };
-                reader.onerror = reject;
-                reader.readAsDataURL(file);
-            });
-        }
-    </script>
+</div>
+</div>
 </x-app-layout>

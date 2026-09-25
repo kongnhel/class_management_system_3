@@ -15,6 +15,7 @@ class ProfessorCourseOfferingController extends Controller
         $user = Auth::user();
         $courseOfferings = CourseOffering::where('lecturer_user_id', $user->id)
             ->with('course.department', 'lecturer')
+            ->withCount('studentCourseEnrollments')
             ->whereHas('course')
             ->paginate(10);
 

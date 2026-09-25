@@ -18,7 +18,7 @@
                         </div>
                         <div>
                             <h2 class="text-2xl font-bold text-slate-800 tracking-tight leading-none">{{ __('teaching_schedule') }}</h2>
-                            <p class="text-xs text-slate-500 font-medium mt-1 uppercase tracking-wider">My Teaching Schedule</p>
+                            <p class="text-xs text-slate-500 font-medium mt-1 uppercase tracking-wider">{{ __('My Teaching Schedule') }}</p>
                         </div>
                     </div>
                     
@@ -52,8 +52,13 @@
                     </div>
                 @else
                     @php
-                        $weekdayMap = ['Monday' => __('mon'), 'Tuesday' => __('tue'), 'Wednesday' => __('wed'), 'Thursday' => __('thu'), 'Friday' => __('fri')];
-                        $weekendMap = ['Saturday' => __('sat'), 'Sunday' => __('sun')];
+                        function toKhmerNumsScr($n) {
+                            $khmer = ['០','១','២','៣','៤','៥','៦','៧','៨','៩'];
+                            return str_replace(range(0,9), $khmer, $n);
+                        }
+
+                        $weekdayMap = ['Monday' => 'ចន្ទ/Monday', 'Tuesday' => 'អង្គារ/Tuesday', 'Wednesday' => 'ពុធ/Wednesday', 'Thursday' => 'ព្រហស្បតិ៍/Thursday', 'Friday' => 'សុក្រ/Friday'];
+                        $weekendMap = ['Saturday' => 'សៅរ៍/Saturday', 'Sunday' => 'អាទិត្យ/Sunday'];
 
                         $allSchedules = collect();
                         foreach ($courseOfferings as $offering) {
@@ -62,8 +67,8 @@
                                     'day_of_week' => $schedule->day_of_week,
                                     'start_time' => $schedule->start_time,
                                     'end_time' => $schedule->end_time,
-                                    'course_title_km' => $offering->course?->title_km ?? '',
-                                    'course_title_en' => $offering->course?->title_en ?? '',
+                                    'course_title' => $offering->course?->title_km ?? $offering->course?->title_en ?? 'N/A',
+                                    'lecturer_name' => $offering->lecturer?->name ?? '',
                                     'room_number' => $schedule->room?->room_number ?? '-',
                                 ]);
                             }
@@ -74,127 +79,149 @@
 
                         $weekdayRows = $weekdaySchedules->groupBy(fn($s) => \Carbon\Carbon::parse($s->start_time)->format('H:i') . '-' . \Carbon\Carbon::parse($s->end_time)->format('H:i'))->sortKeys();
                         $weekendTimeSlots = $weekendSchedules->map(fn($s) => \Carbon\Carbon::parse($s->start_time)->format('H:i') . '-' . \Carbon\Carbon::parse($s->end_time)->format('H:i'))->unique()->sort();
+
+                        $firstOffering = $courseOfferings->first();
+                        $deptName = $firstOffering?->department?->name_km;
+                        $facultyName = $firstOffering?->department?->faculty?->name_km;
+                        $generationKh = toKhmerNumsScr($firstOffering?->generation ?? '');
+                        $yearKh = toKhmerNumsScr($academicYear ?? '');
                     @endphp
 
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                        <div class="p-6">
-                            {{-- Header --}}
-                            <div class="grid grid-cols-3 items-start gap-4 border-b-2 border-black pb-4 mb-4 text-center">
-                                <div class="flex flex-col items-center">
-                                    <img src="{{ asset('assets/image/nmu_Logo.png') }}" alt="Logo" class="w-20 h-20 object-contain">
-                                    <h3 class="text-sm font-bold text-blue-700 mt-1" style="font-family: 'Moul', serif;">{{ __('national_meanchey_university') }}</h3>
-                                    <h3 class="text-sm font-bold text-blue-700" style="font-family: 'Moul', serif;">{{ __('academic_office') }}</h3>
-                                </div>
-                                <div class="flex flex-col items-center">
-                                    <h2 class="text-base font-bold" style="font-family: 'Moul', serif;">{{ __('kingdom_of_cambodia') }}</h2>
-                                    <h2 class="text-base font-bold" style="font-family: 'Moul', serif;">{{ __('nation_religion_king') }}</h2>
-                                    <img src="{{ asset('assets/image/2.png') }}" alt="motto" class="h-7 mx-auto mt-1">
-                                </div>
-                                <div></div>
+                    {{-- screen document styles (admin print mirror) --}}
+                    <style>
+                        .schedule-doc .header-print-layout { display: flex; align-items: flex-start; position: relative; width: 100%; margin-bottom: 15px; }
+                        .schedule-doc .uni-logo-text { text-align: center; display: flex; flex-direction: column; align-items: center; padding-left: 10px; }
+                        .schedule-doc .uni-logo-text img { width: 95px; height: auto; margin: 0 auto 5px auto; }
+                        .schedule-doc .uni-logo-text h3 { font-family: 'Moul', serif; font-size: 11pt; color: black; margin: 2px 0; line-height: 1.4; font-weight: normal; white-space: nowrap; }
+                        .schedule-doc .kingdom-header { position: absolute; left: 50%; transform: translateX(-50%); text-align: center; top: 0; }
+                        .schedule-doc .kingdom-header h2 { font-family: 'Moul', serif; font-size: 13pt; margin: 2px 0; color: black; line-height: 1.4; font-weight: normal; }
+                        .schedule-doc .kingdom-header img { width: 130px; height: auto; margin: 4px auto 0 auto; display: block; }
+                        .schedule-doc .schedule-title-block { text-align: center; margin-top: 15px; margin-bottom: 20px; }
+                        .schedule-doc .schedule-title-block h1 { font-family: 'Moul', serif; font-size: 12pt; margin: 5px 0; color: black; font-weight: normal; }
+                        .schedule-doc .schedule-title-block p { font-size: 10.5pt; margin: 3px 0; color: black; line-height: 1.5; }
+                        .schedule-doc .specialty-title { text-align: left; font-weight: bold; font-family: 'Battambang', sans-serif; font-size: 11pt; margin-bottom: 6px; text-decoration: underline; text-underline-offset: 3px; }
+                        .schedule-doc .matrix-table { width: 100%; border-collapse: collapse; border: 1.5pt solid black; margin-bottom: 20px; }
+                        .schedule-doc .matrix-table th, .schedule-doc .matrix-table td { border: 1pt solid black; padding: 6px 4px; text-align: center; vertical-align: middle; color: black; }
+                        .schedule-doc .matrix-table th { font-size: 10pt; font-family: 'Battambang', sans-serif; font-weight: bold; background-color: transparent; }
+                        .schedule-doc .matrix-table td { font-size: 9.5pt; line-height: 1.4; height: 45px; }
+                        .schedule-doc .cell-subject { font-weight: bold; display: block; margin-bottom: 2px; }
+                        .schedule-doc .cell-lecturer { display: block; margin-bottom: 2px; }
+                        .schedule-doc .cell-room { display: block; font-weight: bold; }
+                        .schedule-doc .f-sigs { display: flex; justify-content: space-between; margin-top: 20px; padding: 0 10px 15px; }
+                        .schedule-doc .sig-block-left { text-align: center; width: 40%; }
+                        .schedule-doc .sig-block-right { text-align: center; width: 45%; }
+                        .schedule-doc .sig-title-moul { font-family: 'Moul', serif; font-size: 11pt; margin-bottom: 4px; font-weight: normal; }
+                        .schedule-doc .sig-date-kh { font-size: 11pt; font-family: 'Battambang', sans-serif; margin-bottom: 4px; }
+                        .schedule-doc .sig-spacer { height: 80px; }
+                    </style>
+
+                    {{-- SCREEN DOCUMENT (admin print mirror) --}}
+                    <div class="schedule-doc bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-10">
+
+                        {{-- Header Layout --}}
+                        <div class="header-print-layout">
+                            <div class="kingdom-header">
+                                <h2>{{ __('kingdom_of_cambodia') }}</h2>
+                                <h2>{{ __('nation_religion_king') }}</h2>
+                                <img src="{{ asset('assets/image/2.png') }}" alt="Line">
                             </div>
 
-                            <div class="text-center mb-4">
-                                <h1 class="text-lg font-bold" style="font-family: 'Moul', serif;">{{ __('weekly_analysis_timetable') }}{{ $semester }}</h1>
-                                <p class="text-sm font-bold mt-1">{{ __('academic_year') }} {{ $academicYear }}</p>
+                            <div class="uni-logo-text">
+                                <img src="{{ asset('assets/image/nmu_Logo.png') }}" alt="Logo">
+                                <h3>{{ __('national_meanchey_university') }}</h3>
+                                <h3>{{ __('academic_office') }}</h3>
                             </div>
+                        </div>
 
-                            {{-- Weekday Table --}}
-                            @if($weekdayRows->isNotEmpty())
-                                <div class="mb-5">
-                                    <div class="text-left font-bold underline text-sm mb-1">{{ __('shift_mon_fri') }} (Mon-Fri)</div>
-                                    <div class="overflow-x-auto">
-                                        <table class="w-full border-collapse border border-black text-sm">
-                                            <thead>
-                                                <tr>
-                                                    <th class="border border-black px-2 py-1 bg-slate-100" style="font-family: 'Moul', serif; width: 12%;">{{ __('class_hours') }}</th>
-                                                    @foreach($weekdayMap as $label)
-                                                        <th class="border border-black px-2 py-1 bg-slate-100" style="font-family: 'Moul', serif;">{{ $label }}</th>
-                                                    @endforeach
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach($weekdayRows as $slot => $slots)
-                                                <tr>
-                                                    <td class="border border-black px-2 py-1 text-center font-bold bg-slate-50">{{ $slot }}</td>
-                                                    @foreach($weekdayMap as $dayKey => $label)
-                                                        <td class="border border-black px-2 py-1 text-center">
-                                                            @php $class = $slots->where('day_of_week', $dayKey)->first(); @endphp
-                                                            @if($class)
-                                                                <div class="flex flex-col gap-0.5">
-                                                                    <span class="font-bold">{{ $class->course_title_km }}</span>
-                                                                    <span class="text-xs">{{ __('room') }} {{ $class->room_number }}</span>
-                                                                </div>
-                                                            @endif
-                                                        </td>
-                                                    @endforeach
-                                                </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            @endif
+                        {{-- Schedule Title --}}
+                        <div class="schedule-title-block">
+                            <h1>កាលវិភាគប្រចាំឆមាសទី{{ $semesterNum }} / Timetable Semester {{ $semesterNum }}</h1>
+                            <p>ជំនាន់ទី{{ $generationKh }} {{ $facultyName }} ឆ្នាំសិក្សា {{ $yearKh }}</p>
+                            <p>ចាប់ផ្តើមពីថ្ងៃ................................................................................. វេនសិក្សា ចន្ទ-សុក្រ</p>
+                        </div>
 
-                            {{-- Weekend Table --}}
-                            @if($weekendSchedules->isNotEmpty())
-                                <div class="mb-5">
-                                    <div class="text-left font-bold underline text-sm mb-1">{{ __('shift_sat_sun') }} (Sat-Sun)</div>
-                                    <div class="overflow-x-auto">
-                                        <table class="w-full border-collapse border border-black text-sm">
-                                            <thead>
-                                                <tr>
-                                                    <th class="border border-black px-2 py-1 bg-slate-100" style="font-family: 'Moul', serif; width: 12%;">{{ __('class_day') }}</th>
-                                                    @foreach($weekendTimeSlots as $time)
-                                                        <th class="border border-black px-2 py-1 bg-slate-100" style="font-family: 'Moul', serif;">{{ $time }}</th>
-                                                    @endforeach
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach($weekendMap as $dayKey => $label)
-                                                <tr>
-                                                    <td class="border border-black px-2 py-1 text-center font-bold bg-slate-50">{{ $label }}</td>
-                                                    @foreach($weekendTimeSlots as $time)
-                                                        <td class="border border-black px-2 py-1 text-center">
-                                                            @php
-                                                                $class = $weekendSchedules->filter(function($s) use ($dayKey, $time) {
-                                                                    $slot = \Carbon\Carbon::parse($s->start_time)->format('H:i') . '-' . \Carbon\Carbon::parse($s->end_time)->format('H:i');
-                                                                    return $s->day_of_week === $dayKey && $slot === $time;
-                                                                })->first();
-                                                            @endphp
-                                                            @if($class)
-                                                                <div class="flex flex-col gap-0.5">
-                                                                    <span class="font-bold">{{ $class->course_title_km }}</span>
-                                                                    <span class="text-xs">{{ __('room') }} {{ $class->room_number }}</span>
-                                                                </div>
-                                                            @endif
-                                                        </td>
-                                                    @endforeach
-                                                </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            @endif
+                        {{-- Weekday Matrix --}}
+                        @if($weekdayRows->isNotEmpty())
+                            <div class="specialty-title">ជំនាញ៖ {{ $deptName }}</div>
+                            <table class="matrix-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 14%;">{{ __('class_hours') }}</th>
+                                        @foreach($weekdayMap as $dayLabel)
+                                            <th>{{ $dayLabel }}</th>
+                                        @endforeach
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($weekdayRows as $slot => $slots)
+                                        <tr>
+                                            <td style="font-weight: bold;">{{ $slot }}</td>
+                                            @foreach($weekdayMap as $dayKey => $dayLabel)
+                                                <td>
+                                                    @php $class = $slots->where('day_of_week', $dayKey)->first(); @endphp
+                                                    @if($class)
+                                                        <span class="cell-subject">{{ $class->course_title }}</span>
+                                                        <span class="cell-lecturer">លោក {{ str_replace('Mr. ', '', $class->lecturer_name) }}</span>
+                                                        <span class="cell-room">បន្ទប់ {{ $class->room_number }}</span>
+                                                    @endif
+                                                </td>
+                                            @endforeach
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        @endif
 
-                            {{-- Footer Signature --}}
-                            <div class="flex justify-between mt-6">
-                                <div class="text-left w-1/2 pl-2">
-                                    <div class="text-sm font-bold">{{ __('seen_and_approved') }}</div>
-                                    <div class="text-sm" style="font-family: 'Moul', serif;">{{ __('vice_rector') }}</div>
-                                    <div class="text-sm" style="font-family: 'Moul', serif;">{{ __('deputy_vice_rector') }}</div>
-                                    <div class="h-16"></div>
-                                </div>
-                                @php
-                                    $now = now();
-                                    $khmerMonths = [1=>__('january'),2=>__('february'),3=>__('march'),4=>__('april'),5=>__('may'),6=>__('june'),7=>__('july'),8=>__('august'),9=>__('september'),10=>__('october'),11=>__('november'),12=>__('december')];
-                                    function toKhmerNumsScr($n) { return str_replace(range(0,9), ['០','១','២','៣','៤','៥','៦','៧','៨','៩'], $n); }
-                                @endphp
-                                <div class="text-right w-1/2 pr-2">
-                                    <div class="text-xs">{{ __('day') }}{{ toKhmerNumsScr($now->format('d')) }} {{ __('month') }}{{ $khmerMonths[$now->month] }} {{ __('years') }}{{ toKhmerNumsScr((string)$now->year) }}</div>
-                                    <div class="text-sm mt-1" style="font-family: 'Moul', serif;">ប្រធាន{{ __('academic_office') }}</div>
-                                    <div class="h-16"></div>
-                                </div>
+                        {{-- Weekend Matrix --}}
+                        @if($weekendSchedules->isNotEmpty())
+                            <div class="specialty-title">ជំនាញ៖ {{ $deptName }} (សៅរ៍-អាទិត្យ)</div>
+                            <table class="matrix-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 14%;">{{ __('class_hours') }}</th>
+                                        @foreach($weekendTimeSlots as $timeSlot)
+                                            <th>{{ toKhmerNumsScr($timeSlot) }}</th>
+                                        @endforeach
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($weekendMap as $dayKey => $dayLabel)
+                                        <tr>
+                                            <td style="font-weight: bold;">{{ $dayLabel }}</td>
+                                            @foreach($weekendTimeSlots as $time)
+                                                <td>
+                                                    @php
+                                                        $class = $weekendSchedules->filter(function($s) use ($dayKey, $time) {
+                                                            $slot = \Carbon\Carbon::parse($s->start_time)->format('H:i') . '-' . \Carbon\Carbon::parse($s->end_time)->format('H:i');
+                                                            return $s->day_of_week === $dayKey && $slot === $time;
+                                                        })->first();
+                                                    @endphp
+                                                    @if($class)
+                                                        <span class="cell-subject">{{ $class->course_title }}</span>
+                                                        <span class="cell-lecturer">លោក {{ str_replace('Mr. ', '', $class->lecturer_name) }}</span>
+                                                        <span class="cell-room">បន្ទប់ {{ $class->room_number }}</span>
+                                                    @endif
+                                                </td>
+                                            @endforeach
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        @endif
+
+                        {{-- Footer Signatures --}}
+                        <div class="f-sigs">
+                            <div class="sig-block-left">
+                                <div class="sig-title-moul">{{ __('seen_and_approved') }}</div>
+                                <div class="sig-title-moul">{{ __('vice_rector') }}</div>
+                                <div class="sig-title-moul" style="margin-top: 0;">{{ __('deputy_vice_rector') }}</div>
+                                <div class="sig-spacer"></div>
+                            </div>
+                            <div class="sig-block-right">
+                                <div class="sig-date-kh">ថ្ងៃ........................... ខែ...................... ឆ្នាំ...................... ព.ស ២៥៦...</div>
+                                <div class="sig-date-kh">បន្ទាយមានជ័យ ថ្ងៃទី........... ខែ........... ឆ្នាំ២០២...</div>
+                                <div class="sig-title-moul" style="margin-top: 8px;">ប្រធាន{{ __('academic_office') }}</div>
+                                <div class="sig-spacer"></div>
                             </div>
                         </div>
                     </div>

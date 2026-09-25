@@ -394,7 +394,7 @@ class ProfessorController extends Controller
         }
 
         $courseOfferings = CourseOffering::where('lecturer_user_id', $user->id)
-            ->with(['course', 'schedules'])
+            ->with(['course', 'department.faculty', 'schedules.room', 'lecturer'])
             ->get();
 
         $semester = $courseOfferings->first()?->semester ?? 'ឆមាសទី១';

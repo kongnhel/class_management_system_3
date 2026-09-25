@@ -72,7 +72,7 @@
                                        max="15" 
                                        min="0"
                                        value="{{ old('score', $enrollment->attendance_score_manual) }}"
-                                       placeholder="ឧទាហរណ៍៖ 14.5"
+                                       placeholder="{{ __('example_14_5') }}"
                                        class="w-full bg-slate-50 border-2 border-slate-100 rounded-[2rem] p-6 text-2xl font-black text-slate-800 focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all outline-none">
                                 <div class="absolute right-6 top-1/2 -translate-y-1/2 text-slate-300 font-bold group-focus-within:text-emerald-500">
                                     / 15

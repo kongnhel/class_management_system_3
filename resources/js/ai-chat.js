@@ -5,6 +5,7 @@
     const currentUserName = typeof CURRENT_USER_NAME !== 'undefined' ? CURRENT_USER_NAME : '';
     const csrfToken = typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : '';
     const routes = typeof AI_ROUTES !== 'undefined' ? AI_ROUTES : {};
+    const T = typeof window.I18N !== 'undefined' ? window.I18N : {};
 
     let lastMessageId = 0;
     let currentAbortController = null;
@@ -65,9 +66,9 @@
         activeBtn.classList.add(...activeClass.split(' '));
 
         const placeholders = {
-            info: 'សួរអំពីព័ត៌មានវត្តមាន និងទិន្នន័យ...',
-            search: 'ស្វែងរកសិស្ស សាស្ត្រាចារ្យ មុខវិជ្ជា ព័ត៌មានសាលា...',
-            process: 'សួរអំពីរបៀបប្រើប្រាស់ប្រព័ន្ធ...',
+            info: T.ai_ph_info,
+            search: T.ai_ph_search,
+            process: T.ai_ph_process,
         };
         userInput.placeholder = placeholders[option];
     };
@@ -127,7 +128,7 @@
         const chatBox = document.getElementById('chat-box');
         if (!chatBox) return;
 
-        chatBox.innerHTML = '<div class="flex justify-center py-8"><span class="text-gray-400">កំពុងផ្ទុកប្រវត្តិសន្ទនា...</span></div>';
+        chatBox.innerHTML = `<div class="flex justify-center py-8"><span class="text-gray-400">${T.ai_loading_history}</span></div>`;
 
         try {
             const response = await fetch(routes.history);
@@ -154,22 +155,22 @@
         let quickActions = '';
         if (userRole === 'admin') {
             quickActions = `
-                <button onclick="sendQuickQuery('តើមានសិស្សប៉ុន្មាននាក់ក្នុងប្រព័ន្ធ?', 'search')" class="text-[11px] bg-emerald-50 border border-emerald-100 text-emerald-700 px-3 py-2 rounded-full hover:bg-emerald-100 transition-all">🔍 ស្វែងរកសិស្ស</button>
-                <button onclick="sendQuickQuery('តើមានសាស្ត្រាចារ្យប៉ុន្មាននាក់?', 'search')" class="text-[11px] bg-emerald-50 border border-emerald-100 text-emerald-700 px-3 py-2 rounded-full hover:bg-emerald-100 transition-all">👨‍🏫 សាស្ត្រាចារ្យ</button>
-                <button onclick="sendQuickQuery('មុខវិជ្ជាទាំងអស់ក្នុងសាលា', 'search')" class="text-[11px] bg-emerald-50 border border-emerald-100 text-emerald-700 px-3 py-2 rounded-full hover:bg-emerald-100 transition-all">📚 មុខវិជ្ជា</button>
-                <button onclick="sendQuickQuery('ព័ត៌មានសាកលវិទ្យាល័យជាតិមានជ័យ', 'search')" class="text-[11px] bg-blue-50 border border-blue-100 text-blue-700 px-3 py-2 rounded-full hover:bg-blue-100 transition-all">🏛️ NMU Info</button>`;
+                <button onclick="sendQuickQuery('តើមានសិស្សប៉ុន្មាននាក់ក្នុងប្រព័ន្ធ?', 'search')" class="text-[11px] bg-emerald-50 border border-emerald-100 text-emerald-700 px-3 py-2 rounded-full hover:bg-emerald-100 transition-all">🔍 ${T.ai_qa_search_students}</button>
+                <button onclick="sendQuickQuery('តើមានសាស្ត្រាចារ្យប៉ុន្មាននាក់?', 'search')" class="text-[11px] bg-emerald-50 border border-emerald-100 text-emerald-700 px-3 py-2 rounded-full hover:bg-emerald-100 transition-all">👨‍🏫 ${T.ai_qa_professors}</button>
+                <button onclick="sendQuickQuery('មុខវិជ្ជាទាំងអស់ក្នុងសាលា', 'search')" class="text-[11px] bg-emerald-50 border border-emerald-100 text-emerald-700 px-3 py-2 rounded-full hover:bg-emerald-100 transition-all">📚 ${T.ai_qa_courses}</button>
+                <button onclick="sendQuickQuery('ព័ត៌មានសាកលវិទ្យាល័យជាតិមានជ័យ', 'search')" class="text-[11px] bg-blue-50 border border-blue-100 text-blue-700 px-3 py-2 rounded-full hover:bg-blue-100 transition-all">🏛️ ${T.ai_qa_nmu_info}</button>`;
         } else if (userRole === 'professor') {
             quickActions = `
-                <button onclick="sendQuickQuery('បង្ហាញថ្នាក់ទាំងអស់របស់ខ្ញុំ', 'search')" class="text-[11px] bg-green-50 border border-green-100 text-green-700 px-3 py-2 rounded-full hover:bg-green-100 transition-all">📚 ថ្នាក់របស់ខ្ញុំ</button>
-                <button onclick="sendQuickQuery('សិស្សក្នុងថ្នាក់របស់ខ្ញុំ', 'search')" class="text-[11px] bg-green-50 border border-green-100 text-green-700 px-3 py-2 rounded-full hover:bg-green-100 transition-all">👨‍🎓 សិស្សរបស់ខ្ញុំ</button>
-                <button onclick="sendQuickQuery('តើខ្ញុំត្រូវស្រង់វត្តមានយ៉ាងដូចម្តេច?', 'process')" class="text-[11px] bg-green-50 border border-green-100 text-green-700 px-3 py-2 rounded-full hover:bg-green-100 transition-all">📝 របៀបស្រង់វត្តមាន</button>
-                <button onclick="sendQuickQuery('ព័ត៌មានសាកលវិទ្យាល័យ', 'search')" class="text-[11px] bg-blue-50 border border-blue-100 text-blue-700 px-3 py-2 rounded-full hover:bg-blue-100 transition-all">🏛️ NMU Info</button>`;
+                <button onclick="sendQuickQuery('បង្ហាញថ្នាក់ទាំងអស់របស់ខ្ញុំ', 'search')" class="text-[11px] bg-green-50 border border-green-100 text-green-700 px-3 py-2 rounded-full hover:bg-green-100 transition-all">📚 ${T.ai_qa_my_classes}</button>
+                <button onclick="sendQuickQuery('សិស្សក្នុងថ្នាក់របស់ខ្ញុំ', 'search')" class="text-[11px] bg-green-50 border border-green-100 text-green-700 px-3 py-2 rounded-full hover:bg-green-100 transition-all">👨‍🎓 ${T.ai_qa_my_students}</button>
+                <button onclick="sendQuickQuery('តើខ្ញុំត្រូវស្រង់វត្តមានយ៉ាងដូចម្តេច?', 'process')" class="text-[11px] bg-green-50 border border-green-100 text-green-700 px-3 py-2 rounded-full hover:bg-green-100 transition-all">📝 ${T.ai_qa_attendance_how}</button>
+                <button onclick="sendQuickQuery('ព័ត៌មានសាកលវិទ្យាល័យ', 'search')" class="text-[11px] bg-blue-50 border border-blue-100 text-blue-700 px-3 py-2 rounded-full hover:bg-blue-100 transition-all">🏛️ ${T.ai_qa_nmu_info}</button>`;
         } else if (userRole === 'student') {
             quickActions = `
-                <button onclick="sendQuickQuery('ពិន្ទុរបស់ខ្ញុំ', 'search')" class="text-[11px] bg-purple-50 border border-purple-100 text-purple-700 px-3 py-2 rounded-full hover:bg-purple-100 transition-all">📊 ពិន្ទុរបស់ខ្ញុំ</button>
-                <button onclick="sendQuickQuery('វត្តមានរបស់ខ្ញុំ', 'search')" class="text-[11px] bg-purple-50 border border-purple-100 text-purple-700 px-3 py-2 rounded-full hover:bg-purple-100 transition-all">🙋 វត្តមានរបស់ខ្ញុំ</button>
-                <button onclick="sendQuickQuery('កាលវិភាគសិក្សារបស់ខ្ញុំ', 'search')" class="text-[11px] bg-purple-50 border border-purple-100 text-purple-700 px-3 py-2 rounded-full hover:bg-purple-100 transition-all">📅 កាលវិភាគរៀន</button>
-                <button onclick="sendQuickQuery('ព័ត៌មានសាកលវិទ្យាល័យ', 'search')" class="text-[11px] bg-blue-50 border border-blue-100 text-blue-700 px-3 py-2 rounded-full hover:bg-blue-100 transition-all">🏛️ NMU Info</button>`;
+                <button onclick="sendQuickQuery('ពិន្ទុរបស់ខ្ញុំ', 'search')" class="text-[11px] bg-purple-50 border border-purple-100 text-purple-700 px-3 py-2 rounded-full hover:bg-purple-100 transition-all">📊 ${T.ai_qa_my_grades}</button>
+                <button onclick="sendQuickQuery('វត្តមានរបស់ខ្ញុំ', 'search')" class="text-[11px] bg-purple-50 border border-purple-100 text-purple-700 px-3 py-2 rounded-full hover:bg-purple-100 transition-all">🙋 ${T.ai_qa_my_attendance}</button>
+                <button onclick="sendQuickQuery('កាលវិភាគសិក្សារបស់ខ្ញុំ', 'search')" class="text-[11px] bg-purple-50 border border-purple-100 text-purple-700 px-3 py-2 rounded-full hover:bg-purple-100 transition-all">📅 ${T.ai_qa_my_schedule}</button>
+                <button onclick="sendQuickQuery('ព័ត៌មានសាកលវិទ្យាល័យ', 'search')" class="text-[11px] bg-blue-50 border border-blue-100 text-blue-700 px-3 py-2 rounded-full hover:bg-blue-100 transition-all">🏛️ ${T.ai_qa_nmu_info}</button>`;
         }
 
         chatBox.innerHTML = `
@@ -179,9 +180,9 @@
                         <span class="text-xs font-bold">NMU</span>
                     </div>
                     <div class="bg-white border border-gray-100 text-gray-700 p-5 rounded-2xl rounded-tl-none shadow-sm text-base leading-relaxed">
-                        សួស្តី <strong>${currentUserName}</strong>! 👋<br>
-                        ខ្ញុំជា <strong>NMU Smart Assistant</strong>។ ខ្ញុំអាចជួយអ្នករកទិន្នន័យក្នុងប្រព័ន្ធ និងព័ត៌មានពីសាកលវិទ្យាល័យជាតិមានជ័យ។<br><br>
-                        <span class="text-xs text-gray-400">ជ្រើសរើស <strong>ស្វែងរក</strong> ដើម្បីស្វែងរកទិន្នន័យក្នុង Database និងគេហទំព័រសាលា។</span>
+                        ${T.ai_welcome_hello} <strong>${currentUserName}</strong>! 👋<br>
+                        ${T.ai_welcome_intro}<br><br>
+                        <span class="text-xs text-gray-400">${T.ai_welcome_hint}</span>
                         <div class="flex flex-wrap gap-2 mt-4">${quickActions}</div>
                     </div>
                 </div>
@@ -216,10 +217,10 @@
                         <div class="flex flex-col">
                             <div class="bg-white border border-gray-100 text-gray-800 p-5 rounded-2xl rounded-tl-none shadow-sm prose prose-sm prose-green max-w-full text-base leading-relaxed msg-content">${marked.parse(safeText)}</div>
                             <div class="flex items-center space-x-3 mt-2 ml-1">
-                                <button onclick="copyMessage(this)" class="text-gray-400 hover:text-green-600 transition-colors text-xs" title="Copy"><i class="fas fa-copy"></i></button>
+                                <button onclick="copyMessage(this)" class="text-gray-400 hover:text-green-600 transition-colors text-xs" title="${T.ai_copy}"><i class="fas fa-copy"></i></button>
                                 ${msgId ? `
-                                <button onclick="sendFeedback(${msgId}, 'up')" class="feedback-btn feedback-up text-gray-400 hover:text-green-600 transition-colors text-xs" title="Good"><i class="fas fa-thumbs-up"></i></button>
-                                <button onclick="sendFeedback(${msgId}, 'down')" class="feedback-btn feedback-down text-gray-400 hover:text-red-500 transition-colors text-xs" title="Bad"><i class="fas fa-thumbs-down"></i></button>
+                                <button onclick="sendFeedback(${msgId}, 'up')" class="feedback-btn feedback-up text-gray-400 hover:text-green-600 transition-colors text-xs" title="${T.ai_good}"><i class="fas fa-thumbs-up"></i></button>
+                                <button onclick="sendFeedback(${msgId}, 'down')" class="feedback-btn feedback-down text-gray-400 hover:text-red-500 transition-colors text-xs" title="${T.ai_bad}"><i class="fas fa-thumbs-down"></i></button>
                                 ` : ''}
                                 <span class="text-[10px] text-gray-400 italic font-medium">NMU Smart Assistant</span>
                                 <span class="text-[10px] text-gray-400">•</span>
@@ -255,7 +256,7 @@
     window.confirmClearHistory = async function() {
         hideConfirmModal();
         const chatBox = document.getElementById('chat-box');
-        chatBox.innerHTML = '<div class="flex justify-center py-12"><span class="text-red-500">កំពុងលុបប្រវត្តិ...</span></div>';
+        chatBox.innerHTML = `<div class="flex justify-center py-12"><span class="text-red-500">${T.ai_deleting}</span></div>`;
 
         try {
             const response = await fetch(routes['clear-history'], {
@@ -266,13 +267,13 @@
             if (response.ok) {
                 chatBox.innerHTML = '';
                 appendWelcomeMessage();
-                if (typeof showToast === 'function') showToast('ប្រវត្តិត្រូវបានលុប។', 'success');
+                if (typeof showToast === 'function') showToast(T.ai_history_deleted, 'success');
             } else {
                 throw new Error();
             }
         } catch (e) {
             console.error(e);
-            if (typeof showToast === 'function') showToast("មានបញ្ហាក្នុងការលុបប្រវត្តិ។", 'error');
+            if (typeof showToast === 'function') showToast(T.ai_delete_failed, 'error');
             loadChatHistory();
         }
     };
@@ -311,11 +312,11 @@
                     messageInput.focus();
 
                     if (response.status === 429) {
-                        appendMessage('ai', data.message || 'សូមរង់ចាំមួយភ្លែត។');
+                        appendMessage('ai', data.message || T.ai_please_wait);
                     } else if (response.ok) {
-                        appendMessage('ai', data.message || 'សុំទោស មានបញ្ហា។', true, data.message_id);
+                        appendMessage('ai', data.message || T.ai_error_generic, true, data.message_id);
                     } else {
-                        appendMessage('ai', data.message || 'សុំទោស មានបញ្ហាបច្ចេកទេស។');
+                        appendMessage('ai', data.message || T.ai_error_technical);
                     }
                 } catch (error) {
                     currentAbortController = null;
@@ -324,9 +325,9 @@
                     messageInput.focus();
 
                     if (error.name === 'AbortError') {
-                        appendMessage('ai', '_(ការឆ្លើយតបត្រូវបានឈប់។)_');
+                        appendMessage('ai', T.ai_response_stopped);
                     } else {
-                        appendMessage('ai', 'មិនអាចភ្ជាប់ទៅ AI បានទេ។ សូមព្យាយាមម្តងទៀត។');
+                        appendMessage('ai', T.ai_connect_failed);
                     }
                 }
             });

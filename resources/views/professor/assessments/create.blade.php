@@ -54,7 +54,7 @@
                                     <div class="group">
                                         <label class="flex items-center gap-2 text-[11px] font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-                                            ប្រភេទការវាយតម្លៃ <span class="text-rose-500">*</span>
+                                            {{ __('assessment_type') }} <span class="text-rose-500">*</span>
                                         </label>
                                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="typeGrid">
                                             {{-- Midterm Exam --}}
@@ -63,7 +63,7 @@
                                                     data-type="midterm" data-title-km="ប្រឡងពាក់កណ្ដាល់ឆមាស" data-title-en="Midterm Exam"
                                                     data-grading="Midterm Exam" data-icon="📝" data-color="amber" data-default-score="100">
                                                 <span class="text-2xl block mb-1">📝</span>
-                                                <span class="text-[10px] font-bold text-gray-600 group-hover:text-amber-700 uppercase leading-tight block">ប្រឡងពាក់កណ្ដាល់ឆមាស</span>
+                                                <span class="text-[10px] font-bold text-gray-600 group-hover:text-amber-700 uppercase leading-tight block">{{ __('midterm_exam') }}</span>
                                                 <span class="text-[9px] text-gray-400 block mt-1">Midterm Exam</span>
                                                 <span class="text-[9px] font-black text-amber-500 block mt-1">15%</span>
                                             </button>
@@ -73,7 +73,7 @@
                                                     data-type="assignment" data-title-km="កិច្ចការស្រាវជ្រាវ" data-title-en="Group Assignment"
                                                     data-grading="Group Assignment" data-icon="📋" data-color="blue" data-default-score="100">
                                                 <span class="text-2xl block mb-1">📋</span>
-                                                <span class="text-[10px] font-bold text-gray-600 group-hover:text-emerald-700 uppercase leading-tight block">កិច្ចការស្រាវជ្រាវ</span>
+                                                <span class="text-[10px] font-bold text-gray-600 group-hover:text-emerald-700 uppercase leading-tight block">{{ __('group_assignment') }}</span>
                                                 <span class="text-[9px] text-gray-400 block mt-1">Group Assignment</span>
                                                 <span class="text-[9px] font-black text-emerald-500 block mt-1">20%</span>
                                             </button>
@@ -83,7 +83,7 @@
                                                     data-type="final" data-title-km="ប្រឡងប្រចាំឆមាស" data-title-en="Final Exam"
                                                     data-grading="Final Exam" data-icon="🎓" data-color="rose" data-default-score="100">
                                                 <span class="text-2xl block mb-1">🎓</span>
-                                                <span class="text-[10px] font-bold text-gray-600 group-hover:text-rose-700 uppercase leading-tight block">ប្រឡងប្រចាំឆមាស</span>
+                                                <span class="text-[10px] font-bold text-gray-600 group-hover:text-rose-700 uppercase leading-tight block">{{ __('final_exam_label') }}</span>
                                                 <span class="text-[9px] text-gray-400 block mt-1">Final Exam</span>
                                                 <span class="text-[9px] font-black text-rose-500 block mt-1">50%</span>
                                             </button>
@@ -93,7 +93,7 @@
                                                     data-type="quiz" data-title-km="កម្រងសំណួរ" data-title-en="Quiz"
                                                     data-grading="" data-icon="⚡" data-color="purple" data-default-score="20">
                                                 <span class="text-2xl block mb-1">⚡</span>
-                                                <span class="text-[10px] font-bold text-gray-600 group-hover:text-purple-700 uppercase leading-tight block">កម្រងសំណួរ</span>
+                                                <span class="text-[10px] font-bold text-gray-600 group-hover:text-purple-700 uppercase leading-tight block">{{ __('quiz') }}</span>
                                                 <span class="text-[9px] text-gray-400 block mt-1">Quiz</span>
                                                 <span class="text-[9px] font-black text-purple-500 block mt-1">Optional</span>
                                             </button>
@@ -129,7 +129,7 @@
                                         <div class="group">
                                             <label for="max_score" class="flex items-center gap-2 text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
-                                                ពិន្ទុអតិបរមា <span class="text-rose-500">*</span>
+                                                {{ __('maximum_score') }} <span class="text-rose-500">*</span>
                                             </label>
                                             <input type="number" name="max_score" id="max_score" value="{{ old('max_score', 100) }}" required min="1"
                                                    class="w-full bg-gray-50 border-gray-200 focus:bg-white focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 rounded-xl py-3.5 px-5 transition-all font-bold text-gray-700">
@@ -151,11 +151,11 @@
                                 <div class="mt-10 pt-8 border-t border-gray-100 flex flex-col-reverse sm:flex-row gap-3 sm:justify-end">
                                     <a wire:navigate href="{{ route('professor.manage-grades', ['offering_id' => $courseOffering->id]) }}"
                                        class="w-full sm:w-auto inline-flex justify-center items-center px-8 py-3.5 border border-gray-200 text-sm font-bold rounded-xl text-gray-500 bg-white hover:bg-gray-50 transition-all active:scale-95">
-                                        បោះបង់
+                                        {{ __('cancel_2') }}
                                     </a>
                                     <button type="submit" id="submitBtn" disabled
                                             class="w-full sm:w-auto inline-flex justify-center items-center px-10 py-3.5 border border-transparent text-sm font-bold rounded-xl shadow-xl shadow-emerald-100 text-white bg-emerald-400 cursor-not-allowed transition-all transform disabled:active:scale-100">
-                                        រក្សាទុកការវាយតម្លៃ
+                                        {{ __('save_assessment') }}
                                     </button>
                                 </div>
                             </form>
@@ -171,13 +171,13 @@
                         <div class="px-5 py-4 border-b border-gray-100 bg-gray-50/50">
                             <h3 class="text-[11px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                                មើលជាមុន
+                                {{ __('preview') }}
                             </h3>
                         </div>
                         <div class="p-5">
                             <div id="previewCard" class="space-y-3">
                                 <div id="previewEmpty" class="text-center py-6">
-                                    <p class="text-sm text-gray-400 italic">សូមជ្រើសរើសប្រភេទការវាយតម្លៃ</p>
+                                    <p class="text-sm text-gray-400 italic">{{ __('select_assessment_type') }}</p>
                                 </div>
                                 <div id="previewContent" class="hidden space-y-3">
                                     <div class="flex items-center gap-2">
@@ -192,17 +192,17 @@
                                         </span>
                                         <span class="flex items-center gap-1">
                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                            <span id="previewScore">100 ពិន្ទុ</span>
+                                            <span id="previewScore">100 {{ __('score') }}</span>
                                         </span>
                                     </div>
                                     <div id="previewDurationRow" class="hidden flex items-center gap-1 text-[11px] text-gray-500">
                                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                        <span id="previewDuration">120 នាទី</span>
+                                        <span id="previewDuration">120 {{ __('minutes') }}</span>
                                     </div>
                                     <div class="pt-2 border-t border-gray-100">
                                         <div class="flex items-center gap-1 text-[11px]">
                                             <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-                                            <span class="text-gray-400">ប្រភេទពិន្ទុ:</span>
+                                            <span class="text-gray-400">{{ __('grading_category_label') }}:</span>
                                             <span id="previewCategory" class="font-bold text-gray-600">---</span>
                                         </div>
                                     </div>
@@ -216,7 +216,7 @@
                         <div class="px-5 py-4 border-b border-gray-100 bg-gray-50/50">
                             <h3 class="text-[11px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-                                ថវិកាពិន្ទុ
+                                {{ __('score_budget') }}
                             </h3>
                         </div>
                         <div class="p-5 space-y-4">
@@ -235,10 +235,10 @@
                                         <div class="h-full rounded-full transition-all duration-500 {{ $usedScore > 0 ? 'bg-emerald-500' : 'bg-gray-200' }}"
                                              style="width: {{ min($usedScore > 0 ? ($usedScore / 100) * 100 : 0, 100) }}%"></div>
                                     </div>
-                                    <p class="text-[9px] text-gray-400 mt-1">{{ $usedScore }} ពិន្ទុប្រើប្រាស់រួចហើយ</p>
+                                    <p class="text-[9px] text-gray-400 mt-1">{{ $usedScore }} {{ __('points_used') }}</p>
                                 </div>
                             @empty
-                                <p class="text-xs text-gray-400 text-center py-2">មិនមានប្រភេទពិន្ទុ</p>
+                                <p class="text-xs text-gray-400 text-center py-2">{{ __('no_grading_categories') }}</p>
                             @endforelse
                         </div>
                     </div>
@@ -247,23 +247,23 @@
                     <div class="bg-emerald-50 rounded-2xl border border-emerald-100 p-5">
                         <h3 class="text-[11px] font-black text-emerald-400 uppercase tracking-widest mb-3 flex items-center gap-2">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-                            រចនាសម្ព័ន្ធវាយតម្លៃ
+                            {{ __('evaluation_structure') }}
                         </h3>
                         <ul class="text-[11px] text-emerald-700 space-y-2">
                             <li class="flex items-center justify-between">
-                                <span>វត្តមាន (Attendance)</span>
+                                <span>{{ __('attendance') }} ({{ __('attendance_label') }})</span>
                                 <span class="font-black">15%</span>
                             </li>
                             <li class="flex items-center justify-between">
-                                <span>ប្រឡងពាក់កណ្ដាល់ឆមាស (Midterm)</span>
+                                <span>{{ __('midterm_short') }} ({{ __('midterm_label') }})</span>
                                 <span class="font-black">15%</span>
                             </li>
                             <li class="flex items-center justify-between">
-                                <span>កិច្ចការស្រាវជ្រាវ (Assignment)</span>
+                                <span>{{ __('assignment_label') }} ({{ __('assignment') }})</span>
                                 <span class="font-black">20%</span>
                             </li>
                             <li class="flex items-center justify-between">
-                                <span>ប្រឡងប្រចាំឆមាស (Final)</span>
+                                <span>{{ __('final_short') }} ({{ __('final_label') }})</span>
                                 <span class="font-black">50%</span>
                             </li>
                             <li class="border-t border-emerald-200 pt-2 flex items-center justify-between font-black">
@@ -292,7 +292,7 @@
                 icon: '📝', color: 'amber',
                 defaultScore: 15,
                 showDuration: true,
-                dateLabel: 'កាលបរិច្ឆេទប្រឡង',
+                dateLabel: '{{ __("exam_date") }}',
             },
             assignment: {
                 assessmentType: 'assignment',
@@ -302,7 +302,7 @@
                 icon: '📋', color: 'blue',
                 defaultScore: 20,
                 showDuration: false,
-                dateLabel: 'កាលបរិច្ឆេទដាក់ស្នើ',
+                dateLabel: '{{ __("submission_date") }}',
             },
             final: {
                 assessmentType: 'exam',
@@ -312,7 +312,7 @@
                 icon: '🎓', color: 'rose',
                 defaultScore: 50,
                 showDuration: true,
-                dateLabel: 'កាលបរិច្ឆេទប្រឡង',
+                dateLabel: '{{ __("exam_date") }}',
             },
             quiz: {
                 assessmentType: 'quiz',
@@ -322,7 +322,7 @@
                 icon: '⚡', color: 'purple',
                 defaultScore: 20,
                 showDuration: false,
-                dateLabel: 'កាលបរិច្ឆេទសំណួរ',
+                dateLabel: '{{ __("quiz_date") }}',
             },
         };
 
@@ -382,7 +382,7 @@
             document.getElementById('previewType').textContent = config.titleKm;
             document.getElementById('previewType').className = `text-[10px] font-black uppercase px-2 py-0.5 rounded-md bg-${config.color}-50 text-${config.color}-600`;
             document.getElementById('previewTitle').textContent = `${config.titleKm} (${config.titleEn})`;
-            document.getElementById('previewScore').textContent = `${maxScore} ពិន្ទុ`;
+            document.getElementById('previewScore').textContent = `${maxScore} {{ __('score') }}`;
 
             if (date) {
                 const d = new Date(date);
@@ -391,10 +391,10 @@
 
             document.getElementById('previewDurationRow').classList.toggle('hidden', !config.showDuration);
             if (config.showDuration) {
-                document.getElementById('previewDuration').textContent = `${duration || 120} នាទី`;
+                document.getElementById('previewDuration').textContent = `${duration || 120} {{ __('minutes') }}`;
             }
 
-            document.getElementById('previewCategory').textContent = config.gradingName || 'កម្រងសំណួរ';
+            document.getElementById('previewCategory').textContent = config.gradingName || '{{ __("quiz") }}';
         }
 
         function checkDuplicate() {
@@ -406,7 +406,7 @@
                 .then(r => r.json())
                 .then(data => {
                     if (data.duplicate) {
-                        document.getElementById('duplicateMessage').textContent = data.message || 'វិញ្ញាសានេះអាចមានរួចហើយ!';
+                        document.getElementById('duplicateMessage').textContent = data.message || '{{ __("duplicate_may_exist") }}';
                         warning.classList.remove('hidden');
                     } else {
                         warning.classList.add('hidden');

@@ -7,7 +7,7 @@
                 </h2>
                 <p class="mt-1 text-lg text-gray-500">
                     Quiz: <span class="font-semibold text-emerald-600">{{ $quiz->title_km ?? $quiz->title_en }}</span>
-                    | មុខវិជ្ជា: {{ $courseOffering->course->title_km ?? 'N/A' }}
+                    | {{ __('course_label') }} {{ $courseOffering->course->title_km ?? 'N/A' }}
                 </p>
             </div>
             
@@ -48,7 +48,7 @@
                     <div class="bg-gray-50 p-4 rounded-lg shadow-sm mb-4 border border-gray-200">
                         <div class="flex justify-between items-start">
                             <div class="flex-1 mr-4">
-                                <span class="text-sm font-semibold text-gray-500 mr-2">({{ $loop->iteration }}) {{ $question->type === 'multiple_choice' ? 'ពហុជ្រើសរើស' : 'N/A' }}:</span>
+                                <span class="text-sm font-semibold text-gray-500 mr-2">({{ $loop->iteration }}) {{ $question->type === 'multiple_choice' ? __('multiple_choice') : 'N/A' }}:</span>
                                 <p class="text-lg font-medium text-gray-900 mt-1">{!! nl2br(e($question->text_km)) !!}</p>
                             </div>
                             <div class="flex-shrink-0 text-right">
@@ -63,7 +63,7 @@
                                         {{ __('edit_2') }}
                                     </button>
                                     {{-- Placeholder for Delete Form --}}
-                                    <form action="{{ route('professor.quizzes.destroy', ['offering_id' => $courseOffering->id, 'quiz' => $quiz->id]) }}/questions/{{ $question->id }}" method="POST" class="inline" onsubmit="return confirm('តើអ្នកពិតជាចង់លុបសំណួរនេះមែនទេ?');">
+                                    <form action="{{ route('professor.quizzes.destroy', ['offering_id' => $courseOffering->id, 'quiz' => $quiz->id]) }}/questions/{{ $question->id }}" method="POST" class="inline" onsubmit="return confirm('{{ __('confirm_delete_this') }}');">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="text-red-600 hover:text-red-900 text-sm ml-2">
@@ -97,7 +97,7 @@
         <div class="relative top-10 mx-auto p-8 border w-11/12 md:w-1/2 lg:w-2/5 shadow-2xl rounded-xl bg-white">
             <h3 class="text-2xl font-bold mb-6 text-gray-800 border-b pb-3">{{ __('add_new_question') }}</h3>
             {{-- Action will go to a new QuestionController method: /offering_id/quizzes/quiz_id/questions --}}
-            <form action="{{ route('professor.quizzes.manage-questions', ['offering_id' => $courseOffering->id, 'quiz' => $quiz->id]) }}" method="POST">
+            <form action="{{ route('professor.quizzes.questions.store', ['offering_id' => $courseOffering->id, 'quiz' => $quiz->id]) }}" method="POST">
                 @csrf 
                 
                 {{-- Placeholder for Question Type --}}

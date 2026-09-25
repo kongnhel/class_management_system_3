@@ -140,7 +140,7 @@
                                         </span>
                                     @endif
                                     <span class="inline-flex items-center gap-1 bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full text-[10px] font-bold">
-                                        <i class="fas fa-door-open"></i> {{ $att->courseOffering?->room_number ?? 'Online' }}
+                                        <i class="fas fa-door-open"></i> {{ $att->courseOffering?->room_number ?? __('Online') }}
                                     </span>
                                     <span class="inline-flex items-center gap-1 bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full text-[10px] font-bold">
                                         <i class="fas fa-calendar"></i> {{ $att->courseOffering?->semester ?? '' }}/{{ $att->courseOffering?->academic_year ?? '' }}
@@ -164,13 +164,13 @@
                             </div>
                             <span class="inline-flex items-center gap-1.5 {{ $mode === 'online' ? 'bg-sky-50 text-sky-600' : 'bg-emerald-50 text-emerald-600' }} px-3 py-1 rounded-full text-xs font-bold">
                                 <i class="fas {{ $mode === 'online' ? 'fa-video' : 'fa-location-dot' }}"></i>
-                                {{ $mode === 'online' ? 'Online' : 'On-campus' }}
+                                {{ $mode === 'online' ? __('Online') : __('On-campus') }}
                             </span>
                         </div>
                     </div>
                     <div class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-slate-400 pl-15 sm:pl-0">
                         @if($mode === 'on_campus' && $att->lat !== null && $att->lng !== null)
-                            <span class="inline-flex items-center gap-1" title="GPS coordinates">
+                            <span class="inline-flex items-center gap-1" title="{{ __('GPS coordinates') }}">
                                 <i class="fas fa-location-crosshairs"></i>
                                 {{ number_format((float) $att->lat, 5) }}, {{ number_format((float) $att->lng, 5) }}
                             </span>

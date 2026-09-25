@@ -329,7 +329,7 @@
                                                 @if($profilePictureUrl)
                                                     <img src="{{ $profilePictureUrl }}?tr=w-100,h-100,fo-face"
                                                          onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
-                                                         style="width:100%;height:100%;object-fit:cover;" alt="Profile">
+                                                         style="width:100%;height:100%;object-fit:cover;" alt="{{ __('Profile picture') }}">
                                                     <span class="kh" style="font-size:1rem; font-weight:900; color:#16a34a; display:none;">
                                                         {{ Str::substr($student->studentProfile->full_name_km ?? $student->name, 0, 1) }}
                                                     </span>

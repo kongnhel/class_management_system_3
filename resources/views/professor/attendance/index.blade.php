@@ -13,7 +13,7 @@
                         <svg class="w-4 h-4 mr-2 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M9 4.804A7.993 7.993 0 002 12a7.993 7.993 0 007 7.196V4.804z"></path>
                         </svg>
-                        {{ $courseOffering->course->name_km ?? 'មុខវិជ្ជា' }}
+                        {{ $courseOffering->course->name_km ?? __('course_2') }}
                     </p>
                 </div>
                 
@@ -148,7 +148,7 @@
                 totalStudents: {{ $students->count() }},
                 toggleAll(event) {
                     if (event.target.checked) {
-                        this.selectedIds = [@foreach($students as $s){{ $s->id }}, @endphp].map(id => id);
+                        this.selectedIds = [@foreach($students as $s){{ $s->id }}, @endforeach].map(id => id);
                         this.allSelected = true;
                     } else {
                         this.selectedIds = [];
@@ -181,12 +181,12 @@
         function getLocation() {
             const btn = document.getElementById('btn-location');
             btn.disabled = true;
-            btn.innerHTML = 'កំពុងឆែកទីតាំង...';
+            btn.innerHTML = '{{ __("checking_location") }}';
 
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(showPosition, showError);
             } else {
-                Swal.fire('កំហុស', 'Browser របស់អ្នកមិនគាំទ្រ GPS ទេ។', 'error');
+                Swal.fire('{{ __("error_2") }}', '{{ __("browser_does_not_support_gps") }}', 'error');
                 btn.disabled = false;
             }
         }
@@ -212,19 +212,19 @@
             .then(data => {
                 const btn = document.getElementById('btn-location');
                 btn.disabled = false;
-                btn.innerHTML = 'ផ្ទៀងផ្ទាត់ទីតាំងគ្រូ';
+                btn.innerHTML = '{{ __("verify_teacher_location") }}';
 
                 if (data.success) {
                     Swal.fire({
-                        title: 'ជោគជ័យ!',
-                        text: 'អ្នកបាន Check-in វត្តមានគ្រូបានជោគជ័យ។',
+                        title: '{{ __("success_3") }}',
+                        text: '{{ __("teacher_location_check_in_successful") }}',
                         icon: 'success',
                         confirmButtonColor: '#1e293b'
                     });
                     btn.classList.replace('bg-emerald-600', 'bg-green-600');
-                    btn.innerHTML = '✓ បានផ្ទៀងផ្ទាត់រួច';
+                    btn.innerHTML = '{{ __("already_verified") }}';
                 } else {
-                    Swal.fire('បរាជ័យ', data.message, 'error');
+                    Swal.fire('{{ __("failed") }}', data.message, 'error');
                 }
             })
             .catch(error => {
@@ -236,14 +236,14 @@
         function showError(error) {
             const btn = document.getElementById('btn-location');
             btn.disabled = false;
-            btn.innerHTML = 'ផ្ទៀងផ្ទាត់ទីតាំងគ្រូ';
+            btn.innerHTML = '{{ __("verify_teacher_location") }}';
             
             switch(error.code) {
                 case error.PERMISSION_DENIED:
-                    Swal.fire('សុំសិទ្ធិ', 'សូមអនុញ្ញាតឱ្យប្រើ GPS ជាមុនសិន។', 'warning');
+                    Swal.fire('{{ __("permission_required") }}', '{{ __("please_allow_gps_permission_first") }}', 'warning');
                     break;
                 default:
-                    Swal.fire('កំហុស', 'មានបញ្ហាបច្ចេកទេសក្នុងការចាប់ទីតាំង។', 'error');
+                    Swal.fire('{{ __("error_2") }}', '{{ __("technical_problem_locating_device") }}', 'error');
             }
         }
     </script>

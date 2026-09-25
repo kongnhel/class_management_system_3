@@ -1,125 +1,119 @@
 <x-app-layout>
-<div class="bg-slate-50 min-h-screen font-['Battambang'] antialiased">
-<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8 space-y-5">
+<x-slot name="header">
+    <h2 class="font-bold text-xl text-gray-800 leading-tight">{{ __('profile_title') }}</h2>
+    <p class="text-sm text-slate-500 mt-0.5">{{ __('profile_subtitle') }}</p>
+</x-slot>
 
-    {{-- ============================================================ --}}
-    {{-- SUCCESS FLASH                                                --}}
-    {{-- ============================================================ --}}
+<div class="bg-slate-50 min-h-screen font-['Battambang'] antialiased">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    @php
+        $user = $user ?? auth()->user();
+        $userProfile = $userProfile ?? $user->userProfile;
+        $departmentName = \App\Models\CourseOffering::where('lecturer_user_id', $user->id)
+            ->with('department')
+            ->orderByDesc('academic_year')
+            ->first()?->department?->name_km;
+    @endphp
+
     @if(session('success'))
-        <div class="bg-emerald-50 border border-emerald-200 text-emerald-700 px-5 py-3.5 rounded-2xl flex items-center gap-3 text-sm font-bold">
+        <div class="mb-6 bg-emerald-50 border border-emerald-200 text-emerald-700 px-5 py-4 rounded-2xl flex items-center gap-3 text-sm font-semibold">
             <i class="fas fa-check-circle text-emerald-500"></i>
             {{ session('success') }}
         </div>
     @endif
 
     {{-- ============================================================ --}}
-    {{-- PROFILE HERO                                                 --}}
+    {{-- MAIN TWO-COLUMN SPLIT GRID                                   --}}
     {{-- ============================================================ --}}
-    <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-600 via-emerald-700 to-purple-700 shadow-xl shadow-emerald-200/50">
-        {{-- decorative blobs --}}
-        <div class="absolute -top-20 -right-20 w-72 h-72 bg-white/5 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute -bottom-16 -left-10 w-64 h-64 bg-purple-400/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="w-full grid grid-cols-1 lg:grid-cols-3 gap-6 p-6">
 
-        {{-- edit button — top right --}}
-        <div class="absolute top-5 right-5 z-10">
+        {{-- ===== LEFT CARD PANEL ===== --}}
+        <div class="col-span-1 bg-white rounded-2xl shadow-sm p-6 text-center">
+
+            {{-- avatar wrapper + profile picture --}}
+            <div class="mx-auto w-fit p-2 rounded-[2rem] bg-gradient-to-br from-emerald-500 via-teal-500 to-emerald-600 shadow-lg shadow-emerald-500/25">
+                <div class="w-24 h-24 rounded-3xl overflow-hidden bg-white flex items-center justify-center">
+                    @if($userProfile?->profile_picture_url)
+                        <img src="{{ $userProfile->profile_picture_url }}?tr=w-400,h-400,fo-face,q-auto,f-auto"
+                             alt="{{ $user->name }}" class="w-full h-full object-cover">
+                    @else
+                        <span class="text-emerald-600 text-3xl font-semibold">{{ Str::upper(Str::substr($user->name, 0, 1)) }}</span>
+                    @endif
+                </div>
+            </div>
+
+            {{-- role + name + email --}}
+            <span class="inline-flex items-center gap-1.5 mt-5 bg-emerald-50 border border-emerald-100 text-emerald-700 text-[11px] font-bold px-3 py-1 rounded-full">
+                <i class="fas fa-chalkboard-teacher text-[10px]"></i>
+                {{ __('professor_2') }}
+            </span>
+            <h1 class="text-lg font-semibold text-slate-800 tracking-tight mt-3 break-words leading-relaxed">
+                {{ $userProfile?->full_name_km ?? $user->name }}
+            </h1>
+            <p class="text-sm text-slate-400 font-medium mt-1 break-all leading-relaxed">{{ $user->email }}</p>
+
+            {{-- department --}}
+            @if($departmentName)
+                <p class="inline-flex items-center gap-1.5 text-sm font-medium text-slate-600 mt-3 leading-relaxed">
+                    <i class="fas fa-building-columns text-slate-400 text-xs"></i>
+                    {{ $departmentName }}
+                </p>
+            @endif
+
+            {{-- edit profile: full-width secondary button --}}
             <a wire:navigate href="{{ route('professor.profile.edit') }}"
-                class="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur border border-white/20 text-white px-4 py-2 rounded-xl font-bold text-xs transition-all">
-                <i class="fas fa-user-edit"></i>
+               class="mt-6 inline-flex items-center justify-center gap-2 w-full h-11 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-700 text-sm font-semibold hover:bg-emerald-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40 active:scale-[0.98]">
+                <i class="fas fa-user-edit text-xs"></i>
                 {{ __('edit_profile') }}
             </a>
         </div>
 
-        {{-- content --}}
-        <div class="relative px-8 pt-10 pb-8 flex flex-col sm:flex-row items-center sm:items-end gap-6">
+        {{-- ===== RIGHT DETAIL PANEL ===== --}}
+        <div class="col-span-1 lg:col-span-2 bg-white rounded-2xl shadow-sm p-6">
 
-            {{-- avatar --}}
-            <div class="flex-shrink-0 w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border-4 border-white/20 shadow-2xl bg-white/10">
-                @if($userProfile->profile_picture_url)
-                    <img
-                        src="{{ $userProfile->profile_picture_url }}?tr=w-600,h-600,fo-face,q-auto,f-auto"
-                        alt="{{ $user->name }}"
-                        class="w-full h-full object-cover">
-                @else
-                    <div class="w-full h-full flex items-center justify-center text-white text-3xl font-black">
-                        {{ Str::upper(Str::substr($user->name, 0, 1)) }}
-                    </div>
-                @endif
-            </div>
-
-            {{-- name + role --}}
-            <div class="text-center sm:text-left pb-1">
-                <div class="inline-flex items-center gap-1.5 bg-white/10 border border-white/15 text-emerald-100 text-[11px] font-bold px-3 py-1 rounded-full mb-2">
-                    <i class="fas fa-chalkboard-teacher text-[10px]"></i>
-                    {{ __('professor_2') }}
+            {{-- panel heading --}}
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-id-card text-sm"></i>
                 </div>
-                <h2 class="text-2xl sm:text-3xl font-black text-white leading-tight">
-                    {{ $userProfile->full_name_km ?? $user->name }}
-                </h2>
-                <p class="text-emerald-200 text-sm mt-1">{{ $user->email }}</p>
+                <div>
+                    <h3 class="text-base font-semibold text-slate-800">{{ __('details_2') }}</h3>
+                    <p class="text-xs text-slate-400 mt-0.5">{{ __('profile_details_desc') }}</p>
+                </div>
             </div>
-        </div>
-    </div>
 
-    {{-- ============================================================ --}}
-    {{-- DETAILS CARD                                                 --}}
-    {{-- ============================================================ --}}
-    <div class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
-
-        {{-- card header --}}
-        <div class="flex items-center gap-2.5 px-6 py-4 border-b border-slate-50">
-            <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm">
-                <i class="fas fa-id-card"></i>
-            </div>
-            <h4 class="text-sm font-bold text-gray-800">{{ __('details_2') }}</h4>
-        </div>
-
-        {{-- details grid --}}
-        <div class="p-6">
             @php
                 $details = [
-                    ['label' => __('khmer_name'),      'value' => $userProfile->full_name_km,    'icon' => 'fas fa-user',          'color' => 'emerald'],
-                    ['label' => __('english_name'),    'value' => $userProfile->full_name_en,    'icon' => 'fas fa-font',          'color' => 'emerald'],
-                    ['label' => __('gender'),          'value' => $userProfile->gender == 'male' ? __('male') : ($userProfile->gender == 'female' ? __('female') : null), 'icon' => 'fas fa-venus-mars', 'color' => 'violet'],
-                    ['label' => __('date_of_birth_2'), 'value' => $userProfile->date_of_birth ? \Carbon\Carbon::parse($userProfile->date_of_birth)->format('d M Y') : null, 'icon' => 'fas fa-calendar', 'color' => 'violet'],
-                    ['label' => 'Telegram',            'value' => $userProfile->telegram_user ? '@' . $userProfile->telegram_user : null, 'icon' => 'fab fa-telegram-plane', 'color' => 'sky'],
-                    ['label' => __('phone'),           'value' => $userProfile->phone_number,    'icon' => 'fas fa-phone',         'color' => 'sky'],
-                    ['label' => __('address'),         'value' => $userProfile->address,         'icon' => 'fas fa-map-marker-alt','color' => 'amber', 'fullWidth' => true],
+                    ['label' => __('khmer_name'),      'icon' => 'fas fa-user',          'value' => $userProfile?->full_name_km],
+                    ['label' => __('english_name'),    'icon' => 'fas fa-font',          'value' => $userProfile?->full_name_en],
+                    ['label' => __('gender'),          'icon' => 'fas fa-venus-mars',     'value' => $userProfile?->gender ? ($userProfile->gender == 'male' ? __('male') : ($userProfile->gender == 'female' ? __('female') : __('other'))) : null],
+                    ['label' => __('date_of_birth_2'), 'icon' => 'fas fa-calendar',       'value' => $userProfile?->date_of_birth ? \Carbon\Carbon::parse($userProfile->date_of_birth)->format('d M Y') : null],
+                    ['label' => __('phone'),           'icon' => 'fas fa-phone',         'value' => $userProfile?->phone_number],
+                    ['label' => __('Telegram'),         'icon' => 'fab fa-telegram-plane', 'value' => $userProfile?->telegram_user ? '@' . $userProfile->telegram_user : null],
+                    ['label' => __('address'),         'icon' => 'fas fa-map-marker-alt', 'value' => $userProfile?->address, 'full' => true],
                 ];
             @endphp
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {{-- minimal 2-column data grid --}}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                 @foreach($details as $detail)
-                    @php
-                        $colorMap = [
-                            'emerald' => ['bg' => 'bg-emerald-50', 'text' => 'text-emerald-600'],
-                            'violet'  => ['bg' => 'bg-violet-50',  'text' => 'text-violet-600'],
-                            'sky'     => ['bg' => 'bg-sky-50',     'text' => 'text-sky-600'],
-                            'amber'   => ['bg' => 'bg-amber-50',   'text' => 'text-amber-600'],
-                        ];
-                        $c = $colorMap[$detail['color']] ?? $colorMap['emerald'];
-                    @endphp
-                    <div class="{{ isset($detail['fullWidth']) ? 'sm:col-span-2' : '' }}">
-                        <div class="flex items-center gap-4 p-4 rounded-2xl border border-slate-100 bg-slate-50/50 hover:bg-white hover:border-slate-200 hover:shadow-sm transition-all">
-
-                            {{-- icon --}}
-                            <div class="w-9 h-9 rounded-xl {{ $c['bg'] }} {{ $c['text'] }} flex items-center justify-center flex-shrink-0 text-sm">
+                    <div class="{{ isset($detail['full']) ? 'md:col-span-2' : '' }} bg-slate-50 border border-slate-100 rounded-xl p-4 transition-colors hover:bg-slate-100/60">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-white text-emerald-600 shadow-sm flex items-center justify-center flex-shrink-0 text-xs">
                                 <i class="{{ $detail['icon'] }}"></i>
                             </div>
-
-                            {{-- label + value --}}
-                            <div class="min-w-0 flex-1">
-                                <p class="text-[11px] text-gray-400 font-semibold mb-0.5">{{ $detail['label'] }}</p>
-                                <p class="text-sm font-bold text-gray-800 {{ isset($detail['fullWidth']) ? '' : 'truncate' }}">
-                                    {{ $detail['value'] ?? '—' }}
-                                </p>
+                            <div class="min-w-0">
+                                <p class="text-[11px] text-slate-400 font-semibold uppercase tracking-wide">{{ $detail['label'] }}</p>
+                                <p class="text-sm font-medium text-slate-800 mt-0.5 break-words leading-relaxed">{{ $detail['value'] ?? '-' }}</p>
                             </div>
                         </div>
                     </div>
                 @endforeach
             </div>
+
         </div>
     </div>
-
 </div>
 </div>
 </x-app-layout>

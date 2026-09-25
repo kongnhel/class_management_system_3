@@ -168,7 +168,7 @@
                 if (data.status === 'success') {
                     showToast(data.message, 'success');
                 } else {
-                    showToast(data.message || '{{ __(\'auth_error_generic\') }}', 'error');
+                    showToast(data.message || '{{ __('auth_error_generic') }}', 'error');
                 }
             }).catch(() => {
                 window.location.reload();

@@ -55,7 +55,7 @@
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('title') }} (ខ្មែរ)</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('title') }} ({{ __('khmer_label') }})</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('maximum_score') }}</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('start_time') }}</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('complete') }}</th>
@@ -68,8 +68,8 @@
                                     <tr>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $quiz->title_km }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $quiz->max_score }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ \Carbon\Carbon::parse($quiz->start_time)->format('Y-m-d H:i') }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ \Carbon\Carbon::parse($quiz->end_time)->format('Y-m-d H:i') }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $quiz->start_time ? \Carbon\Carbon::parse($quiz->start_time)->format('Y-m-d H:i') : '-' }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $quiz->end_time ? \Carbon\Carbon::parse($quiz->end_time)->format('Y-m-d H:i') : '-' }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $quiz->is_published ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
                                                 {{ $quiz->is_published ? __('published') : __('unpublished') }}
@@ -84,12 +84,16 @@
                                                 data-description-km="{{ $quiz->description_km }}"
                                                 data-description-en="{{ $quiz->description_en }}"
                                                 data-max-score="{{ $quiz->max_score }}"
-                                                data-start-time="{{ \Carbon\Carbon::parse($quiz->start_time)->format('Y-m-d\TH:i') }}"
-                                                data-end-time="{{ \Carbon\Carbon::parse($quiz->end_time)->format('Y-m-d\TH:i') }}"
+                                                data-start-time="{{ $quiz->start_time ? \Carbon\Carbon::parse($quiz->start_time)->format('Y-m-d\TH:i') : '' }}"
+                                                data-end-time="{{ $quiz->end_time ? \Carbon\Carbon::parse($quiz->end_time)->format('Y-m-d\TH:i') : '' }}"
                                                 data-is-published="{{ $quiz->is_published }}"
                                             >
                                                 {{ __('edit_2') }}
                                             </button>
+                                            <a wire:navigate href="{{ route('professor.quizzes.manage-questions', ['offering_id' => $courseOffering->id, 'quiz' => $quiz->id]) }}"
+                                               class="text-violet-600 hover:text-violet-900 text-sm">
+                                                {{ __('manage_quiz_questions') }}
+                                            </a>
                                             <!-- ប៊ូតុងផ្សេងទៀតដូចជាគ្រប់គ្រងសំណួរ -->
                                         </td>
                                     </tr>
@@ -123,7 +127,7 @@
                     <div class="space-y-4">
                         <!-- ចំណងជើង (ខ្មែរ) -->
                         <div>
-                            <label for="create_title_km" class="block text-sm font-medium text-gray-700">{{ __('title') }} (ខ្មែរ) <span class="text-red-500">*</span></label>
+                            <label for="create_title_km" class="block text-sm font-medium text-gray-700">{{ __('title') }} ({{ __('khmer_label') }}) <span class="text-red-500">*</span></label>
                             <input type="text" id="create_title_km" name="title_km" value="{{ old('title_km') }}" required
                                 class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 @error('title_km') border-red-500 @enderror">
                             @error('title_km')
@@ -133,7 +137,7 @@
 
                         <!-- ចំណងជើង (អង់គ្លេស) -->
                         <div>
-                            <label for="create_title_en" class="block text-sm font-medium text-gray-700">{{ __('title') }} (អង់គ្លេស)</label>
+                            <label for="create_title_en" class="block text-sm font-medium text-gray-700">{{ __('title') }} ({{ __('english_label') }})</label>
                             <input type="text" id="create_title_en" name="title_en" value="{{ old('title_en') }}"
                                 class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 @error('title_en') border-red-500 @enderror">
                             @error('title_en')
@@ -175,7 +179,7 @@
 
                         <!-- ការពិពណ៌នា (ខ្មែរ) -->
                         <div>
-                            <label for="create_description_km" class="block text-sm font-medium text-gray-700">{{ __('description') }} (ខ្មែរ)</label>
+                            <label for="create_description_km" class="block text-sm font-medium text-gray-700">{{ __('description') }} ({{ __('khmer_label') }})</label>
                             <textarea id="create_description_km" name="description" rows="3"
                                 class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 @error('description_km') border-red-500 @enderror">{{ old('description_km') }}</textarea>
                             @error('description_km')
@@ -187,7 +191,7 @@
                         <div class="flex items-center">
                             <input type="checkbox" id="create_is_published" name="is_published" value="1" {{ old('is_published') ? 'checked' : '' }}
                                 class="rounded border-gray-300 text-emerald-600 shadow-sm focus:ring-emerald-500">
-                            <label for="create_is_published" class="ml-2 text-sm font-medium text-gray-700">{{ __('publish') }} (Publish)</label>
+                            <label for="create_is_published" class="ml-2 text-sm font-medium text-gray-700">{{ __('publish') }} ({{ __('publish_2') }})</label>
                             @error('is_published')
                                 <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                             @enderror
@@ -226,14 +230,14 @@
                     <div class="space-y-4">
                         <!-- ចំណងជើង (ខ្មែរ) -->
                         <div>
-                            <label for="edit_title_km" class="block text-sm font-medium text-gray-700">{{ __('title') }} (ខ្មែរ) <span class="text-red-500">*</span></label>
+                            <label for="edit_title_km" class="block text-sm font-medium text-gray-700">{{ __('title') }} ({{ __('khmer_label') }}) <span class="text-red-500">*</span></label>
                             <input type="text" id="edit_title_km" name="title_km" required
                                 class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500">
                         </div>
 
                         <!-- ចំណងជើង (អង់គ្លេស) -->
                         <div>
-                            <label for="edit_title_en" class="block text-sm font-medium text-gray-700">{{ __('title') }} (អង់គ្លេស)</label>
+                            <label for="edit_title_en" class="block text-sm font-medium text-gray-700">{{ __('title') }} ({{ __('english_label') }})</label>
                             <input type="text" id="edit_title_en" name="title_en"
                                 class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500">
                         </div>
@@ -263,7 +267,7 @@
 
                         <!-- ការពិពណ៌នា (ខ្មែរ) -->
                         <div>
-                            <label for="edit_description_km" class="block text-sm font-medium text-gray-700">{{ __('description') }} (ខ្មែរ)</label>
+                            <label for="edit_description_km" class="block text-sm font-medium text-gray-700">{{ __('description') }} ({{ __('khmer_label') }})</label>
                             <textarea id="edit_description_km" name="description_km" rows="3"
                                 class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"></textarea>
                         </div>
@@ -272,7 +276,7 @@
                         <div class="flex items-center">
                             <input type="checkbox" id="edit_is_published" name="is_published" value="1"
                                 class="rounded border-gray-300 text-emerald-600 shadow-sm focus:ring-emerald-500">
-                            <label for="edit_is_published" class="ml-2 text-sm font-medium text-gray-700">{{ __('publish') }} (Publish)</label>
+                            <label for="edit_is_published" class="ml-2 text-sm font-medium text-gray-700">{{ __('publish') }} ({{ __('publish_2') }})</label>
                         </div>
                     </div>
 
