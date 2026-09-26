@@ -102,8 +102,12 @@ class StudentRegistrationController extends Controller
 
     public function checkStudent($code): JsonResponse
     {
+        // Only return data for students who haven't registered yet
+        // (password is null = pre-created by admin, no account yet).
+        // Registered students are invisible to this endpoint.
         $student = User::where('student_id_code', $code)
             ->where('role', 'student')
+            ->whereNull('password')
             ->with('department')
             ->first();
 

@@ -39,12 +39,10 @@ class AddSecurityHeaders
         if (config('app.env') === 'production') {
             $response->header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
         }
-        /**
-         * 5. Content Security Policy (Updated for Livewire & Assets)
-         * - ថែម 'unsafe-eval' ក្នុង script-src ដើម្បីឱ្យ Livewire ដើរ
-         * - ថែម 'unsafe-inline' ក្នុង style-src ដើម្បីឱ្យ CSS ដើរ
-         * - ថែម https://fonts.gstatic.com សម្រាប់ Font
-         */
+        // 5. Content Security Policy
+        // 'unsafe-inline' + 'unsafe-eval' in script-src are required by Livewire
+        // 'unsafe-inline' in style-src is required by Tailwind + Livewire inline styles
+        // localhost entries are for development; harmless in production
         $csp = "default-src 'self' http://localhost:* http://127.0.0.1:* [::1]:*; ".
                "script-src 'self' 'unsafe-inline' 'unsafe-eval' ".
                'https://cdn.jsdelivr.net https://www.gstatic.com https://unpkg.com '.
@@ -56,7 +54,7 @@ class AddSecurityHeaders
                "connect-src 'self' https://www.gstatic.com https://firebase.googleapis.com ".
                'ws://localhost:* ws://127.0.0.1:* http://localhost:* http://127.0.0.1:* [::1]:*;';
 
-        // $response->header('Content-Security-Policy', $csp);
+        $response->header('Content-Security-Policy', $csp);
 
         // 6. Remove server header info
         $response->header('Server', 'Server');

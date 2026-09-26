@@ -121,6 +121,13 @@ class ImageKitService
         $finfo = new \finfo(FILEINFO_MIME_TYPE);
         $mime = $finfo->buffer($contents);
 
+        // Security: only allow real images — reject PHP/HTML/zip/exe disguised as base64
+        $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'];
+        if (! in_array($mime, $allowedMimes)) {
+            Log::error('ImageKit base64 upload rejected: not an image (detected: '.$mime.')');
+            return null;
+        }
+
         $ext = 'jpg';
 
         if ($mime === 'image/png') {
@@ -129,6 +136,8 @@ class ImageKitService
             $ext = 'gif';
         } elseif ($mime === 'image/webp') {
             $ext = 'webp';
+        } elseif ($mime === 'image/svg+xml') {
+            $ext = 'svg';
         }
 
         try {

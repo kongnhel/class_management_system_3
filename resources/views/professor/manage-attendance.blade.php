@@ -1,6 +1,6 @@
 ﻿<x-app-layout>
     @php
-        $enrolledStudentsJson = $courseOffering->studentCourseEnrollments->unique('student_user_id')->filter(fn($e) => $e->student)->values()->map(fn($e) => ['id' => $e->student->id, 'name' => $e->student->studentProfile?->full_name_km ?? $e->student->name])->toJson();
+        $enrolledStudentsJson = $courseOffering->studentCourseEnrollments->unique('student_user_id')->filter(fn($e) => $e->student)->values()->map(fn($e) => ['id' => $e->student->id, 'name' => $e->student->studentProfile?->full_name_km ?? $e->student->name])->toJson(JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
     @endphp
     <script type="application/json" id="enrolled-students-data">{!! $enrolledStudentsJson !!}</script>
 

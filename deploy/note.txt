@@ -133,14 +133,32 @@ The files get to the server automatically when you: git pull
           Log: storage\logs\health-check.log
           Test by hand: powershell ... -File .\deploy\health-check.ps1
 
-   powershell -ExecutionPolicy Bypass -File .\deploy\set-update-policy.ps1
-       -> Windows Update: active hours 07:00-23:00, downloads
-          updates but YOU click install, never restarts while
-          someone is logged on. Monthly routine: pick a weekend,
-          install updates, reboot, watch Telegram for the
-          health-check confirmation 5 minutes later.
+    powershell -ExecutionPolicy Bypass -File .\deploy\set-update-policy.ps1
+        -> Windows Update: active hours 07:00-23:00, downloads
+           updates but YOU click install, never restarts while
+           someone is logged on. Monthly routine: pick a weekend,
+           install updates, reboot, watch Telegram for the
+           health-check confirmation 5 minutes later.
 
- EXTERNAL MONITORING (5 minutes, do once on the web):
+  TELEGRAM WEBHOOK SECRET (one-time, 5 minutes):
+    The Telegram webhook is SECURE but BLOCKED (403) until you
+    register a secret token with Telegram. Here is how:
+
+    1. TELEGRAM_WEBHOOK_SECRET is already set in .env.production
+       (a random 40-char token was generated for you).
+    2. After deploying .env.production to the server, tell
+       Telegram to use it (run this ONCE on the server):
+
+       php artisan tinker --execute="echo file_get_contents('https://api.telegram.org/bot' . config('services.telegram.bot_token') . '/setWebhook?url=https://sys.nmu.edu.kh/professor/telegram/webhook&secret_token=' . config('services.telegram.webhook_secret'));"
+
+    3. Telegram now sends the secret_token header on every
+       webhook call, your server validates it with hash_equals,
+       and only genuine Telegram messages get through.
+
+    If you need to change the secret: generate a new one, update
+    .env, re-run step 2, and the old secret stops working.
+
+  EXTERNAL MONITORING (5 minutes, do once on the web):
    1. Create a free account at uptimerobot.com
    2. Add New Monitor -> HTTP(s)
    3. URL: https://sys.nmu.edu.kh/login

@@ -1,6 +1,6 @@
 ﻿<x-app-layout>
     @php
-        $allStudentsJson = $students->map(fn($s) => ['id' => $s->id, 'name' => $s->profile?->full_name_km ?? $s->name])->values()->toJson();
+        $allStudentsJson = $students->map(fn($s) => ['id' => $s->id, 'name' => $s->profile?->full_name_km ?? $s->name])->values()->toJson(JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
     @endphp
     <script type="application/json" id="students-data">{!! $allStudentsJson !!}</script>
 
