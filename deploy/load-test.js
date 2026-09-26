@@ -12,7 +12,7 @@
 //      during the test (revert after!)
 //
 // RUN:
-//   k6 run -e BASE_URL=https://grade.nmu.edu.kh ^
+//   k6 run -e BASE_URL=https://sys.nmu.edu.kh ^
 //          -e EMAIL=loadtest@nmu.edu.kh ^
 //          -e PASSWORD=your-test-password ^
 //          deploy\load-test.js

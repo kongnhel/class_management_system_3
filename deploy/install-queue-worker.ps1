@@ -23,6 +23,14 @@ param(
 
 $taskName = "NMU-Queue-Worker"
 
+# ---- require Administrator ---------------------------------------------
+$isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+if (-not $isAdmin) {
+    Write-Host "This script must run as Administrator." -ForegroundColor Red
+    Write-Host "Right-click PowerShell -> Run as Administrator, then run it again." -ForegroundColor Red
+    exit 1
+}
+
 if ($Remove) {
     Write-Host "Removing scheduled task '$taskName'..." -ForegroundColor Cyan
     Stop-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue
@@ -65,6 +73,12 @@ Register-ScheduledTask `
     -User "SYSTEM" `
     -RunLevel Highest | Out-Null
 
+# verify the task actually got created (Register-ScheduledTask can fail silently)
+if (-not (Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue)) {
+    Write-Host "ERROR: task '$taskName' was NOT created - registration failed. Check output above." -ForegroundColor Red
+    exit 1
+}
+
 Start-ScheduledTask -TaskName $taskName
 
 Write-Host ""
@@ -78,4 +92,6 @@ Write-Host "Watch the worker log:"
 Write-Host "  Get-Content '$siteRoot\storage\logs\queue-worker.log' -Tail 20 -Wait"
 Write-Host ""
 Write-Host "Jobs waiting right now:"
+Push-Location $siteRoot
 php artisan tinker --execute="echo 'jobs pending: ' . DB::table('jobs')->count() . ' | failed jobs: ' . DB::table('failed_jobs')->count() . PHP_EOL;"
+Pop-Location

@@ -27,18 +27,30 @@ param([switch]$Yes)
 
 $marker = "# ==== NMU CMS MySQL tuning (deploy\mysql-tune.ps1) ===="
 
+# ---- require Administrator ---------------------------------------------
+$isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+if (-not $isAdmin) {
+    Write-Host "This script must run as Administrator." -ForegroundColor Red
+    Write-Host "Right-click PowerShell -> Run as Administrator, then run it again." -ForegroundColor Red
+    exit 1
+}
+
 # ---- Step 1: find the MySQL that actually serves the site -----------
-$conn = Get-NetTCPConnection -LocalPort 3306 -State Listen -ErrorAction SilentlyContinue | Select-Object -First 1
+$dbPort = 3306
+$portLine = Select-String -Path ".env" -Pattern "^DB_PORT=(.*)$" -ErrorAction SilentlyContinue | Select-Object -First 1
+if ($portLine -and $portLine.Matches[0].Groups[1].Value.Trim()) { $dbPort = $portLine.Matches[0].Groups[1].Value.Trim() }
+
+$conn = Get-NetTCPConnection -LocalPort $dbPort -State Listen -ErrorAction SilentlyContinue | Select-Object -First 1
 if (-not $conn) {
-    Write-Host "Nothing is listening on port 3306. Is MySQL running?" -ForegroundColor Red
+    Write-Host "Nothing is listening on port $dbPort. Is MySQL running?" -ForegroundColor Red
     exit 1
 }
 $proc = Get-Process -Id $conn.OwningProcess -ErrorAction SilentlyContinue
 if (-not $proc) {
-    Write-Host "Could not identify the process owning port 3306." -ForegroundColor Red
+    Write-Host "Could not identify the process owning port $dbPort." -ForegroundColor Red
     exit 1
 }
-Write-Host "MySQL on port 3300/3306: $($proc.ProcessName) (PID $($proc.Id))" -ForegroundColor Cyan
+Write-Host "MySQL on port ${dbPort}: $($proc.ProcessName) (PID $($proc.Id))" -ForegroundColor Cyan
 
 $svc = Get-CimInstance Win32_Service | Where-Object { $_.ProcessId -eq $proc.Id } | Select-Object -First 1
 $isService = ($null -ne $svc)
@@ -74,8 +86,8 @@ Write-Host "Config file: $ini" -ForegroundColor Cyan
 
 # ---- Step 3: size the buffer pool from RAM ---------------------------
 $ramGB = [Math]::Round((Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory / 1GB, 0)
-$poolGB = [Math]::Max(2, [Math]::Floor($ramGB * 0.4))
-Write-Host "Server RAM: $ramGB GB  ->  InnoDB buffer pool: $poolGB GB" -ForegroundColor Cyan
+$poolGB = [Math]::Min(8, [Math]::Max(2, [Math]::Floor($ramGB * 0.4)))
+Write-Host "Server RAM: $ramGB GB  ->  InnoDB buffer pool: $poolGB GB (40% of RAM, capped at 8GB)" -ForegroundColor Cyan
 
 # ---- Confirm before touching anything --------------------------------
 if (-not $Yes) {
@@ -120,6 +132,12 @@ if ($isService) {
     Start-Sleep -Seconds 3
     $status = (Get-Service -Name $svc.Name).Status
     Write-Host "Service status: $status" -ForegroundColor Cyan
+    if ($status -ne "Running") {
+        Write-Host ""
+        Write-Host "ERROR: MySQL did not come back up (status: $status)." -ForegroundColor Red
+        Write-Host "Check the MySQL error log for the cause. Your my.ini backup: $backup" -ForegroundColor Red
+        exit 1
+    }
 } else {
     Write-Host ""
     Write-Host "MySQL is not a Windows service (Laragon-style)." -ForegroundColor Yellow

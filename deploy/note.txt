@@ -1,0 +1,181 @@
+================================================================
+ NMU CLASS MANAGEMENT - DEPLOY FOLDER NOTES
+================================================================
+Everything in this folder runs ON THE WINDOWS SERVER
+(as Administrator, PowerShell), EXCEPT load-test.js which can
+run from any machine.
+
+The files get to the server automatically when you: git pull
+
+
+----------------------------------------------------------------
+ 1. WHAT EACH FILE DOES (one-time setup, run in this order)
+----------------------------------------------------------------
+
+ iis-tune.ps1
+    Tunes IIS so the site can handle 500 concurrent users:
+    - More PHP workers (2 per CPU core, min 8)
+    - Workers not killed every 200 requests (the IIS default
+      was silently wiping OPcache all day)
+    - Never sleeps between classes, auto-starts, restarts at 3 AM
+    HOW TO RUN:
+     cd C:\path\to\your\site
+     powershell -ExecutionPolicy Bypass -File .\deploy\iis-tune.ps1
+    REVERT: nothing to revert - settings are safe defaults.
+    Run it again any time after changing hardware.
+
+ mysql-tune.ps1
+    Tunes MySQL for the school workload:
+    - Buffer pool sized to ~40% of server RAM (default 128MB
+      is tiny - MySQL was re-reading tables from disk)
+    - max_connections=300, bigger packets for Excel imports
+    - Faster writes for attendance scans
+    - Slow-query log ON (>1s queries get logged)
+    HOW TO RUN:
+     powershell -ExecutionPolicy Bypass -File .\deploy\mysql-tune.ps1
+    It asks y/n first, BACKS UP my.ini, and marks the block it
+    adds. REVERT: delete the marked section in my.ini or restore
+    the backup file next to it, then restart MySQL.
+    NOTE: restarts MySQL (~10 seconds) - run outside class hours.
+
+ install-queue-worker.ps1
+    Installs a Windows task "NMU-Queue-Worker" that runs
+    php artisan queue:work forever and restarts itself if it
+    crashes. Without this, notifications pile up unsent.
+    HOW TO RUN:
+     powershell -ExecutionPolicy Bypass -File .\deploy\install-queue-worker.ps1
+    UNINSTALL:
+     powershell -ExecutionPolicy Bypass -File .\deploy\install-queue-worker.ps1 -Remove
+    Worker log: storage\logs\queue-worker.log
+    Safe to re-run (replaces the old task).
+
+  queue-worker-loop.ps1
+     (Used internally by the task above - never run by hand.)
+
+  install-backup-task.ps1
+     Registers the "NMU-Backup" task: nightly 02:30 DB dump.
+     Covered in section 3 below - install after setting the
+     two .env variables described there.
+
+  install-health-check-task.ps1
+     Registers "NMU-Health-Check": 5 min after boot + daily 06:00.
+     Covered in section 3 below.
+
+  set-update-policy.ps1
+     Windows Update: active hours, manual installs only.
+     Covered in section 3 below.
+
+  load-test.js
+    Simulates 300 students at class start: log in, open
+    dashboard, fire scan POST. Proves the server can take it.
+    HOW TO RUN (needs k6 installed - choco install k6):
+     1. Create a test student (on the server):
+        php artisan tinker --execute="App\Models\User::create(['name' => 'Load Test Student', 'email' => 'loadtest@nmu.edu.kh', 'password' => Illuminate\Support\Facades\Hash::make('LoadTest-2026!'), 'role' => 'student']);"
+     2. TEMPORARILY change the student route group throttle in
+        routes\web.php from throttle:120,1 to throttle:100000,1
+        (the test comes from one IP - real students do not)
+     3. Run:
+        k6 run -e BASE_URL=https://sys.nmu.edu.kh -e EMAIL=loadtest@nmu.edu.kh -e PASSWORD=LoadTest-2026! deploy\load-test.js
+     4. PASS = http_req_failed under 1%, dashboard p(95) under 500ms
+     5. REVERT the throttle change and delete the test student.
+    Run before each semester starts, or after big hardware changes.
+
+
+----------------------------------------------------------------
+ 2. EVERY-DEPLOY CHECKLIST (after every git pull on the server)
+----------------------------------------------------------------
+
+ cd C:\path\to\site
+ git pull
+ php artisan migrate --force        (only if there are new migrations)
+ php artisan optimize               (caches config, routes, views)
+ php artisan queue:restart          (worker picks up new code in ~5s)
+ & "C:\Windows\System32\inetsrv\appcmd.exe" recycle apppool /apppool.name:"nmu-cms"
+
+ IMPORTANT: the last line (recycle) is REQUIRED every time.
+ OPcache is set to never recheck files (that is what makes it
+ fast), so without the recycle the server keeps running the
+ OLD code after a git pull.
+
+
+----------------------------------------------------------------
+  3. BACKUPS, HEALTH MONITORING, UPDATE POLICY (Phase 3)
+----------------------------------------------------------------
+
+ BEFORE the three installs below, add these 2 lines to the
+ server's .env (fill in real values):
+
+   BACKUP_CLOUD_DIR=C:\Users\Administrator\Google Drive\NMU-Backups
+   TELEGRAM_ALERT_CHAT_ID=your-chat-id-number
+
+ BACKUP_CLOUD_DIR  = a folder that the Google Drive or OneDrive
+                     desktop app syncs. Create it, sign in to the
+                     Drive app once, and backups go offsite
+                     automatically. Leave empty = local backups only.
+ TELEGRAM_ALERT_CHAT_ID = send @userinfobot a message on Telegram
+                     to get this number. Alerts arrive from your
+                     existing grade bot.
+
+ Install order (one command each, as Administrator):
+
+   powershell -ExecutionPolicy Bypass -File .\deploy\install-backup-task.ps1
+       -> nightly 02:30 DB dump, zip, 30-day retention,
+          cloud copy, Telegram "OK" or "FAILED" message.
+          Catch-up run if the server was off at 02:30.
+          Log: storage\logs\backup.log
+          Test by hand: powershell ... -File .\deploy\backup.ps1
+
+   powershell -ExecutionPolicy Bypass -File .\deploy\install-health-check-task.ps1
+       -> "NMU-Health-Check" task: 5 min after every boot
+          + daily 06:00. Checks app pool, MySQL, queue worker,
+          disk space, site HTTP, database query.
+          Sends one Telegram status message.
+          Log: storage\logs\health-check.log
+          Test by hand: powershell ... -File .\deploy\health-check.ps1
+
+   powershell -ExecutionPolicy Bypass -File .\deploy\set-update-policy.ps1
+       -> Windows Update: active hours 07:00-23:00, downloads
+          updates but YOU click install, never restarts while
+          someone is logged on. Monthly routine: pick a weekend,
+          install updates, reboot, watch Telegram for the
+          health-check confirmation 5 minutes later.
+
+ EXTERNAL MONITORING (5 minutes, do once on the web):
+   1. Create a free account at uptimerobot.com
+   2. Add New Monitor -> HTTP(s)
+   3. URL: https://sys.nmu.edu.kh/login
+   4. Check interval: 5 minutes
+   This is the only thing that warns you when the whole server
+   or the internet line is down (health-check can't - it runs on
+   the server itself). Install their phone app for push alerts.
+
+ WHAT A REBOOT LOOKS LIKE NOW (everything self-recovers):
+   boot -> MySQL service auto-starts
+        -> IIS app pool auto-starts (AlwaysRunning)
+        -> NMU-Queue-Worker task auto-starts (AtStartup)
+        -> NMU-Health-Check pings you on Telegram 5 min later
+   If that Telegram message says all green, the reboot was clean.
+
+----------------------------------------------------------------
+  4. QUICK REFERENCE
+----------------------------------------------------------------
+
+ What runs automatically after setup:
+   - App pool "nmu-cms": always on, restarts 3:00 AM daily
+   - Task "NMU-Queue-Worker": starts at boot, runs forever
+
+  How to check things are healthy:
+    App pool:   & "C:\Windows\System32\inetsrv\appcmd.exe" list apppool /apppool.name:"nmu-cms"
+    Queue:      Get-Content .\storage\logs\queue-worker.log -Tail 20
+    PHP busy:   Get-Process php-cgi | Measure-Object | Select Count
+    MySQL slow: look in the MySQL data dir for *slow.log
+
+  If the site shows "Service Unavailable":
+    The app pool is stopped or crashed. This happens when IIS
+    Rapid Fail Protection trips (a batch of PHP errors makes IIS
+    take the whole pool offline). Fix: re-run iis-tune.ps1 to
+    re-apply the rapidFailProtection:False setting, or recycle:
+    & "C:\Windows\System32\inetsrv\appcmd.exe" recycle apppool /apppool.name:"nmu-cms"
+
+ If a deploy "didn't take effect":
+   You forgot the app pool recycle. Run it (see checklist above).

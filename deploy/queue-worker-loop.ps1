@@ -13,8 +13,20 @@ $siteRoot = Split-Path -Parent $PSScriptRoot
 Set-Location $siteRoot
 
 $log = Join-Path $siteRoot "storage\logs\queue-worker.log"
+if (-not (Test-Path (Split-Path $log))) { New-Item -ItemType Directory -Path (Split-Path $log) | Out-Null }
+
+# Log rotation: if the file exceeds 10MB, keep it as .old and start fresh.
+# Max disk usage: ~20MB (current + one .old). The .old replaces any previous .old.
+$maxLogBytes = 10MB
 
 while ($true) {
+    # rotate before starting a new cycle
+    if ((Test-Path $log) -and ((Get-Item $log).Length -gt $maxLogBytes)) {
+        Remove-Item "$log.old" -Force -ErrorAction SilentlyContinue
+        Move-Item $log "$log.old" -Force
+        Add-Content -Path $log -Value "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] log rotated (previous size: $([Math]::Round((Get-Item "$log.old").Length / 1MB, 1)) MB)"
+    }
+
     $stamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
     Add-Content -Path $log -Value "[$stamp] queue worker starting"
 
