@@ -374,6 +374,8 @@ class ProfessorController extends Controller
             ->with(['course', 'department.faculty', 'schedules.room', 'lecturer'])
             ->get();
 
+        $courseOfferings = CourseOffering::onlyNewestSemester($courseOfferings);
+
         $semester = $courseOfferings->first()?->semester ?? 'ឆមាសទី១';
         $semesterNum = str_replace('ឆមាសទី', '', $semester);
         $academicYear = $courseOfferings->first()?->academic_year ?? date('Y').'-'.(date('Y') + 1);

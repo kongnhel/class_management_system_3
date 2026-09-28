@@ -22,25 +22,18 @@
 
     @php
         $docData = [
-            'rows' => $schedules->map(fn ($s) => (object) [
-                'day_of_week' => $s->day_of_week,
-                'start_time' => $s->start_time,
-                'end_time' => $s->end_time,
-                'course_title' => $s->courseOffering?->course?->title_km ?? $s->courseOffering?->course?->title_en ?? 'N/A',
-                'lecturer_name' => $s->courseOffering?->lecturer?->name ?? '',
-                'room_number' => $s->room?->room_number ?? '-',
-            ]),
+            'rows' => $courseOfferings->flatMap(fn ($offering) => $offering->scheduleDocumentRows()),
             'semesterNum' => $semesterNum,
             'generation' => $generation,
-            'academicYear' => date('Y') . '-' . (date('Y') + 1),
+            'academicYear' => $academicYear,
             'facultyName' => $studentDepartment?->faculty?->name_km,
-            'deptName' => $studentDepartment?->name_km,
+            'deptName' => $courseOfferings->map(fn ($offering) => $offering->department?->name_km)->filter()->unique()->implode(' / '),
         ];
     @endphp
 
     <div class="bg-gray-100 min-h-screen py-4 md:py-10 print:hidden">
         <div class="max-w-6xl mx-auto px-2 sm:px-4">
-            @if ($schedules->isEmpty())
+            @if ($courseOfferings->isEmpty())
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-16 text-center">
                     <div class="w-20 h-20 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-5">
                         <i class="fas fa-book-open text-gray-300 text-3xl"></i>
@@ -57,7 +50,7 @@
     </div>
 
     {{-- PRINT: same document, laid out for one A4 landscape page --}}
-    @if ($schedules->isNotEmpty())
+    @if ($courseOfferings->isNotEmpty())
         <div class="hidden print:block">
             @include('components.schedule-document', $docData + ['forPrint' => true])
         </div>

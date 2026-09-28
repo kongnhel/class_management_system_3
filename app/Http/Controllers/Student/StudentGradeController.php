@@ -204,22 +204,23 @@ class StudentGradeController extends Controller
     public function mySchedule()
     {
         $user = Auth::user();
-        $enrolledOfferingIds = StudentCourseEnrollment::where('student_user_id', $user->id)->pluck('course_offering_id');
-        $schedules = \App\Models\Schedule::whereIn('course_offering_id', $enrolledOfferingIds)
-            ->whereHas('courseOffering.course')
-            ->with(['room', 'courseOffering.course', 'courseOffering.lecturer', 'courseOffering.department'])
-            ->orderByRaw("FIELD(day_of_week, 'Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday')")
-            ->orderBy('start_time')
+
+        $courseOfferings = CourseOffering::forStudentCohort($user)
+            ->with(['course', 'lecturer', 'department.faculty', 'schedules.room'])
             ->get();
+
+        $courseOfferings = CourseOffering::onlyNewestSemester($courseOfferings);
+
         $studentDepartment = $user->department;
 
-        $semester = $schedules->first()?->courseOffering?->semester ?? '';
+        $semester = $courseOfferings->first()?->semester ?? '';
         $semesterNum = str_replace('ឆមាសទី', '', $semester);
 
-        $generation = $schedules->first()?->courseOffering?->generation ?? '';
-        $startDate = $schedules->first()?->courseOffering?->start_date ?? now();
+        $generation = $courseOfferings->first()?->generation ?? '';
+        $academicYear = $courseOfferings->first()?->academic_year ?? date('Y').'-'.(date('Y') + 1);
+        $startDate = $courseOfferings->first()?->start_date ?? now();
 
-        return view('student.my-schedule', compact('schedules', 'studentDepartment', 'semester', 'semesterNum', 'user', 'generation', 'startDate'));
+        return view('student.my-schedule', compact('courseOfferings', 'studentDepartment', 'semester', 'semesterNum', 'user', 'generation', 'academicYear', 'startDate'));
     }
 
     public function enrolledCourses($studentId)

@@ -131,4 +131,43 @@ class CourseOffering extends Model
     {
         return $this->belongsTo(AcademicYear::class, 'academic_year', 'name');
     }
+
+    public function scheduleDocumentRows()
+    {
+        return $this->schedules->map(function ($s) {
+            if (! $s->relationLoaded('room')) {
+                $s->load('room');
+            }
+
+            return (object) [
+                'day_of_week' => $s->day_of_week,
+                'start_time' => $s->start_time,
+                'end_time' => $s->end_time,
+                'course_title' => $this->course?->title_km ?? $this->course?->title_en ?? 'N/A',
+                'lecturer_name' => $this->lecturer?->name ?? '',
+                'room_number' => $s->room?->room_number ?? '-',
+            ];
+        });
+    }
+
+    public function scopeForStudentCohort($query, $user)
+    {
+        return $query->where('department_id', $user->department_id)
+            ->where('generation', $user->generation)
+            ->where(fn ($q) => $q->whereNull('end_date')->orWhere('end_date', '>=', now()));
+    }
+
+    public static function onlyNewestSemester($offerings)
+    {
+        $latest = $offerings->sortByDesc(function ($o) {
+            $date = $o->start_date ?? $o->created_at;
+
+            return $date instanceof \DateTimeInterface ? $date->getTimestamp() : (int) strtotime((string) $date);
+        })->first();
+
+        return $offerings->when($latest, fn ($c) => $c->filter(
+            fn ($o) => $o->academic_year === $latest->academic_year
+                && $o->semester === $latest->semester
+        ))->values();
+    }
 }

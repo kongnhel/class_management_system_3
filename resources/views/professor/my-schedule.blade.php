@@ -50,28 +50,13 @@
                 </div>
             @else
                 @php
-                    $docRows = collect();
-                    foreach ($courseOfferings as $offering) {
-                        foreach ($offering->schedules as $schedule) {
-                            $docRows->push((object) [
-                                'day_of_week' => $schedule->day_of_week,
-                                'start_time' => $schedule->start_time,
-                                'end_time' => $schedule->end_time,
-                                'course_title' => $offering->course?->title_km ?? $offering->course?->title_en ?? 'N/A',
-                                'lecturer_name' => $offering->lecturer?->name ?? '',
-                                'room_number' => $schedule->room?->room_number ?? '-',
-                            ]);
-                        }
-                    }
-
-                    $firstOffering = $courseOfferings->first();
                     $docData = [
-                        'rows' => $docRows,
+                        'rows' => $courseOfferings->flatMap(fn ($offering) => $offering->scheduleDocumentRows()),
                         'semesterNum' => $semesterNum,
-                        'generation' => $firstOffering?->generation,
+                        'generation' => $courseOfferings->first()?->generation,
                         'academicYear' => $academicYear,
-                        'facultyName' => $firstOffering?->department?->faculty?->name_km,
-                        'deptName' => $firstOffering?->department?->name_km,
+                        'facultyName' => $courseOfferings->first()?->department?->faculty?->name_km,
+                        'deptName' => $courseOfferings->map(fn ($offering) => $offering->department?->name_km)->filter()->unique()->implode(' / '),
                     ];
                 @endphp
 

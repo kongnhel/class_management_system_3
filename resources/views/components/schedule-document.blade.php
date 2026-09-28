@@ -124,6 +124,7 @@
         .sched-doc .cell-subject { font-weight: bold; display: block; margin-bottom: 2px; }
         .sched-doc .cell-lecturer { display: block; margin-bottom: 2px; }
         .sched-doc .cell-room { display: block; font-weight: bold; }
+        .sched-doc .cell-entry + .cell-entry { margin-top: 4px; padding-top: 4px; border-top: 1px dotted #999; }
 
         .sched-doc .f-sigs {
             display: flex;
@@ -205,14 +206,15 @@
                             <td style="font-weight: bold;">{{ $slot }}</td>
                             @foreach ($weekdayMap as $dayKey => $dayLabel)
                                 <td>
-                                    @php $class = $slots->where('day_of_week', $dayKey)->first(); @endphp
-                                    @if ($class)
-                                        <span class="cell-subject">{{ $class->course_title }}</span>
-                                        @if ($showLecturer)
-                                            <span class="cell-lecturer">លោក {{ str_replace('Mr. ', '', $class->lecturer_name) }}</span>
-                                        @endif
-                                        <span class="cell-room">{{ __('room') }} {{ $class->room_number }}</span>
-                                    @endif
+                                    @foreach ($slots->where('day_of_week', $dayKey) as $class)
+                                        <div class="cell-entry">
+                                            <span class="cell-subject">{{ $class->course_title }}</span>
+                                            @if ($showLecturer)
+                                                <span class="cell-lecturer">លោក {{ str_replace('Mr. ', '', $class->lecturer_name) }}</span>
+                                            @endif
+                                            <span class="cell-room">{{ __('room') }} {{ $class->room_number }}</span>
+                                        </div>
+                                    @endforeach
                                 </td>
                             @endforeach
                         </tr>
@@ -238,18 +240,17 @@
                             <td style="font-weight: bold;">{{ $dayLabel }}</td>
                             @foreach ($weekendTimeSlots as $time)
                                 <td>
-                                    @php
-                                        $class = $weekendSchedules->filter(function ($r) use ($dayKey, $time, $slotOf) {
-                                            return $r->day_of_week === $dayKey && $slotOf($r) === $time;
-                                        })->first();
-                                    @endphp
-                                    @if ($class)
-                                        <span class="cell-subject">{{ $class->course_title }}</span>
-                                        @if ($showLecturer)
-                                            <span class="cell-lecturer">លោក {{ str_replace('Mr. ', '', $class->lecturer_name) }}</span>
-                                        @endif
-                                        <span class="cell-room">{{ __('room') }} {{ $class->room_number }}</span>
-                                    @endif
+                                    @foreach ($weekendSchedules->filter(function ($r) use ($dayKey, $time, $slotOf) {
+                                        return $r->day_of_week === $dayKey && $slotOf($r) === $time;
+                                    }) as $class)
+                                        <div class="cell-entry">
+                                            <span class="cell-subject">{{ $class->course_title }}</span>
+                                            @if ($showLecturer)
+                                                <span class="cell-lecturer">លោក {{ str_replace('Mr. ', '', $class->lecturer_name) }}</span>
+                                            @endif
+                                            <span class="cell-room">{{ __('room') }} {{ $class->room_number }}</span>
+                                        </div>
+                                    @endforeach
                                 </td>
                             @endforeach
                         </tr>
