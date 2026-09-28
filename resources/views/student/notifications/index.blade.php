@@ -107,13 +107,12 @@
                 },
 
                 markAsRead(notificationId, element) {
-                    fetch('{{ route("student.notifications.markAsRead") }}', {
-                        method: 'POST',
+                    fetch(`{{ url('student/notifications') }}/${notificationId}/read`, {
+                        method: 'PATCH',
                         headers: {
-                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
                             'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        },
-                        body: JSON.stringify({ id: notificationId })
+                        }
                     })
                     .then(res => res.json())
                     .then(data => {

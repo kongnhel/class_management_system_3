@@ -81,7 +81,7 @@ class StudentIdGeneratorService
             ->value('student_id_code');
 
         if (! $lastCode) {
-            return 1;
+            return (int) config('services.nmu.student_id_start', 1);
         }
 
         $parts = explode('-', $lastCode);

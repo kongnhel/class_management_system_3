@@ -59,7 +59,7 @@
                             name="name_en"
                             value="{{ old('name_en') }}"
                             required
-                            placeholder="{{ __('e.g. Faculty of Science and Technology') }}"
+                            placeholder="{{ __('e_g_faculty_of_science_and_technology') }}"
                             class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200 @error('name_en') border-red-500 focus:border-red-500 focus:ring-red-500/20 @enderror"
                         />
                         @error('name_en')

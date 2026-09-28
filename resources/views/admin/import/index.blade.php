@@ -1,4 +1,4 @@
-﻿<x-app-layout>
+<x-app-layout>
     <div class="min-h-screen bg-gray-50 font-sans text-gray-900">
 
         {{-- Header --}}
@@ -30,29 +30,7 @@
                         <ul class="mt-2 text-sm text-red-700 space-y-1">
                             @foreach($errors->all() as $error)
                             <li class="flex items-start gap-1">
-                                <span class="text-red-400 mt-0.5">•</span>
-                                <span>{{ $error }}</span>
-                            </li>
-                            @endforeach
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            @endif
-
-            {{-- Import Errors Detail (from successful import with skipped rows) --}}
-            @if(session('import_errors') && count(session('import_errors')) > 0)
-            <div class="mb-6 bg-amber-50 border border-amber-200 rounded-2xl p-5 shadow-sm">
-                <div class="flex items-start gap-3">
-                    <div class="bg-amber-100 text-amber-600 p-2 rounded-xl flex-shrink-0">
-                        <i class="fas fa-exclamation-triangle"></i>
-                    </div>
-                    <div class="flex-1">
-                        <p class="font-bold text-amber-800">{{ __('errors_count') }} {{ count(session('import_errors')) }} {{ __('errors_count_label') }}</p>
-                        <ul class="mt-2 text-xs text-amber-700 space-y-1 max-h-32 overflow-y-auto">
-                            @foreach(session('import_errors') as $error)
-                            <li class="flex items-start gap-1">
-                                <span class="text-amber-400 mt-0.5">•</span>
+                                <span class="text-red-400 mt-0.5">â€¢</span>
                                 <span>{{ $error }}</span>
                             </li>
                             @endforeach
@@ -89,7 +67,7 @@
                         <div class="bg-emerald-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">3</div>
                         <div>
                             <p class="font-bold text-gray-900 text-sm">{{ __('import') }}</p>
-                            <p class="text-xs text-gray-500 mt-1">ជ្រើសរើស{{ __('file') }}ហើយចុចប៊ូតុង{{ __('import') }}</p>
+                            <p class="text-xs text-gray-500 mt-1">{{ __('select_file_then_click_import') }}</p>
                         </div>
                     </div>
                 </div>
@@ -133,15 +111,15 @@
                         </label>
                         <select name="role" required class="w-full rounded-xl border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 text-sm">
                             <option value="student" @if(old('role','student')=='student') selected @endif>{{ __('student') }}</option>
-                            <!-- <option value="professor" @if(old('role')=='professor') selected @endif>សាស្ត្រាចារ្យ</option> -->
+                            <!-- <option value="professor" @if(old('role')=='professor') selected @endif>ážŸáž¶ážŸáŸ’ážáŸ’ážšáž¶áž…áž¶ážšáŸ’áž™</option> -->
                         </select>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Duplicate email handling</label>
-                        <select name="duplicate_action" required class="w-full rounded-xl border-gray-200 focus:border-emerald-500 focus:ring-emerald-500 text-sm">
-                            <option value="skip" @selected(old('duplicate_action', 'skip') === 'skip')>Skip existing students</option>
-                            <option value="reject" @selected(old('duplicate_action') === 'reject')>Reject duplicate rows</option>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">{{ __('duplicate_email_handling') }}</label>
+                        <select name="duplicate_action" required class="w-full rounded-xl border-gray-200 focus:border-emerald-500 focus:ring-2 focus:border-emerald-500 text-sm">
+                            <option value="skip" @selected(old('duplicate_action', 'skip') === 'skip')>{{ __('skip_existing_students') }}</option>
+                            <option value="reject" @selected(old('duplicate_action') === 'reject')>{{ __('reject_duplicate_rows') }}</option>
                         </select>
                     </div>
 
@@ -172,8 +150,8 @@
                         <label class="mt-4 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
                             <input type="checkbox" name="enroll_in_matching_courses" value="1" @checked(old('enroll_in_matching_courses')) class="mt-1 rounded border-amber-300 text-emerald-600 focus:ring-emerald-500">
                             <span>
-                                <span class="block font-semibold">Enroll students in matching course offerings</span>
-                                <span class="block text-xs text-amber-800">Optional. This requires both a study program and generation, and may create many course enrollments.</span>
+                                <span class="block font-semibold">{{ __('enroll_students_in_matching_courses') }}</span>
+                                <span class="block text-xs text-amber-800">{{ __('enroll_matching_courses_hint') }}</span>
                             </span>
                         </label>
                     </div>
@@ -205,8 +183,8 @@
                                 <div class="bg-emerald-100 text-emerald-500 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4">
                                     <i class="fas fa-cloud-upload-alt text-2xl"></i>
                                 </div>
-                                <p class="font-bold text-gray-700">អូស{{ __('file') }}មកទីនេះ</p>
-                                <p class="text-sm text-gray-500 mt-1">ឬចុចដើម្បីជ្រើសរើស{{ __('file') }}</p>
+                                <p class="font-bold text-gray-700">{{ __('drag_file_here') }}</p>
+                                <p class="text-sm text-gray-500 mt-1">{{ __('or_click_to_select_file') }}</p>
                                 <p class="text-xs text-gray-400 mt-3">{{ __('supported_formats') }}</p>
                             </div>
                             <div id="file-preview" class="hidden">

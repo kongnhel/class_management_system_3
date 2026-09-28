@@ -363,19 +363,6 @@ class StudentGradeController extends Controller
         return view('student.available-departments', compact('departments'));
     }
 
-    public function availableCourses()
-    {
-        $user = Auth::user();
-        $enrolledIds = StudentCourseEnrollment::where('student_user_id', $user->id)->pluck('course_offering_id');
-        $courses = CourseOffering::with(['course', 'lecturer'])->withCount('studentCourseEnrollments')
-            ->where('department_id', $user->department_id)
-            ->where('generation', $user->generation)
-            ->whereHas('course')
-            ->where('end_date', '>=', now())->whereNotIn('id', $enrolledIds)->get();
-
-        return view('student.available-courses', compact('courses'));
-    }
-
     public function enrollSelf(Request $request)
     {
         $request->validate(['course_offering_id' => 'required|exists:course_offerings,id']);

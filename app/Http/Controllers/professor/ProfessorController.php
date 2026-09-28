@@ -259,29 +259,6 @@ class ProfessorController extends Controller
     }
 
     /**
-     * API to get students for a course offering (JSON response).
-     */
-    public function apiGetStudents($offering_id)
-    {
-        $user = Auth::user();
-
-        $courseOffering = CourseOffering::where('id', $offering_id)
-            ->where('lecturer_user_id', $user->id)
-            ->with(['studentCourseEnrollments.student.studentProfile'])
-            ->firstOrFail();
-
-        $students = $courseOffering->studentCourseEnrollments
-            ->filter(fn ($enrollment) => $enrollment->student)
-            ->map(fn ($enrollment) => [
-                'id' => $enrollment->student->id,
-                'name' => $enrollment->student->studentProfile?->full_name_km ?? $enrollment->student->name,
-            ])
-            ->values();
-
-        return response()->json(['students' => $students]);
-    }
-
-    /**
      * Display an 'all-in-one' view for professors,
      * combining various data points from all their courses.
      */
@@ -402,13 +379,6 @@ class ProfessorController extends Controller
         $academicYear = $courseOfferings->first()?->academic_year ?? date('Y').'-'.(date('Y') + 1);
 
         return view('professor.my-schedule', compact('user', 'courseOfferings', 'semester', 'semesterNum', 'academicYear'));
-    }
-
-    public function createAssessment($offering_id)
-    {
-        $courseOffering = CourseOffering::findOrFail($offering_id);
-
-        return view('professor.assignments.create', compact('courseOffering'));
     }
 
     public function toggleClassLeader($offeringId, $studentUserId)
@@ -652,55 +622,6 @@ class ProfessorController extends Controller
     }
 
     // សម្រាប់បង្ហាញទំព័រ Edit
-
-    public function showGradebook($offering_id)
-    {
-        // ១. ទាញយកព័ត៌មានមុខវិជ្ជា (Course Offering)
-        $courseOffering = CourseOffering::with('course')->findOrFail($offering_id);
-
-        // ២. ទាញបញ្ជីឈ្មោះសិស្ស ព្រមជាមួយ "វត្តមាន" ក្នុងមុខវិជ្ជានេះ
-        $students = User::where('role', 'student')
-            ->whereHas('courseOfferings', function ($q) use ($offering_id) {
-                $q->where('course_offering_id', $offering_id);
-            })
-            ->with(['attendanceRecords' => function ($q) use ($offering_id) {
-                $q->where('course_offering_id', $offering_id);
-            }])
-            ->get();
-
-        // ៣. ទាញរាល់ការវាយតម្លៃទាំងអស់ (Assessments)
-        $assignments = Assignment::where('course_offering_id', $offering_id)->get();
-        $quizzes = Quiz::where('course_offering_id', $offering_id)->get();
-        $exams = Exam::where('course_offering_id', $offering_id)->get();
-
-        // បញ្ចូលគ្នាជា Collection តែមួយសម្រាប់បង្ហាញក្នុង Header តារាង
-        $assessments = $assignments->concat($quizzes)->concat($exams);
-
-        // ៤. រៀបចំទិន្នន័យពិន្ទុដាក់ក្នុង Array ដើម្បីងាយស្រួលទាញក្នុង Blade
-        $gradebook = [];
-        foreach ($students as $student) {
-            foreach ($assignments as $a) {
-                // ឧបមាថាអ្នកមាន Model AssignmentSubmission សម្រាប់រក្សាពិន្ទុ
-                $student->attendance_score = $this->getAttendanceScore($student->id, $offering_id);
-                $submission = $a->submissions()->where('user_id', $student->id)->first();
-                $gradebook[$student->id]['assignment_'.$a->id] = $submission ? $submission->score : 0;
-            }
-            // ធ្វើដូចគ្នាសម្រាប់ Quiz និង Exam...
-        }
-
-        return view('professor.gradebook', compact('courseOffering', 'students', 'assessments', 'gradebook'));
-    }
-
-    // totalAttendanceWeight
-    public function getAttendanceScore($studentId, $courseOfferingId)
-    {
-        $student = User::find($studentId);
-        if (! $student) {
-            return 0;
-        }
-
-        return $student->getAttendanceScoreByCourse($courseOfferingId);
-    }
 
     public function exportStudentsDocx($offering_id)
     {

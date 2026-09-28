@@ -52,6 +52,7 @@ return [
         'lat' => env('NMU_LAT', 13.57952292),
         'lng' => env('NMU_LNG', 102.92898894),
         'radius' => env('NMU_RADIUS', 100),
+        'student_id_start' => (int) env('STUDENT_ID_START', 1),
     ],
 
     'telegram' => [

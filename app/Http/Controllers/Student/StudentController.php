@@ -197,8 +197,4 @@ class StudentController extends Controller
         return back()->with('success', 'អបអរសាទរ! គណនី Telegram របស់អ្នកត្រូវបានភ្ជាប់ហើយ។');
     }
 
-    public function myTimetable()
-    {
-        return redirect()->route('student.my-schedule');
-    }
 }

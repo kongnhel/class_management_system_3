@@ -167,13 +167,6 @@ class UserController extends Controller
         return response()->json($users);
     }
 
-    public function getDepartmentsByFaculty(Faculty $faculty)
-    {
-        $departments = $faculty->departments()->select('id', 'name_km', 'name_en')->get();
-
-        return response()->json($departments);
-    }
-
     public function showUser(User $user)
     {
         $user->load(['profile', 'studentProfile']);

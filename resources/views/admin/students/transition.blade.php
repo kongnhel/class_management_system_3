@@ -66,9 +66,9 @@
                             <select id="bachelor_department_id" name="bachelor_department_id" class="form-select w-full rounded-xl border-gray-300 shadow-sm focus:ring-green-500 focus:border-green-500 transition duration-150 ease-in-out" required>
                                 <option value="">{{ __('select_study_program') }}</option>
                                 @foreach ($transitionDepartments as $dept)
-                                    <option value="{{ $dept->id }}" {{ old('bachelor_department_id') == $dept->id ? 'selected' : '' }}>
-                                        {{ $dept->name_km }} - {{ $dept->duration_years }} ឆ្នាំ
-                                    </option>
+<option value="{{ $dept->id }}" {{ old('bachelor_department_id') == $dept->id ? 'selected' : '' }}>
+{{ $dept->name_km }} - {{ $dept->duration_years }} {{ __('years_2') }}
+</option>
                                 @endforeach
                             </select>
                             @error('bachelor_department_id')

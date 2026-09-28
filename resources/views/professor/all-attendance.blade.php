@@ -304,12 +304,12 @@
                         this.courseFilterStudents = this.students;
                         return;
                     }
-                    fetch('/professor/api/course-offering/' + courseId + '/students', {
+                    fetch('/professor/course-offerings/' + courseId + '/students-data', {
                         headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
                     })
                     .then(r => r.json())
                     .then(data => {
-                        this.courseFilterStudents = data.students || [];
+                        this.courseFilterStudents = Array.isArray(data) ? data : [];
                     })
                     .catch(() => {
                         this.courseFilterStudents = this.students;

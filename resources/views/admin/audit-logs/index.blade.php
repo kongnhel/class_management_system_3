@@ -19,27 +19,27 @@
 
                     <form method="GET" action="{{ route('admin.audit-logs.index') }}" class="mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">ស្វែងរក</label>
-                            <input type="text" name="search" value="{{ request('search') }}" placeholder="ពិពណ៌នា, IP..."
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('search') }}</label>
+                            <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('description') }}, IP..."
                                 class="block w-full rounded-md shadow-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">សកម្មភាព</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('actions_2') }}</label>
                             <select name="action" class="block w-full rounded-md shadow-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm">
-                                <option value="">ទាំងអស់</option>
-                                <option value="create" {{ request('action') == 'create' ? 'selected' : '' }}>បង្កើត</option>
-                                <option value="update" {{ request('action') == 'update' ? 'selected' : '' }}>កែប្រែ</option>
-                                <option value="delete" {{ request('action') == 'delete' ? 'selected' : '' }}>លុប</option>
-                                <option value="login" {{ request('action') == 'login' ? 'selected' : '' }}>ចូល</option>
+                                <option value="">{{ __('all_2') }}</option>
+                                <option value="create" {{ request('action') == 'create' ? 'selected' : '' }}>{{ __('created') }}</option>
+                                <option value="update" {{ request('action') == 'update' ? 'selected' : '' }}>{{ __('updated_2') }}</option>
+                                <option value="delete" {{ request('action') == 'delete' ? 'selected' : '' }}>{{ __('deleted_2') }}</option>
+                                <option value="login" {{ request('action') == 'login' ? 'selected' : '' }}>{{ __('login_action') }}</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">ពីថ្ងៃ</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('from_day') }}</label>
                             <input type="date" name="date_from" value="{{ request('date_from') }}"
                                 class="block w-full rounded-md shadow-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">ដល់ថ្ងៃ</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('until_day') }}</label>
                             <input type="date" name="date_to" value="{{ request('date_to') }}"
                                 class="block w-full rounded-md shadow-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm">
                         </div>
@@ -85,15 +85,15 @@
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             @if ($log->action === 'create')
                                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                                    បង្កើត
+                                                    {{ __('created') }}
                                                 </span>
                                             @elseif ($log->action === 'update')
                                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                                    កែប្រែ
+                                                    {{ __('updated_2') }}
                                                 </span>
                                             @elseif ($log->action === 'delete')
                                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                                                    លុប
+                                                    {{ __('deleted_2') }}
                                                 </span>
                                             @else
                                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-emerald-100 text-emerald-800">
@@ -125,7 +125,7 @@
                                 @empty
                                     <tr>
                                         <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
-                                            មិនមានកំណត់ត្រាសកម្មភាពទេ។
+                                            {{ __('no_audit_logs') }}
                                         </td>
                                     </tr>
                                 @endforelse

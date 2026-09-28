@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
             <div class="flex items-center gap-3">
@@ -31,7 +31,7 @@
                         <i class="fas fa-exclamation-triangle text-amber-500 text-4xl"></i>
                     </div>
                     <h3 class="text-2xl font-bold text-gray-900 mb-2">{{ __('import_with_errors') }}</h3>
-                    <p class="text-gray-500">{{ __('imported_successfully') }} <span class="font-bold text-emerald-600">{{ $imported }}</span> នាក់ {{ __('and_skipped') }} <span class="font-bold text-red-600">{{ $skipped }}</span> {{ __('people_skipped') }}</p>
+                    <p class="text-gray-500">{{ __('imported_successfully') }} <span class="font-bold text-emerald-600">{{ $imported }}</span> {{ __('student_2') }} {{ __('and_skipped') }} <span class="font-bold text-red-600">{{ $skipped }}</span> {{ __('people_skipped') }}</p>
                 @else
                     <div class="w-20 h-20 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-6">
                         <i class="fas fa-times-circle text-red-500 text-4xl"></i>
@@ -81,7 +81,7 @@
                     </div>
                     <div>
                         <h4 class="text-sm font-bold text-blue-800">{{ __('default_password') }}</h4>
-                        <p class="text-sm text-blue-600 mt-1">{{ __('students_default_password') }} <code class="bg-blue-100 px-2 py-0.5 rounded font-mono">password123</code></p>
+                        <p class="text-sm text-blue-600 mt-1">{{ __('students_default_password') }}</p>
                         <p class="text-xs text-blue-500 mt-1">{{ __('provide_credentials_info') }}</p>
                     </div>
                 </div>
@@ -94,7 +94,7 @@
                     <i class="fas fa-plus"></i> {{ __('import_again') }}
                 </a>
                 @if($imported > 0)
-                <a href="{{ route('admin.manage-users', ['tab' => $settings['role'] === 'student' ? 'students' : 'professors']) }}" 
+                <a href="{{ route('admin.manage-users', ['tab' => $role === 'student' ? 'students' : 'professors']) }}"
                    class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-600 to-emerald-600 rounded-xl font-bold text-white hover:from-emerald-700 hover:to-emerald-700 transition shadow-md">
                     <i class="fas fa-eye"></i> {{ __('view_users') }}
                 </a>

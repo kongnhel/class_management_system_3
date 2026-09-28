@@ -428,7 +428,7 @@
                                                     G{{ $generation ?? '?' }}
                                                 </div>
                                                 <div class="text-left">
-                                                    <h3 class="text-lg font-bold text-gray-800 tracking-tight">{{ __('generation_2') }} {{ $generation ?? 'មិនកំណត់' }}</h3>
+                                                    <h3 class="text-lg font-bold text-gray-800 tracking-tight">{{ __('generation_2') }} {{ $generation ?? __('not_set') }}</h3>
                                                     <p class="text-xs font-medium text-gray-500">{{ $departments->flatten()->count() }} {{ __('total_students_2') }}</p>
                                                 </div>
                                             </div>

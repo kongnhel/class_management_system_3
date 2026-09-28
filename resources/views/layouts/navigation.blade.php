@@ -202,7 +202,7 @@
                     <a wire:navigate href="{{ route('admin.progression.index') }}"
                        class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all {{ request()->routeIs('admin.progression.*') ? 'bg-green-600 text-white shadow-md shadow-green-600/20' : 'text-gray-400 hover:bg-slate-700/50 hover:text-white' }}">
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                        <span>{{ __('nav_generation_management') }}</span>
+                        <span>{{ __('student_progression_title') }}</span>
                     </a>
                 </div>
 
@@ -212,11 +212,11 @@
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.899a9 9 0 010 12.728M5.88 15.828l2.585-2.585M13.414 7.05l-2.585 2.585M12 12h.01M3 3l.707.707M20.293 3.707l-.707.707M3 21l.707-.707M20.293 20.293l-.707-.707"/></svg>
                         <span>{{ __('nav_other') }}</span>
                     </div>
-                    <a wire:navigate href="{{ route('admin.announcements.index') }}"
+                    <!-- <a wire:navigate href="{{ route('admin.announcements.index') }}"
                        class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all {{ request()->routeIs('admin.announcements.*') ? 'bg-green-600 text-white shadow-md shadow-green-600/20' : 'text-gray-400 hover:bg-slate-700/50 hover:text-white' }}">
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.899a9 9 0 010 12.728M5.88 15.828l2.585-2.585M13.414 7.05l-2.585 2.585M12 12h.01M3 3l.707.707M20.293 3.707l-.707.707M3 21l.707-.707M20.293 20.293l-.707-.707"/></svg>
                         <span>{{ __('nav_announcement') }}</span>
-                    </a>
+                    </a> -->
                 </div>
             @endif
 
@@ -245,7 +245,7 @@
                                 <span id="sidebar-unread-badge" class="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center px-1 shadow-lg">{{ $totalUnread > 99 ? '99+' : $totalUnread }}</span>
                             @endif
                         </div>
-                        <span>{{ __('nav_notifications') }}</span>
+                        <!-- <span>{{ __('nav_notifications') }}</span> -->
                     </a>
                     <a wire:navigate href="{{ route('professor.my-schedule') }}"
                        class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all {{ request()->routeIs('professor.my-schedule') ? 'bg-green-600 text-white shadow-md shadow-green-600/20' : 'text-gray-400 hover:bg-slate-700/50 hover:text-white' }}">

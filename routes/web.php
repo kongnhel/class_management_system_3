@@ -107,8 +107,6 @@ Route::middleware(['auth', 'role:admin', 'throttle:120,1'])->prefix('admin')->na
     Route::get('/faculties/{faculty}/edit', [FacultyController::class, 'edit'])->name('edit-faculty');
     Route::put('/faculties/{faculty}', [FacultyController::class, 'update'])->name('update-faculty');
     Route::delete('/faculties/{faculty}', [FacultyController::class, 'destroy'])->name('delete-faculty');
-    // Route::get('/get-departments-by-faculty/{faculty}', [FacultyController::class, 'getDepartmentsByFaculty'])->name('get-departments-by-faculty');
-    // Route::get('/get-departments-by-faculty/{faculty}', [AdminController::class, 'getDepartmentsByFaculty'])->name('get-departments-by-faculty');
 
     Route::get('/departments', [DepartmentController::class, 'index'])->name('manage-departments');
     Route::get('/departments/create', [DepartmentController::class, 'create'])->name('create-department');
@@ -132,19 +130,16 @@ Route::middleware(['auth', 'role:admin', 'throttle:120,1'])->prefix('admin')->na
     Route::put('/courses/{course}', [CourseController::class, 'update'])->name('update-course');
     Route::delete('/courses/{course}', [CourseController::class, 'destroy'])->name('delete-course');
 
-    // Route::resource('course-offerings', CourseOfferingController::class);
     Route::get('/course-offerings', [CourseOfferingController::class, 'index'])->name('manage-course-offerings');
     Route::get('/course-offerings/create', [CourseOfferingController::class, 'create'])->name('create-course-offering');
     Route::post('/course-offerings', [CourseOfferingController::class, 'store'])->name('store-course-offering');
     Route::get('/course-offerings/{courseOffering}/edit', [CourseOfferingController::class, 'edit'])->name('edit-course-offering');
     Route::get('/course-offerings/check-room', [CourseOfferingController::class, 'checkRoomAvailability'])->name('course-offerings.check-room');
-    // Route::put('/course-offerings/{courseOffering}', [CourseOfferingController::class, 'update'])->name('update-course-offering');
     Route::put('/course-offerings/{courseOffering}', [CourseOfferingController::class, 'update'])->name('course-offerings.update');
     Route::delete('/course-offerings/{courseOffering}', [CourseOfferingController::class, 'destroy'])->name('course-offerings.destroy');
     Route::get('/enroll-student', [CourseOfferingController::class, 'enrollStudentForm'])->name('enroll_student_form');
     Route::post('/perform-enrollment', [CourseOfferingController::class, 'performEnrollment'])->name('perform_enrollment');
 
-    // Route::resource('rooms', RoomController::class);
     Route::get('/rooms', [RoomController::class, 'index'])->name('rooms.index');
     Route::get('/rooms/create', [RoomController::class, 'create'])->name('rooms.create');
     Route::post('/rooms', [RoomController::class, 'store'])->name('rooms.store');
@@ -161,7 +156,6 @@ Route::middleware(['auth', 'role:admin', 'throttle:120,1'])->prefix('admin')->na
     Route::delete('/announcements/{announcement}', [AnnouncementController::class, 'destroy'])->name('announcements.destroy');
 
     Route::get('/users/search', [UserController::class, 'searchUsers'])->name('users.search');
-    Route::get('/get-courses-by-department/{department}', [AdminController::class, 'getCoursesByDepartment'])->name('get-courses-by-department');
     Route::get('/course-offerings/{courseOffering}', [CourseOfferingController::class, 'show'])->name('show-course-offering');
 
     // Academic Year Management
@@ -194,6 +188,7 @@ Route::middleware(['auth', 'role:admin', 'throttle:120,1'])->prefix('admin')->na
     Route::post('/import/preview', [BulkImportController::class, 'previewUsers'])->name('import.preview');
     Route::post('/import/execute', [BulkImportController::class, 'importUsers'])->name('import.users');
     Route::get('/import/template', [BulkImportController::class, 'downloadTemplate'])->name('import.template');
+    Route::get('/import/result', [BulkImportController::class, 'result'])->name('import.result');
 
     // // Audit Logs (hidden)
     // Route::get('/audit-logs', [\App\Http\Controllers\admin\AuditLogController::class, 'index'])->name('audit-logs.index');
@@ -222,10 +217,8 @@ Route::middleware(['auth', 'role:professor', 'throttle:120,1'])->prefix('profess
         ->name('security.trusted-devices');
     Route::delete('/security/trusted-device/{trustedDevice}', [App\Http\Controllers\professor\TrustedDeviceController::class, 'revoke'])
         ->name('security.trusted-device.revoke');
-    Route::get('/view-departments', [ProfessorController::class, 'viewDepartments'])->name('view-departments');
-    Route::get('/view-courses', [ProfessorController::class, 'viewCourses'])->name('view-courses');
-    Route::get('/view-all-course-offerings', [ProfessorController::class, 'viewAllCourseOfferings'])->name('view-all-course-offerings');
-    Route::get('/all-students', [ProfessorController::class, 'allStudents'])->name('all-students');
+    Route::get('/view-departments', [ProfessorCourseOfferingController::class, 'viewDepartments'])->name('view-departments');
+    Route::get('/view-courses', [ProfessorCourseOfferingController::class, 'viewCourses'])->name('view-courses');
     Route::get('/my-course-offerings', [ProfessorCourseOfferingController::class, 'myCourseOfferings'])->name('my-course-offerings');
     Route::get('/course-offering/{offering_id}/grades', [ProfessorGradeController::class, 'manageGrades'])->name('manage-grades');
     Route::get('/course-offering/{offering_id}/grades/print', [ProfessorGradeController::class, 'printGrades'])->name('grades.print');
@@ -234,53 +227,33 @@ Route::middleware(['auth', 'role:professor', 'throttle:120,1'])->prefix('profess
     Route::get('/course-offering/{offering_id}/re-exam', [App\Http\Controllers\professor\ProfessorReExamController::class, 'showForm'])->name('re-exam-form');
     Route::post('/course-offering/{offering_id}/re-exam', [App\Http\Controllers\professor\ProfessorReExamController::class, 'store'])->name('re-exam-store');
     Route::get('/course-offering/{offering_id}/attendance', [ProfessorController::class, 'manageAttendance'])->name('manage-attendance');
-    Route::get('/course-offering/{offering_id}/assignments', [ProfessorController::class, 'manageAssignments'])->name('manage-assignments');
-    Route::get('/course-offering/{offering_id}/exams', [ProfessorController::class, 'manageExams'])->name('manage-exams');
-    Route::post('/course-offering/{offering_id}/exams', [ProfessorController::class, 'storeExam'])->name('store-exam');
 
     Route::get('/all-grades', [ProfessorGradeController::class, 'allGrades'])->name('grades.all');
-    Route::get('/courses', [ProfessorGradeController::class, 'professorCourses'])->name('professor.courses');
 
-    Route::get('/course-offerings/{offering_id}/assignments/{assignment}/edit', [ProfessorController::class, 'editAssignment'])->name('assignments.edit');
-    Route::put('/course-offerings/{offering_id}/assignments/{assignment}', [ProfessorController::class, 'updateAssignment'])->name('assignments.update');
-    Route::delete('/course-offerings/{offering_id}/assignments/{assignment}', [ProfessorController::class, 'destroyAssignment'])->name('assignments.destroy');
-    Route::get('/course-offering/{offering_id}/exams/{exam}/edit', [ProfessorController::class, 'editExam'])->name('exams.edit');
-    Route::put('/course-offering/{offering_id}/exams/{exam}', [ProfessorController::class, 'updateExam'])->name('exams.update');
-    Route::delete('/course-offering/{offering_id}/exams/{exam}', [ProfessorController::class, 'destroyExam'])->name('exams.destroy');
     Route::get('/all-attendance', [ProfessorController::class, 'allAttendance'])->name('all-attendance');
-    Route::get('/api/course-offering/{offering_id}/students', [ProfessorController::class, 'apiGetStudents'])->name('api.course-offering.students');
     Route::post('/attendances', [ProfessorAttendanceController::class, 'storeAttendance'])->name('attendances.store');
     Route::put('/attendances/{attendance}', [ProfessorAttendanceController::class, 'updateAttendance'])->name('attendances.update');
     Route::delete('/attendances/{attendance}', [ProfessorAttendanceController::class, 'destroyAttendance'])->name('attendances.destroy');
     Route::get('/my-schedule', [ProfessorController::class, 'mySchedule'])->name('my-schedule');
-    Route::get('/api/course-offerings-with-students', [ProfessorController::class, 'getCourseOfferingsWithStudents']);
     Route::get('/all-data', [ProfessorController::class, 'allDataView'])->name('all-data-view');
     Route::get('/course-offering/{offering_id}/students', [ProfessorController::class, 'getStudentsInCourseOffering'])->name('students.in-course-offering');
     Route::get('/course-offerings/{courseOffering}/students', [ProfessorController::class, 'redirectToCourseStudents'])->name('professor.course-offerings.students.index');
     Route::get('/course-offerings/{courseOffering}/students/print', [ProfessorController::class, 'printStudents'])->name('students.print');
     Route::get('/course-offerings/{courseOffering}/students/{student}', [ProfessorController::class, 'showStudentProfile'])->name('students.show');
     Route::get('/students/{student}', [ProfessorController::class, 'showStudentProfile'])->name('professor.students.show');
-    Route::get('/profile/create', [ProfessorProfileController::class, 'create'])->name('profile.create');
 
     Route::get('/notifications', [ProfessorNotificationController::class, 'notificationsIndex'])->name('notifications.index');
     Route::get('/course-offerings/{courseOffering}/students-data', [ProfessorNotificationController::class, 'getStudentsForCourseOffering'])->name('course_offerings.students');
     Route::get('/notifications/create', [ProfessorNotificationController::class, 'createNotificationForm'])->name('notifications.create');
     Route::post('/notifications/store', [ProfessorNotificationController::class, 'notificationsStore'])->name('notifications.store');
-    Route::get('/notifications/{id}/edit', [ProfessorNotificationController::class, 'notificationsEdit'])->name('notifications.edit');
-    Route::put('/notifications/{id}', [ProfessorNotificationController::class, 'notificationsUpdate'])->name('notifications.update');
     Route::delete('/notifications/{id}', [ProfessorNotificationController::class, 'notificationsDestroy'])->name('notifications.destroy');
     Route::post('/notifications/{id}/mark-as-read', [ProfessorNotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
     Route::post('/notifications/mark-all-as-read', [ProfessorNotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
-    Route::get('/course/{course}/grading-categories', [ProfessorController::class, 'manageGradingCategories'])->name('grading-categories.index');
-    Route::post('/course/{course}/grading-categories', [ProfessorController::class, 'storeGradingCategory'])->name('grading-categories.store');
-    Route::delete('/grading-categories/{category}', [ProfessorController::class, 'destroyGradingCategory'])->name('grading-categories.destroy');
     Route::get('/course-offerings/{offering_id}/assessments/create', [ProfessorGradeController::class, 'createAssessmentForm'])->name('assessments.create');
     Route::post('/course-offerings/{offering_id}/assessments', [ProfessorGradeController::class, 'storeAssessment'])->name('assessments.store');
     Route::get('/api/check-duplicate', [ProfessorGradeController::class, 'checkDuplicate']);
     Route::get('/assessments/{assessment_id}/grades/edit', [ProfessorGradeController::class, 'showGradeEntryForm'])->name('grades.edit');
-    // Route::delete('/assessments/{id}', [ProfessorGradeController::class, 'destroyAssessment'])->name('assessments.destroy');
     Route::post('/assessments/{assessment_id}/grades', [ProfessorGradeController::class, 'storeGradesForAssessment'])->name('grades.store');
-    Route::post('/course-offering/{offering_id}/assignments', [ProfessorController::class, 'storeAssignment'])->name('assignments.store');
 
     Route::post('/announcements/{announcement}/mark-as-read', [ProfessorController::class, 'markAsRead'])->name('announcements.markAsRead');
     Route::get('/profile', [ProfessorProfileController::class, 'showProfile'])->name('profile.show');
@@ -314,8 +287,6 @@ Route::middleware(['auth', 'role:professor', 'throttle:120,1'])->prefix('profess
         ->name('attendance.report');
     Route::get('/course-offerings/{courseOffering}/attendance-report/print', [ProfessorController::class, 'printAttendanceReport'])
         ->name('attendance-report.print');
-    Route::post('/grades/store/{assessment_id}', [ProfessorController::class, 'updateGrades'])
-        ->name('grades.update-grades');
     Route::delete('/assessments/{id}', [ProfessorGradeController::class, 'destroyAssessment'])->name('assessments.destroy');
     Route::get('/assessments/{id}/edit/{type}',
         [ProfessorGradeController::class, 'assessmentEdit']
@@ -384,7 +355,6 @@ Route::middleware(['auth', 'role:student', 'throttle:120,1'])->prefix('student')
     Route::get('profile/edit', [StudentProfileController::class, 'edit'])->name('profile.edit');
     Route::put('profile', [StudentProfileController::class, 'update'])->name('profile.update');
     Route::get('/rooms', [StudentRoomController::class, 'rooms'])->name('rooms.index');
-    Route::get('/my-timetable', [StudentController::class, 'myTimetable'])->name('my-timetable');
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::patch('/announcements/{id}/read', [NotificationController::class, 'markAnnouncementAsRead'])->name('announcements.read');
@@ -407,7 +377,7 @@ Route::middleware(['auth', 'role:student', 'throttle:120,1'])->prefix('student')
         ->name('update_telegram');
     Route::view('/scan', 'student.scan')->name('scan');
 
-    // API សម្រាប់ទទួលទិន្នន័យស្កែន
+    // API ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¾ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¾ÃƒÆ’Ã¢â‚¬Â¹Ãƒâ€¦Ã¢â‚¬Å“ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¾ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¶ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¾ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¹ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¾ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¹Ã…â€œÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¾ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¹Ã…â€œÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â½ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¾ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂºÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¾ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¹Ã…â€œÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â·ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¾ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¾ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¾ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¾ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¾ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¾ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¾ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“
     Route::post('/process-scan', [AttendanceController::class, 'processScan'])
         ->name('process-scan');
 

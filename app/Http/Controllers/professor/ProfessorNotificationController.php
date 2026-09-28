@@ -43,6 +43,7 @@ class ProfessorNotificationController extends Controller
 
     public function getStudentsForCourseOffering(CourseOffering $courseOffering)
     {
+        abort_unless($courseOffering->lecturer_user_id === Auth::id(), 403);
 
         $students = StudentCourseEnrollment::where('course_offering_id', $courseOffering->id)
             ->with('student.studentProfile')
@@ -50,7 +51,7 @@ class ProfessorNotificationController extends Controller
             ->map(function ($enrollment) {
                 return [
                     'id' => $enrollment->student->id,
-                    'name' => $enrollment->student->studentProfile->full_name_km ?? $enrollment->student->name,
+                    'name' => $enrollment->student->studentProfile?->full_name_km ?? $enrollment->student->name,
                 ];
             });
 
@@ -198,52 +199,4 @@ class ProfessorNotificationController extends Controller
         return response()->json(['success' => true]);
     }
 
-    public function getStudentsInCourseOffering($offering_id)
-    {
-        $user = Auth::user();
-
-        $courseOffering = CourseOffering::where('id', $offering_id)
-            ->where('lecturer_user_id', $user->id)
-            ->with([
-                'course',
-                'studentCourseEnrollments.student.studentProfile',
-                'studentCourseEnrollments.student.studentDepartmentEnrollments.department',
-            ])
-            ->firstOrFail();
-
-        $stats = [
-            'total' => $courseOffering->studentCourseEnrollments->count(),
-            'male' => 0,
-            'female' => 0,
-            'leaders' => 0,
-        ];
-
-        $students = $courseOffering->studentCourseEnrollments->map(function ($enrollment) use (&$stats) {
-            $student = $enrollment->student;
-
-            $gender = strtoupper($student->studentProfile->gender ?? '');
-            if (in_array($gender, ['M', 'MALE', 'ប្រុស'])) {
-                $stats['male']++;
-            } elseif (in_array($gender, ['F', 'FEMALE', 'ស្រី'])) {
-                $stats['female']++;
-            }
-
-            if ($enrollment->is_class_leader) {
-                $stats['leaders']++;
-            }
-
-            return $student;
-        });
-
-        $perPage = 10;
-        $currentPage = LengthAwarePaginator::resolveCurrentPage('studentsPage');
-        $currentItems = $students->slice(($currentPage - 1) * $perPage, $perPage)->values()->all();
-
-        $paginatedStudents = new LengthAwarePaginator($currentItems, $students->count(), $perPage, $currentPage, [
-            'path' => request()->url(),
-            'pageName' => 'studentsPage',
-        ]);
-
-        return view('professor.students.index', compact('courseOffering', 'paginatedStudents', 'stats'));
-    }
 }

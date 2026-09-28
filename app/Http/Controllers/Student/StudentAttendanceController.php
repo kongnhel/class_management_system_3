@@ -141,13 +141,4 @@ class StudentAttendanceController extends Controller
         return view('student.leader.report', compact('courseOffering', 'students'));
     }
 
-    public function getAttendanceScore($studentId, $courseOfferingId)
-    {
-        $student = \App\Models\User::find($studentId);
-        if (! $student) {
-            return 0;
-        }
-
-        return $student->getAttendanceScoreByCourse($courseOfferingId);
-    }
 }

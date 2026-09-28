@@ -52,7 +52,7 @@
         <div class="flex items-center gap-2 relative z-10">
             <button onclick="showClearConfirm()"
                     class="p-2.5 bg-white/15 hover:bg-white/25 text-white rounded-xl transition-all backdrop-blur-sm border border-white/20"
-                    title="{{ __('clear_history') }}">
+                    title="{{ __('ai_clear_history') }}">
                 <i class="fas fa-trash-alt text-sm"></i>
             </button>
             <button onclick="toggleAIChat()" class="p-2.5 hover:bg-white/15 rounded-xl transition-all">
@@ -66,7 +66,7 @@
     {{-- Mode Tabs --}}
     <div class="flex border-b border-gray-100 bg-white px-3 py-2 gap-1">
         <button type="button" onclick="setOption('info')" id="btn-info" class="flex-1 py-2.5 rounded-xl text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold transition-all flex items-center justify-center gap-1.5">
-            <i class="fas fa-info-circle text-[10px]"></i> {{ __('information') }}
+            <i class="fas fa-info-circle text-[10px]"></i> {{ __('ai_general_info') }}
         </button>
         <button type="button" onclick="setOption('search')" id="btn-search" class="flex-1 py-2.5 rounded-xl text-xs text-gray-400 hover:text-gray-600 hover:bg-gray-50 font-bold transition-all flex items-center justify-center gap-1.5">
             <i class="fas fa-search text-[10px]"></i> {{ __('search_2') }}
@@ -89,7 +89,7 @@
                     <div class="w-2 h-2 bg-emerald-500 rounded-full animate-bounce" style="animation-delay: -0.3s"></div>
                     <div class="w-2 h-2 bg-emerald-500 rounded-full animate-bounce" style="animation-delay: -0.5s"></div>
                 </div>
-                <span class="text-xs text-gray-400 font-medium">{{ __('thinking') }}</span>
+                <span class="text-xs text-gray-400 font-medium">{{ __('ai_thinking') }}</span>
             </div>
             <button id="stop-btn" onclick="stopGenerating()" class="px-3 py-1.5 bg-red-50 text-red-500 text-[11px] font-bold rounded-lg hover:bg-red-100 transition-all flex items-center gap-1.5 border border-red-100">
                 <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
@@ -106,7 +106,7 @@
             <div class="flex-1 relative">
                 <input type="text" id="user-input" autocomplete="off"
                     class="w-full bg-gray-50 border border-gray-200 rounded-2xl pl-5 pr-12 py-3.5 text-sm outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 transition-all placeholder:text-gray-400"
-                    placeholder="{{ __('write_your_question_here') }}" required>
+                    placeholder="{{ __('ai_ph_info') }}" required>
                 <button type="submit" class="absolute right-2 top-1/2 -translate-y-1/2 bg-emerald-500 text-white p-2.5 rounded-xl hover:bg-emerald-600 active:scale-95 shadow-md transition-all">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
@@ -124,9 +124,9 @@
             <div class="mx-auto w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mb-5">
                 <i class="fas fa-trash-alt text-red-500 text-2xl"></i>
             </div>
-            <h3 class="text-xl font-bold text-gray-900 mb-2">{{ __('clear_chat_history') }}</h3>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">{{ __('ai_clear_history') }}</h3>
             <p class="text-sm text-gray-500 leading-relaxed">
-                {{ __('this_action_will_permanently_delete_all_chat_history') }}
+                {{ __('ai_clear_history_warning') }}
             </p>
         </div>
         <div class="px-6 pb-6 flex gap-3">

@@ -15,94 +15,51 @@
 
     <div class="py-10 bg-gray-50 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
-            {{-- Key Metrics Section --}}
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-                
-                {{-- Total Users --}}
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:-translate-y-1 group">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-sm font-medium text-gray-500 mb-1">{{ __('admin_total_users') }}</p>
-                            <h3 class="text-3xl font-extrabold text-gray-800">{{ $totalUsers }}</h3>
+
+            {{-- ============================================================ --}}
+            {{-- HERO BANNER - greeting + key metrics                        --}}
+            {{-- ============================================================ --}}
+            <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-800 text-white shadow-lg shadow-emerald-600/20">
+                <div class="absolute -top-24 -right-16 w-80 h-80 bg-white/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="relative px-6 sm:px-10 py-8">
+                    <div class="flex items-center gap-5 min-w-0">
+                        <div class="flex-shrink-0 w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 overflow-hidden flex items-center justify-center text-2xl font-bold">
+                            <i class="fas fa-chart-bar text-emerald-200"></i>
                         </div>
-                        <div class="p-3 bg-green-50 rounded-xl text-green-600 group-hover:bg-green-600 group-hover:text-white transition-colors duration-300">
-                            <i class="fas fa-users-cog text-xl"></i>
+                        <div class="min-w-0">
+                            <p class="text-emerald-200/80 text-[11px] font-semibold uppercase tracking-widest">{{ now()->translatedFormat('l, d F Y') }}</p>
+                            <h1 class="text-2xl sm:text-3xl font-bold tracking-tight mt-1 truncate">
+                                {{ __('admin_dashboard_title') }}
+                            </h1>
+                            <p class="text-emerald-100/70 text-sm mt-1">{{ __('admin_dashboard_subtitle') }}</p>
                         </div>
                     </div>
-                    <div class="mt-4 w-full bg-gray-100 rounded-full h-1.5">
-                        <div class="bg-green-500 h-1.5 rounded-full" style="width: {{ min(100, max(5, $totalUsers * 2)) }}%"></div>
+
+                    {{-- today's attendance metrics row --}}
+                    <div class="mt-8 pt-6 border-t border-white/15 grid grid-cols-3 divide-x divide-white/10">
+                        <div class="pr-5 sm:pr-8">
+                            <p class="text-[11px] font-semibold uppercase tracking-wider text-emerald-200/80">{{ __('admin_today_total_attendance') }}</p>
+                            <p class="text-2xl sm:text-3xl font-bold tracking-tight tabular-nums mt-1 leading-none">{{ $todayAttendanceCount }}</p>
+                        </div>
+                        <div class="px-5 sm:px-8">
+                            <p class="text-[11px] font-semibold uppercase tracking-wider text-emerald-200/80">{{ __('admin_today_present') }}</p>
+                            <p class="text-2xl sm:text-3xl font-bold tracking-tight tabular-nums mt-1 leading-none text-emerald-200">{{ $todayPresentCount }}</p>
+                        </div>
+                        <div class="pl-5 sm:pl-8">
+                            <p class="text-[11px] font-semibold uppercase tracking-wider text-emerald-200/80">{{ __('admin_today_absent') }}</p>
+                            <p class="text-2xl sm:text-3xl font-bold tracking-tight tabular-nums mt-1 leading-none text-amber-200">{{ $todayAbsentCount }}</p>
+                        </div>
                     </div>
                 </div>
+            </section>
 
-                {{-- Total Students --}}
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:-translate-y-1 group">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-sm font-medium text-gray-500 mb-1">{{ __('admin_total_students') }}</p>
-                            <h3 class="text-3xl font-extrabold text-gray-800">{{ $totalStudents }}</h3>
-                        </div>
-                        <div class="p-3 bg-teal-50 rounded-xl text-teal-600 group-hover:bg-teal-600 group-hover:text-white transition-colors duration-300">
-                            <i class="fas fa-user-graduate text-xl"></i>
-                        </div>
-                    </div>
-                    <div class="mt-4 w-full bg-gray-100 rounded-full h-1.5">
-                        <div class="bg-teal-500 h-1.5 rounded-full" style="width: {{ $totalUsers > 0 ? round($totalStudents / $totalUsers * 100) : 0 }}%"></div>
-                    </div>
-                </div>
-
-                {{-- Total Professors --}}
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:-translate-y-1 group">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-sm font-medium text-gray-500 mb-1">{{ __('admin_total_professors') }}</p>
-                            <h3 class="text-3xl font-extrabold text-gray-800">{{ $totalProfessors }}</h3>
-                        </div>
-                        <div class="p-3 bg-orange-50 rounded-xl text-orange-600 group-hover:bg-orange-600 group-hover:text-white transition-colors duration-300">
-                            <i class="fas fa-chalkboard-teacher text-xl"></i>
-                        </div>
-                    </div>
-                    <div class="mt-4 w-full bg-gray-100 rounded-full h-1.5">
-                        <div class="bg-orange-500 h-1.5 rounded-full" style="width: {{ $totalUsers > 0 ? round($totalProfessors / $totalUsers * 100) : 0 }}%"></div>
-                    </div>
-                </div>
-
-                {{-- Total Faculties --}}
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:-translate-y-1 group">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-sm font-medium text-gray-500 mb-1">{{ __('admin_total_faculties') }}</p>
-                            <h3 class="text-3xl font-extrabold text-gray-800">{{ $totalFaculties }}</h3>
-                        </div>
-                        <div class="p-3 bg-purple-50 rounded-xl text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors duration-300">
-                            <i class="fas fa-building text-xl"></i>
-                        </div>
-                    </div>
-                    <div class="mt-4 w-full bg-gray-100 rounded-full h-1.5">
-                        <div class="bg-purple-500 h-1.5 rounded-full" style="width: {{ min(100, max(5, $totalFaculties * 20)) }}%"></div>
-                    </div>
-                </div>
-
-                {{-- Active Course Offerings --}}
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:-translate-y-1 group">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-sm font-medium text-gray-500 mb-1">{{ __('admin_active_course_offerings') }}</p>
-                            <h3 class="text-3xl font-extrabold text-gray-800">{{ $activeCourseOfferings }}</h3>
-                        </div>
-                        <div class="p-3 bg-cyan-50 rounded-xl text-cyan-600 group-hover:bg-cyan-600 group-hover:text-white transition-colors duration-300">
-                            <i class="fas fa-calendar-check text-xl"></i>
-                        </div>
-                    </div>
-                    <div class="mt-4 w-full bg-gray-100 rounded-full h-1.5">
-                        <div class="bg-cyan-500 h-1.5 rounded-full" style="width: {{ min(100, max(5, $activeCourseOfferings * 10)) }}%"></div>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Content Split --}}
+            {{-- ============================================================ --}}
+            {{-- MAIN GRID: quick actions (2/3) + system info (1/3)          --}}
+            {{-- ============================================================ --}}
             <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
-                
-                {{-- Quick Actions (Takes up 2/3 on large screens) --}}
+
+                {{-- Quick Actions --}}
                 <div class="xl:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                     <div class="p-6 border-b border-gray-50 flex items-center justify-between">
                         <h4 class="text-lg font-bold text-gray-800 flex items-center gap-2">
@@ -111,7 +68,7 @@
                         </h4>
                     </div>
                     <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                        
+
                         <a href="{{ route('admin.create-user') }}" class="group flex items-center p-4 bg-gray-50 rounded-xl border border-transparent hover:border-emerald-200 hover:bg-emerald-50 transition-all duration-200">
                             <div class="h-12 w-12 rounded-lg bg-white flex items-center justify-center shadow-sm text-emerald-600 group-hover:scale-110 transition-transform">
                                 <i class="fas fa-user-plus text-lg"></i>
@@ -159,7 +116,7 @@
                     </div>
                 </div>
 
-                {{-- System Info (Takes up 1/3) --}}
+                {{-- System Info --}}
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
                     <div class="p-6 border-b border-gray-50">
                         <h4 class="text-lg font-bold text-gray-800 flex items-center gap-2">
@@ -169,7 +126,7 @@
                     </div>
                     <div class="p-6 flex-1">
                         <div class="space-y-5">
-                            {{-- Item 1 --}}
+                            {{-- Departments --}}
                             <div class="flex items-center justify-between group">
                                 <div class="flex items-center gap-3">
                                     <div class="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
@@ -177,23 +134,11 @@
                                     </div>
                                     <span class="text-gray-600 font-medium">{{ __('admin_total_departments') }}</span>
                                 </div>
-                                <span class="text-lg font-bold text-gray-900 group-hover:text-emerald-600 transition-colors">{{ $totalDepartments }}</span>
+                                <span class="text-lg font-bold text-gray-900 group-hover:text-emerald-600 transition-colors tabular-nums">{{ $totalDepartments }}</span>
                             </div>
                             <hr class="border-gray-50">
 
-                            {{-- Item 2 --}}
-                            <div class="flex items-center justify-between group">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
-                                        <i class="fas fa-cubes text-xs"></i>
-                                    </div>
-                                    <span class="text-gray-600 font-medium">{{ __('admin_total_departments') }}</span>
-                                </div>
-                                <span class="text-lg font-bold text-gray-900 group-hover:text-emerald-600 transition-colors">{{ $totalDepartments }}</span>
-                            </div>
-                            <hr class="border-gray-50">
-
-                            {{-- Item 3 --}}
+                            {{-- Courses --}}
                             <div class="flex items-center justify-between group">
                                 <div class="flex items-center gap-3">
                                     <div class="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center text-amber-600">
@@ -201,11 +146,11 @@
                                     </div>
                                     <span class="text-gray-600 font-medium">{{ __('admin_total_courses') }}</span>
                                 </div>
-                                <span class="text-lg font-bold text-gray-900 group-hover:text-amber-600 transition-colors">{{ $totalCourses }}</span>
+                                <span class="text-lg font-bold text-gray-900 group-hover:text-amber-600 transition-colors tabular-nums">{{ $totalCourses }}</span>
                             </div>
                             <hr class="border-gray-50">
 
-                            {{-- Item 4 --}}
+                            {{-- Offerings --}}
                             <div class="flex items-center justify-between group">
                                 <div class="flex items-center gap-3">
                                     <div class="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
@@ -213,7 +158,7 @@
                                     </div>
                                     <span class="text-gray-600 font-medium">{{ __('admin_total_offerings') }}</span>
                                 </div>
-                                <span class="text-lg font-bold text-gray-900 group-hover:text-emerald-600 transition-colors">{{ $totalCourseOfferings }}</span>
+                                <span class="text-lg font-bold text-gray-900 group-hover:text-emerald-600 transition-colors tabular-nums">{{ $totalCourseOfferings }}</span>
                             </div>
                         </div>
                     </div>
@@ -221,28 +166,19 @@
 
             </div>
 
-            {{-- Today's Attendance Summary --}}
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:-translate-y-1 group">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-sm font-medium text-gray-500 mb-1">{{ __('admin_today_total_attendance') }}</p>
-                            <h3 class="text-3xl font-extrabold text-gray-800">{{ $todayAttendanceCount }}</h3>
-                        </div>
-                        <div class="p-3 bg-emerald-50 rounded-xl text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors duration-300">
-                            <i class="fas fa-clipboard-list text-xl"></i>
-                        </div>
-                    </div>
-                </div>
+            {{-- ============================================================ --}}
+            {{-- KEY METRICS ROW: users + students + professors + faculties  --}}
+            {{-- ============================================================ --}}
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
 
                 <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:-translate-y-1 group">
                     <div class="flex justify-between items-start">
                         <div>
-                            <p class="text-sm font-medium text-gray-500 mb-1">{{ __('admin_today_present') }}</p>
-                            <h3 class="text-3xl font-extrabold text-green-600">{{ $todayPresentCount }}</h3>
+                            <p class="text-sm font-medium text-gray-500 mb-1">{{ __('admin_total_users') }}</p>
+                            <h3 class="text-3xl font-extrabold text-gray-800 tabular-nums">{{ $totalUsers }}</h3>
                         </div>
                         <div class="p-3 bg-green-50 rounded-xl text-green-600 group-hover:bg-green-600 group-hover:text-white transition-colors duration-300">
-                            <i class="fas fa-check-circle text-xl"></i>
+                            <i class="fas fa-users-cog text-xl"></i>
                         </div>
                     </div>
                 </div>
@@ -250,17 +186,55 @@
                 <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:-translate-y-1 group">
                     <div class="flex justify-between items-start">
                         <div>
-                            <p class="text-sm font-medium text-gray-500 mb-1">{{ __('admin_today_absent') }}</p>
-                            <h3 class="text-3xl font-extrabold text-red-600">{{ $todayAbsentCount }}</h3>
+                            <p class="text-sm font-medium text-gray-500 mb-1">{{ __('admin_total_students') }}</p>
+                            <h3 class="text-3xl font-extrabold text-gray-800 tabular-nums">{{ $totalStudents }}</h3>
                         </div>
-                        <div class="p-3 bg-red-50 rounded-xl text-red-600 group-hover:bg-red-600 group-hover:text-white transition-colors duration-300">
-                            <i class="fas fa-times-circle text-xl"></i>
+                        <div class="p-3 bg-teal-50 rounded-xl text-teal-600 group-hover:bg-teal-600 group-hover:text-white transition-colors duration-300">
+                            <i class="fas fa-user-graduate text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:-translate-y-1 group">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 mb-1">{{ __('admin_total_professors') }}</p>
+                            <h3 class="text-3xl font-extrabold text-gray-800 tabular-nums">{{ $totalProfessors }}</h3>
+                        </div>
+                        <div class="p-3 bg-orange-50 rounded-xl text-orange-600 group-hover:bg-orange-600 group-hover:text-white transition-colors duration-300">
+                            <i class="fas fa-chalkboard-teacher text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:-translate-y-1 group">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 mb-1">{{ __('admin_total_faculties') }}</p>
+                            <h3 class="text-3xl font-extrabold text-gray-800 tabular-nums">{{ $totalFaculties }}</h3>
+                        </div>
+                        <div class="p-3 bg-purple-50 rounded-xl text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors duration-300">
+                            <i class="fas fa-building text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:-translate-y-1 group">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 mb-1">{{ __('admin_active_course_offerings') }}</p>
+                            <h3 class="text-3xl font-extrabold text-gray-800 tabular-nums">{{ $activeCourseOfferings }}</h3>
+                        </div>
+                        <div class="p-3 bg-cyan-50 rounded-xl text-cyan-600 group-hover:bg-cyan-600 group-hover:text-white transition-colors duration-300">
+                            <i class="fas fa-calendar-check text-xl"></i>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {{-- Recent Users & Announcements --}}
+            {{-- ============================================================ --}}
+            {{-- RECENT USERS & ANNOUNCEMENTS                                --}}
+            {{-- ============================================================ --}}
             <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
 
                 {{-- Recent Users (2/3 width) --}}
@@ -309,7 +283,7 @@
                                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-teal-100 text-teal-700">{{ __('admin_role_student') }}</span>
                                         @endif
                                     </td>
-                                    <td class="px-6 py-4 text-gray-500">
+                                    <td class="px-6 py-4 text-gray-500 tabular-nums">
                                         {{ $user->created_at->format('d M Y') }}
                                     </td>
                                 </tr>
@@ -342,7 +316,7 @@
                             </div>
                             <div class="flex-1 min-w-0">
                                 <p class="font-medium text-gray-800 text-sm leading-tight truncate">{{ $announcement->title }}</p>
-                                <p class="text-xs text-gray-400 mt-1">{{ $announcement->created_at->format('d M Y') }}</p>
+                                <p class="text-xs text-gray-400 mt-1 tabular-nums">{{ $announcement->created_at->format('d M Y') }}</p>
                             </div>
                         </div>
                         @empty

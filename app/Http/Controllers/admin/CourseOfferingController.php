@@ -512,13 +512,6 @@ class CourseOfferingController extends Controller
         return redirect()->back();
     }
 
-    public function getCoursesByDepartment(Department $department)
-    {
-        $courses = $department->courses()->select('id', 'code', 'title_km')->get();
-
-        return response()->json($courses);
-    }
-
     public function exportStudents($offering_id)
     {
         abort_unless(Auth::user()?->isProfessor(), 403);

@@ -27,17 +27,14 @@
                                     <dt class="w-32 font-medium text-gray-500">{{ __('actions_2') }}:</dt>
                                     <dd>
                                         @if ($auditLog->action === 'create')
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                                បង្កើត
-                                            </span>
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">{{ __('created') }}
+                                                </span>
                                         @elseif ($auditLog->action === 'update')
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                                កែប្រែ
-                                            </span>
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">{{ __('updated_2') }}
+                                                </span>
                                         @elseif ($auditLog->action === 'delete')
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                                                លុប
-                                            </span>
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">{{ __('deleted_2') }}
+                                                </span>
                                         @else
                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-emerald-100 text-emerald-800">
                                                 {{ $auditLog->action }}

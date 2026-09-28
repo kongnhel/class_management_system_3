@@ -345,14 +345,13 @@ class BulkImportController extends Controller
                 }
             }
 
-            $message = "បាននាំចូល {$imported} នាក់ដោយជោគជ័យ។";
-            if ($skipped > 0) {
-                $message .= " រំលង {$skipped} នាក់។";
-            }
-
-            return redirect()->route('admin.import.index')
-                ->with('success', $message)
-                ->with('import_errors', $errors);
+            return redirect()->route('admin.import.result')
+                ->with('import_result', [
+                    'imported' => $imported,
+                    'skipped' => $skipped,
+                    'errors' => $errors,
+                    'role' => $request->role,
+                ]);
 
         } catch (\Exception $e) {
             Log::error('Bulk import error: '.$e->getMessage()."\n".$e->getTraceAsString());
@@ -360,6 +359,17 @@ class BulkImportController extends Controller
             return redirect()->route('admin.import.index')
                 ->with('error', 'Import failed: '.$e->getMessage());
         }
+    }
+
+    public function result()
+    {
+        $result = session('import_result');
+
+        abort_unless($result, 404);
+
+        return view('admin.import.result', array_merge($result, [
+            'errors' => collect($result['errors']),
+        ]));
     }
 
     private function mapHeaders($headers)
