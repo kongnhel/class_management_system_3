@@ -237,7 +237,7 @@
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.206 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.794 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.794 5 16.5 5c1.706 0 3.332.477 4.5 1.253v13C19.832 18.477 18.206 18 16.5 18c-1.706 0-3.332.477-4.5 1.253"/></svg>
                         <span>{{ __('nav_my_teaching') }}</span>
                     </a>
-                    <a wire:navigate href="{{ route('professor.notifications.index') }}"
+                    <!-- <a wire:navigate href="{{ route('professor.notifications.index') }}"
                        class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all {{ request()->routeIs('professor.notifications.*') ? 'bg-green-600 text-white shadow-md shadow-green-600/20' : 'text-gray-400 hover:bg-slate-700/50 hover:text-white' }}">
                         <div class="relative">
                             <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C8.67 6.165 8 7.388 8 8.75V14.158c0 .53-.211 1.039-.595 1.437L6 17h5m4 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
@@ -245,8 +245,8 @@
                                 <span id="sidebar-unread-badge" class="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center px-1 shadow-lg">{{ $totalUnread > 99 ? '99+' : $totalUnread }}</span>
                             @endif
                         </div>
-                        <!-- <span>{{ __('nav_notifications') }}</span> -->
-                    </a>
+                        <span>{{ __('nav_notifications') }}</span>
+                    </a> -->
                     <a wire:navigate href="{{ route('professor.my-schedule') }}"
                        class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all {{ request()->routeIs('professor.my-schedule') ? 'bg-green-600 text-white shadow-md shadow-green-600/20' : 'text-gray-400 hover:bg-slate-700/50 hover:text-white' }}">
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>

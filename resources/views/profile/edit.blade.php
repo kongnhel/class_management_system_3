@@ -137,23 +137,23 @@
                     {{ __('account_security') }}
                 </a>
                 @if($role === 'professor')
-                    <a wire:navigate href="{{ route('professor.notifications.index') }}"
+                    <!-- <a wire:navigate href="{{ route('professor.notifications.index') }}"
                        class="flex items-center gap-3 px-4 h-11 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-colors">
                         <i class="fas fa-bell text-xs text-amber-500"></i>
                         {{ __('nav_notifications') }}
-                    </a>
+                    </a> -->
                 @elseif($role === 'student')
-                    <a wire:navigate href="{{ route('student.notifications.index') }}"
+                    <!-- <a wire:navigate href="{{ route('student.notifications.index') }}"
                        class="flex items-center gap-3 px-4 h-11 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-colors">
                         <i class="fas fa-bell text-xs text-amber-500"></i>
                         {{ __('nav_notifications') }}
-                    </a>
+                    </a> -->
                 @else
-                    <a wire:navigate href="{{ route('admin.announcements.index') }}"
+                    <!-- <a wire:navigate href="{{ route('admin.announcements.index') }}"
                        class="flex items-center gap-3 px-4 h-11 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-colors">
                         <i class="fas fa-bell text-xs text-amber-500"></i>
                         {{ __('nav_notifications') }}
-                    </a>
+                    </a> -->
                 @endif
             </nav>
         </div>
