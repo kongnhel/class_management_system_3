@@ -287,7 +287,7 @@
                                 <div class="flex justify-between items-center p-4 bg-slate-50 rounded-2xl border border-slate-100">
                                     <span class="text-xs font-bold text-slate-500">{{ __('attendance_score') }}</span>
                                     <div class="flex items-center gap-2">
-                                        <span class="text-xs font-black text-slate-700">{{ number_format($attendanceScore, 1) }}</span>
+                                        <span class="text-xs font-black text-slate-700">{{ number_format($student->attendanceScore, 1) }}</span>
                                     </div>
                                 </div>
 
@@ -370,9 +370,6 @@
                         </thead>
                         <tbody>
                             @foreach($students as $student)
-                                @php
-                                    $attendanceScore = $student->getAttendanceScoreByCourse($courseOffering->id);
-                                @endphp
                                 <tr>
                                     <td class="border border-black px-1 py-0.5" style="font-size:10px;">{{ $loop->iteration }}</td>
                                     <td class="border border-black px-1 py-0.5 text-left" style="font-size:10px;">{{ $student->studentProfile->full_name_km ?? $student->profile->full_name_km ?? $student->name }}</td>
@@ -385,7 +382,7 @@
                                         @endphp
                                         <td class="border border-black px-1 py-0.5" style="font-size:10px;">{{ $score > 0 ? number_format($score, 1) : '' }}</td>
                                     @endforeach
-                                    <td class="border border-black px-1 py-0.5" style="font-size:10px;">{{ $attendanceScore > 0 ? number_format($attendanceScore, 1) : '' }}</td>
+                                    <td class="border border-black px-1 py-0.5" style="font-size:10px;">{{ $student->attendanceScore > 0 ? number_format($student->attendanceScore, 1) : '' }}</td>
                                     <td class="border border-black px-1 py-0.5 font-bold" style="font-size:10px;">{{ number_format($student->temp_total ?? 0, 1) }}</td>
                                     <td class="border border-black px-1 py-0.5 font-bold" style="font-size:10px;">{{ $student->letterGrade ?? '' }}</td>
                                 </tr>
@@ -482,7 +479,6 @@
                         <tbody class="divide-y divide-slate-50" id="gradeBody">
                             @forelse ($students as $student)
                                 @php
-                                    $attendanceScore = $student->getAttendanceScoreByCourse($courseOffering->id);
                                     $rowTotal = $student->temp_total ?? 0;
                                     $grade = $student->letterGrade ?? \App\Services\GradingService::getLetterGrade($rowTotal);
                                     $isPassing = $student->isPassing ?? false;
@@ -517,7 +513,7 @@
                                     </td>
 
                                     <td class="px-4 py-5 text-center font-black text-slate-500 text-xs border-r border-slate-50 bg-slate-50/10">
-                                        {{ number_format($attendanceScore, 1) }}
+                                        {{ number_format($student->attendanceScore, 1) }}
                                     </td>
 
                                     @foreach ($assessments as $assessment)

@@ -28,6 +28,7 @@ class ProfessorNotificationController extends Controller
             $students = StudentCourseEnrollment::where('course_offering_id', $offering->id)
                 ->with('student.studentProfile')
                 ->get()
+                ->filter(fn ($enrollment) => (bool) $enrollment->student)
                 ->map(function ($enrollment) {
                     return [
                         'id' => $enrollment->student->id,
@@ -48,6 +49,7 @@ class ProfessorNotificationController extends Controller
         $students = StudentCourseEnrollment::where('course_offering_id', $courseOffering->id)
             ->with('student.studentProfile')
             ->get()
+            ->filter(fn ($enrollment) => (bool) $enrollment->student)
             ->map(function ($enrollment) {
                 return [
                     'id' => $enrollment->student->id,

@@ -68,7 +68,18 @@ class ProfessorGradeController extends Controller
         $students = $courseOffering->studentCourseEnrollments->map(function ($enrollment) use ($assessments, $allResults, &$gradebook, $offering_id, $courseOffering) {
             $student = $enrollment->student;
 
+            if (! $student) {
+                Log::warning('manageGrades: enrollment points at a missing or deleted student', [
+                    'enrollment_id' => $enrollment->id,
+                    'course_offering_id' => $offering_id,
+                    'student_user_id' => $enrollment->student_user_id,
+                ]);
+
+                return null;
+            }
+
             $attendanceScore = (float) ($student->getAttendanceScoreByCourse($offering_id) ?? 0);
+            $student->attendanceScore = $attendanceScore;
 
             $studentResults = $allResults->where('student_user_id', $student->id);
 
@@ -100,7 +111,7 @@ class ProfessorGradeController extends Controller
             return $student;
         });
 
-        $students = $students->sortByDesc('temp_total')->values();
+        $students = $students->filter()->sortByDesc('temp_total')->values();
 
         foreach ($students as $index => $student) {
             $student->rank = $index + 1;
@@ -144,6 +155,16 @@ class ProfessorGradeController extends Controller
 
         $students = $enrollments->map(function ($e) use ($gradebook, $assessments, $allResults, $courseOffering) {
             $student = $e->student;
+
+            if (! $student) {
+                Log::warning('exportExcel: enrollment points at a missing or deleted student', [
+                    'enrollment_id' => $e->id,
+                    'student_user_id' => $e->student_user_id,
+                ]);
+
+                return null;
+            }
+
             $attendanceScore = (float) ($student->getAttendanceScoreByCourse($e->course_offering_id) ?? 0);
 
             $studentResults = $allResults->where('student_user_id', $student->id);
@@ -161,7 +182,7 @@ class ProfessorGradeController extends Controller
             $student->component_status = $gradeResult['component_status'];
 
             return $student;
-        })->sortByDesc('temp_total')->values();
+        })->filter()->sortByDesc('temp_total')->values();
 
         $fileName = "grades_{$courseOffering->course->title_en}_{$courseOffering->academic_year}_sem{$courseOffering->semester}.xlsx";
 
@@ -242,6 +263,7 @@ class ProfessorGradeController extends Controller
             $enrolledStudents = StudentCourseEnrollment::where('course_offering_id', $offering_id)
                 ->with('student.studentProfile')
                 ->get()
+                ->filter(fn ($e) => (bool) $e->student)
                 ->mapWithKeys(fn ($e) => [
                     trim($e->student->studentProfile->full_name_km ?? $e->student->name) => $e->student_user_id,
                 ]);
@@ -905,6 +927,16 @@ class ProfessorGradeController extends Controller
         $gradebook = [];
         $students = $courseOffering->studentCourseEnrollments->map(function ($enrollment) use ($assessments, $allResults, &$gradebook, $offering_id, $courseOffering) {
             $student = $enrollment->student;
+
+            if (! $student) {
+                Log::warning('printGrades: enrollment points at a missing or deleted student', [
+                    'enrollment_id' => $enrollment->id,
+                    'student_user_id' => $enrollment->student_user_id,
+                ]);
+
+                return null;
+            }
+
             $attendanceScore = (float) ($student->getAttendanceScoreByCourse($offering_id) ?? 0);
 
             $studentResults = $allResults->where('student_user_id', $student->id);
@@ -932,7 +964,7 @@ class ProfessorGradeController extends Controller
             $student->component_status = $gradeResult['component_status'];
 
             return $student;
-        });
+        })->filter()->values();
 
         $students = $students->sortByDesc('temp_total')->values();
         foreach ($students as $index => $student) {

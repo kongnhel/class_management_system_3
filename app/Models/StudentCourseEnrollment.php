@@ -28,6 +28,15 @@ class StudentCourseEnrollment extends Model
         'enrollment_date' => 'date', // នឹងបំប្លែងទៅជា Carbon Object ដោយស្វ័យប្រវត្តិ
     ];
 
+    protected static function booted(): void
+    {
+        static::creating(function (self $enrollment) {
+            if ($enrollment->student_id === null && $enrollment->student_user_id !== null) {
+                $enrollment->student_id = $enrollment->student_user_id;
+            }
+        });
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Relationships
