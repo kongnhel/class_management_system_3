@@ -299,6 +299,8 @@ class BulkImportController extends Controller
                             if ($rowAttempt >= 3) {
                                 $errors[] = 'Row '.($index + 1).': '.$e->getMessage();
                                 $skipped++;
+
+                                break;
                             }
                         }
                     }
