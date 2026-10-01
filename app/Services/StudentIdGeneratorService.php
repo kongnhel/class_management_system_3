@@ -33,7 +33,7 @@ class StudentIdGeneratorService
         }
         $prefix = $this->getPrefix($degreeLevel);
         $romanGen = $this->toRoman((int) $generation);
-        $serial = $this->getNextSerial($prefix, $romanGen);
+        $serial = $this->getNextSerial();
 
         return sprintf('%s-%s-%s', $prefix, $romanGen, str_pad($serial, 6, '0', STR_PAD_LEFT));
     }
@@ -70,24 +70,114 @@ class StudentIdGeneratorService
     }
 
     /**
-     * Get the next serial number for a given prefix and Roman generation.
+     * Get the next serial number across all students.
+     *
+     * The serial is one global running sequence (the total number of students
+     * issued so far), not a sequence that restarts for each generation.
      */
-    public function getNextSerial(string $prefix, string $romanGen): int
+    public function getNextSerial(): int
     {
-        $pattern = "{$prefix}-{$romanGen}-%";
+        $max = (int) User::withTrashed()
+            ->toBase()
+            ->whereNotNull('student_id_code')
+            ->selectRaw('MAX(CAST(SUBSTRING_INDEX(student_id_code, "-", -1) AS UNSIGNED)) as serial')
+            ->value('serial');
 
-        $lastCode = User::where('student_id_code', 'LIKE', $pattern)
-            ->orderByDesc('student_id_code')
-            ->value('student_id_code');
+        return max($max + 1, (int) config('services.nmu.student_id_start', 1));
+    }
 
-        if (! $lastCode) {
-            return (int) config('services.nmu.student_id_start', 1);
+    /**
+     * Resolve the [prefix, roman generation] bucket a student belongs to.
+     *
+     * Reuses the bucket already present in the code when it parses, otherwise
+     * derives it from the student's department and generation. Returns null
+     * when neither is possible.
+     *
+     * @return array{0: string, 1: string}|null
+     */
+    protected function bucketFor(User $student): ?array
+    {
+        if (preg_match('/^([A-Z])-([A-Z]+)-\d+$/', (string) $student->student_id_code, $matches)) {
+            return [$matches[1], $matches[2]];
         }
 
-        $parts = explode('-', $lastCode);
-        $lastSerial = (int) end($parts);
+        if (! $student->department_id || ! $student->generation) {
+            return null;
+        }
 
-        return $lastSerial + 1;
+        $generation = (int) $student->generation;
+        if ($generation < 1) {
+            return null;
+        }
+
+        $department = Department::find($student->department_id);
+        if (! $department) {
+            return null;
+        }
+
+        return [$this->getPrefix($department->degree_level), $this->toRoman($generation)];
+    }
+
+    /**
+     * One-time migration: rewrite every serial into one dense global sequence.
+     *
+     * Students are numbered by id (creation order) from STUDENT_ID_START, so the
+     * serial becomes the total number of students issued rather than a counter
+     * that restarts per generation.
+     *
+     * @return array{renumbered: int, skipped: int}
+     */
+    public function renumberAllStudents(): array
+    {
+        $start = (int) config('services.nmu.student_id_start', 1);
+
+        return DB::transaction(function () use ($start) {
+            $students = User::withTrashed()
+                ->whereNotNull('student_id_code')
+                ->orderBy('id')
+                ->get(['id', 'student_id_code', 'department_id', 'generation']);
+
+            $todo = [];
+            $skippedIds = [];
+
+            foreach ($students as $student) {
+                $bucket = $this->bucketFor($student);
+
+                if ($bucket === null) {
+                    $skippedIds[] = $student->id;
+
+                    continue;
+                }
+
+                $todo[] = ['student' => $student, 'bucket' => $bucket];
+            }
+
+            // Clear first so a new serial can never collide with a row that has
+            // not been rewritten yet. Only rows we are rewriting are cleared.
+            $query = User::withTrashed()->whereNotNull('student_id_code');
+            if ($skippedIds) {
+                $query->whereNotIn('id', $skippedIds);
+            }
+            $query->update(['student_id_code' => null]);
+
+            $serial = $start;
+            foreach ($todo as $entry) {
+                User::withTrashed()
+                    ->where('id', $entry['student']->id)
+                    ->update([
+                        'student_id_code' => sprintf(
+                            '%s-%s-%s',
+                            $entry['bucket'][0],
+                            $entry['bucket'][1],
+                            str_pad((string) $serial, 6, '0', STR_PAD_LEFT),
+                        ),
+                    ]);
+
+                $serial++;
+            }
+
+            return ['renumbered' => count($todo), 'skipped' => count($skippedIds)];
+        });
     }
 
     /**

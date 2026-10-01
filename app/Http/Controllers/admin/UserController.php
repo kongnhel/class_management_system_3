@@ -12,7 +12,9 @@ use App\Models\UserProfile;
 use App\Services\ImageKitService;
 use App\Services\StudentIdGeneratorService;
 use App\Traits\AuditableTrait;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
@@ -218,6 +220,35 @@ class UserController extends Controller
         return response()->json(['student_id' => $studentId]);
     }
 
+    /**
+     * Generate a student ID and persist it, retrying if another request
+     * claimed that serial between generating and saving.
+     *
+     * @throws UniqueConstraintViolationException when every attempt is lost
+     */
+    private function assignStudentId(User $user, Request $request): void
+    {
+        $attempts = 3;
+
+        for ($attempt = 1; $attempt <= $attempts; $attempt++) {
+            $user->student_id_code = $this->studentIdGenerator->generate(
+                $request->department_id,
+                $request->generation,
+                $request->degree_level,
+            );
+
+            try {
+                $user->save();
+
+                return;
+            } catch (UniqueConstraintViolationException $e) {
+                if ($attempt === $attempts) {
+                    throw $e;
+                }
+            }
+        }
+    }
+
     public function storeUser(Request $request)
     {
         $rules = [
@@ -234,12 +265,23 @@ class UserController extends Controller
         $messages = [
             'profile_picture.max' => 'រូបភាពមិនអាចធំជាង 5MB ឡើយ!',
             'profile_picture.image' => 'ឯកសារត្រូវតែជាប្រភេទរូបភាព!',
+            'student_id_code.required' => __('validation_student_id_required'),
+            'student_id_code.unique' => __('validation_student_id_unique'),
         ];
 
         if ($request->role === 'student') {
             $rules['department_id'] = 'required|exists:departments,id';
             $rules['generation'] = 'required|string|max:255';
             $rules['degree_level'] = 'required|string|max:50';
+            // Free-form manual entry, or the automatic sequence when omitted.
+            $rules['student_id_mode'] = ['nullable', Rule::in(['auto', 'manual'])];
+            $rules['student_id_code'] = [
+                Rule::requiredIf($request->input('student_id_mode') === 'manual'),
+                'nullable',
+                'string',
+                'max:255',
+                Rule::unique('users', 'student_id_code'),
+            ];
         } elseif ($request->role === 'professor') {
             $rules['email'] = 'required|string|email|max:255|unique:users';
             $rules['password'] = [
@@ -267,21 +309,42 @@ class UserController extends Controller
             ];
         }
 
-        $request->validate($rules);
+        $request->validate($rules, $messages);
 
-        $user = User::create([
-            'name' => $request->name,
-            'role' => $request->role,
-            'department_id' => in_array($request->role, ['student', 'professor']) ? $request->department_id : null,
-            'email' => ($request->role !== 'student') ? $request->email : null,
-            'password' => ($request->role !== 'student') ? Hash::make($request->password) : null,
-            'generation' => ($request->role === 'student') ? $request->generation : null,
-        ]);
+        try {
+            $user = DB::transaction(function () use ($request) {
+                $user = User::create([
+                    'name' => $request->name,
+                    'role' => $request->role,
+                    'department_id' => in_array($request->role, ['student', 'professor']) ? $request->department_id : null,
+                    'email' => ($request->role !== 'student') ? $request->email : null,
+                    'password' => ($request->role !== 'student') ? Hash::make($request->password) : null,
+                    'generation' => ($request->role === 'student') ? $request->generation : null,
+                ]);
+
+                if ($request->role === 'student') {
+                    if ($request->input('student_id_mode') === 'manual') {
+                        $user->student_id_code = trim($request->input('student_id_code'));
+                        $user->save();
+                    } else {
+                        $this->assignStudentId($user, $request);
+                    }
+                }
+
+                return $user;
+            });
+        } catch (UniqueConstraintViolationException $e) {
+            // Only the student code can collide here; anything else must surface.
+            if ($request->role !== 'student') {
+                throw $e;
+            }
+
+            return back()->withInput()->withErrors([
+                'student_id_code' => __('validation_student_id_unique'),
+            ]);
+        }
 
         if ($request->role === 'student') {
-            $studentId = $this->studentIdGenerator->generate($request->department_id, $request->generation, $request->degree_level);
-            $user->student_id_code = $studentId;
-            $user->save();
 
             \App\Models\StudentDepartmentEnrollment::create([
                 'student_user_id' => $user->id,

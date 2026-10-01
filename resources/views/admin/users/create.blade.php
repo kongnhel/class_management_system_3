@@ -45,6 +45,7 @@
             <form method="POST" action="{{ route('admin.store-user') }}" enctype="multipart/form-data" novalidate
                 x-data="{
                     userRole: '{{ old('role', 'professor') }}',
+                    studentIdMode: '{{ old('student_id_mode', 'auto') }}',
                     profilePicturePreview: null,
                     passwordVisible: false,
                     passwordConfirmVisible: false,
@@ -65,6 +66,7 @@
                         else if (name === 'department_id') val = document.getElementById('student_department_id')?.value || document.getElementById('professor_department_id')?.value || '';
                         else if (name === 'degree_level') val = document.getElementById('degree_level')?.value || '';
                         else if (name === 'generation') val = document.getElementById('generation')?.value || '';
+                        else if (name === 'student_id_code') val = document.getElementById('student_id_code')?.value || '';
 
                         let err = '';
                         if (name === 'name') {
@@ -95,6 +97,11 @@
                             if (this.userRole === 'student' && !val) err = '{{ __("validation_degree_required") }}';
                         } else if (name === 'generation') {
                             if (this.userRole === 'student' && !val) err = '{{ __("validation_generation_required") }}';
+                        } else if (name === 'student_id_code') {
+                            if (this.userRole === 'student' && this.studentIdMode === 'manual') {
+                                if (!val.trim()) err = '{{ __("validation_student_id_required") }}';
+                                else if (val.length > 255) err = '{{ __("validation_student_id_max") }}';
+                            }
                         }
 
                         if (err) this.fieldErrors[name] = err;
@@ -108,6 +115,12 @@
 
                     onInput(name) {
                         if (this.touched[name]) this.validateField(name);
+                    },
+
+                    setStudentIdMode(mode) {
+                        this.studentIdMode = mode;
+                        this.touched.student_id_code = true;
+                        this.validateField('student_id_code');
                     }
                 }" class="space-y-6">
                 @csrf
@@ -296,10 +309,43 @@
                         </div>
 
                         <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4 mb-5">
-                            <p class="text-sm text-emerald-700 flex items-center gap-2">
+                            <input type="hidden" name="student_id_mode" :value="studentIdMode">
+                            <div class="flex items-center justify-between gap-3 mb-3">
+                                <p class="text-sm text-emerald-700 flex items-center gap-2 font-bold">
+                                    <i class="fas fa-id-card"></i>
+                                    {{ __('student_id') }}
+                                </p>
+                                <div class="flex rounded-lg bg-white border border-emerald-200 p-0.5">
+                                    <button type="button" @click="setStudentIdMode('auto')"
+                                        :class="studentIdMode === 'auto' ? 'bg-emerald-600 text-white' : 'text-emerald-700 hover:text-emerald-900'"
+                                        class="px-3 py-1 text-xs font-bold rounded-md transition">
+                                        {{ __('auto') }}
+                                    </button>
+                                    <button type="button" @click="setStudentIdMode('manual')"
+                                        :class="studentIdMode === 'manual' ? 'bg-emerald-600 text-white' : 'text-emerald-700 hover:text-emerald-900'"
+                                        class="px-3 py-1 text-xs font-bold rounded-md transition">
+                                        {{ __('manual_entry') }}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <p x-show="studentIdMode === 'auto'" x-cloak class="text-sm text-emerald-700 flex items-center gap-2">
                                 <i class="fas fa-info-circle"></i>
-                                {{ __('student_id') }} <span id="preview-student-id" class="font-bold text-emerald-800 font-mono">—</span>
+                                <span id="preview-student-id" class="font-bold text-emerald-800 font-mono">—</span>
                             </p>
+
+                            <div x-show="studentIdMode === 'manual'" x-cloak>
+                                <input type="text" id="student_id_code" name="student_id_code" maxlength="255"
+                                    value="{{ old('student_id_code') }}"
+                                    placeholder="B-XVII-005000"
+                                    autocomplete="off"
+                                    @blur="onBlur('student_id_code')"
+                                    @input="onInput('student_id_code')"
+                                    x-bind:class="fieldErrors.student_id_code ? 'ring-2 ring-red-400 bg-red-50' : ''"
+                                    class="w-full rounded-lg border-0 bg-white text-gray-900 focus:ring-2 focus:ring-emerald-500 transition text-sm px-4 py-2.5 font-mono" />
+                                <x-input-error :messages="$errors->get('student_id_code')" class="mt-2" />
+                                <p x-show="fieldErrors.student_id_code" x-text="fieldErrors.student_id_code" class="text-sm text-red-600 mt-2"></p>
+                            </div>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-5">

@@ -7,6 +7,7 @@ use App\Models\Department;
 use App\Models\Faculty;
 use App\Models\User;
 use App\Services\StudentIdGeneratorService;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
@@ -240,11 +241,6 @@ class BulkImportController extends Controller
                         continue;
                     }
 
-                    $studentIdCode = null;
-                    if ($request->role === 'student' && $request->generation && $request->department_id) {
-                        $studentIdCode = $this->studentIdGenerator->generate((int) $request->department_id, $request->generation);
-                    }
-
                     $email = ! empty($rowData['email']) ? trim((string) $rowData['email']) : null;
 
                     if ($email && ! filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -266,21 +262,50 @@ class BulkImportController extends Controller
                         continue;
                     }
 
-                    DB::beginTransaction();
-                    $transactionStarted = true;
+                    $rowAttempt = 0;
+                    $created = false;
 
-                    $user = User::create([
-                        'name' => $rowData['name'],
-                        'email' => $email,
-                        'role' => $request->role,
-                        'password' => null,
-                        'student_id_code' => $studentIdCode,
-                        'department_id' => $request->department_id,
-                        'generation' => $request->role === 'student' ? $request->generation : null,
-                        'profile_status' => $request->role === 'student' && (! $request->department_id || ! $request->generation)
-                            ? 'pending'
-                            : 'complete',
-                    ]);
+                    while (! $created) {
+                        $rowAttempt++;
+
+                        $studentIdCode = null;
+                        if ($request->role === 'student' && $request->generation && $request->department_id) {
+                            $studentIdCode = $this->studentIdGenerator->generate((int) $request->department_id, $request->generation);
+                        }
+
+                        DB::beginTransaction();
+                        $transactionStarted = true;
+
+                        try {
+                            $user = User::create([
+                                'name' => $rowData['name'],
+                                'email' => $email,
+                                'role' => $request->role,
+                                'password' => null,
+                                'student_id_code' => $studentIdCode,
+                                'department_id' => $request->department_id,
+                                'generation' => $request->role === 'student' ? $request->generation : null,
+                                'profile_status' => $request->role === 'student' && (! $request->department_id || ! $request->generation)
+                                    ? 'pending'
+                                    : 'complete',
+                            ]);
+                            $created = true;
+                        } catch (UniqueConstraintViolationException $e) {
+                            // Another request claimed this serial between generate()
+                            // and create(): roll back, regenerate, and try again.
+                            DB::rollBack();
+                            $transactionStarted = false;
+
+                            if ($rowAttempt >= 3) {
+                                $errors[] = 'Row '.($index + 1).': '.$e->getMessage();
+                                $skipped++;
+                            }
+                        }
+                    }
+
+                    if (! $created) {
+                        continue;
+                    }
 
                     if ($request->role === 'student' && $request->department_id) {
                         \App\Models\StudentDepartmentEnrollment::create([
