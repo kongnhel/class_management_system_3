@@ -294,7 +294,6 @@ class UserController extends Controller
                     ->symbols()
                     ->uncompromised(),
             ];
-            $rules['department_id'] = 'required|exists:departments,id';
         } else {
             $rules['email'] = 'required|string|email|max:255|unique:users';
             $rules['password'] = [
@@ -316,7 +315,7 @@ class UserController extends Controller
                 $user = User::create([
                     'name' => $request->name,
                     'role' => $request->role,
-                    'department_id' => in_array($request->role, ['student', 'professor']) ? $request->department_id : null,
+                    'department_id' => $request->role === 'student' ? $request->department_id : null,
                     'email' => ($request->role !== 'student') ? $request->email : null,
                     'password' => ($request->role !== 'student') ? Hash::make($request->password) : null,
                     'generation' => ($request->role === 'student') ? $request->generation : null,
@@ -471,9 +470,6 @@ class UserController extends Controller
         } else {
             $rules['email'] = ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)];
             $rules['password'] = 'nullable|string|min:8|confirmed';
-            if ($request->role === 'professor') {
-                $rules['department_id'] = 'required|exists:departments,id';
-            }
         }
 
         $request->validate($rules, $messages);
@@ -482,7 +478,10 @@ class UserController extends Controller
 
         $user->name = $request->name;
         $user->role = $request->role;
-        $user->department_id = in_array($request->role, ['student', 'professor']) ? $request->department_id : null;
+        // Students always pick one; professors keep theirs unless one is explicitly submitted.
+        $user->department_id = $request->role === 'professor'
+            ? ($request->filled('department_id') ? $request->department_id : $user->department_id)
+            : ($request->role === 'student' ? $request->department_id : null);
         $user->generation = ($request->role === 'student') ? $request->generation : null;
 
         if ($request->role !== 'student') {

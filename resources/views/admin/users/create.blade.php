@@ -62,8 +62,7 @@
                         else if (name === 'email') val = document.getElementById('email')?.value || '';
                         else if (name === 'password') val = this.passwordValue;
                         else if (name === 'password_confirmation') val = document.getElementById('password_confirmation')?.value || '';
-                        else if (name === 'faculty_id') val = document.getElementById('faculty_id')?.value || '';
-                        else if (name === 'department_id') val = document.getElementById('student_department_id')?.value || document.getElementById('professor_department_id')?.value || '';
+                        else if (name === 'department_id') val = document.getElementById('student_department_id')?.value || '';
                         else if (name === 'degree_level') val = document.getElementById('degree_level')?.value || '';
                         else if (name === 'generation') val = document.getElementById('generation')?.value || '';
                         else if (name === 'student_id_code') val = document.getElementById('student_id_code')?.value || '';
@@ -89,8 +88,6 @@
                         } else if (name === 'password_confirmation') {
                             let pw = document.getElementById('password')?.value || '';
                             if ((this.userRole === 'admin' || this.userRole === 'professor') && val !== pw) err = '{{ __("validation_password_confirm") }}';
-                        } else if (name === 'faculty_id') {
-                            if (this.userRole === 'professor' && !val) err = '{{ __("validation_faculty_required") }}';
                         } else if (name === 'department_id') {
                             if (this.userRole === 'student' && !val) err = '{{ __("please_select_a_department") }}';
                         } else if (name === 'degree_level') {
@@ -395,87 +392,6 @@
                                     @endforeach
                                 </select>
                                 <p x-show="fieldErrors.generation" x-text="fieldErrors.generation" class="text-sm text-red-600 mt-2"></p>
-                            </div>
-                        </div>
-                    </div>
-                </template>
-
-                {{-- Section 2C: Professor Info --}}
-                <template x-if="userRole === 'professor'" x-init="$nextTick(() => {
-                    const facultySelect = document.getElementById('faculty_id');
-                    const departmentSelect = document.getElementById('professor_department_id');
-                    const oldFacultyId = '{{ old('faculty_id') }}';
-                    const oldDepartmentId = '{{ old('department_id') }}';
-
-                    function updateDepartments(facultyId, defaultDepartmentId = null) {
-                        if (!departmentSelect) return;
-                        departmentSelect.innerHTML = '<option value=\"{{ __("loading_2") }}\"></option>';
-                        departmentSelect.disabled = true;
-
-                        if (!facultyId) {
-                            departmentSelect.innerHTML = '<option value=\"{{ __("please_select_a_faculty_first") }}\"></option>';
-                            return;
-                        }
-
-                        fetch('/admin/get-departments-by-faculty/' + facultyId)
-                            .then(response => response.json())
-                            .then(departments => {
-                                departmentSelect.innerHTML = '<option value=\"{{ __("select_a_department_2") }}\"></option>';
-                                departments.forEach(department => {
-                                    const option = document.createElement('option');
-                                    option.value = department.id;
-                                    option.textContent = department.name_km || department.name_en;
-                                    if (department.id == defaultDepartmentId) option.selected = true;
-                                    departmentSelect.appendChild(option);
-                                });
-                                departmentSelect.disabled = false;
-                            })
-                            .catch(error => console.error('Error fetching departments:', error));
-                    }
-
-                    if (facultySelect) {
-                        facultySelect.addEventListener('change', function() { updateDepartments(this.value); });
-                        if (oldFacultyId) updateDepartments(oldFacultyId, oldDepartmentId);
-                    }
-                })">
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                        <div class="flex items-center gap-3 mb-6">
-                            <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
-                                <span class="text-emerald-600 font-bold text-sm">2</span>
-                            </div>
-                            <div>
-                                <h3 class="text-lg font-bold text-gray-900">{{ __('lecturer_information') }}</h3>
-                                <p class="text-xs text-gray-500">{{ __('professor_information') }}</p>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                            <div>
-                                <label for="faculty_id" class="block text-sm font-bold text-gray-700 mb-1.5">
-                                    <i class="fas fa-university mr-1.5 text-emerald-500"></i> {{ __('faculty') }} <span class="text-red-500">*</span>
-                                </label>
-                                <select id="faculty_id" name="faculty_id"
-                                    class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition text-sm px-4 py-2.5"
-                                    @blur="onBlur('faculty_id')" @change="touched.faculty_id = true; validateField('faculty_id')"
-                                    x-bind:class="fieldErrors.faculty_id ? 'ring-2 ring-red-400 bg-red-50' : ''">
-                                    <option value="">{{ __('select_a_faculty') }}</option>
-                                    @foreach($faculties as $faculty)
-                                        <option value="{{ $faculty->id }}">{{ $faculty->name_km ?? $faculty->name_en }}</option>
-                                    @endforeach
-                                </select>
-                                <p x-show="fieldErrors.faculty_id" x-text="fieldErrors.faculty_id" class="text-sm text-red-600 mt-2"></p>
-                            </div>
-                            <div>
-                                <label for="professor_department_id" class="block text-sm font-bold text-gray-700 mb-1.5">
-                                    <i class="fas fa-building mr-1.5 text-emerald-500"></i> {{ __('department_3') }} <span class="text-red-500">*</span>
-                                </label>
-                                <select id="professor_department_id" name="department_id"
-                                    class="w-full rounded-xl border-0 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition text-sm px-4 py-2.5"
-                                    @blur="onBlur('department_id')" @change="touched.department_id = true; validateField('department_id')"
-                                    x-bind:class="fieldErrors.department_id ? 'ring-2 ring-red-400 bg-red-50' : ''">
-                                    <option value="">{{ __('please_select_a_department') }}</option>
-                                </select>
-                                <x-input-error :messages="$errors->get('department_id')" class="mt-2" />
-                                <p x-show="fieldErrors.department_id" x-text="fieldErrors.department_id" class="text-sm text-red-600 mt-2"></p>
                             </div>
                         </div>
                     </div>

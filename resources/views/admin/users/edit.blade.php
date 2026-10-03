@@ -205,40 +205,6 @@
                     </div>
                 </div>
 
-                {{-- Section 4: Professor Info --}}
-                <div x-show="userRole === 'professor'" x-cloak class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                    <div class="flex items-center gap-3 mb-6">
-                        <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600">
-                            <i class="fas fa-chalkboard-teacher"></i>
-                        </span>
-                        <h3 class="text-xl font-bold text-gray-900">{{ __('lecturer_information') }}</h3>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 items-end">
-                        <div>
-                            <x-input-label for="faculty_id" class="font-semibold text-gray-700 mb-1.5">
-                                <i class="fas fa-university mr-1.5 text-emerald-500"></i> {{ __('faculty') }}
-                            </x-input-label>
-                            <select id="faculty_id" name="faculty_id" class="block w-full rounded-xl border-gray-200 bg-white focus:ring-2 focus:ring-emerald-500 py-2.5 px-4 h-[50px]">
-                                <option value="">{{ __('select_a_faculty') }}</option>
-                                @foreach($faculties as $faculty)
-                                    <option value="{{ $faculty->id }}" {{ (old('faculty_id', $user->department?->faculty_id ?? '')) == $faculty->id ? 'selected' : '' }}>
-                                        {{ $faculty->name_km ?? $faculty->name_en }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div>
-                            <x-input-label for="department_id" class="font-semibold text-gray-700 mb-1.5">
-                                <i class="fas fa-building mr-1.5 text-emerald-500"></i> {{ __('department_3') }}
-                            </x-input-label>
-                            <select id="department_id" name="department_id" class="block w-full rounded-xl border-gray-200 bg-white focus:ring-2 focus:ring-emerald-500 py-2.5 px-4 h-[50px]">
-                                <option value="">{{ __('please_select_a_department') }}</option>
-                            </select>
-                            <x-input-error :messages="$errors->get('department_id')" class="mt-2" />
-                        </div>
-                    </div>
-                </div>
-
                 {{-- Section 5: Profile Info --}}
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                     <div class="flex items-center gap-3 mb-6">
@@ -358,48 +324,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const facultySelect = document.getElementById('faculty_id');
-            const departmentSelect = document.getElementById('department_id');
-            const selectedDepartmentId = {{ old('department_id', $user->department_id) ?? 'null' }};
-
-            function updateDepartments(facultyId, defaultDepartmentId = null) {
-                if (!departmentSelect) return;
-                departmentSelect.innerHTML = '<option value="">{{ __("loading_2") }}</option>';
-                departmentSelect.disabled = true;
-
-                if (!facultyId) {
-                    departmentSelect.innerHTML = '<option value="">{{ __("please_select_a_faculty_first") }}</option>';
-                    return;
-                }
-
-                fetch(`/admin/get-departments-by-faculty/${facultyId}`)
-                    .then(response => response.json())
-                    .then(departments => {
-                        departmentSelect.innerHTML = '<option value="">{{ __("select_a_department_2") }}</option>';
-                        departments.forEach(department => {
-                            const option = document.createElement('option');
-                            option.value = department.id;
-                            option.textContent = department.name_km || department.name_en;
-                            if (department.id == defaultDepartmentId) {
-                                option.selected = true;
-                            }
-                            departmentSelect.appendChild(option);
-                        });
-                        departmentSelect.disabled = false;
-                    })
-                    .catch(error => console.error('Error fetching departments:', error));
-            }
-            
-            if (facultySelect) {
-                facultySelect.addEventListener('change', function() {
-                    updateDepartments(this.value);
-                });
-
-                const initialFacultyId = facultySelect.value;
-                if (initialFacultyId) {
-                    updateDepartments(initialFacultyId, selectedDepartmentId);
-                }
-            }
 
             // Toggle Password Visibility
             function togglePassword(inputId, buttonId) {
