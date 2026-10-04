@@ -70,12 +70,11 @@
                     editSaving: false,
                     showProfilePreview: false,
                     previewUser: {},
-                    editDepartments: [],
                     editForm: {
                         id: '', name: '', email: '', role: 'admin', password: '', password_confirmation: '',
-                        department_id: '', generation: '', faculty_id: '',
+                        department_id: '', generation: '',
                         full_name_km: '', full_name_en: '', gender: '', phone_number: '', address: '', date_of_birth: '',
-                        departments: [], faculties: [], generations: []
+                        departments: [], generations: []
                     },
 
                     init() {
@@ -681,28 +680,6 @@
                                     </div>
                                 </div>
 
-                                {{-- Professor fields --}}
-                                <div x-show="editForm.role === 'professor'" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('faculty') }}</label>
-                                        <select x-model="editForm.faculty_id" @change="filterEditDepartments($event.target.value)" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
-                                            <option value="">{{ __('select_2') }}</option>
-                                            <template x-for="f in (editForm.faculties || [])" :key="f.id">
-                                                <option :value="f.id" x-text="f.name"></option>
-                                            </template>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-bold text-gray-500 mb-1.5">{{ __('department_3') }}</label>
-                                        <select x-model="editForm.department_id" class="w-full rounded-xl border-gray-200 text-sm focus:ring-2 focus:ring-emerald-500 py-2.5 px-4">
-                                            <option value="">{{ __('select_2') }}</option>
-                                            <template x-for="d in editDepartments" :key="d.id">
-                                                <option :value="d.id" x-text="d.name"></option>
-                                            </template>
-                                        </select>
-                                    </div>
-                                </div>
-
                                 {{-- Profile Info --}}
                                 <div class="border-t border-gray-100 pt-5">
                                     <h4 class="text-sm font-bold text-gray-700 mb-3"><i class="fas fa-id-card mr-1.5 text-orange-500"></i> {{ __('personal_information') }}</h4>
@@ -829,7 +806,6 @@
             f.email = data.email || '';
             f.role = data.role || 'admin';
             f.department_id = data.department_id || '';
-            f.faculty_id = data.faculty_id || '';
             f.full_name_km = data.full_name_km || '';
             f.full_name_en = data.full_name_en || '';
             f.gender = data.gender || '';
@@ -837,14 +813,9 @@
             f.address = data.address || '';
             f.date_of_birth = data.date_of_birth || '';
             f.departments = data.departments || [];
-            f.faculties = data.faculties || [];
             f.generations = data.generations || [];
             f.password = '';
             f.password_confirmation = '';
-            c.editDepartments = data.departments || [];
-            if (data.faculty_id) {
-                c.editDepartments = c.editDepartments.filter(function(d) { return d.faculty_id == data.faculty_id; });
-            }
             c.editLoading = false;
             // Clear file input
             var fileInput = document.getElementById('editProfilePicture');
@@ -867,14 +838,11 @@
             // Re-set select values after x-for options render
             var savedGen = data.generation || '';
             var savedDept = data.department_id || '';
-            var savedFac = data.faculty_id || '';
             f.generation = '';
             f.department_id = '';
-            f.faculty_id = '';
             setTimeout(function() {
                 f.generation = savedGen;
                 f.department_id = savedDept;
-                f.faculty_id = savedFac;
             }, 100);
         })
         .catch(function() {
@@ -882,12 +850,6 @@
             c.showEditModal = false;
             window.showToast && window.showToast('{{ __("problem_fetching_data") }}', 'error');
         });
-    }
-
-    function filterEditDepartments(facultyId) {
-        var c = _ctx();
-        c.editDepartments = c.editForm.departments.filter(function(d) { return d.faculty_id == facultyId; });
-        c.editForm.department_id = '';
     }
 
     function previewEditAvatar(input) {
@@ -939,8 +901,6 @@
         if (f.role === 'student') {
             fd.append('department_id', f.department_id);
             fd.append('generation', f.generation);
-        } else if (f.role === 'professor') {
-            fd.append('department_id', f.department_id);
         }
         fd.append('full_name_km', f.full_name_km);
         fd.append('full_name_en', f.full_name_en);

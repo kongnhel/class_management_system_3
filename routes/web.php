@@ -88,6 +88,7 @@ Route::middleware(['auth', 'role:admin', 'throttle:120,1'])->prefix('admin')->na
     Route::get('/users', [UserController::class, 'manageUsers'])->name('manage-users');
     Route::get('/users/create', [UserController::class, 'createUser'])->name('create-user');
     Route::get('/users/preview-student-id', [UserController::class, 'previewStudentId'])->name('preview-student-id');
+    Route::get('/users/check-student-id', [UserController::class, 'checkStudentId'])->name('check-student-id');
     Route::post('/users', [UserController::class, 'storeUser'])->name('store-user');
     Route::get('/users/{user}/edit', [UserController::class, 'editUser'])->name('edit-user');
     Route::get('/users/{user}/ajax-edit', [UserController::class, 'ajaxEditUser'])->name('ajax-edit-user');

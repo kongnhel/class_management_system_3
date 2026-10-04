@@ -221,6 +221,25 @@ class UserController extends Controller
     }
 
     /**
+     * Check whether a manually entered student ID is still free.
+     *
+     * Soft-deleted users are included: their student_id_code is still held
+     * by the unique index, so reporting "available" would be a lie.
+     */
+    public function checkStudentId(Request $request)
+    {
+        $request->validate([
+            'student_id_code' => 'required|string|max:255',
+        ]);
+
+        $taken = User::withTrashed()
+            ->where('student_id_code', $request->input('student_id_code'))
+            ->exists();
+
+        return response()->json(['available' => ! $taken]);
+    }
+
+    /**
      * Generate a student ID and persist it, retrying if another request
      * claimed that serial between generating and saving.
      *
@@ -267,6 +286,7 @@ class UserController extends Controller
             'profile_picture.image' => 'ឯកសារត្រូវតែជាប្រភេទរូបភាព!',
             'student_id_code.required' => __('validation_student_id_required'),
             'student_id_code.unique' => __('validation_student_id_unique'),
+            'student_id_code.regex' => __('validation_student_id_format'),
         ];
 
         if ($request->role === 'student') {
@@ -280,6 +300,7 @@ class UserController extends Controller
                 'nullable',
                 'string',
                 'max:255',
+                'regex:/^[A-Z]-[A-Z]+-\d{6}$/',
                 Rule::unique('users', 'student_id_code'),
             ];
         } elseif ($request->role === 'professor') {
@@ -409,17 +430,16 @@ class UserController extends Controller
 
     public function editUser(User $user)
     {
-        $user->load('profile', 'studentProfile', 'department.faculty');
-        $faculties = Faculty::all();
+        $user->load('profile', 'studentProfile');
         $departments = Department::all();
         $generations = \App\Models\Generation::where('is_active', true)->orderByDesc('name')->pluck('name')->toArray();
 
-        return view('admin.users.edit', compact('user', 'departments', 'faculties', 'generations'));
+        return view('admin.users.edit', compact('user', 'departments', 'generations'));
     }
 
     public function ajaxEditUser(User $user)
     {
-        $user->load('profile', 'studentProfile', 'department.faculty');
+        $user->load('profile', 'studentProfile');
 
         $profile = $user->role === 'student' ? $user->studentProfile : $user->profile;
 
@@ -437,10 +457,8 @@ class UserController extends Controller
             'phone_number' => $profile->phone_number ?? '',
             'address' => $profile->address ?? '',
             'date_of_birth' => $profile->date_of_birth ?? '',
-            'faculty_id' => $user->department?->faculty_id ?? '',
             'profile_picture_url' => $profile->profile_picture_url ?? '',
-            'departments' => Department::all()->map(fn ($d) => ['id' => $d->id, 'name' => $d->name_km ?? $d->name_en, 'faculty_id' => $d->faculty_id]),
-            'faculties' => Faculty::all()->map(fn ($f) => ['id' => $f->id, 'name' => $f->name_km ?? $f->name_en]),
+            'departments' => Department::all()->map(fn ($d) => ['id' => $d->id, 'name' => $d->name_km ?? $d->name_en]),
             'generations' => \App\Models\Generation::where('is_active', true)->orderByDesc('name')->get()->map(fn ($g) => ['name' => $g->name, 'join_year' => $g->join_year ?? '']),
         ]);
     }

@@ -9,25 +9,41 @@ return new class extends Migration
 {
     private function dropForeignKeyIfExists(string $table, string $column): void
     {
-        $constraints = DB::select("SELECT CONSTRAINT_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = '{$table}' AND COLUMN_NAME = '{$column}' AND REFERENCED_TABLE_NAME IS NOT NULL");
-        foreach ($constraints as $constraint) {
-            try {
-                Schema::table($table, function (Blueprint $tbl) use ($constraint) {
-                    $tbl->dropForeign($constraint->CONSTRAINT_NAME);
-                });
-            } catch (\Exception $e) {
-                // FK doesn't exist or already dropped
+        if (DB::connection()->getDriverName() === 'mysql') {
+            // MySQL: constraint names live in INFORMATION_SCHEMA.
+            $constraints = DB::select("SELECT CONSTRAINT_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = '{$table}' AND COLUMN_NAME = '{$column}' AND REFERENCED_TABLE_NAME IS NOT NULL");
+            foreach ($constraints as $constraint) {
+                try {
+                    Schema::table($table, function (Blueprint $tbl) use ($constraint) {
+                        $tbl->dropForeign($constraint->CONSTRAINT_NAME);
+                    });
+                } catch (\Exception $e) {
+                    // FK doesn't exist or already dropped
+                }
             }
+
+            return;
+        }
+
+        // Everything else has no foreign-key introspection, but the schema
+        // builder can rebuild the table from the column name. Same call the
+        // rest of the migrations already rely on.
+        try {
+            Schema::table($table, function (Blueprint $tbl) use ($column) {
+                $tbl->dropForeign([$column]);
+            });
+        } catch (\Exception $e) {
+            // FK doesn't exist or already dropped
         }
     }
 
     public function up(): void
     {
-        // This migration uses MySQL-specific foreign-key introspection. The
-        // schema is already represented in fresh SQLite test databases.
-        if (DB::connection()->getDriverName() !== 'mysql') {
-            return;
-        }
+        // The whole migration is driver-agnostic apart from
+        // dropForeignKeyIfExists(), which guards itself. Fresh SQLite
+        // databases need this too — bailing out here left
+        // student_program_enrollments unrenamed, so anything selecting
+        // from student_department_enrollments crashed.
 
         // 1. Ensure departments has the needed columns
         if (! Schema::hasColumn('departments', 'degree_level')) {

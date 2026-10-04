@@ -43,6 +43,7 @@
             @endif
 
             <form method="POST" action="{{ route('admin.store-user') }}" enctype="multipart/form-data" novalidate
+                @submit="if (studentIdBlocked) $event.preventDefault()"
                 x-data="{
                     userRole: '{{ old('role', 'professor') }}',
                     studentIdMode: '{{ old('student_id_mode', 'auto') }}',
@@ -54,6 +55,15 @@
                     passwordValue: '',
                     fieldErrors: {},
                     touched: {},
+                    studentIdStatus: 'idle',
+                    studentIdCheckTimer: null,
+                    studentIdCheckSeq: 0,
+
+                    get studentIdBlocked() {
+                        return this.userRole === 'student'
+                            && this.studentIdMode === 'manual'
+                            && this.studentIdStatus === 'taken';
+                    },
 
                     validateField(name) {
                         let val = '';
@@ -98,6 +108,7 @@
                             if (this.userRole === 'student' && this.studentIdMode === 'manual') {
                                 if (!val.trim()) err = '{{ __("validation_student_id_required") }}';
                                 else if (val.length > 255) err = '{{ __("validation_student_id_max") }}';
+                                else if (!/^[A-Z]-[A-Z]+-\d{6}$/.test(val.trim())) err = '{{ __("validation_student_id_format") }}';
                             }
                         }
 
@@ -118,6 +129,40 @@
                         this.studentIdMode = mode;
                         this.touched.student_id_code = true;
                         this.validateField('student_id_code');
+                        this.scheduleStudentIdCheck();
+                    },
+
+                    scheduleStudentIdCheck() {
+                        clearTimeout(this.studentIdCheckTimer);
+
+                        if (this.userRole !== 'student' || this.studentIdMode !== 'manual') {
+                            this.studentIdStatus = 'idle';
+                            return;
+                        }
+
+                        const val = (document.getElementById('student_id_code')?.value || '').trim();
+                        if (!val || val.length > 255 || !/^[A-Z]-[A-Z]+-\d{6}$/.test(val)) {
+                            this.studentIdStatus = 'idle';
+                            return;
+                        }
+
+                        this.studentIdStatus = 'checking';
+                        this.studentIdCheckTimer = setTimeout(() => this.runStudentIdCheck(val), 500);
+                    },
+
+                    async runStudentIdCheck(val) {
+                        const seq = ++this.studentIdCheckSeq;
+                        try {
+                            const res = await fetch('{{ route("admin.check-student-id") }}?student_id_code=' + encodeURIComponent(val), {
+                                headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+                            });
+                            if (seq !== this.studentIdCheckSeq) return;
+                            if (!res.ok) throw new Error('request failed');
+                            const data = await res.json();
+                            this.studentIdStatus = data.available ? 'available' : 'taken';
+                        } catch (e) {
+                            if (seq === this.studentIdCheckSeq) this.studentIdStatus = 'idle';
+                        }
                     }
                 }" class="space-y-6">
                 @csrf
@@ -293,6 +338,7 @@
                     if (departmentSelect) departmentSelect.addEventListener('change', fetchPreview);
                     if (degreeSelect) degreeSelect.addEventListener('change', fetchPreview);
                     if (generationSelect) generationSelect.addEventListener('change', fetchPreview);
+                    scheduleStudentIdCheck();
                 })">
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                         <div class="flex items-center gap-3 mb-6">
@@ -337,11 +383,20 @@
                                     placeholder="B-XVII-005000"
                                     autocomplete="off"
                                     @blur="onBlur('student_id_code')"
-                                    @input="onInput('student_id_code')"
-                                    x-bind:class="fieldErrors.student_id_code ? 'ring-2 ring-red-400 bg-red-50' : ''"
+                                    @input="onInput('student_id_code'); scheduleStudentIdCheck()"
+                                    x-bind:class="(fieldErrors.student_id_code || studentIdStatus === 'taken') ? 'ring-2 ring-red-400 bg-red-50' : ''"
                                     class="w-full rounded-lg border-0 bg-white text-gray-900 focus:ring-2 focus:ring-emerald-500 transition text-sm px-4 py-2.5 font-mono" />
                                 <x-input-error :messages="$errors->get('student_id_code')" class="mt-2" />
                                 <p x-show="fieldErrors.student_id_code" x-text="fieldErrors.student_id_code" class="text-sm text-red-600 mt-2"></p>
+                                <p x-cloak x-show="studentIdStatus === 'checking'" class="text-xs text-gray-500 mt-2">
+                                    <i class="fas fa-circle-notch fa-spin mr-1"></i>{{ __('checking') }}
+                                </p>
+                                <p x-cloak x-show="studentIdStatus === 'available'" class="text-xs text-emerald-600 mt-2">
+                                    <i class="fas fa-check-circle mr-1"></i>{{ __('student_id_available') }}
+                                </p>
+                                <p x-cloak x-show="studentIdStatus === 'taken'" class="text-xs text-red-600 mt-2">
+                                    <i class="fas fa-times-circle mr-1"></i>{{ __('student_id_taken') }}
+                                </p>
                             </div>
                         </div>
 
@@ -496,7 +551,7 @@
                         <a href="{{ route('admin.manage-users') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-xl font-bold text-gray-600 hover:bg-gray-50 transition text-sm">
                             <i class="fas fa-times"></i> {{ __('cancel_2') }}
                         </a>
-                        <button type="submit" class="inline-flex items-center gap-2 px-8 py-3 bg-emerald-600 rounded-xl font-bold text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all shadow-lg shadow-emerald-200 text-sm">
+                        <button type="submit" :disabled="studentIdBlocked" :class="studentIdBlocked ? 'opacity-50 cursor-not-allowed' : ''" class="inline-flex items-center gap-2 px-8 py-3 bg-emerald-600 rounded-xl font-bold text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all shadow-lg shadow-emerald-200 text-sm">
                             <i class="fas fa-save"></i> {{ __('save_and_create_user') }}
                         </button>
                     </div>
