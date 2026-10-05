@@ -64,4 +64,10 @@ return [
         'app_name' => env('APP_NAME', 'NMU Class Management'),
     ],
 
+    'turnstile' => [
+        'site_key' => env('TURNSTILE_SITE_KEY'),
+        'secret' => env('TURNSTILE_SECRET'),
+        'hostnames' => env('TURNSTILE_HOSTNAMES', ''),
+    ],
+
 ];

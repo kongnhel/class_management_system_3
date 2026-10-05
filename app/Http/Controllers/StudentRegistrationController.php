@@ -7,6 +7,7 @@ use App\Models\Department;
 use App\Models\StudentCourseEnrollment;
 use App\Models\StudentDepartmentEnrollment;
 use App\Models\User;
+use App\Rules\Turnstile;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -44,6 +45,7 @@ class StudentRegistrationController extends Controller
             'password' => ['required', 'confirmed', 'min:8'],
             'generation' => 'required|string',
             'degree_level' => 'required|string|max:50',
+            'cf-turnstile-response' => [new Turnstile('register')],
         ]);
 
         try {

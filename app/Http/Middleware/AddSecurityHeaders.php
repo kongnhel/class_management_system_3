@@ -43,16 +43,25 @@ class AddSecurityHeaders
         // 'unsafe-inline' + 'unsafe-eval' in script-src are required by Livewire
         // 'unsafe-inline' in style-src is required by Tailwind + Livewire inline styles
         // localhost entries are for development; harmless in production
+        // challenges.cloudflare.com is Cloudflare Turnstile (the CAPTCHA
+        // replacement on the guest forms). It needs script-src for api.js,
+        // frame-src for the widget iframe and connect-src for the widget's
+        // own calls. Without all three the widget never renders, no token is
+        // submitted and every login/register/reset is rejected.
         $csp = "default-src 'self' http://localhost:* http://127.0.0.1:* [::1]:*; ".
                "script-src 'self' 'unsafe-inline' 'unsafe-eval' ".
                'https://cdn.jsdelivr.net https://www.gstatic.com https://unpkg.com '.
+               'https://challenges.cloudflare.com '.
                'http://localhost:* http://127.0.0.1:* [::1]:*; '.
                "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://fonts.bunny.net ".
                'http://localhost:* http://127.0.0.1:* [::1]:*; '.
                "img-src 'self' data: https: http://localhost:* http://127.0.0.1:* [::1]:*; ".
                "font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com https://fonts.bunny.net; ".
                "connect-src 'self' https://www.gstatic.com https://firebase.googleapis.com ".
-               'ws://localhost:* ws://127.0.0.1:* http://localhost:* http://127.0.0.1:* [::1]:*;';
+               'https://challenges.cloudflare.com '.
+               'ws://localhost:* ws://127.0.0.1:* http://localhost:* http://127.0.0.1:* [::1]:*; '.
+               "frame-src 'self' https://challenges.cloudflare.com ".
+               'http://localhost:* http://127.0.0.1:* [::1]:*;';
 
         $response->header('Content-Security-Policy', $csp);
 

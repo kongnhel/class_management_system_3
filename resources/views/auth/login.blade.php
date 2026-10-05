@@ -79,6 +79,11 @@
                             <x-input-error :messages="$errors->get('password')" class="mt-1.5 text-xs text-red-500" />
                         </div>
 
+                        @if (config('services.turnstile.site_key'))
+                            <div class="cf-turnstile" data-sitekey="{{ config('services.turnstile.site_key') }}" data-action="login"></div>
+                            <x-input-error :messages="$errors->get('cf-turnstile-response')" class="mt-1.5 text-xs text-red-500" />
+                        @endif
+
                         <button type="submit" id="loginBtn" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-emerald-200 hover:shadow-emerald-300 transition-all duration-200 text-sm">
                             {{ __('auth_login_btn') }}
                         </button>

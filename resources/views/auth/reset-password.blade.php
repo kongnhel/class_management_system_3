@@ -49,6 +49,11 @@
                         <x-input-error :messages="$errors->get('password_confirmation')" class="mt-1.5 text-xs text-red-500" />
                     </div>
 
+                    @if (config('services.turnstile.site_key'))
+                        <div class="cf-turnstile" data-sitekey="{{ config('services.turnstile.site_key') }}" data-action="reset-password"></div>
+                        <x-input-error :messages="$errors->get('cf-turnstile-response')" class="mt-1.5 text-xs text-red-500" />
+                    @endif
+
                     <button type="submit" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-emerald-200 hover:shadow-emerald-300 transition-all duration-200 text-sm">
                         កំណត់{{ __('auth_new_password') }}
                     </button>

@@ -30,5 +30,10 @@
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
+        <!-- Turnstile must be off in tests: an empty secret makes the rule
+             self-skip, so no test ever reaches Cloudflare siteverify. -->
+        <env name="TURNSTILE_HOSTNAMES" value=""/>
+        <env name="TURNSTILE_SECRET" value=""/>
+        <env name="TURNSTILE_SITE_KEY" value=""/>
     </php>
 </phpunit>

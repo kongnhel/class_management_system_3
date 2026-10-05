@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Auth;
 
 use App\Models\User;
+use App\Rules\Turnstile;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -22,6 +23,7 @@ class LoginRequest extends FormRequest
         return [
             'login_identifier' => ['required', 'string'],
             'password' => ['nullable', 'string'],
+            'cf-turnstile-response' => [new Turnstile('login')],
         ];
     }
 
