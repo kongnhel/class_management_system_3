@@ -5,6 +5,7 @@ namespace App\Rules;
 use App\Services\TurnstileService;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Support\Facades\Log;
 
 class Turnstile implements ValidationRule
 {
@@ -27,6 +28,10 @@ class Turnstile implements ValidationRule
         $service = app(TurnstileService::class);
 
         if (! $service->isEnabled()) {
+            if (app()->isProduction()) {
+                Log::warning('Turnstile: TURNSTILE_SECRET is empty, protection disabled.');
+            }
+
             return;
         }
 

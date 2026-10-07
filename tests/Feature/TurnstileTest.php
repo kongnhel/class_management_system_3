@@ -3,6 +3,7 @@
 use App\Rules\Turnstile;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 function enableTurnstile(string $secret = 'test-secret', string $hostnames = 'localhost'): void
@@ -30,6 +31,26 @@ test('the rule is skipped entirely when no secret is configured', function () {
     enableTurnstile(secret: '');
 
     expect(loginTokenErrors([]))->toBe([]);
+});
+
+test('a missing secret is reported in production instead of disabling silently', function () {
+    Log::spy();
+    $this->app['env'] = 'production';
+    enableTurnstile(secret: '');
+
+    expect(loginTokenErrors([]))->toBe([]);
+
+    Log::shouldHaveReceived('warning')
+        ->with('Turnstile: TURNSTILE_SECRET is empty, protection disabled.');
+});
+
+test('a missing secret is not reported outside production', function () {
+    Log::spy();
+    enableTurnstile(secret: '');
+
+    expect(loginTokenErrors([]))->toBe([]);
+
+    Log::shouldNotHaveReceived('warning');
 });
 
 test('an absent token is rejected while turnstile is enabled', function () {

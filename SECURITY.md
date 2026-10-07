@@ -228,26 +228,29 @@ ActivityLogger::logAPIError('Gemini', 429, 'Rate limit exceeded');
 
 ---
 
-### 10. ✅ ADDED: Security Configuration File
+### 10. ✅ FIXED: Rate Limits Live In Code, Not In A Dead Config
 
-**File:** `config/security.php`
+**Issue:** `config/security.php` was documented as the central security
+config, but nothing in the application ever read it — all six of its keys
+were orphaned. Worse, it advertised protections that did not exist and a
+`Content-Security-Policy` with no `challenges.cloudflare.com`, so wiring it
+up would have blanked the Turnstile widget and failed every login. The file
+has been deleted so it can no longer mislead.
 
-Centralized security configuration:
+**Where the real limits are:**
 
-```php
-'rate_limits' => [
-    'login' => '5,1',           // 5 attempts per minute
-    'password_reset' => '3,60', // 3 per hour
-    'api_calls' => '60,1',
-    'ai_chat' => '5,1',
-],
+- `/login` — 5 failed attempts per account + IP, then a 15 minute lockout:
+  `app/Http/Requests/Auth/LoginRequest.php`
+- `/forgot-password` — 5 per hour, keyed by **email** rather than IP, so a
+  shared campus NAT cannot lock out a whole building:
+  `RateLimiter::for('forgot-password')` in `app/Providers/AppServiceProvider.php`
+- Authenticated routes — `throttle:60,1` / `throttle:120,1` per role group:
+  `routes/web.php`
+- Email verification — `throttle:6,1`: `routes/auth.php`
 
-'audit_events' => [
-    'grade_updated' => true,
-    'attendance_recorded' => true,
-    'user_created' => true,
-],
-```
+All four guest forms (`login`, `register`, `forgot-password`,
+`reset-password`) additionally require a valid Cloudflare Turnstile token.
+See `deploy/note.txt` section 5.
 
 ---
 

@@ -97,6 +97,10 @@ The files get to the server automatically when you: git pull
  fast), so without the recycle the server keeps running the
  OLD code after a git pull.
 
+ If you edited .env, do that BEFORE php artisan optimize - that
+ step bakes the values into the config cache. Also confirm the
+ Turnstile bot protection is still on: see section 5.
+
 
 ----------------------------------------------------------------
   3. BACKUPS, HEALTH MONITORING, UPDATE POLICY (Phase 3)
@@ -196,4 +200,88 @@ The files get to the server automatically when you: git pull
     & "C:\Windows\System32\inetsrv\appcmd.exe" recycle apppool /apppool.name:"nmu-cms"
 
  If a deploy "didn't take effect":
-   You forgot the app pool recycle. Run it (see checklist above).
+    You forgot the app pool recycle. Run it (see checklist above).
+
+----------------------------------------------------------------
+  5. TURNSTILE BOT PROTECTION (guest forms)
+----------------------------------------------------------------
+
+ The login, register, forgot-password and reset-password forms are
+ protected by Cloudflare Turnstile. Production needs these 3 lines
+ in the SERVER'S .env:
+
+   TURNSTILE_SITE_KEY=0x4AAAAAAFLNBo_JUXu6D5I8
+   TURNSTILE_SECRET=<copy from .env.production - never commit this>
+   TURNSTILE_HOSTNAMES=sys.nmu.edu.kh
+
+ The site key is public - it is embedded in every page's HTML.
+ The SECRET is not. .env.production holds the only copy and is
+ gitignored. If it is ever lost, create a new widget secret in the
+ Cloudflare dashboard and update both .env.production and the
+ server's .env.
+
+ TURNSTILE_HOSTNAMES must NOT contain localhost in production.
+ The widget's hostname list in the Cloudflare dashboard (which
+ pages may render the widget) and this value (which hostnames THIS
+ server accepts from siteverify) are independent of each other.
+
+ WHY THIS MATTERS - THE CHECK FAILS OPEN:
+   There are two different ways protection can drop off, and they are
+   NOT the same thing:
+
+   a) SITEVERIFY UNREACHABLE (Cloudflare outage, network fault).
+      The request is allowed through and a warning is written to
+      storage/logs/laravel.log. Deliberate: an outage must never lock
+      students out.
+
+   b) TURNSTILE_SECRET MISSING OR EMPTY.
+      The rule skips itself entirely. Outside production that is silent;
+      IN PRODUCTION it logs "Turnstile: TURNSTILE_SECRET is empty,
+      protection disabled." on every guest form submit, so a botched
+      .env edit cannot go unnoticed.
+
+   After any deploy that touched .env, confirm it is still on:
+
+     php artisan tinker --execute="printf('turnstile enabled: %s'.PHP_EOL, var_export((bool) config('services.turnstile.secret'), true));"
+
+   Expected output:  turnstile enabled: true
+
+ KNOWN GAPS (accepted on purpose - none of these are oversights):
+
+   1. DURING AN OUTAGE TURNSTILE CONTRIBUTES NOTHING. Nothing is left
+      wide open though - every guest form has a second layer that keeps
+      working:
+
+        /login            5 attempts per account+IP, then 15 min lockout
+        /register         student_id_code must already exist in users
+        /forgot-password  5 per hour, keyed by email
+        /reset-password   signed, single-use, expiring token
+
+   2. THE LOGIN LOCKOUT IS KEYED identifier|IP (LoginRequest.php), so a
+      bot spraying one password across many usernames still gets 5 tries
+      per ACCOUNT, not 5 overall. Turnstile is what stops the spray; the
+      lockout only caps guessing against a single account.
+
+   3. MAIL_MAILER=log in production, so abuse of /forgot-password only
+      writes to storage/logs/laravel.log - no quota and no cost. This
+      becomes a real problem the moment a live mailer is configured.
+
+   Rate limits live in CODE, not in config. config/security.php was
+   deleted because nothing ever read it. See SECURITY.md section 10.
+
+ LOCAL DEVELOPMENT:
+   Turnstile is deliberately OFF on the dev machine. TURNSTILE_SITE_KEY
+   and TURNSTILE_SECRET are blank in the local .env, so no widget is
+   rendered and the validation rule self-skips. To test the real
+   widget locally you must restore BOTH values AND set
+   TURNSTILE_HOSTNAMES=localhost,127.0.0.1 - restoring the keys with
+   hostnames left empty makes every token be refused.
+
+ IN TESTS:
+   phpunit.xml forces all three values to blank, so the test suite
+   never calls Cloudflare.
+
+ WHERE THE CODE LIVES:
+   app/Services/TurnstileService.php  siteverify, action/hostname checks, fail-open
+   app/Rules/Turnstile.php            validation rule (rejects a missing token)
+   tests/Feature/TurnstileTest.php    16 tests
