@@ -18,54 +18,23 @@
     </style>
 
     <div class="min-h-screen flex">
-        {{-- Left: Branding Sidebar --}}
-        <div class="hidden lg:flex lg:w-5/12 relative overflow-hidden items-center justify-center">
+        {{-- Left: Branding (Matches Login Page) --}}
+        <div class="hidden lg:flex lg:w-1/2 relative overflow-hidden items-center justify-center">
             <img src="{{ asset('assets/image/download (5).jpg') }}" alt="" class="absolute inset-0 w-full h-full object-cover">
-            <div class="absolute inset-0 bg-gradient-to-br from-slate-950/85 via-emerald-950/80 to-slate-900/90 backdrop-blur-[2px]"></div>
-            
-            <div class="relative z-10 text-center px-10 max-w-lg">
-                <div class="w-24 h-24 mx-auto mb-6 p-3 bg-white/10 rounded-3xl backdrop-blur-md border border-white/20 shadow-2xl flex items-center justify-center">
-                    <img src="{{ asset('assets/image/nmu_Logo.png') }}" alt="Logo" class="w-full h-full object-contain drop-shadow">
-                </div>
-                
-                <h1 class="text-3xl xl:text-4xl font-extrabold text-white leading-tight mb-3 tracking-tight">
-                    Class Management<br><span class="text-emerald-400">System</span>
-                </h1>
-                <p class="text-emerald-100/90 text-sm xl:text-base leading-relaxed mb-8">
-                    {{ __('register_branding_subtitle') }}
-                </p>
-
-                {{-- Feature Badges --}}
-                <div class="space-y-3 text-left max-w-xs mx-auto">
-                    <div class="flex items-center gap-3 bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white/10 text-emerald-100 text-xs font-medium">
-                        <div class="w-7 h-7 rounded-xl bg-emerald-500/20 text-emerald-300 flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-id-card text-xs"></i>
-                        </div>
-                        <span>{{ __('student_id_2') }} Auto-Lookup</span>
-                    </div>
-                    <div class="flex items-center gap-3 bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white/10 text-emerald-100 text-xs font-medium">
-                        <div class="w-7 h-7 rounded-xl bg-emerald-500/20 text-emerald-300 flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-graduation-cap text-xs"></i>
-                        </div>
-                        <span>Course & Grade Tracking</span>
-                    </div>
-                    <div class="flex items-center gap-3 bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white/10 text-emerald-100 text-xs font-medium">
-                        <div class="w-7 h-7 rounded-xl bg-emerald-500/20 text-emerald-300 flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-shield-alt text-xs"></i>
-                        </div>
-                        <span>Secure Student Portal</span>
-                    </div>
-                </div>
-
-                <div class="mt-8 flex items-center justify-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span class="text-emerald-200/80 text-xs">{{ __('register_please_fill_info') }}</span>
+            <div class="absolute inset-0 bg-emerald-900/70"></div>
+            <div class="relative z-10 text-center px-12">
+                <img src="{{ asset('assets/image/nmu_Logo.png') }}" alt="Logo" class="w-28 h-28 mx-auto mb-8 drop-shadow-2xl">
+                <h1 class="text-4xl font-extrabold text-white leading-tight mb-4">Class Management<br>System</h1>
+                <p class="text-emerald-100 text-lg max-w-sm mx-auto leading-relaxed">{{ __('register_branding_subtitle') }}</p>
+                <div class="mt-10 flex items-center justify-center gap-3">
+                    <div class="w-3 h-3 rounded-full bg-emerald-300 animate-pulse"></div>
+                    <span class="text-emerald-200 text-sm font-medium">{{ __('register_please_fill_info') }}</span>
                 </div>
             </div>
         </div>
 
         {{-- Right: Registration Form Panel --}}
-        <div class="relative w-full lg:w-7/12 flex items-center justify-center px-4 sm:px-8 lg:px-12 py-10 bg-gray-50 overflow-y-auto">
+        <div class="relative w-full lg:w-1/2 flex items-center justify-center px-4 sm:px-8 lg:px-12 py-10 bg-gray-50 overflow-y-auto">
 
             {{-- Top-Right Language Switcher (matches login page) --}}
             <div class="absolute top-4 right-4 sm:top-6 sm:right-6 flex gap-1 rounded-xl bg-white p-1 shadow-sm border border-gray-200 z-20">
