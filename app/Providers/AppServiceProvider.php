@@ -29,5 +29,12 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('forgot-password', function (Request $request) {
             return Limit::perHour(5)->by(strtolower((string) $request->input('email')) ?: $request->ip());
         });
+
+        // Registration is authorised by a student_id_code, which is a dense
+        // sequential range — without a limit this endpoint doubles as an
+        // unbounded oracle for which pre-created accounts are still claimable.
+        RateLimiter::for('registration', function (Request $request) {
+            return Limit::perMinute(5)->by($request->ip());
+        });
     }
 }

@@ -82,7 +82,9 @@ class ProfileController extends Controller
                     return redirect()->back()->withErrors(['profile_picture' => 'មានបញ្ហាក្នុងការ upload រូបភាព។']);
                 }
             } catch (\Exception $e) {
-                return redirect()->back()->withErrors(['profile_picture' => 'មានបញ្ហាបច្ចេកទេស៖ '.$e->getMessage()]);
+                report($e);
+
+                return redirect()->back()->withErrors(['profile_picture' => __('technical_error')]);
             }
         } elseif ($request->hasFile('profile_picture')) {
             try {
@@ -101,7 +103,9 @@ class ProfileController extends Controller
                     return redirect()->back()->withErrors(['profile_picture' => 'មានបញ្ហាក្នុងការ upload រូបភាព។']);
                 }
             } catch (\Exception $e) {
-                return redirect()->back()->withErrors(['profile_picture' => 'មានបញ្ហាបច្ចេកទេស៖ '.$e->getMessage()]);
+                report($e);
+
+                return redirect()->back()->withErrors(['profile_picture' => __('technical_error')]);
             }
         }
 

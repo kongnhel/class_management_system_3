@@ -13,6 +13,22 @@ class GradingService
     /** @var array<int, array<string, true>> */
     protected static array $offeringAssessmentKeys = [];
 
+    /** @var array<int, array<int, array<string, ReExamResult>>> */
+    protected static array $reExamCache = [];
+
+    /**
+     * Drop the per-request memos.
+     *
+     * PHP resets statics between real requests, but a single test process
+     * handles many requests, and ids restart on a fresh in-memory database —
+     * so without this a test would inherit another test's cached allow-list.
+     */
+    public static function flushCache(): void
+    {
+        self::$offeringAssessmentKeys = [];
+        self::$reExamCache = [];
+    }
+
     /**
      * Grading scale thresholds (total score out of 100).
      * Attendance (15) + Assessments (85) = 100 max.
@@ -202,23 +218,12 @@ class GradingService
     ): array {
         // Controllers may load all results for a student. Restrict the input
         // to assessments belonging to this offering before calculating totals.
-        if ($courseOfferingId) {
-            $allowedKeys = self::getOfferingAssessmentKeys($courseOfferingId);
-            $assessmentScores = collect($assessmentScores)->filter(function ($result) use ($allowedKeys) {
-                return isset($allowedKeys[$result->assessment_type.':'.$result->assessment_id]);
-            })->values();
-        }
+        $assessmentScores = self::restrictToOffering($assessmentScores, $courseOfferingId);
 
         // Load re-exam results if student and offering provided
         $reExamMap = [];
         if ($student && $courseOfferingId) {
-            $reExamResults = ReExamResult::where('student_user_id', $student->id)
-                ->where('course_offering_id', $courseOfferingId)
-                ->get()
-                ->keyBy('assessment_type');
-            foreach ($reExamResults as $type => $reExam) {
-                $reExamMap[$type] = $reExam;
-            }
+            $reExamMap = self::reExamsFor((int) $student->id, $courseOfferingId);
         }
 
         // Aggregate scores by component type
@@ -288,6 +293,52 @@ class GradingService
     }
 
     /**
+     * Load every re-exam row for a set of students and offerings in one query
+     * so ranking loops do not issue one query per (student, offering) pair.
+     *
+     * @param  array<int>  $studentIds
+     * @param  array<int>  $courseOfferingIds
+     */
+    public static function preloadReExams(array $studentIds, array $courseOfferingIds): void
+    {
+        if ($studentIds === [] || $courseOfferingIds === []) {
+            return;
+        }
+
+        foreach ($studentIds as $studentId) {
+            foreach ($courseOfferingIds as $offeringId) {
+                self::$reExamCache[(int) $studentId][(int) $offeringId] = [];
+            }
+        }
+
+        $rows = ReExamResult::whereIn('student_user_id', $studentIds)
+            ->whereIn('course_offering_id', $courseOfferingIds)
+            ->get();
+
+        foreach ($rows as $row) {
+            self::$reExamCache[(int) $row->student_user_id][(int) $row->course_offering_id][(string) $row->assessment_type] = $row;
+        }
+    }
+
+    /**
+     * Re-exam rows for one student and offering, keyed by assessment type.
+     *
+     * @return array<string, ReExamResult>
+     */
+    private static function reExamsFor(int $studentId, int $courseOfferingId): array
+    {
+        if (isset(self::$reExamCache[$studentId][$courseOfferingId])) {
+            return self::$reExamCache[$studentId][$courseOfferingId];
+        }
+
+        return self::$reExamCache[$studentId][$courseOfferingId] = ReExamResult::where('student_user_id', $studentId)
+            ->where('course_offering_id', $courseOfferingId)
+            ->get()
+            ->keyBy('assessment_type')
+            ->all();
+    }
+
+    /**
      * Build the assessment allow-list once per offering per request.
      */
     private static function getOfferingAssessmentKeys(int $courseOfferingId): array
@@ -311,6 +362,29 @@ class GradingService
     }
 
     /**
+     * Keep only the rows that belong to this offering.
+     *
+     * Both the component buckets and the quiz bonus have to be scoped: the
+     * controllers hand us every result a student has across all of their
+     * enrollments, then ask once per offering. Returns the input narrowed to
+     * one offering's assessments.
+     */
+    private static function restrictToOffering($assessmentScores, ?int $courseOfferingId)
+    {
+        $scores = collect($assessmentScores);
+
+        if (! $courseOfferingId) {
+            return $scores;
+        }
+
+        $allowedKeys = self::getOfferingAssessmentKeys($courseOfferingId);
+
+        return $scores->filter(function ($result) use ($allowedKeys) {
+            return isset($allowedKeys[$result->assessment_type.':'.$result->assessment_id]);
+        })->values();
+    }
+
+    /**
      * Calculate the final grade for a student in a course offering,
      * considering critical component rules and re-exam results.
      *
@@ -331,6 +405,11 @@ class GradingService
         ?User $student = null,
         ?int $courseOfferingId = null
     ): array {
+        // The quiz bonus below reads the raw input, so scope it here as well —
+        // otherwise a quiz sat in one course is added to the total of every
+        // other course the student is enrolled in.
+        $assessmentScores = self::restrictToOffering($assessmentScores, $courseOfferingId);
+
         $componentStatus = self::checkCriticalComponents(
             $attendanceScore,
             $assessmentScores,

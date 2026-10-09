@@ -38,7 +38,8 @@ Route::middleware('guest')->group(function () {
     Route::get('register', [StudentRegistrationController::class, 'create'])
         ->name('register');
 
-    Route::post('register', [StudentRegistrationController::class, 'store']);
+    Route::post('register', [StudentRegistrationController::class, 'store'])
+        ->middleware('throttle:registration');
 });
 
 Route::middleware('auth')->group(function () {

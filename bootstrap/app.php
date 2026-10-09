@@ -27,6 +27,13 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function (HttpException $e, Request $request) {
+            // A redirect to /login hands XHR/fetch callers HTML instead of a
+            // status code, so their .json() parsing throws and the failure
+            // stays invisible. Let Laravel's default renderer answer instead.
+            if ($request->ajax() || $request->expectsJson()) {
+                return;
+            }
+
             if (in_array($e->getStatusCode(), [419, 403])) {
                 return redirect()->route('login')
                     ->with('error', 'Session របស់អ្នកហួសកំណត់ ឬអ្នកមិនមានសិទ្ធិចូលទំព័រនេះទេ។ សូមចូលប្រព័ន្ធម្ដងទៀត!');

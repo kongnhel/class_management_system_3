@@ -354,6 +354,7 @@ class ProfessorGradeController extends Controller
         ]);
 
         $courseOffering = CourseOffering::findOrFail($offering_id);
+        $this->authorizeCourseOffering($courseOffering);
         $type = $request->input('assessment_type');
         $titleEn = $request->input('title_en');
         $titleKm = $request->input('title_km');
@@ -671,12 +672,25 @@ class ProfessorGradeController extends Controller
     {
         $request->validate([
             'excel_file' => 'required|mimes:xlsx,xls,csv,txt',
-            'type' => 'required',
+            'type' => 'required|in:assignment,quiz,exam',
             'offering_id' => 'required',
         ]);
 
         $type = $request->input('type');
         $offering_id = $request->input('offering_id');
+
+        // The assessment id comes from the URL; verify the authenticated
+        // professor actually teaches the offering it belongs to.
+        if ($type === 'assignment') {
+            $assessment = \App\Models\Assignment::findOrFail($id);
+        } elseif ($type === 'quiz') {
+            $assessment = \App\Models\Quiz::findOrFail($id);
+        } else {
+            $assessment = \App\Models\Exam::findOrFail($id);
+        }
+
+        $this->authorizeAssessment($assessment);
+
         $file = $request->file('excel_file');
         $extension = strtolower($file->getClientOriginalExtension());
 

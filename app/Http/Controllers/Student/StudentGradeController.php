@@ -43,7 +43,16 @@ class StudentGradeController extends Controller
             ->with(['course', 'assignments', 'exams', 'quizzes'])
             ->get();
 
-        $courseGrades = $courseOfferings->map(function ($offering) use ($filteredResults, $user) {
+        $peerIds = StudentCourseEnrollment::whereIn('course_offering_id', $filteredOfferingIds)->pluck('student_user_id')->unique();
+        $peers = User::whereIn('id', $peerIds)->get()->keyBy('id');
+        $peerResults = ExamResult::whereIn('student_user_id', $peerIds)->get()->groupBy('student_user_id');
+        $enrollmentsByOffering = StudentCourseEnrollment::whereIn('course_offering_id', $filteredOfferingIds)
+            ->orderBy('id')
+            ->get()
+            ->groupBy('course_offering_id');
+        GradingService::preloadReExams($peerIds->all(), $filteredOfferingIds->all());
+
+        $courseGrades = $courseOfferings->map(function ($offering) use ($filteredResults, $user, $peers, $peerResults, $enrollmentsByOffering) {
             $courseId = $offering->course_id;
             $items = $filteredResults->where('course_offering_id', $offering->id)->values();
             $resultFor = function (string $type, int $assessmentId) use ($items) {
@@ -98,15 +107,15 @@ class StudentGradeController extends Controller
 
             // Ranking
             $enrollments = $offeringId
-                ? StudentCourseEnrollment::where('course_offering_id', $offeringId)->get()
+                ? ($enrollmentsByOffering->get($offeringId) ?? collect())
                 : collect();
-            $rankings = $enrollments->map(function ($enrol) use ($offeringId) {
-                $student = User::find($enrol->student_user_id);
+            $rankings = $enrollments->map(function ($enrol) use ($offeringId, $peers, $peerResults) {
+                $student = $peers->get($enrol->student_user_id);
                 if (! $student) {
                     return ['id' => $enrol->student_user_id, 'total' => 0];
                 }
                 $att = (float) ($student->getAttendanceScoreByCourse($offeringId) ?? 0);
-                $studentResults = ExamResult::where('student_user_id', $enrol->student_user_id)->get();
+                $studentResults = $peerResults->get($enrol->student_user_id) ?? collect();
                 $gradeResult = GradingService::calculateFinalGrade(
                     $att, $studentResults, $student, $offeringId
                 );
@@ -146,18 +155,17 @@ class StudentGradeController extends Controller
         $gpa = $totalCredits > 0 ? round($weightedPoints / $totalCredits, 2) : 0;
         $averageScore = $courseGrades->count() > 0 ? round($courseGrades->avg('total_score'), 1) : 0;
 
-        $peerIds = StudentCourseEnrollment::whereIn('course_offering_id', $filteredOfferingIds)->pluck('student_user_id')->unique();
-        $rankings = $peerIds->map(function ($peerId) use ($filteredOfferingIds) {
-            $peer = User::find($peerId);
+        $rankings = $peerIds->map(function ($peerId) use ($filteredOfferingIds, $peers, $peerResults) {
+            $peer = $peers->get($peerId);
             if (! $peer) {
                 return ['id' => $peerId, 'total' => 0];
             }
             $total = 0;
             foreach ($filteredOfferingIds as $offeringId) {
                 $att = (float) ($peer->getAttendanceScoreByCourse($offeringId) ?? 0);
-                $peerResults = ExamResult::where('student_user_id', $peerId)->get();
+                $peerStudentResults = $peerResults->get($peerId) ?? collect();
                 $gradeResult = GradingService::calculateFinalGrade(
-                    $att, $peerResults, $peer, $offeringId
+                    $att, $peerStudentResults, $peer, $offeringId
                 );
                 $total += (float) $gradeResult['total_score'];
             }
@@ -252,6 +260,7 @@ class StudentGradeController extends Controller
 
         $assessmentsByCourse = $courseOfferings->map(function ($offering) use ($user, $allResultIds, $reExamMap) {
             $items = collect();
+            $examResultsForGrading = collect();
             $offeringReExams = $reExamMap->get($offering->id, collect())->keyBy('assessment_type');
 
             foreach ($offering->assignments as $a) {
@@ -271,6 +280,12 @@ class StudentGradeController extends Controller
                     'has_re_exam' => (bool) $reExam,
                     'date' => $a->due_date,
                     'notes' => $result?->notes,
+                ]);
+
+                $examResultsForGrading->push((object) [
+                    'assessment_type' => 'assignment',
+                    'assessment_id' => $a->id,
+                    'score_obtained' => $originalScore,
                 ]);
             }
 
@@ -298,6 +313,13 @@ class StudentGradeController extends Controller
                     'date' => $e->exam_date,
                     'notes' => $result?->notes,
                 ]);
+
+                $examResultsForGrading->push((object) [
+                    'assessment_type' => 'exam',
+                    'assessment_id' => $e->id,
+                    'score_obtained' => $originalScore,
+                    'exam' => $e,
+                ]);
             }
 
             foreach ($offering->quizzes as $q) {
@@ -315,19 +337,15 @@ class StudentGradeController extends Controller
                     'date' => $q->quiz_date,
                     'notes' => $result?->notes,
                 ]);
+
+                $examResultsForGrading->push((object) [
+                    'assessment_type' => 'quiz',
+                    'assessment_id' => $q->id,
+                    'score_obtained' => $result?->score_obtained ?? 0,
+                ]);
             }
 
             $att = (float) ($user->getAttendanceScoreByCourse($offering->id) ?? 0);
-
-            // Build ExamResult-like objects for the grading service
-            $examResultsForGrading = collect();
-            foreach ($items as $item) {
-                $examResultsForGrading->push((object) [
-                    'assessment_type' => $item['type'],
-                    'assessment_id' => 0,
-                    'score_obtained' => $item['score'],
-                ]);
-            }
 
             $gradeResult = GradingService::calculateFinalGrade(
                 $att,

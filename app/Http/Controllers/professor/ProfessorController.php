@@ -385,6 +385,13 @@ class ProfessorController extends Controller
 
     public function toggleClassLeader($offeringId, $studentUserId)
     {
+        $courseOffering = \App\Models\CourseOffering::find($offeringId);
+
+        abort_unless(
+            $courseOffering && $courseOffering->lecturer_user_id === Auth::id(),
+            403
+        );
+
         // ១. ស្វែងរក record ក្នុង table student_course_enrollments
         $enrollment = DB::table('student_course_enrollments')
             ->where('course_offering_id', $offeringId)

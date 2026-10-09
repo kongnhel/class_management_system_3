@@ -159,17 +159,21 @@ class StudentController extends Controller
 
             // Rank — compute per-course totals using GradingService for each peer
             $peerIds = StudentCourseEnrollment::whereIn('course_offering_id', $enrolledOfferingIds)->pluck('student_user_id')->unique();
-            $rankings = $peerIds->map(function ($peerId) use ($enrolledOfferingIds) {
-                $peer = \App\Models\User::find($peerId);
+            $peers = \App\Models\User::whereIn('id', $peerIds)->get()->keyBy('id');
+            $peerResults = \App\Models\ExamResult::whereIn('student_user_id', $peerIds)->get()->groupBy('student_user_id');
+            \App\Services\GradingService::preloadReExams($peerIds->all(), $enrolledOfferingIds->all());
+
+            $rankings = $peerIds->map(function ($peerId) use ($enrolledOfferingIds, $peers, $peerResults) {
+                $peer = $peers->get($peerId);
                 if (! $peer) {
                     return ['id' => $peerId, 'total' => 0];
                 }
                 $totalAcrossCourses = 0;
                 foreach ($enrolledOfferingIds as $offeringId) {
                     $att = (float) ($peer->getAttendanceScoreByCourse($offeringId) ?? 0);
-                    $studentResults = \App\Models\ExamResult::where('student_user_id', $peerId)->get();
+                    $peerStudentResults = $peerResults->get($peerId) ?? collect();
                     $gradeResult = \App\Services\GradingService::calculateFinalGrade(
-                        $att, $studentResults, $peer, $offeringId
+                        $att, $peerStudentResults, $peer, $offeringId
                     );
                     $totalAcrossCourses += (float) $gradeResult['total_score'];
                 }

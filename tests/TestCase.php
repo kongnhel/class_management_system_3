@@ -2,10 +2,18 @@
 
 namespace Tests;
 
+use App\Services\GradingService;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        GradingService::flushCache();
+    }
+
     /**
      * Keep tests isolated even if a developer's .env points at MySQL.
      */

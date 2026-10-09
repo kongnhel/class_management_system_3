@@ -384,7 +384,7 @@ class BulkImportController extends Controller
             Log::error('Bulk import error: '.$e->getMessage()."\n".$e->getTraceAsString());
 
             return redirect()->route('admin.import.index')
-                ->with('error', 'Import failed: '.$e->getMessage());
+                ->with('error', __('import_failed'));
         }
     }
 

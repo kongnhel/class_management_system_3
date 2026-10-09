@@ -606,12 +606,14 @@ class UserController extends Controller
                 ->with('success', __('user_and_related_data_deleted'));
 
         } catch (\Exception $e) {
+            report($e);
+
             if (request()->ajax()) {
-                return response()->json(['success' => false, 'message' => 'មានបញ្ហាបច្ចេកទេស៖ '.$e->getMessage()]);
+                return response()->json(['success' => false, 'message' => __('technical_error')]);
             }
 
             return redirect()->route('admin.manage-users')
-                ->with('error', __('technical_error').$e->getMessage());
+                ->with('error', __('technical_error'));
         }
     }
 

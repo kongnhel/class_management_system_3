@@ -253,7 +253,7 @@ class CourseOfferingController extends Controller
             \Illuminate\Support\Facades\Log::error('Error creating course offering: '.$e->getMessage());
 
             return redirect()->back()
-                ->with('error', __('error_creating_offering').$e->getMessage())
+                ->with('error', __('error_creating_offering'))
                 ->withInput();
         }
     }
@@ -413,7 +413,7 @@ class CourseOfferingController extends Controller
             \Illuminate\Support\Facades\Log::error('Error updating course offering: '.$e->getMessage());
 
             return redirect()->back()
-                ->with('error', __('error_creating_offering').$e->getMessage())
+                ->with('error', __('error_creating_offering'))
                 ->withInput();
         }
     }

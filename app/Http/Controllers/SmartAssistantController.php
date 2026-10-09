@@ -130,7 +130,7 @@ class SmartAssistantController extends Controller
         } catch (\Exception $e) {
             Log::error('SmartAssistant Exception: '.$e->getMessage());
 
-            return response()->json(['message' => 'មានបញ្ហាខាងក្នុងម៉ាស៊ីនហើយមេ! Error: '.$e->getMessage()], 500);
+            return response()->json(['message' => __('ai_error_generic')], 500);
         }
     }
 

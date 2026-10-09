@@ -50,7 +50,13 @@ class StudentRegistrationController extends Controller
 
         try {
             DB::transaction(function () use ($request) {
-                $user = User::where('student_id_code', $request->student_id_code)->firstOrFail();
+                // Repeat the validation scope at the write site: the account
+                // being mutated must be the one the rule authorised, not just
+                // the first row carrying this student_id_code.
+                $user = User::where('student_id_code', $request->student_id_code)
+                    ->where('role', 'student')
+                    ->whereNull('password')
+                    ->firstOrFail();
 
                 $user->forceFill([
                     'name' => $request->name,
@@ -98,7 +104,12 @@ class StudentRegistrationController extends Controller
                 ->with('success', 'ចុះឈ្មោះជោគជ័យ!');
 
         } catch (\Exception $e) {
-            return back()->with('error', 'Error: '.$e->getMessage());
+            // Never echo the exception: a QueryException carries the connection
+            // details and the SQL with every binding inlined (including the
+            // password hash), and this endpoint is unauthenticated.
+            report($e);
+
+            return back()->with('error', __('auth_error_generic'));
         }
     }
 
