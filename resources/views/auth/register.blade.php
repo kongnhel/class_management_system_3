@@ -15,6 +15,30 @@
             background-position: right 0.85rem center;
             background-size: 1.15em 1.15em;
         }
+
+        /* Right panel form fields */
+        .reg-input {
+            display: block;
+            width: 100%;
+            height: 2.75rem;
+            border-radius: 0.625rem;
+            border: 1px solid #d1d5db;
+            background-color: #fff;
+            color: #111827;
+            font-size: 0.875rem;
+            outline: none;
+            transition: border-color .15s, box-shadow .15s;
+        }
+        .reg-input::placeholder { color: #9ca3af; }
+        .reg-input:hover { border-color: #9ca3af; }
+        .reg-input:focus { border-color: #059669; box-shadow: 0 0 0 4px rgba(5, 150, 105, .12); }
+        .reg-input.is-ok { border-color: #10b981; }
+        .reg-input.is-bad { border-color: #f43f5e; }
+        .reg-label { display: block; font-size: 0.8125rem; font-weight: 600; color: #374151; margin-bottom: 0.375rem; }
+        .reg-group-title { display: flex; align-items: center; gap: .625rem; font-size: .9375rem; font-weight: 700; color: #111827; }
+        .reg-group-title i { width: 1.75rem; height: 1.75rem; display: inline-flex; align-items: center; justify-content: center; border-radius: .5rem; background: #ecfdf5; color: #047857; font-size: .75rem; }
+        .strength-seg { height: 4px; flex: 1; border-radius: 9999px; background: #e5e7eb; transition: background-color .25s; }
+        @media (prefers-reduced-motion: reduce) { .reg-input, .strength-seg { transition: none; } }
     </style>
 
     <div class="min-h-screen flex">
@@ -33,66 +57,48 @@
             </div>
         </div>
 
-        {{-- Right: Registration Form Panel --}}
-        <div class="relative w-full lg:w-1/2 flex items-center justify-center px-4 sm:px-8 lg:px-12 py-10 bg-gray-50 overflow-y-auto">
+        {{-- Right: Registration Form Panel (redesigned) --}}
+        <div class="relative w-full lg:w-1/2 flex items-start lg:items-center justify-center px-5 sm:px-10 lg:px-14 py-12 bg-white overflow-y-auto">
 
-            {{-- Top-Right Language Switcher (matches login page) --}}
-            <div class="absolute top-4 right-4 sm:top-6 sm:right-6 flex gap-1 rounded-xl bg-white p-1 shadow-sm border border-gray-200 z-20">
+            {{-- Top-Right Language Switcher --}}
+            <div class="absolute top-4 right-4 sm:top-6 sm:right-6 flex gap-1 rounded-xl bg-gray-100 p-1 z-20">
                 <a href="{{ route('locale.switch', ['locale' => 'km']) }}"
-                   class="px-3 py-1 rounded-lg text-xs font-bold transition-all {{ app()->getLocale() === 'km' ? 'bg-emerald-600 text-white shadow-sm' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100' }}">
+                   class="px-3 py-1 rounded-lg text-xs font-bold transition-all {{ app()->getLocale() === 'km' ? 'bg-emerald-600 text-white shadow-sm' : 'text-gray-500 hover:text-gray-900 hover:bg-white' }}">
                     ខ្មែរ
                 </a>
                 <a href="{{ route('locale.switch', ['locale' => 'en']) }}"
-                   class="px-3 py-1 rounded-lg text-xs font-bold transition-all {{ app()->getLocale() === 'en' ? 'bg-emerald-600 text-white shadow-sm' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100' }}">
+                   class="px-3 py-1 rounded-lg text-xs font-bold transition-all {{ app()->getLocale() === 'en' ? 'bg-emerald-600 text-white shadow-sm' : 'text-gray-500 hover:text-gray-900 hover:bg-white' }}">
                     EN
                 </a>
             </div>
 
-            <div class="w-full max-w-xl">
+            <div class="w-full max-w-lg mt-8 lg:mt-0">
 
                 {{-- Mobile University Logo Header --}}
-                <div class="lg:hidden text-center mb-6">
-                    <div class="w-16 h-16 mx-auto mb-2.5 p-2 bg-emerald-50 rounded-2xl border border-emerald-100 flex items-center justify-center">
-                        <img src="{{ asset('assets/image/nmu_Logo.png') }}" alt="Logo" class="w-full h-full object-contain">
-                    </div>
-                    <h2 class="text-lg font-bold text-gray-800">Class Management System</h2>
+                <div class="lg:hidden flex items-center gap-3 mb-8">
+                    <img src="{{ asset('assets/image/nmu_Logo.png') }}" alt="Logo" class="w-11 h-11 object-contain">
+                    <span class="text-base font-bold text-gray-800">Class Management System</span>
                 </div>
 
                 {{-- Page Heading --}}
-                <div class="mb-6">
-                    <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">{{ __('register_heading') }}</h2>
-                    <p class="text-gray-500 mt-1.5 text-sm">{{ __('register_subtitle') }}</p>
+                <div class="mb-8">
+                    <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">{{ __('register_heading') }}</h2>
+                    <p class="text-gray-500 mt-2 text-sm leading-relaxed">{{ __('register_subtitle') }}</p>
                 </div>
 
-                {{-- Student Auto-Found Banner (Populated via AJAX lookup) --}}
-                <div id="studentFoundBanner" class="hidden mb-6 p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm flex items-start gap-3 transition-all duration-300">
-                    <div class="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <i class="fas fa-check"></i>
-                    </div>
-                    <div class="flex-1">
-                        <div class="font-bold text-emerald-950">{{ __('register_swal_found_title') }}</div>
-                        <div id="studentFoundDetails" class="text-emerald-700 mt-0.5"></div>
-                    </div>
-                    <button type="button" onclick="dismissStudentFoundBanner()" class="text-emerald-600 hover:text-emerald-800">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-
-                <form method="POST" action="{{ route('register') }}" class="space-y-6">
+                <form method="POST" action="{{ route('register') }}" class="space-y-8">
                     @csrf
 
-                    {{-- SECTION 1: Academic Identity --}}
-                    <div class="bg-white p-5 sm:p-6 rounded-2xl border border-gray-200 shadow-sm space-y-4">
-                        <div class="flex items-center gap-2.5 pb-2 border-b border-gray-100">
-                            <div class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-xs">
-                                <i class="fas fa-university"></i>
-                            </div>
-                            <span class="text-xs font-bold uppercase tracking-wider text-gray-600">{{ __('study_program') }} & {{ __('student_id_2') }}</span>
-                        </div>
+                    {{-- GROUP 1: Study details --}}
+                    <fieldset class="space-y-5">
+                        <legend class="reg-group-title mb-5">
+                            <i class="fas fa-university"></i>
+                            <span>{{ __('study_program') }} & {{ __('student_id_2') }}</span>
+                        </legend>
 
                         {{-- Student ID Code --}}
                         <div>
-                            <label class="block text-xs font-bold text-gray-600 uppercase tracking-wide mb-1.5">
+                            <label for="student_id_code" class="reg-label">
                                 {{ __('student_id_2') }} <span class="text-rose-500">*</span>
                             </label>
                             <div class="relative">
@@ -100,45 +106,53 @@
                                     <i class="fas fa-id-badge text-sm"></i>
                                 </span>
                                 <input type="text" name="student_id_code" id="student_id_code" value="{{ old('student_id_code') }}" required
-                                       class="block w-full pl-10 pr-24 py-2.5 rounded-xl border border-gray-200 bg-gray-50/50 focus:bg-white text-gray-900 placeholder-gray-400 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none"
+                                       autocomplete="off"
+                                       class="reg-input pl-10 pr-28"
                                        placeholder="e.g. B-XVI-000123" />
-                                <span id="idLookupSpinner" class="hidden absolute inset-y-0 right-3 flex items-center text-emerald-600 text-xs">
-                                    <i class="fas fa-circle-notch fa-spin mr-1"></i> Checking
+                                <span id="idLookupSpinner" class="absolute inset-y-0 right-3 items-center text-emerald-600 text-xs font-medium" style="display:none;">
+                                    <i class="fas fa-circle-notch fa-spin mr-1.5"></i> Checking
                                 </span>
                             </div>
-                            <p class="text-xs text-gray-400 mt-1 flex items-center gap-1">
-                                <i class="fas fa-info-circle text-[10px]"></i>
-                                <span>{{ __('register_student_id_hint') }}</span>
-                            </p>
+                            <p class="text-xs text-gray-500 mt-1.5">{{ __('register_student_id_hint') }}</p>
                             <x-input-error :messages="$errors->get('student_id_code')" class="mt-1 text-xs text-rose-500" />
+
+                            {{-- Student Auto-Found Banner (Populated via AJAX lookup) --}}
+                            <div id="studentFoundBanner" class="hidden mt-3 pl-3.5 pr-2 py-2.5 border-l-4 border-emerald-500 bg-emerald-50 rounded-r-lg text-sm flex items-start gap-3">
+                                <i class="fas fa-circle-check text-emerald-600 mt-0.5"></i>
+                                <div class="flex-1 min-w-0">
+                                    <div class="font-semibold text-emerald-900">{{ __('register_swal_found_title') }}</div>
+                                    <div id="studentFoundDetails" class="text-emerald-800 text-xs mt-0.5 break-words"></div>
+                                </div>
+                                <button type="button" onclick="dismissStudentFoundBanner()" aria-label="Dismiss"
+                                        class="w-7 h-7 flex items-center justify-center rounded-md text-emerald-700 hover:bg-emerald-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500">
+                                    <i class="fas fa-times text-xs"></i>
+                                </button>
+                            </div>
                         </div>
 
-                        {{-- Department & Degree Level --}}
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-bold text-gray-600 uppercase tracking-wide mb-1.5">
-                                    {{ __('course') }} <span class="text-rose-500">*</span>
-                                </label>
-                                <div class="relative">
-                                    <select name="department_id" id="department_id" required
-                                            class="block w-full pl-3.5 pr-8 py-2.5 rounded-xl border border-gray-200 bg-gray-50/50 focus:bg-white text-gray-900 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none">
-                                        <option value="">{{ __('select_course') }}</option>
-                                        @foreach ($departments as $department)
-                                            <option value="{{ $department->id }}" {{ old('department_id') == $department->id ? 'selected' : '' }}>
-                                                {{ $department->name_km }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <x-input-error :messages="$errors->get('department_id')" class="mt-1 text-xs text-rose-500" />
-                            </div>
+                        {{-- Department --}}
+                        <div>
+                            <label for="department_id" class="reg-label">
+                                {{ __('course') }} <span class="text-rose-500">*</span>
+                            </label>
+                            <select name="department_id" id="department_id" required class="reg-input pl-3.5 pr-9">
+                                <option value="">{{ __('select_course') }}</option>
+                                @foreach ($departments as $department)
+                                    <option value="{{ $department->id }}" {{ old('department_id') == $department->id ? 'selected' : '' }}>
+                                        {{ $department->name_km }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <x-input-error :messages="$errors->get('department_id')" class="mt-1 text-xs text-rose-500" />
+                        </div>
 
+                        {{-- Degree Level & Generation --}}
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                             <div>
-                                <label class="block text-xs font-bold text-gray-600 uppercase tracking-wide mb-1.5">
+                                <label for="degree_level" class="reg-label">
                                     {{ __('degree_level') }} <span class="text-rose-500">*</span>
                                 </label>
-                                <select name="degree_level" id="degree_level" required
-                                        class="block w-full pl-3.5 pr-8 py-2.5 rounded-xl border border-gray-200 bg-gray-50/50 focus:bg-white text-gray-900 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none">
+                                <select name="degree_level" id="degree_level" required class="reg-input pl-3.5 pr-9">
                                     <option value="">{{ __('select_degree_level') }}</option>
                                     <option value="បរិញ្ញាបត្រ" {{ old('degree_level') == 'បរិញ្ញាបត្រ' ? 'selected' : '' }}>បរិញ្ញាបត្រ</option>
                                     <option value="បរិញ្ញាបត្ររង" {{ old('degree_level') == 'បរិញ្ញាបត្ររង' ? 'selected' : '' }}>បរិញ្ញាបត្ររង</option>
@@ -148,39 +162,37 @@
                                 </select>
                                 <x-input-error :messages="$errors->get('degree_level')" class="mt-1 text-xs text-rose-500" />
                             </div>
-                        </div>
 
-                        {{-- Generation --}}
-                        <div>
-                            <label class="block text-xs font-bold text-gray-600 uppercase tracking-wide mb-1.5">
-                                {{ __('generation') }} <span class="text-rose-500">*</span>
-                            </label>
-                            <select name="generation" id="generation" required
-                                    class="block w-full pl-3.5 pr-8 py-2.5 rounded-xl border border-gray-200 bg-gray-50/50 focus:bg-white text-gray-900 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none">
-                                <option value="">{{ __('select_a_generation') }}</option>
-                                @foreach($generations as $generation)
-                                    <option value="{{ $generation }}" {{ old('generation') == $generation ? 'selected' : '' }}>
-                                        {{ __('generation_2') }} {{ $generation }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <x-input-error :messages="$errors->get('generation')" class="mt-1 text-xs text-rose-500" />
-                        </div>
-                    </div>
-
-                    {{-- SECTION 2: Account Details --}}
-                    <div class="bg-white p-5 sm:p-6 rounded-2xl border border-gray-200 shadow-sm space-y-4">
-                        <div class="flex items-center gap-2.5 pb-2 border-b border-gray-100">
-                            <div class="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xs">
-                                <i class="fas fa-user"></i>
+                            <div>
+                                <label for="generation" class="reg-label">
+                                    {{ __('generation') }} <span class="text-rose-500">*</span>
+                                </label>
+                                <select name="generation" id="generation" required class="reg-input pl-3.5 pr-9">
+                                    <option value="">{{ __('select_a_generation') }}</option>
+                                    @foreach($generations as $generation)
+                                        <option value="{{ $generation }}" {{ old('generation') == $generation ? 'selected' : '' }}>
+                                            {{ __('generation_2') }} {{ $generation }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <x-input-error :messages="$errors->get('generation')" class="mt-1 text-xs text-rose-500" />
                             </div>
-                            <span class="text-xs font-bold uppercase tracking-wider text-gray-600">{{ __('personal_information') }}</span>
                         </div>
+                    </fieldset>
 
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <hr class="border-gray-200">
+
+                    {{-- GROUP 2: Personal information --}}
+                    <fieldset class="space-y-5">
+                        <legend class="reg-group-title mb-5">
+                            <i class="fas fa-user"></i>
+                            <span>{{ __('personal_information') }}</span>
+                        </legend>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                             {{-- Full Name --}}
                             <div>
-                                <label class="block text-xs font-bold text-gray-600 uppercase tracking-wide mb-1.5">
+                                <label for="name" class="reg-label">
                                     {{ __('display_name') }} <span class="text-rose-500">*</span>
                                 </label>
                                 <div class="relative">
@@ -188,7 +200,7 @@
                                         <i class="fas fa-user-circle text-sm"></i>
                                     </span>
                                     <input type="text" name="name" id="name" value="{{ old('name') }}" required
-                                           class="block w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/50 focus:bg-white text-gray-900 placeholder-gray-400 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none"
+                                           class="reg-input pl-10 pr-3.5"
                                            placeholder="Full Name" />
                                 </div>
                                 <x-input-error :messages="$errors->get('name')" class="mt-1 text-xs text-rose-500" />
@@ -196,71 +208,74 @@
 
                             {{-- Email --}}
                             <div>
-                                <label class="block text-xs font-bold text-gray-600 uppercase tracking-wide mb-1.5">
+                                <label for="email" class="reg-label">
                                     {{ __('email') }} <span class="text-rose-500">*</span>
                                 </label>
                                 <div class="relative">
                                     <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
                                         <i class="fas fa-envelope text-sm"></i>
                                     </span>
-                                    <input type="email" name="email" value="{{ old('email') }}" required
-                                           class="block w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/50 focus:bg-white text-gray-900 placeholder-gray-400 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none"
+                                    <input type="email" name="email" id="email" value="{{ old('email') }}" required
+                                           class="reg-input pl-10 pr-3.5"
                                            placeholder="name@nmu.edu.kh" />
                                 </div>
                                 <x-input-error :messages="$errors->get('email')" class="mt-1 text-xs text-rose-500" />
                             </div>
                         </div>
-                    </div>
+                    </fieldset>
 
-                    {{-- SECTION 3: Password & Security --}}
-                    <div class="bg-white p-5 sm:p-6 rounded-2xl border border-gray-200 shadow-sm space-y-4">
-                        <div class="flex items-center gap-2.5 pb-2 border-b border-gray-100">
-                            <div class="w-7 h-7 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-xs">
-                                <i class="fas fa-lock"></i>
-                            </div>
-                            <span class="text-xs font-bold uppercase tracking-wider text-gray-600">{{ __('security_and_login') }}</span>
-                        </div>
+                    <hr class="border-gray-200">
 
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {{-- GROUP 3: Password --}}
+                    <fieldset class="space-y-5">
+                        <legend class="reg-group-title mb-5">
+                            <i class="fas fa-lock"></i>
+                            <span>{{ __('security_and_login') }}</span>
+                        </legend>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                             {{-- Password --}}
                             <div>
-                                <label class="block text-xs font-bold text-gray-600 uppercase tracking-wide mb-1.5">
+                                <label for="password" class="reg-label">
                                     {{ __('password') }} <span class="text-rose-500">*</span>
                                 </label>
                                 <div class="relative">
                                     <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
                                         <i class="fas fa-key text-xs"></i>
                                     </span>
-                                    <input id="password" type="password" name="password" required
-                                           class="block w-full pl-10 pr-10 py-2.5 rounded-xl border border-gray-200 bg-gray-50/50 focus:bg-white text-gray-900 placeholder-gray-400 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none"
+                                    <input id="password" type="password" name="password" required autocomplete="new-password"
+                                           class="reg-input pl-10 pr-10"
                                            placeholder="••••••••" />
-                                    <button type="button" onclick="togglePassword('password', 'eyeOpen1', 'eyeClosed1')"
-                                            class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600">
+                                    <button type="button" onclick="togglePassword('password', 'eyeOpen1', 'eyeClosed1')" aria-label="Show or hide password"
+                                            class="absolute inset-y-0 right-0 w-10 flex items-center justify-center text-gray-400 hover:text-gray-600 focus-visible:outline-none focus-visible:text-emerald-600">
                                         <i id="eyeOpen1" class="fas fa-eye text-xs"></i>
                                         <i id="eyeClosed1" class="fas fa-eye-slash text-xs hidden"></i>
                                     </button>
                                 </div>
-                                {{-- Password Strength Meter --}}
-                                <div class="mt-2 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                                    <div id="strength-bar" class="h-full w-0 transition-all duration-500 rounded-full"></div>
+                                {{-- Password Strength Meter (4 segments) --}}
+                                <div id="strength-bar" class="mt-2.5 flex gap-1.5" aria-hidden="true">
+                                    <span class="strength-seg"></span>
+                                    <span class="strength-seg"></span>
+                                    <span class="strength-seg"></span>
+                                    <span class="strength-seg"></span>
                                 </div>
                                 <x-input-error :messages="$errors->get('password')" class="mt-1 text-xs text-rose-500" />
                             </div>
 
                             {{-- Confirm Password --}}
                             <div>
-                                <label class="block text-xs font-bold text-gray-600 uppercase tracking-wide mb-1.5">
+                                <label for="password_confirmation" class="reg-label">
                                     {{ __('confirm_password') }} <span class="text-rose-500">*</span>
                                 </label>
                                 <div class="relative">
                                     <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
                                         <i class="fas fa-shield-alt text-xs"></i>
                                     </span>
-                                    <input id="password_confirmation" type="password" name="password_confirmation" required
-                                           class="block w-full pl-10 pr-10 py-2.5 rounded-xl border border-gray-200 bg-gray-50/50 focus:bg-white text-gray-900 placeholder-gray-400 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none"
+                                    <input id="password_confirmation" type="password" name="password_confirmation" required autocomplete="new-password"
+                                           class="reg-input pl-10 pr-10"
                                            placeholder="••••••••" />
-                                    <button type="button" onclick="togglePassword('password_confirmation', 'eyeOpen2', 'eyeClosed2')"
-                                            class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600">
+                                    <button type="button" onclick="togglePassword('password_confirmation', 'eyeOpen2', 'eyeClosed2')" aria-label="Show or hide password"
+                                            class="absolute inset-y-0 right-0 w-10 flex items-center justify-center text-gray-400 hover:text-gray-600 focus-visible:outline-none focus-visible:text-emerald-600">
                                         <i id="eyeOpen2" class="fas fa-eye text-xs"></i>
                                         <i id="eyeClosed2" class="fas fa-eye-slash text-xs hidden"></i>
                                     </button>
@@ -268,31 +283,30 @@
                                 <x-input-error :messages="$errors->get('password_confirmation')" class="mt-1 text-xs text-rose-500" />
                             </div>
                         </div>
-                    </div>
+                    </fieldset>
 
                     @if (config('services.turnstile.site_key'))
-                        <div class="cf-turnstile" data-sitekey="{{ config('services.turnstile.site_key') }}" data-action="register"></div>
-                        <x-input-error :messages="$errors->get('cf-turnstile-response')" class="mt-1.5 text-xs text-rose-500" />
+                        <div>
+                            <div class="cf-turnstile" data-sitekey="{{ config('services.turnstile.site_key') }}" data-action="register"></div>
+                            <x-input-error :messages="$errors->get('cf-turnstile-response')" class="mt-1.5 text-xs text-rose-500" />
+                        </div>
                     @endif
 
                     {{-- Submit Button --}}
                     <button type="submit"
-                            class="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-600 text-white font-bold rounded-xl shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 active:scale-[0.99] transition-all duration-200 text-sm flex items-center justify-center gap-2">
+                            class="w-full h-12 bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white font-bold rounded-xl transition-colors duration-150 text-sm flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-600/30">
                         <i class="fas fa-user-plus text-xs"></i>
                         <span>{{ __('btn_register') }}</span>
                     </button>
                 </form>
 
                 {{-- Login Link Footer --}}
-                <div class="text-center mt-6 pt-4 border-t border-gray-200">
-                    <p class="text-sm text-gray-500">
-                        {{ __('auth_already_have_account') }}
-                        <a href="{{ route('login') }}" class="font-bold text-emerald-600 hover:text-emerald-700 ml-1 inline-flex items-center gap-1 hover:underline">
-                            <span>{{ __('log_in') }}</span>
-                            <i class="fas fa-arrow-right text-[10px]"></i>
-                        </a>
-                    </p>
-                </div>
+                <p class="text-sm text-gray-500 text-center mt-8">
+                    {{ __('auth_already_have_account') }}
+                    <a href="{{ route('login') }}" class="font-bold text-emerald-700 hover:text-emerald-800 ml-1 hover:underline underline-offset-4">
+                        {{ __('log_in') }}
+                    </a>
+                </p>
 
             </div>
         </div>
@@ -315,10 +329,13 @@
             }
         }
 
-        // Password strength meter
+        // Password strength meter (4 segments)
         const pswInput = document.getElementById('password');
+        const pswConfirm = document.getElementById('password_confirmation');
         const sBar = document.getElementById('strength-bar');
         if (pswInput && sBar) {
+            const segs = sBar.querySelectorAll('.strength-seg');
+            const colors = ['', '#f43f5e', '#f59e0b', '#facc15', '#10b981'];
             pswInput.addEventListener('input', () => {
                 const val = pswInput.value;
                 let strength = 0;
@@ -326,11 +343,21 @@
                 if (/[A-Z]/.test(val)) strength++;
                 if (/[0-9]/.test(val)) strength++;
                 if (/[!@#$%^&*]/.test(val)) strength++;
-                const colors = ['bg-transparent', 'bg-rose-500', 'bg-amber-500', 'bg-yellow-400', 'bg-emerald-500'];
-                sBar.className = `h-full transition-all duration-500 rounded-full ${colors[strength]}`;
-                sBar.style.width = (strength * 25) + '%';
+                segs.forEach((seg, i) => {
+                    seg.style.backgroundColor = i < strength ? colors[strength] : '';
+                });
+                checkConfirmMatch();
             });
         }
+
+        // Confirm password match feedback
+        function checkConfirmMatch() {
+            if (!pswConfirm || !pswInput) return;
+            pswConfirm.classList.remove('is-ok', 'is-bad');
+            if (pswConfirm.value.length === 0) return;
+            pswConfirm.classList.add(pswConfirm.value === pswInput.value ? 'is-ok' : 'is-bad');
+        }
+        if (pswConfirm) pswConfirm.addEventListener('input', checkConfirmMatch);
 
         function dismissStudentFoundBanner() {
             const banner = document.getElementById('studentFoundBanner');
@@ -347,16 +374,18 @@
             const banner = document.getElementById('studentFoundBanner');
             const bannerDetails = document.getElementById('studentFoundDetails');
 
+            const showSpinner = (on) => { if (spinner) spinner.style.display = on ? 'flex' : 'none'; };
+
             if (studentIdInput) {
                 studentIdInput.addEventListener('blur', function() {
                     const code = this.value.trim();
                     if (code.length >= 3) {
-                        if (spinner) spinner.classList.remove('hidden');
+                        showSpinner(true);
 
                         fetch(`/api/check-student/${encodeURIComponent(code)}`)
                             .then(res => res.json())
                             .then(data => {
-                                if (spinner) spinner.classList.add('hidden');
+                                showSpinner(false);
 
                                 if (data.success) {
                                     Swal.fire({
@@ -417,7 +446,7 @@
                                 }
                             })
                             .catch(error => {
-                                if (spinner) spinner.classList.add('hidden');
+                                showSpinner(false);
                                 Swal.fire({
                                     title: 'Error',
                                     text: '{{ __('register_swal_error_text') }}',
