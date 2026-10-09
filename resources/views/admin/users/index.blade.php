@@ -1,135 +1,144 @@
-﻿<x-app-layout>
-    <x-slot name="header">
-        <div class="px-4 md:px-6 lg:px-8">
-            <h2 class="text-4xl font-extrabold text-gray-900 leading-tight flex items-center">
-                {{ __('manage_users') }} <i class="fas fa-users-cog text-green-600 ml-4"></i>
-            </h2>
-            <p class="mt-2 text-lg text-gray-500">{{ __('list_of_all_users_in_the_system') }}</p>
-        </div>
-    </x-slot>
+<x-app-layout>
+    <div class="min-h-screen bg-gray-50 font-sans text-gray-900">
 
-    <div class="py-12 bg-gray-50 min-h-screen">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-2xl sm:rounded-3xl p-8 lg:p-12 border border-gray-100">
-
-                <div class="flex flex-col lg:flex-row justify-between items-center mb-10 gap-6">
-                    <div class="text-center lg:text-left">
-                        <h3 class="text-3xl font-bold text-gray-800 tracking-tight">
-                            {{ __('user_list') }}
-                        </h3>
-                        <p class="text-gray-500 text-sm mt-1">{{ __('manage_and_track_all_member_information') }}</p>
+        {{-- Hero Header --}}
+        <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white pb-28 pt-10 shadow-lg">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 flex items-center justify-center">
+                            <i class="fas fa-users-cog text-emerald-300 text-xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-3xl font-bold tracking-tight">{{ __('manage_users') }}</h2>
+                            <p class="text-slate-400 mt-1 text-sm">{{ __('list_of_all_users_in_the_system') }}</p>
+                        </div>
                     </div>
-
-                    <div class="flex flex-col md:flex-row items-center gap-4 w-full lg:w-auto">
-                        
-                        <form id="search-form" action="{{ route('admin.manage-users') }}" method="GET" class="w-full md:w-80">
-                            <input type="hidden" name="tab" value="{{ request('tab', 'admins') }}">
-                            <div class="relative group">
-                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                    <i class="fas fa-search text-gray-400 group-focus-within:text-green-500 transition-colors"></i>
-                                </div>
-                                <input
-                                    id="live-search"
-                                    type="text"
-                                    name="search"
-                                    value="{{ request('search') }}"
-                                    placeholder="{{ __('search_by_name_or_email') }}"
-                                    autocomplete="off"
-                                    aria-controls="user-results"
-                                    class="block w-full pl-11 pr-20 py-3 bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-2xl focus:ring-2 focus:ring-green-500/20 focus:border-green-500 focus:bg-white transition-all duration-200 outline-none"
-                                >
-                                <div id="live-search-loading" class="hidden absolute inset-y-0 right-11 items-center text-green-600" aria-hidden="true">
-                                    <i class="fas fa-spinner fa-spin"></i>
-                                </div>
-                                <button id="clear-live-search" type="button" class="hidden absolute inset-y-0 right-3 items-center text-gray-400 hover:text-gray-700 transition-colors" aria-label="{{ __('clear_search') }}">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                            <p id="live-search-status" class="sr-only" role="status" aria-live="polite"></p>
-                        </form>
-                        
-                        <div class="hidden md:block h-8 w-px bg-gray-200"></div>
-
+                    <div class="flex flex-wrap items-center gap-3">
                         <a wire:navigate href="{{ route('admin.create-user') }}"
-                           class="w-full md:w-auto inline-flex items-center justify-center px-6 py-3 bg-green-600 border border-transparent rounded-2xl font-bold text-sm text-white hover:bg-green-700 active:scale-95 focus:outline-none focus:ring-4 focus:ring-green-500/30 transition-all duration-200 shadow-lg shadow-green-200">
-                            <i class="fas fa-plus-circle mr-2 text-lg"></i> 
-                            {{ __('add_new_member') }}
+                           class="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white px-5 py-2.5 rounded-xl font-bold shadow-lg transition-all text-sm">
+                            <i class="fas fa-plus"></i>
+                            <span>{{ __('add_new_member') }}</span>
                         </a>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <div id="user-manage-root" x-data="{ 
-                    activeTab: $persist('admins').as('user_manage_tab'),
-                    showDeleteModal: false,
-                    deletingUserId: '',
-                    deletingUserType: '',
-                    deletingFormId: '',
-                    isDeleting: false,
-                    showEditModal: false,
-                    editLoading: false,
-                    editSaving: false,
-                    showProfilePreview: false,
-                    previewUser: {},
-                    editForm: {
-                        id: '', name: '', email: '', role: 'admin', password: '', password_confirmation: '',
-                        department_id: '', generation: '',
-                        full_name_km: '', full_name_en: '', gender: '', phone_number: '', address: '', date_of_birth: '',
-                        departments: [], generations: []
-                    },
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-20 pb-12 relative z-10">
 
-                    init() {
-                        const urlParams = new URLSearchParams(window.location.search);
-                        const tabParam = urlParams.get('tab');
-                        if (tabParam) { this.activeTab = tabParam; }
-                        window._editCtx = this;
-                    },
+            {{-- Main Content Container with Alpine Scope --}}
+            <div id="user-manage-root" x-data="{ 
+                activeTab: $persist('admins').as('user_manage_tab'),
+                showDeleteModal: false,
+                deletingUserId: '',
+                deletingUserType: '',
+                deletingFormId: '',
+                isDeleting: false,
+                showEditModal: false,
+                editLoading: false,
+                editSaving: false,
+                showProfilePreview: false,
+                previewUser: {},
+                editForm: {
+                    id: '', name: '', email: '', role: 'admin', password: '', password_confirmation: '',
+                    department_id: '', generation: '',
+                    full_name_km: '', full_name_en: '', gender: '', phone_number: '', address: '', date_of_birth: '',
+                    departments: [], generations: []
+                },
 
-                    confirmDelete(formId, userType) {
-                        this.deletingFormId = formId;
-                        this.deletingUserType = userType;
-                        this.deletingUserId = formId;
-                        this.showDeleteModal = true;
-                    }
-                }" class="mt-8">
-                    
-                    {{-- 🔥 ដាក់ប៊ូតុង Excel នៅទីនេះ (ក្នុង x-data) ដើម្បីឱ្យវាស្គាល់ activeTab និង Filter --}}
-                    <div class="flex justify-end mb-4 gap-2">
-                        <a href="javascript:void(0)" onclick="printStudentsPdf()"
-                           class="w-full md:w-auto inline-flex items-center justify-center px-6 py-3 bg-blue-600 border border-transparent rounded-2xl font-bold text-sm text-white hover:bg-blue-700 active:scale-95 transition-all duration-200 shadow-lg shadow-blue-200">
-                            <i class="fas fa-print mr-2 text-lg"></i> 
-                            {{ __('print_pdf') }}
-                        </a>
-                        <button @click="window.location.href = '{{ route('admin.users.export') }}?tab=' + activeTab + 
-                            '&search={{ request('search') }}' + 
-                            '&generation={{ request('generation') }}' + 
-                            '&department_id={{ request('department_id') }}'"
-                           class="w-full md:w-auto inline-flex items-center justify-center px-6 py-3 bg-emerald-600 border border-transparent rounded-2xl font-bold text-sm text-white hover:bg-emerald-700 active:scale-95 transition-all duration-200 shadow-lg shadow-emerald-200">
-                            <i class="fas fa-file-excel mr-2 text-lg"></i> 
-                            {{ __('download_excel') }}
-                        </button>
+                init() {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const tabParam = urlParams.get('tab');
+                    if (tabParam) { this.activeTab = tabParam; }
+                    window._editCtx = this;
+                },
+
+                confirmDelete(formId, userType) {
+                    this.deletingFormId = formId;
+                    this.deletingUserType = userType;
+                    this.deletingUserId = formId;
+                    this.showDeleteModal = true;
+                }
+            }">
+
+                {{-- Toolbar Card: Search + Export Actions --}}
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-8">
+                    <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+                        {{-- Live Search --}}
+                        <div class="flex-1 max-w-lg">
+                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 block">{{ __('search_by_name_or_email') }}</label>
+                            <form id="search-form" action="{{ route('admin.manage-users') }}" method="GET" class="w-full">
+                                <input type="hidden" name="tab" value="{{ request('tab', 'admins') }}">
+                                <div class="relative group">
+                                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                        <i class="fas fa-search text-gray-400 group-focus-within:text-emerald-500 transition-colors"></i>
+                                    </div>
+                                    <input
+                                        id="live-search"
+                                        type="text"
+                                        name="search"
+                                        value="{{ request('search') }}"
+                                        placeholder="{{ __('search_by_name_or_email') }}"
+                                        autocomplete="off"
+                                        aria-controls="user-results"
+                                        class="block w-full pl-10 pr-20 py-2.5 bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent focus:bg-white transition-all outline-none"
+                                    >
+                                    <div id="live-search-loading" class="hidden absolute inset-y-0 right-10 items-center text-emerald-600" aria-hidden="true">
+                                        <i class="fas fa-spinner fa-spin text-sm"></i>
+                                    </div>
+                                    <button id="clear-live-search" type="button" class="hidden absolute inset-y-0 right-3 items-center text-gray-400 hover:text-gray-700 transition-colors" aria-label="{{ __('clear_search') }}">
+                                        <i class="fas fa-times text-sm"></i>
+                                    </button>
+                                </div>
+                                <p id="live-search-status" class="sr-only" role="status" aria-live="polite"></p>
+                            </form>
+                        </div>
+
+                        {{-- Print & Excel Action Buttons --}}
+                        <div class="flex items-center gap-3 self-end lg:self-end pt-2 lg:pt-0">
+                            <button type="button" onclick="printStudentsPdf()"
+                               class="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 hover:bg-gray-50 text-slate-700 rounded-xl font-bold text-sm shadow-sm transition-all active:scale-95">
+                                <i class="fas fa-print text-slate-500"></i> 
+                                <span>{{ __('print_pdf') }}</span>
+                            </button>
+                            <button type="button" @click="window.location.href = '{{ route('admin.users.export') }}?tab=' + activeTab + 
+                                '&search={{ request('search') }}' + 
+                                '&generation={{ request('generation') }}' + 
+                                '&department_id={{ request('department_id') }}'"
+                               class="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-sm shadow-sm transition-all active:scale-95">
+                                <i class="fas fa-file-excel"></i> 
+                                <span>{{ __('download_excel') }}</span>
+                            </button>
+                        </div>
                     </div>
 
-                    <div class="border-b-2 border-gray-200">
-                        <nav class="-mb-0.5 flex space-x-6 overflow-x-auto" aria-label="Tabs">
+                    {{-- Tabs Navigation --}}
+                    <div class="border-t border-gray-100 mt-6 pt-2">
+                        <nav class="flex space-x-2 sm:space-x-4 overflow-x-auto" aria-label="Tabs">
                             <a wire:navigate href="{{ route('admin.manage-users', ['tab' => 'admins', 'search' => request('search')]) }}" @click="activeTab = 'admins'"
-                               class="whitespace-nowrap py-4 px-1 border-b-2 text-lg transition-colors duration-200"
-                               :class="{ 'border-green-500 text-green-600 font-semibold': activeTab === 'admins', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'admins' }">
-                                <i class="fas fa-user-shield mr-2"></i>{{ __('administrator') }}
+                               class="whitespace-nowrap px-4 py-3 rounded-xl text-sm font-bold transition-all flex items-center gap-2"
+                               :class="activeTab === 'admins' ? 'bg-emerald-50 text-emerald-700 shadow-sm border border-emerald-100' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'">
+                                <i class="fas fa-user-shield"></i>
+                                <span>{{ __('administrator') }}</span>
                             </a>
                             <a wire:navigate href="{{ route('admin.manage-users', ['tab' => 'professors', 'search' => request('search')]) }}" @click="activeTab = 'professors'"
-                               class="whitespace-nowrap py-4 px-1 border-b-2 text-lg transition-colors duration-200"
-                               :class="{ 'border-green-500 text-green-600 font-semibold': activeTab === 'professors', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'professors' }">
-                                <i class="fas fa-chalkboard-teacher mr-2"></i>{{ __('lecturers') }}
+                               class="whitespace-nowrap px-4 py-3 rounded-xl text-sm font-bold transition-all flex items-center gap-2"
+                               :class="activeTab === 'professors' ? 'bg-emerald-50 text-emerald-700 shadow-sm border border-emerald-100' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'">
+                                <i class="fas fa-chalkboard-teacher"></i>
+                                <span>{{ __('lecturers') }}</span>
                             </a>
                             <a wire:navigate href="{{ route('admin.manage-users', ['tab' => 'students', 'search' => request('search')]) }}" @click="activeTab = 'students'"
-                               class="whitespace-nowrap py-4 px-1 border-b-2 text-lg transition-colors duration-200"
-                               :class="{ 'border-green-500 text-green-600 font-semibold': activeTab === 'students', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'students' }">
-                                <i class="fas fa-user-graduate mr-2"></i>{{ __('students_3') }}
+                               class="whitespace-nowrap px-4 py-3 rounded-xl text-sm font-bold transition-all flex items-center gap-2"
+                               :class="activeTab === 'students' ? 'bg-emerald-50 text-emerald-700 shadow-sm border border-emerald-100' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'">
+                                <i class="fas fa-user-graduate"></i>
+                                <span>{{ __('students_3') }}</span>
                             </a>
                         </nav>
                     </div>
+                </div>
 
-                    <div id="user-results" class="mt-8" aria-live="polite">
+                <div id="user-results" aria-live="polite">
                         <div x-show="activeTab === 'admins'" class="space-y-3">
                             @if ($admins->isEmpty())
                                 <div class="bg-gray-100 p-6 rounded-xl text-center text-gray-500 shadow-inner">
@@ -230,14 +239,14 @@
                         </div>
 
                         <div x-show="activeTab === 'professors'" class="space-y-4">
-                            <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm mb-6">
+                            <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm mb-6">
                                 <form id="professor-filter-form" action="{{ route('admin.manage-users') }}" method="GET" class="flex flex-wrap items-end gap-4">
                                     <input type="hidden" name="tab" value="professors">
                                     <input type="hidden" name="search" value="{{ request('search') }}">
 
                                     <div class="flex-1 min-w-[200px]">
-                                        <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">{{ __('faculty_2') }}</label>
-                                        <select name="faculty_id" onchange="this.form.requestSubmit()" class="w-full border-gray-200 rounded-xl text-sm focus:ring-green-500">
+                                        <label class="block text-xs font-bold text-gray-500 mb-1.5 uppercase tracking-wide">{{ __('faculty_2') }}</label>
+                                        <select name="faculty_id" onchange="this.form.requestSubmit()" class="w-full border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all">
                                             <option value="">{{ __('all_faculties') }}</option>
                                             @foreach($faculties as $fac)
                                                 <option value="{{ $fac->id }}" {{ request('faculty_id') == $fac->id ? 'selected' : '' }}>{{ $fac->name_km }}</option>
@@ -246,8 +255,8 @@
                                     </div>
 
                                     <div class="flex-1 min-w-[200px]">
-                                        <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">{{ __('department_3') }}</label>
-                                        <select name="department_id" onchange="this.form.requestSubmit()" class="w-full border-gray-200 rounded-xl text-sm focus:ring-green-500">
+                                        <label class="block text-xs font-bold text-gray-500 mb-1.5 uppercase tracking-wide">{{ __('department_3') }}</label>
+                                        <select name="department_id" onchange="this.form.requestSubmit()" class="w-full border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all">
                                             <option value="">{{ __('all_departments') }}</option>
                                             @foreach($departments as $dept)
                                                 <option value="{{ $dept->id }}" {{ request('department_id') == $dept->id ? 'selected' : '' }}>{{ $dept->name_km }}</option>
@@ -255,8 +264,9 @@
                                         </select>
                                     </div>
 
-                                    <a wire:navigate href="{{ route('admin.manage-users', ['tab' => 'professors']) }}" class="px-6 py-2 bg-gray-100 text-gray-600 rounded-xl font-bold text-sm hover:bg-gray-200 transition-all">
-                                        {{ __('Reset') }}
+                                    <a wire:navigate href="{{ route('admin.manage-users', ['tab' => 'professors']) }}" class="px-5 py-2.5 bg-gray-100 text-gray-600 rounded-xl font-bold text-sm hover:bg-gray-200 transition-all flex items-center gap-1.5">
+                                        <i class="fas fa-undo text-xs"></i>
+                                        <span>{{ __('reset_2') }}</span>
                                     </a>
                                 </form>
                             </div>
@@ -375,14 +385,14 @@
 
                         <div x-show="activeTab === 'students'" class="space-y-4">
                             
-                            <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm mb-6">
+                            <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm mb-6">
                                 <form id="student-filter-form" action="{{ route('admin.manage-users') }}" method="GET" class="flex flex-wrap items-end gap-4">
                                     <input type="hidden" name="tab" value="students">
                                     <input type="hidden" name="search" value="{{ request('search') }}">
                                     
                                     <div class="flex-1 min-w-[200px]">
-                                        <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">{{ __('generation') }}</label>
-                                        <select name="generation" onchange="this.form.requestSubmit()" class="w-full border-gray-200 rounded-xl text-sm focus:ring-green-500">
+                                        <label class="block text-xs font-bold text-gray-500 mb-1.5 uppercase tracking-wide">{{ __('generation') }}</label>
+                                        <select name="generation" onchange="this.form.requestSubmit()" class="w-full border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all">
                                             <option value="">{{ __('all_generations_2') }}</option>
                                             @foreach($generations as $gen)
                                                 <option value="{{ $gen }}" {{ request('generation') == $gen ? 'selected' : '' }}>
@@ -393,8 +403,8 @@
                                     </div>
 
                                     <div class="flex-1 min-w-[200px]">
-                                        <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">{{ __('department_3') }}</label>
-                                        <select name="department_id" onchange="this.form.requestSubmit()" class="w-full border-gray-200 rounded-xl text-sm focus:ring-green-500">
+                                        <label class="block text-xs font-bold text-gray-500 mb-1.5 uppercase tracking-wide">{{ __('department_3') }}</label>
+                                        <select name="department_id" onchange="this.form.requestSubmit()" class="w-full border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all">
                                             <option value="">{{ __('all_departments') }}</option>
                                             @foreach($departments as $dept)
                                                 <option value="{{ $dept->id }}" {{ request('department_id') == $dept->id ? 'selected' : '' }}>
@@ -404,8 +414,9 @@
                                         </select>
                                     </div>
 
-                                    <a wire:navigate href="{{ route('admin.manage-users', ['tab' => 'students']) }}" class="px-6 py-2 bg-gray-100 text-gray-600 rounded-xl font-bold text-sm hover:bg-gray-200 transition-all">
-                                        {{ __('Reset') }}
+                                    <a wire:navigate href="{{ route('admin.manage-users', ['tab' => 'students']) }}" class="px-5 py-2.5 bg-gray-100 text-gray-600 rounded-xl font-bold text-sm hover:bg-gray-200 transition-all flex items-center gap-1.5">
+                                        <i class="fas fa-undo text-xs"></i>
+                                        <span>{{ __('reset_2') }}</span>
                                     </a>
                                 </form>
                             </div>
@@ -754,11 +765,9 @@
                     </div>
                 </div>
 
-                </div>
             </div>
         </div>
     </div>
-</div>
 
     <style>
         /* Enhanced hover effects for action links */
